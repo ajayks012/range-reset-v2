@@ -1230,18 +1230,18 @@ function CreateEvent() {
                 // justifyContent:"right"
               }}
             >
-              <Grid container item xl={5} lg={5} md={5} sm={5} xs={12}></Grid>
+              <Grid container item xl={5} lg={5} md={5} sm={12} xs={12}></Grid>
               <Grid
                 container
                 item
                 xl={7}
                 lg={7}
                 md={7}
-                sm={7}
+                sm={12}
                 xs={12}
                 spacing={2}
               >
-                <Grid item xl={2} lg={2} md={2} sm={2} xs={12}>
+                <Grid item xl={2} lg={2} md={2} sm={3} xs={12}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -1250,7 +1250,7 @@ function CreateEvent() {
                     Save
                   </Button>
                 </Grid>
-                <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
+                <Grid item xl={6} lg={6} md={6} sm={5} xs={6}>
                   <Button
                     variant="contained"
                     color="primary"

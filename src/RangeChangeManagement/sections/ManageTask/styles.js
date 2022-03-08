@@ -51,7 +51,8 @@ export const useStyles = makeStyles((theme) => {
             'max-width': '80%'
         },
         searchDialog: {
-            'max-width': '65%'
+            'max-width': '65%',
+            padding:"8px"
         },
         globalSearch:{
             [theme.breakpoints.up("sm")]: {

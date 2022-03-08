@@ -1123,7 +1123,7 @@ function ManageTaskEvent(props: any) {
       >
         <Grid container spacing={1}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid item container xs={6} spacing={1}>
+            <Grid item container xs={12} md={6} spacing={1}>
               <Grid item container spacing={2}>
                 <Grid item xs={12}>
                   <label>Reset Type</label>
@@ -1361,11 +1361,15 @@ function ManageTaskEvent(props: any) {
               </Grid>
             </Grid>
 
-            <Grid item xs={1} style={{ height: "100%" }}>
-              <Divider orientation="vertical" variant="middle" />
-            </Grid>
+            {small &&
+              <>
+                <Grid item md={1} style={{ height: "100%" }}>
+                  <Divider orientation="vertical" variant="middle" />
+                </Grid>
+              </>
+            }
 
-            <Grid item container xs={5} spacing={2}>
+            <Grid item container xs={12} md={5} spacing={2}>
               <Grid item container>
                 <Grid item xs={12}>
                   <label>Buyer</label>
