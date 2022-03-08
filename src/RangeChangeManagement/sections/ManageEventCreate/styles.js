@@ -1,0 +1,71 @@
+import { makeStyles } from "@material-ui/core"
+
+export const useStyles = makeStyles ((theme) => {
+    return {
+        backButton: {
+            border: 0,
+            color: "blue",
+            backgroundColor: "inherit",
+            cursor: "pointer",
+            fontSize: "18px",
+        },
+        smallFont: {
+            fontSize: "12px",
+            "&:hover": {
+                backgroundColor: theme.palette.primary.main,
+                color: "white"
+            }
+        },
+        smallFontGrey: {
+            fontSize: "12px",
+            backgroundColor: "#dddddd"
+        },
+        buttons: {
+            width: "100%",
+            height: 40,
+            [theme.breakpoints.up("sm")]: {
+                fontSize: "0.78rem",
+                "&:hover": {
+                    fontSize: "0.8rem",
+                },
+            },
+            [theme.breakpoints.down("sm")]: {
+                fontSize: "0.6rem",
+                // height: 50,
+                padding: "1px"
+            },
+        },
+        inputFieldBox: {
+            width: 400,
+            [theme.breakpoints.down(750)]: {
+                width: 400,
+            },
+            [theme.breakpoints.down(450)]: {
+                width: 350,
+            },
+            [theme.breakpoints.down(400)]: {
+                width: 250,
+            },
+            [theme.breakpoints.down(300)]: {
+                width: 200,
+            },
+        },
+        classDialog: {
+            [theme.breakpoints.up("xs")]: {
+                width:"400px"
+            },
+            [theme.breakpoints.down("xs")]: {
+                width:"250px"
+            },
+        },
+        dialogText:{
+            [theme.breakpoints.up("xs")]: {
+                fontSize:"0.9rem"
+            },
+            [theme.breakpoints.down("xs")]: {
+                fontSize:"0.8rem"
+            },
+        }
+
+    }
+})
