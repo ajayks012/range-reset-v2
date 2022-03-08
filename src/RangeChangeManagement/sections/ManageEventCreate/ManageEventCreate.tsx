@@ -37,6 +37,7 @@ import { Autocomplete, } from '@material-ui/lab'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { useStyles } from './styles'
+import { routes } from '../../../util/Constants'
 
 function ManageEventCreate() {
     const location = useLocation<any>()
@@ -44,6 +45,11 @@ function ManageEventCreate() {
     const theme1 = useTheme()
     const small = useMediaQuery(theme1.breakpoints.up("sm"))
     const classes = useStyles()
+
+    const {
+        DEFAULT,
+        RANGEAMEND_EVENTDASH
+      } = routes;
 
     const [eventDetails, setEventDetails] = useState<any>()
     const [eventName, setEventName] = useState<any>("")
@@ -1030,7 +1036,7 @@ function ManageEventCreate() {
     }
 
     const handlePublishEvent = () => {
-        history.push("/commercial/eventdashboard")
+        history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
     }
 
     return (

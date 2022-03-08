@@ -41,84 +41,7 @@ import { useStyles } from "./styles";
 import DialogHeader from "../../components/DialogHeader/DialogHeader";
 import { routes } from "../../../util/Constants";
 
-// const useStyles = makeStyles((theme: any) => {
-//     return {
-//         dialogTitle: {
-//             backgroundColor: theme.palette.primary.main,
-//             color: "white",
-//             alignItems: "baseline"
-//         },
-//         dialogCloseButton: {
-//             color: "#ff5252",
-//             backgroundColor: theme.palette.primary.main,
-//             fontSize: "18px",
-//             '&:hover': {
-//                 color: "#d50000",
-//                 backgroundColor: "#00e676",
-//                 cursor: "pointer",
-//                 borderRadius: 10
-//             }
-//         },
-//         uploadTextfield: {
-//             [theme.breakpoints.up("sm")]: {
-//                 width: 200,
-//             },
-//             [theme.breakpoints.down("sm")]: {
-//                 width: 100
-//             },
 
-//             height: "32px",
-//             cursor: "pointer"
-//         },
-//         uploadButton: {
-//             width: 100,
-//             height: "32px",
-//             cursor: "pointer",
-//             backgroundColor:theme.palette.primary.main,
-//             color: "white"
-//         },
-//         searchTextField: {
-//             width: "200px"
-//         },
-//         searchBox: {
-//             padding: "10px"
-//         },
-//         submitButtons: {
-//             width: "auto",
-//             backgroundColor: theme.palette.primary.main,
-//             color: "white",
-//             height: 40,
-//             "&:hover": {
-//                 backgroundColor: theme.palette.primary.main,
-//                 color: "white",
-//             },
-//         },
-//         redButtons: {
-//             width: "auto",
-//             backgroundColor: red[600],
-//             color: "white",
-//             height: 40,
-//             "&:hover": {
-//                 backgroundColor: red[400],
-//                 color: "white",
-//             },
-//         },
-//         previewDialog: {
-//             'max-width': '80%'
-//         },
-//         searchDialog: {
-//             'max-width': '50%'
-//         },
-//         globalSearch:{
-//             [theme.breakpoints.up("sm")]: {
-//                 width: "100%",
-//             },
-//             [theme.breakpoints.down("sm")]: {
-//                 width: "80%"
-//             },
-//         }
-//     }
-// })
 const Input = styled("input")({
   display: "none",
 });
@@ -130,10 +53,10 @@ function ManageTaskEvent(props: any) {
   const theme = useTheme();
   const history = useHistory();
   const small = useMediaQuery(theme.breakpoints.up("md"));
+  const between = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const small1 = useMediaQuery(theme.breakpoints.up(650));
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const [openAdvancedSearchDialog, setOpenAdvancedSearchDialog] =
-    useState(false);
+  const [openAdvancedSearchDialog, setOpenAdvancedSearchDialog] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<any>();
   const [importedData, setImportedData] = useState<any>();
   const [filteredImportedData, setFilteredImportedData] = useState<any>();
@@ -177,8 +100,10 @@ function ManageTaskEvent(props: any) {
   });
 
   const {
-    EVENT_CREATE,
-    EVENT_MANAGE
+    DEFAULT,
+    RANGEAMEND_CREATE,
+    RANGEAMEND_MANAGE_TASK,
+    RANGEAMEND_EVENTDASH
   } = routes
 
   const goBack = () => {
@@ -186,7 +111,7 @@ function ManageTaskEvent(props: any) {
   };
 
   const handleCreateEvent = () => {
-    history.push(EVENT_CREATE);
+    history.push(`${DEFAULT}${RANGEAMEND_CREATE}`);
   };
 
   const excelDatetoDate = (eDate: any) => {
@@ -232,8 +157,7 @@ function ManageTaskEvent(props: any) {
     // console.log(data)
 
     history.push({
-      // pathname: '/commercial/singleeventmanage',
-      pathname: EVENT_MANAGE,
+      pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
       search: `?event=${data["eventName"]}`, // query string
       state: {
         // location state
@@ -243,7 +167,7 @@ function ManageTaskEvent(props: any) {
   };
 
   const handlePublish = () => {
-    history.push("/commercial/eventdashboard");
+    history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`);
   };
 
   const eventNameTemplate = (rowData: any) => {
@@ -374,8 +298,8 @@ function ManageTaskEvent(props: any) {
 
             var classArray = () => {
               let classes = d["Planogram Class"].split(",")
-              let classValues=[]
-              for(var i in classes){
+              let classValues = []
+              for (var i in classes) {
                 classValues.push(classes[i].trim())
               }
               return classValues;
@@ -573,7 +497,7 @@ function ManageTaskEvent(props: any) {
               <Typography variant="body2" style={{ display: "inline" }}>
                 Supported file type in MS Excel
               </Typography>
-              <i className="pi pi-file-excel" style={{'fontSize': '18px'}}></i>
+              <i className="pi pi-file-excel" style={{ 'fontSize': '18px' }}></i>
             </Box>
             {/* <Box>
                             Check out the sample file
@@ -673,7 +597,8 @@ function ManageTaskEvent(props: any) {
           className="p-datatable-sm"
           showGridlines
           scrollable
-          // frozenWidth="300px"
+          scrollHeight="400px"
+        // frozenWidth="300px"
         >
           <Column
             selectionMode="multiple"
@@ -682,7 +607,7 @@ function ManageTaskEvent(props: any) {
               color: "white",
               backgroundColor: theme.palette.primary.main,
             }}
-            // frozen
+          // frozen
 
           ></Column>
           {confirmedTableCols.map((col: any, index: any) => {
@@ -709,7 +634,7 @@ function ManageTaskEvent(props: any) {
                   confirmedHeaderStyle(col.width)
                 }
                 sortable
-                // frozen={col.field === "eventName" ? true : false}
+              // frozen={col.field === "eventName" ? true : false}
               />
             );
           })}
@@ -731,7 +656,7 @@ function ManageTaskEvent(props: any) {
           showGridlines
           scrollable
           scrollHeight="400px"
-          // frozenWidth="300px"
+        // frozenWidth="300px"
         >
           <Column
             selectionMode="multiple"
@@ -740,7 +665,7 @@ function ManageTaskEvent(props: any) {
               color: "white",
               backgroundColor: theme.palette.primary.main,
             }}
-            // frozen
+          // frozen
           ></Column>
           {eventUploadTableCols.map((col: any, index: any) => {
             return (
@@ -752,7 +677,7 @@ function ManageTaskEvent(props: any) {
                 style={previewBodyStyle(col.width)}
                 headerStyle={previewHeaderStyle(col.width)}
                 sortable
-                // frozen={col.field === "eventName" ? true : false}
+              // frozen={col.field === "eventName" ? true : false}
               />
             );
           })}
@@ -817,7 +742,9 @@ function ManageTaskEvent(props: any) {
         <Box>
           <Typography variant="subtitle2">Confirm Bulk Event</Typography>
         </Box>
-        <Box>{uploadedTable()}</Box>
+        <Box>
+          {uploadedTable()}
+        </Box>
         <Grid
           container
           spacing={3}
@@ -1434,7 +1361,7 @@ function ManageTaskEvent(props: any) {
               </Grid>
             </Grid>
 
-            <Grid item xs={1} style={{height:"100%"}}>
+            <Grid item xs={1} style={{ height: "100%" }}>
               <Divider orientation="vertical" variant="middle" />
             </Grid>
 
@@ -1699,7 +1626,7 @@ function ManageTaskEvent(props: any) {
       </Grid>
       <Box
         sx={{
-          height: small ? "80%" : "70%",
+          height: small ? "500px" : between ? "600px" : "400px",
           marginLeft: "10px",
           marginRight: "10px",
           display: "flex",
@@ -1725,7 +1652,9 @@ function ManageTaskEvent(props: any) {
               No "Event" to display
             </Typography>
           ) : (
-            uploadedTable()
+            <Box>
+              {uploadedTable()}
+            </Box>
           )}
         </Box>
         {confirmTable && (
@@ -1750,7 +1679,7 @@ function ManageTaskEvent(props: any) {
       </Box>
       {uploadDialog}
       {importedData && importedCols && previewDialog}
-      {sampleExcel}
+      {/* {sampleExcel} */}
       {advancedSearch}
     </>
   );

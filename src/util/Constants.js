@@ -46,9 +46,14 @@ routes = {
   USERCONFIG_GROUPCREATE: `/userconfig/groupcreate`,
   USERCONFIG_GROUPUPDATE: `/userconfig/groupupdate`,
   USERCONFIG_USERUPDATE: `/userconfig/userupdate`,
-  EVENT_BULK_UPLOAD: '/rangeamend/eventupload',
-  EVENT_CREATE:'/rangeamend/createevent',
-  EVENT_MANAGE: '/rangeamend/eventmanage'
+  // EVENT_BULK_UPLOAD: '/rangeamend/eventupload',
+  // EVENT_CREATE:'/rangeamend/createevent',
+  // EVENT_MANAGE: '/rangeamend/eventmanage'
+  RANGEAMEND_EVENTDASH: '/rangeamend/evntdashboard',
+  RANGEAMEND_MANAGE: '/rangeamend/manageevent',
+  RANGEAMEND_DELIST: '/rangeamend/delistltr',
+  RANGEAMEND_CREATE: '/rangeamend/eventcreate',
+  RANGEAMEND_MANAGE_TASK: '/rangeamend/manageeventtask',
 }
 
 export const extensions = [

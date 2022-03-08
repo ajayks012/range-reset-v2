@@ -1,4 +1,4 @@
-import { Divider, Typography, makeStyles } from "@material-ui/core";
+import { Divider, Typography, makeStyles, Grid } from "@material-ui/core";
 import React from "react";
 import BulkUpload from "../../RangeChangeManagement/pages/BulkUpload/BulkUpload";
 
@@ -32,10 +32,10 @@ function RangeAmend() {
     //     <Divider />
     //   </div>
       <div 
-      // className={classes.value}
+      className={classes.value}
       >
         <BulkUpload/>
-        </div>
+         </div>
     // </div>
   );
 }

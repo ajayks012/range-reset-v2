@@ -11,7 +11,7 @@ export const useStyles = makeStyles ((theme) => {
             [theme.breakpoints.down("sm")]: {
                 width: "100%"
             },
-
+            padding:"8px",
             height: 38,
         },
         dateFields: {
@@ -22,7 +22,7 @@ export const useStyles = makeStyles ((theme) => {
             [theme.breakpoints.down("sm")]: {
                 width: "100%"
             },
-
+            padding:"8px",
             height: 38,
         },
         selectField: {
@@ -32,6 +32,7 @@ export const useStyles = makeStyles ((theme) => {
             [theme.breakpoints.down("sm")]: {
                 width: "100%"
             },
+            padding:"8px",
             height: 38,
         },
 

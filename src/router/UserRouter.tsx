@@ -63,9 +63,11 @@ const UserRouter = ({
     USERCONFIG_GROUPCREATE,
     USERCONFIG_GROUPUPDATE,
     USERCONFIG_USERUPDATE,
-    EVENT_BULK_UPLOAD,
-    EVENT_CREATE,
-    EVENT_MANAGE
+    RANGEAMEND_EVENTDASH,
+    RANGEAMEND_MANAGE,
+    RANGEAMEND_DELIST,
+    RANGEAMEND_CREATE,
+    RANGEAMEND_MANAGE_TASK
   } = routes
   const classes = useStyles()
   const getPermission = (url: string) => {
@@ -133,13 +135,13 @@ const UserRouter = ({
           serviceError={serviceError}
           arb={false}
         />
-        <AuthRoute
+        {/* <AuthRoute
           path={`${path}${RANGEAMEND}`}
           component={RangeAmend}
           isAuthorized={userDetail && getPermission(RANGEAMEND)}
           serviceError={serviceError}
           arb={false}
-        />
+        /> */}
         <AuthRoute
           path={`${path}${PROMOFUNDNG}`}
           component={PromotionFunding}
@@ -183,6 +185,13 @@ const UserRouter = ({
           arb={false}
         />
         <AuthRoute
+          path={`${path}${USERCONFIG_USERUPDATE}`}
+          component={UserManageUpdate}
+          isAuthorized={userDetail && getPermission(USERCONFIG_USERMANAGE)}
+          serviceError={serviceError}
+          arb={false}
+        />
+        <AuthRoute
           path={`${path}${USERCONFIG_USERGROUP}`}
           component={UserManageGroup}
           isAuthorized={userDetail && getPermission(USERCONFIG_USERGROUP)}
@@ -204,23 +213,23 @@ const UserRouter = ({
           arb={false}
         />
         <AuthRoute
-          path={`${path}${EVENT_BULK_UPLOAD}`}
+          path={`${path}${RANGEAMEND_MANAGE}`}
           component={BulkUpload}
-          isAuthorized={userDetail && getPermission(EVENT_BULK_UPLOAD)}
+          isAuthorized={userDetail && getPermission(RANGEAMEND_MANAGE)}
           serviceError={serviceError}
           arb={false}
         />
         <AuthRoute
-          path={`${path}${EVENT_CREATE}`}
+          path={`${path}${RANGEAMEND_CREATE}`}
           component={ManualEvent}
-          isAuthorized={userDetail && getPermission(EVENT_CREATE)}
+          isAuthorized={userDetail && getPermission(RANGEAMEND_MANAGE)}
           serviceError={serviceError}
           arb={false}
         />
         <AuthRoute
-          path={`${path}${EVENT_MANAGE}`}
+          path={`${path}${RANGEAMEND_MANAGE_TASK}`}
           component={ManageEventTasks}
-          isAuthorized={userDetail && getPermission(EVENT_MANAGE)}
+          isAuthorized={userDetail && getPermission(RANGEAMEND_MANAGE)}
           serviceError={serviceError}
           arb={false}
         />

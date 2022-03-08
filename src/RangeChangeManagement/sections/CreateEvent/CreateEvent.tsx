@@ -36,12 +36,20 @@ import AutocompleteSelect from "../../components/AutoCompleteSelect/Autocomplete
 import DialogHeader from "../../components/DialogHeader/DialogHeader";
 import { useStyles } from "./styles";
 import SearchSelect from "../../components/SearchSelect/SearchSelect";
+import { routes } from "../../../util/Constants";
 
 function CreateEvent() {
   const history = useHistory();
   const classes = useStyles();
   const theme = useTheme();
   const small = useMediaQuery(theme.breakpoints.up("md"));
+
+  const {
+    DEFAULT,
+    RANGEAMEND_CREATE,
+    RANGEAMEND_MANAGE_TASK,
+    RANGEAMEND_EVENTDASH
+  } = routes;
 
   // const [uniqueId, setUniqueId] = useState<any>("");
   // const [uniqueIdError, setUniqueIdError] = useState<any>("");
@@ -447,7 +455,7 @@ function CreateEvent() {
       };
       console.log(formData);
       history.push({
-        pathname: "/commercial/manageevent",
+        pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
         search: `?event=${formData["eventName"]}`, // query string
         state: {
           // location state

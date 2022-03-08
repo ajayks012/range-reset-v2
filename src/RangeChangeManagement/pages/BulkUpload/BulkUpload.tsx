@@ -24,17 +24,9 @@ const useStyles = makeStyles(theme => ({
 function BulkUpload() {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
-      {/* <div>
-        <Typography variant="h6" color="primary" align="center">
-          Commercial Web Application - Bulk Event Upload
-        </Typography>
-        <Divider />
-      </div> */}
-      <div className={classes.value}>
-        <ManageTaskEvent />
-      </div>
-    </div>
+    <>
+      <ManageTaskEvent />
+    </>
   );
 }
 

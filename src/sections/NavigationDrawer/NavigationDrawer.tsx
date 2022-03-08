@@ -42,9 +42,10 @@ const NavigationDrawer = (props: NavigationProps) => {
     DASHBOARD_UNASSIGNWORKFLOW,
     DASHBOARD_INPROGRESSTASK,
     DASHBOARD_MYGROUPPENDINGTASKS,
-    EVENT_BULK_UPLOAD,
-    EVENT_CREATE,
-    EVENT_MANAGE
+    RANGEAMEND_MANAGE,
+    RANGEAMEND_DELIST,
+    RANGEAMEND_CREATE,
+    RANGEAMEND_MANAGE_TASK
   } = routes
   const {
     menuItems,
@@ -67,14 +68,14 @@ const NavigationDrawer = (props: NavigationProps) => {
         onKeyDown={handleDrawerToggle}
       >
         <div className='menuItemNav'>
-        <div className={`${classes.height} ${classes.setup}`}>
-          <Typography variant="subtitle2" align="center">
-            Menu Items
-          </Typography>
-          <IconButton onClick={handleDrawerToggle} edge="end">
-            <ChevronLeft color="secondary" />
-          </IconButton>
-        </div>
+          <div className={`${classes.height} ${classes.setup}`}>
+            <Typography variant="subtitle2" align="center">
+              Menu Items
+            </Typography>
+            <IconButton onClick={handleDrawerToggle} edge="end">
+              <ChevronLeft color="secondary" />
+            </IconButton>
+          </div>
         </div>
         <Divider />
         <List>
@@ -88,17 +89,17 @@ const NavigationDrawer = (props: NavigationProps) => {
                     onClick={() => handleClick(`${DEFAULT}${menu.url}`)}
                     className={
                       location.pathname === `${DEFAULT}${menu.url}` ||
-                      ((location.pathname ===
-                        `${DEFAULT}${DASHBOARD_PENDINGACTION}` ||
-                        location.pathname ===
+                        ((location.pathname ===
+                          `${DEFAULT}${DASHBOARD_PENDINGACTION}` ||
+                          location.pathname ===
                           `${DEFAULT}${DASHBOARD_PENDINGACTIONS_UPDATE}` ||
-                        location.pathname ===
+                          location.pathname ===
                           `${DEFAULT}${DASHBOARD_UNASSIGNWORKFLOW}` ||
-                        location.pathname ===
+                          location.pathname ===
                           `${DEFAULT}${DASHBOARD_INPROGRESSTASK}` ||
-                        location.pathname ===
+                          location.pathname ===
                           `${DEFAULT}${DASHBOARD_MYGROUPPENDINGTASKS}`) &&
-                        `${DEFAULT}${menu.url}` === `${DEFAULT}${DASHBOARD}`)
+                          `${DEFAULT}${menu.url}` === `${DEFAULT}${DASHBOARD}`)
                         ? `${classes.hover} ${classes.active}`
                         : classes.hover
                     }
@@ -141,16 +142,23 @@ const NavigationDrawer = (props: NavigationProps) => {
                           <ListItem
                             className={
                               location.pathname === `${DEFAULT}${task.url}` ||
-                              (location.pathname ===
-                                `${DEFAULT}${USERCONFIG_USERUPDATE}` &&
-                                `${DEFAULT}${task.url}` ===
+                                (location.pathname ===
+                                  `${DEFAULT}${USERCONFIG_USERUPDATE}` &&
+                                  `${DEFAULT}${task.url}` ===
                                   `${DEFAULT}${USERCONFIG_USERMANAGE}`) ||
-                              ((location.pathname ===
-                                `${DEFAULT}${USERCONFIG_GROUPCREATE}` ||
-                                location.pathname ===
+                                ((location.pathname ===
+                                  `${DEFAULT}${USERCONFIG_GROUPCREATE}` ||
+                                  location.pathname ===
                                   `${DEFAULT}${USERCONFIG_GROUPUPDATE}`) &&
-                                `${DEFAULT}${task.url}` ===
+                                  `${DEFAULT}${task.url}` ===
                                   `${DEFAULT}${USERCONFIG_USERGROUP}`)
+                                  ||
+                                  ((location.pathname ===
+                                    `${DEFAULT}${RANGEAMEND_CREATE}` ||
+                                    location.pathname ===
+                                    `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`) &&
+                                    `${DEFAULT}${task.url}` ===
+                                    `${DEFAULT}${RANGEAMEND_MANAGE}`)
                                 ? `${classes.link} ${classes.active}`
                                 : classes.link
                             }
