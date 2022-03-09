@@ -478,43 +478,20 @@ function CreateEvent() {
   }
 
   const createEventForm = (
-    <Grid container style={{ padding: '30px', justifyContent: 'center' }}>
-      <Grid
-        container
-        item
-        xl={12}
-        lg={12}
-        md={12}
-        sm={12}
-        xs={12}
-        style={{ paddingBottom: '20px' }}
-      >
-        <Grid item xl={11} lg={11} md={11} sm={11} xs={12}>
-          <Typography variant="h5" color="primary">
-            Create Event
-          </Typography>
-        </Grid>
-
-        <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-          <button
-            // className={classes.backButton}
-            className="backButton"
-            onClick={goBack}
-          >
-            <svg
-              className="MuiSvgIcon-root"
-              focusable="false"
-              viewBox="0 0 34 34"
-              aria-hidden="true"
-            >
-              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-            </svg>
-            Back
-          </button>
-        </Grid>
-      </Grid>
-      <form>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <Box
+      className="createRequest"
+      sx={{
+        flexDirection: 'column',
+        display: 'flex',
+        p: 2,
+        paddingLeft: '40px',
+        paddingRight: '30px',
+        textAlign: 'left',
+        // width:"100%"
+      }}
+    >
+      <div className="createRequestContainer">
+        <Grid container style={{ justifyContent: 'center' }}>
           <Grid
             container
             item
@@ -523,9 +500,45 @@ function CreateEvent() {
             md={12}
             sm={12}
             xs={12}
-            spacing={2}
+            style={{ paddingBottom: '20px' }}
           >
-            {/* <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+            <Grid item xs={8} sm={10}>
+              <Typography variant="h6" color="primary">
+                Create Event
+              </Typography>
+            </Grid>
+
+            <Grid item xs={4} sm={2} style={{ textAlign: 'right' }}>
+              <button
+                // className={classes.backButton}
+                className="backButton"
+                onClick={goBack}
+              >
+                <svg
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 34 34"
+                  aria-hidden="true"
+                >
+                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                </svg>
+                Back
+              </button>
+            </Grid>
+          </Grid>
+          <form>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid
+                container
+                item
+                xl={12}
+                lg={12}
+                md={12}
+                sm={12}
+                xs={12}
+                spacing={2}
+              >
+                {/* <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
               <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
                 <Typography variant="subtitle2" color="primary">
                   Unique ID
@@ -555,33 +568,33 @@ function CreateEvent() {
                 </Typography>
               </Grid>
             </Grid> */}
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Reset Type
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Reset Type
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <select
-                    name="requesttype"
-                    id="requesttype"
-                    className={classes.selectField}
-                    ref={focusResetType}
-                    defaultValue=""
-                    value={resetType}
-                    // onChange={e => {
-                    //     setResetType(e.target.value);
-                    // }}
-                    onChange={handleResetType}
-                    required
-                  >
-                    <option disabled value="">
-                      --- Select Reset Type ---
-                    </option>
-                    {/* <option value="Rapid Response">
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <select
+                        name="requesttype"
+                        id="requesttype"
+                        className={classes.selectField}
+                        ref={focusResetType}
+                        defaultValue=""
+                        value={resetType}
+                        // onChange={e => {
+                        //     setResetType(e.target.value);
+                        // }}
+                        onChange={handleResetType}
+                        required
+                      >
+                        <option disabled value="">
+                          --- Select Reset Type ---
+                        </option>
+                        {/* <option value="Rapid Response">
                       Rapid Response
                       </option>
                     <option value="Seasonal Range Reset">
@@ -594,64 +607,64 @@ function CreateEvent() {
                       Seasonal Range Change
                     </option>
                     <option value="Range Reset">Range Reset</option> */}
-                    {resetTypes.map((type) => {
-                      return (
-                        <option value={type.name} key={type.name}>
-                          {type.text}
-                        </option>
-                      )
-                    })}
-                  </select>
-                  <br />
-                  <div className={classes.errorMessage}>
-                    {resetTypeError && resetTypeError}
-                  </div>
-                </Typography>
-              </Grid>
-            </Grid>
+                        {resetTypes.map((type) => {
+                          return (
+                            <option value={type.name} key={type.name}>
+                              {type.text}
+                            </option>
+                          )
+                        })}
+                      </select>
+                      <br />
+                      <div className={classes.errorMessage}>
+                        {resetTypeError && resetTypeError}
+                      </div>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  RAF/App Due Date
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      RAF/App Due Date
+                    </Typography>
+                  </Grid>
 
-              <Grid
-                item
-                xl={7}
-                lg={7}
-                md={7}
-                sm={7}
-                xs={12}
-                // style={{height:"38px"}}
-              >
-                <Typography variant="subtitle2" color="primary">
-                  {/* <input type="text" value={rafDueDate && rafDueDate.getDate()}
+                  <Grid
+                    item
+                    xl={7}
+                    lg={7}
+                    md={7}
+                    sm={7}
+                    xs={12}
+                    // style={{height:"38px"}}
+                  >
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <input type="text" value={rafDueDate && rafDueDate.getDate()}
                                         style={{
                                             display: "none",
                                         }}
                                         ref={focusRafDueDate}
                                         readOnly
                                     /> */}
-                  <DatePicker
-                    format="dd/MM/yyyy"
-                    inputVariant="outlined"
-                    value={rafDueDate}
-                    // ref={focusRafDueDate}
-                    onChange={handleRafDueDate}
-                    // KeyboardButtonProps={{
-                    //   'aria-label': 'change date',
-                    // }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    emptyLabel="Enter RAF/APP Due Date"
-                    maxDate={launchDate && launchDate}
-                    maxDateMessage={allMessages.error.rafDateError}
-                  />
+                      <DatePicker
+                        format="dd/MM/yyyy"
+                        inputVariant="outlined"
+                        value={rafDueDate}
+                        // ref={focusRafDueDate}
+                        onChange={handleRafDueDate}
+                        // KeyboardButtonProps={{
+                        //   'aria-label': 'change date',
+                        // }}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        emptyLabel="Enter RAF/APP Due Date"
+                        maxDate={launchDate && launchDate}
+                        maxDateMessage={allMessages.error.rafDateError}
+                      />
 
-                  {/* <input
+                      {/* <input
                     type="date"
                     value={rafDueDate}
                     // ref={focusRafDueDate}
@@ -663,132 +676,141 @@ function CreateEvent() {
                     }
                   /> */}
 
-                  {/* <RafDueDateComponent ref={focusRafDueDate}/> */}
-                  <br />
-                  <div className={classes.errorMessage} ref={focusRafDueDate}>
-                    {rafDueDateError}
-                  </div>
-                </Typography>
-              </Grid>
-            </Grid>
+                      {/* <RafDueDateComponent ref={focusRafDueDate}/> */}
+                      <br />
+                      <div
+                        className={classes.errorMessage}
+                        ref={focusRafDueDate}
+                      >
+                        {rafDueDateError}
+                      </div>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Trading Group
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Trading Group
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <select
-                    name="group"
-                    id="group"
-                    className={classes.selectField}
-                    defaultValue=""
-                    ref={focusGroup}
-                    value={group}
-                    onChange={handleGroup}
-                    required
-                  >
-                    <option disabled value="">
-                      --- Select Group ---
-                    </option>
-                    <option value="Frozen">Frozen</option>
-                    {/* <option value="Ambient">
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <select
+                        name="group"
+                        id="group"
+                        className={classes.selectField}
+                        defaultValue=""
+                        ref={focusGroup}
+                        value={group}
+                        onChange={handleGroup}
+                        required
+                      >
+                        <option disabled value="">
+                          --- Select Group ---
+                        </option>
+                        <option value="Frozen">Frozen</option>
+                        {/* <option value="Ambient">
                                             Ambient
                                         </option> */}
-                  </select>
-                  <div className={classes.errorMessage}>{groupError}</div>
-                </Typography>
-              </Grid>
-            </Grid>
+                      </select>
+                      <div className={classes.errorMessage}>{groupError}</div>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Category
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Category
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <select
-                    name="category"
-                    id="category"
-                    className={classes.selectField}
-                    defaultValue=""
-                    value={category}
-                    ref={focusCategory}
-                    onChange={handleCategory}
-                    required
-                  >
-                    <option disabled value="">
-                      --- Select Category ---
-                    </option>
-                    <option value="Frozen Food">Frozen Food</option>
-                  </select>
-                  <div className={classes.errorMessage}>{categoryError}</div>
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Department
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <select
+                        name="category"
+                        id="category"
+                        className={classes.selectField}
+                        defaultValue=""
+                        value={category}
+                        ref={focusCategory}
+                        onChange={handleCategory}
+                        required
+                      >
+                        <option disabled value="">
+                          --- Select Category ---
+                        </option>
+                        <option value="Frozen Food">Frozen Food</option>
+                      </select>
+                      <div className={classes.errorMessage}>
+                        {categoryError}
+                      </div>
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Department
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <select
-                    name="department"
-                    id="department"
-                    className={classes.selectField}
-                    defaultValue=""
-                    value={department}
-                    ref={focusDepartment}
-                    onChange={handleDepartment}
-                    required
-                  >
-                    <option disabled value="">
-                      --- Select Department ---
-                    </option>
-                    <option value="Frozen Chips">Frozen Chips</option>
-                    <option value="Frozen Vegetables">Frozen Vegetables</option>
-                    <option value="Frozen Fish">Frozen Fish</option>
-                  </select>
-                  <div className={classes.errorMessage}>{departmentError}</div>
-                </Typography>
-              </Grid>
-            </Grid>
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <select
+                        name="department"
+                        id="department"
+                        className={classes.selectField}
+                        defaultValue=""
+                        value={department}
+                        ref={focusDepartment}
+                        onChange={handleDepartment}
+                        required
+                      >
+                        <option disabled value="">
+                          --- Select Department ---
+                        </option>
+                        <option value="Frozen Chips">Frozen Chips</option>
+                        <option value="Frozen Vegetables">
+                          Frozen Vegetables
+                        </option>
+                        <option value="Frozen Fish">Frozen Fish</option>
+                      </select>
+                      <div className={classes.errorMessage}>
+                        {departmentError}
+                      </div>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Launch Date
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Launch Date
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <DatePicker
-                    format="dd/MM/yyyy"
-                    inputVariant="outlined"
-                    value={launchDate}
-                    // ref={focusLaunchDate}
-                    onChange={handleLaunchDate}
-                    // KeyboardButtonProps={{
-                    //   'aria-label': 'change date',
-                    // }}
-                    emptyLabel="Enter Launch Date"
-                  />
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <DatePicker
+                        format="dd/MM/yyyy"
+                        inputVariant="outlined"
+                        value={launchDate}
+                        // ref={focusLaunchDate}
+                        onChange={handleLaunchDate}
+                        // KeyboardButtonProps={{
+                        //   'aria-label': 'change date',
+                        // }}
+                        emptyLabel="Enter Launch Date"
+                      />
 
-                  {/* <input
+                      {/* <input
                     type="date"
                     value={launchDate}
                     // ref={focusLaunchDate}
@@ -797,167 +819,193 @@ function CreateEvent() {
                     required
                   /> */}
 
-                  <div className={classes.errorMessage}>{launchDateError}</div>
-                </Typography>
-              </Grid>
-            </Grid>
+                      <div className={classes.errorMessage}>
+                        {launchDateError}
+                      </div>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Event Name
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Event Name
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <input
-                    type="text"
-                    placeholder="Event Name"
-                    value={eventName}
-                    className={classes.inputFields}
-                    onChange={(e) => {
-                      setEventName(e.target.value)
-                    }}
-                    required
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <input
+                        type="text"
+                        placeholder="Event Name"
+                        value={eventName}
+                        className={classes.inputFields}
+                        onChange={(e) => {
+                          setEventName(e.target.value)
+                        }}
+                        required
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Planogram Class
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Planogram Class
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <button
-                    className={classes.backButton}
-                    type="button"
-                    onClick={() => setClassOpen(true)}
-                  >
-                    Class(
-                    {confirmClassValues && confirmClassValues.length
-                      ? confirmClassValues.length
-                      : '0'}
-                    )
-                  </button>
-                </Typography>
-              </Grid>
-            </Grid>
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <button
+                        className={classes.backButton}
+                        type="button"
+                        onClick={() => setClassOpen(true)}
+                      >
+                        Class(
+                        {confirmClassValues && confirmClassValues.length
+                          ? confirmClassValues.length
+                          : '0'}
+                        )
+                      </button>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Clearance Price Applied
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Clearance Price Applied
+                    </Typography>
+                  </Grid>
 
-              <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
-                <FormControl>
-                  <RadioGroup
-                    name="clearancePrice"
-                    value={clearancePriceApplied}
-                    onChange={handleClearancePrice}
-                    style={{ display: 'inline' }}
-                  >
-                    <FormControlLabel value="Yes" control={radio} label="Yes" />
-                    <FormControlLabel value="No" control={radio} label="No" />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-            </Grid>
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <FormControl>
+                      <RadioGroup
+                        name="clearancePrice"
+                        value={clearancePriceApplied}
+                        onChange={handleClearancePrice}
+                        style={{ display: 'inline' }}
+                      >
+                        <FormControlLabel
+                          value="Yes"
+                          control={radio}
+                          label="Yes"
+                        />
+                        <FormControlLabel
+                          value="No"
+                          control={radio}
+                          label="No"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  GSCOP Date Check Required
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      GSCOP Date Check Required
+                    </Typography>
+                  </Grid>
 
-              <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
-                <FormControl>
-                  <RadioGroup
-                    name="GSCOPDateCheck"
-                    value={orderStopDateCheck}
-                    onChange={handleStopDateCheck}
-                    style={{ display: 'inline' }}
-                  >
-                    <FormControlLabel value="Yes" control={radio} label="Yes" />
-                    <FormControlLabel value="No" control={radio} label="No" />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-            </Grid>
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <FormControl>
+                      <RadioGroup
+                        name="GSCOPDateCheck"
+                        value={orderStopDateCheck}
+                        onChange={handleStopDateCheck}
+                        style={{ display: 'inline' }}
+                      >
+                        <FormControlLabel
+                          value="Yes"
+                          control={radio}
+                          label="Yes"
+                        />
+                        <FormControlLabel
+                          value="No"
+                          control={radio}
+                          label="No"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Stop Order (Stock rundown)
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Stop Order (Stock rundown)
+                    </Typography>
+                  </Grid>
 
-              <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
-                <FormControl>
-                  <RadioGroup
-                    name="stopOrder"
-                    value={stopOrder}
-                    onChange={handleStopOrder}
-                    style={{ display: 'inline' }}
-                  >
-                    <FormControlLabel value="Yes" control={radio} label="Yes" />
-                    <FormControlLabel value="No" control={radio} label="No" />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-            </Grid>
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <FormControl>
+                      <RadioGroup
+                        name="stopOrder"
+                        value={stopOrder}
+                        onChange={handleStopOrder}
+                        style={{ display: 'inline' }}
+                      >
+                        <FormControlLabel
+                          value="Yes"
+                          control={radio}
+                          label="Yes"
+                        />
+                        <FormControlLabel
+                          value="No"
+                          control={radio}
+                          label="No"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Store Waste Process Timing
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Store Waste Process Timing
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  <select
-                    name="Store Waste Process Timing"
-                    id="storeWasteProcessTiming"
-                    className={classes.selectField}
-                    defaultValue=""
-                    value={storeWasteProcess}
-                    onChange={(e) => {
-                      setStoreWasteProcess(e.target.value)
-                    }}
-                    required
-                  >
-                    <option disabled value="">
-                      --- Select Store Waste Process Timing ---
-                    </option>
-                    <option value="Week +4\ +7">Week +4\ +7</option>
-                    <option value="Week +5\ +8">Week +5\ +8</option>
-                    <option value="Week +6\ +9">Week +6\ +9</option>
-                    <option value="Week +7\ +10">Week +6\ +10</option>
-                  </select>
-                </Typography>
-              </Grid>
-            </Grid>
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      <select
+                        name="Store Waste Process Timing"
+                        id="storeWasteProcessTiming"
+                        className={classes.selectField}
+                        defaultValue=""
+                        value={storeWasteProcess}
+                        onChange={(e) => {
+                          setStoreWasteProcess(e.target.value)
+                        }}
+                        required
+                      >
+                        <option disabled value="">
+                          --- Select Store Waste Process Timing ---
+                        </option>
+                        <option value="Week +4\ +7">Week +4\ +7</option>
+                        <option value="Week +5\ +8">Week +5\ +8</option>
+                        <option value="Week +6\ +9">Week +6\ +9</option>
+                        <option value="Week +7\ +10">Week +6\ +10</option>
+                      </select>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Buyer
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Buyer
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={buyer}
                                         onChange={(e: any) => handleBuyer(e.target.value)}
                                         className={classes.selectField}
@@ -975,31 +1023,31 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={buyer}
-                    onChange={(e: any) => setBuyer(e.target.value)}
-                    placeholder="Search Buyer"
-                    onClick={handleBuyerClick}
-                  />
+                      <SearchSelect
+                        value={buyer}
+                        onChange={(e: any) => setBuyer(e.target.value)}
+                        placeholder="Search Buyer"
+                        onClick={handleBuyerClick}
+                      />
 
-                  <div className={classes.errorMessage} ref={focusBuyer}>
-                    {buyerError}
-                  </div>
-                </Typography>
-              </Grid>
-            </Grid>
+                      <div className={classes.errorMessage} ref={focusBuyer}>
+                        {buyerError}
+                      </div>
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Buying Assistant
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Buying Assistant
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={buyingAssistant}
                                         onChange={(e: any) => setBuyingAssistant(e.target.value)}
                                         className={classes.selectField}
@@ -1015,27 +1063,27 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={buyingAssistant}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Buying Assistant"
-                    onClick={() => console.log('clicked')}
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={buyingAssistant}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Buying Assistant"
+                        onClick={() => console.log('clicked')}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Own Brand Manager
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Own Brand Manager
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={ownBrandManager}
                                         onChange={(e: any) => setOwnBrandManager(e.target.value)}
                                         className={classes.selectField}
@@ -1051,27 +1099,27 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={ownBrandManager}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Own Brand Manager"
-                    onClick={() => console.log('clicked')}
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={ownBrandManager}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Own Brand Manager"
+                        onClick={() => console.log('clicked')}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Senior Buying Manager
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Senior Buying Manager
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={seniorBuyingManager}
                                         onChange={(e: any) => setSeniorBuyingManager(e.target.value)}
                                         className={classes.selectField}
@@ -1087,27 +1135,27 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={seniorBuyingManager}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Senior Buying Manager"
-                    onClick={() => console.log('clicked')}
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={seniorBuyingManager}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Senior Buying Manager"
+                        onClick={() => console.log('clicked')}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Merchandiser
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Merchandiser
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={merchandiser}
                                         onChange={(e: any) => setMerchandiser(e.target.value)}
                                         className={classes.selectField}
@@ -1124,27 +1172,27 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={merchandiser}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Merchandiser"
-                    onClick={() => console.log('clicked')}
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={merchandiser}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Merchandiser"
+                        onClick={() => console.log('clicked')}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Range Reset Manager
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Range Reset Manager
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={rangeResetManager}
                                         onChange={(e: any) => setRangeResetManager(e.target.value)}
                                         className={classes.selectField}
@@ -1161,27 +1209,27 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={rangeResetManager}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Range Reset Manager"
-                    onClick={() => console.log('clicked')}
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={rangeResetManager}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Range Reset Manager"
+                        onClick={() => console.log('clicked')}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Category Director
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Category Director
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={categoryDirector}
                                         onChange={(e: any) => setCategoryDirector(e.target.value)}
                                         className={classes.selectField}
@@ -1198,27 +1246,27 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={categoryDirector}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Category Director"
-                    onClick={() => console.log('clicked')}
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={categoryDirector}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Category Director"
+                        onClick={() => console.log('clicked')}
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  Supply Chain Specialist
-                  {requiredStar}
-                </Typography>
-              </Grid>
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Supply Chain Specialist
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
-                <Typography variant="subtitle2" color="primary">
-                  {/* <select
+                  <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {/* <select
                                         value={supplyChainSpecialist}
                                         onChange={(e: any) => setSupplyChainSpecialist(e.target.value)}
                                         className={classes.selectField}
@@ -1235,80 +1283,90 @@ function CreateEvent() {
                                         }
                                     </select> */}
 
-                  <SearchSelect
-                    value={supplyChainSpecialist}
-                    onChange={(e: any) => console.log(e.target.value)}
-                    placeholder="Search Supply Chain Specialist"
-                    onClick={() => console.log('clicked')}
-                    required
-                  />
-                </Typography>
-              </Grid>
-            </Grid>
+                      <SearchSelect
+                        value={supplyChainSpecialist}
+                        onChange={(e: any) => console.log(e.target.value)}
+                        placeholder="Search Supply Chain Specialist"
+                        onClick={() => console.log('clicked')}
+                        required
+                      />
+                    </Typography>
+                  </Grid>
+                </Grid>
 
-            <Grid
-              container
-              item
-              xl={12}
-              lg={12}
-              md={12}
-              sm={12}
-              xs={12}
-              spacing={2}
-              style={{
-                textAlign: 'center',
-                paddingTop: '20px',
-                // justifyContent:"right"
-              }}
-            >
-              <Grid container item xl={7} lg={7} md={5} sm={1} xs={12}></Grid>
-              <Grid
-                container
-                item
-                xl={5}
-                lg={5}
-                md={7}
-                sm={11}
-                xs={12}
-                spacing={2}
-              >
-                <Grid item xl={2} lg={2} md={2} sm={3} xs={12}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.buttons}
-                    size="small"
+                <Grid
+                  container
+                  item
+                  xl={12}
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  xs={12}
+                  spacing={2}
+                  style={{
+                    textAlign: 'center',
+                    paddingTop: '20px',
+                    // justifyContent:"right"
+                  }}
+                >
+                  <Grid
+                    container
+                    item
+                    xl={7}
+                    lg={7}
+                    md={5}
+                    sm={1}
+                    xs={12}
+                  ></Grid>
+                  <Grid
+                    container
+                    item
+                    xl={5}
+                    lg={5}
+                    md={7}
+                    sm={11}
+                    xs={12}
+                    spacing={2}
                   >
-                    Save
-                  </Button>
-                </Grid>
-                <Grid item xl={6} lg={6} md={6} sm={5} xs={12}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.buttons}
-                    size="small"
-                  >
-                    {buttonText}
-                  </Button>
-                </Grid>
-                <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.buttons}
-                    onClick={handleCreate}
-                    size="small"
-                  >
-                    Create Event
-                  </Button>
+                    <Grid item xl={2} lg={2} md={2} sm={3} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.buttons}
+                        size="small"
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                    <Grid item xl={6} lg={6} md={6} sm={5} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.buttons}
+                        size="small"
+                      >
+                        {buttonText}
+                      </Button>
+                    </Grid>
+                    <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.buttons}
+                        onClick={handleCreate}
+                        size="small"
+                      >
+                        Create Event
+                      </Button>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-        </MuiPickersUtilsProvider>
-      </form>
-    </Grid>
+            </MuiPickersUtilsProvider>
+          </form>
+        </Grid>
+      </div>
+    </Box>
   )
 
   return (

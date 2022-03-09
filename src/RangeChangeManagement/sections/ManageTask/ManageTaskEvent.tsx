@@ -608,7 +608,7 @@ function ManageTaskEvent(props: any) {
           className="p-datatable-sm"
           showGridlines
           scrollable
-          scrollHeight="flex"
+          scrollHeight={small1 ? '350px' : '250px'}
           // frozenWidth={small1 ? '250px' : '200px'}
         >
           <Column
@@ -1582,12 +1582,20 @@ function ManageTaskEvent(props: any) {
         {!confirmTable ? (
           small1 ? (
             <>
-              <Grid item sm={4} xs={12} md={6} lg={7} xl={7}>
+              <Grid item sm={4} xs={12} md={5} lg={7} xl={7}>
                 <Typography variant="h5" color="primary">
                   Manage Events
                 </Typography>
               </Grid>
-              <Grid item sm={3} xs={6} md={2} lg={2} xl={2}>
+              <Grid
+                item
+                sm={3}
+                xs={6}
+                md={2}
+                lg={2}
+                xl={2}
+                style={{ textAlign: 'right' }}
+              >
                 <Typography variant="subtitle1" color="primary">
                   <button
                     // style={{ cursor: 'pointer', color: 'blue' }}
@@ -1599,7 +1607,15 @@ function ManageTaskEvent(props: any) {
                   </button>
                 </Typography>
               </Grid>
-              <Grid item sm={3} xs={6} md={2} lg={2} xl={2}>
+              <Grid
+                item
+                sm={3}
+                xs={6}
+                md={2}
+                lg={2}
+                xl={2}
+                style={{ textAlign: 'right' }}
+              >
                 <Typography variant="subtitle1" color="primary">
                   <button
                     // style={{ cursor: 'pointer', color: 'blue' }}
@@ -1611,7 +1627,15 @@ function ManageTaskEvent(props: any) {
                   </button>
                 </Typography>
               </Grid>
-              <Grid item sm={2} xs={12} md={1} lg={1} xl={1}>
+              <Grid
+                item
+                sm={2}
+                xs={12}
+                md={2}
+                lg={1}
+                xl={1}
+                style={{ textAlign: 'right' }}
+              >
                 <Typography variant="subtitle1" color="primary">
                   <button
                     // style={{ cursor: 'pointer', color: 'blue' }}
@@ -1635,7 +1659,7 @@ function ManageTaskEvent(props: any) {
           ) : (
             <>
               <Grid item xs={8}>
-                <Typography variant="h5" color="primary">
+                <Typography variant="h6" color="primary">
                   Manage Events
                 </Typography>
               </Grid>
@@ -1704,7 +1728,7 @@ function ManageTaskEvent(props: any) {
         ) : (
           <>
             <Grid item sm={6} xs={12} md={2} lg={2} xl={2}>
-              <Typography variant="h5" color="primary">
+              <Typography variant="h6" color="primary">
                 Manage Events
               </Typography>
             </Grid>
@@ -1719,7 +1743,7 @@ function ManageTaskEvent(props: any) {
               />
               {/* </Typography> */}
             </Grid>
-            <Grid item sm={6} xs={6} md={3} lg={3} xl={3}>
+            <Grid item sm={6} xs={6} md={2} lg={3} xl={3}>
               <Typography variant="subtitle1" color="primary">
                 <button
                   // style={{ cursor: 'pointer', color: 'blue' }}
@@ -1731,7 +1755,15 @@ function ManageTaskEvent(props: any) {
                 </button>
               </Typography>
             </Grid>
-            <Grid item sm={6} xs={6} md={2} lg={2} xl={2}>
+            <Grid
+              item
+              sm={6}
+              xs={6}
+              md={2}
+              lg={2}
+              xl={2}
+              style={{ padding: 0 }}
+            >
               <Typography variant="subtitle1" color="primary">
                 <button
                   // style={{ cursor: 'pointer', color: 'blue' }}
@@ -1755,7 +1787,7 @@ function ManageTaskEvent(props: any) {
                 </button>
               </Typography>
             </Grid>
-            <Grid item sm={6} xs={6} md={1} lg={1} xl={1}>
+            <Grid item sm={6} xs={6} md={2} lg={1} xl={1}>
               <Typography variant="subtitle1" color="primary">
                 <button
                   // style={{ cursor: 'pointer', color: 'blue' }}
