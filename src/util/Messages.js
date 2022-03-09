@@ -26,6 +26,7 @@ export const allMessages = {
       'Cannot Inactive/Delete groups which are already assigned to existing users',
     errorReassign:
       'Cannot reassign in case the status of requestor is Inactive/Deleted',
+    rafDateError: 'RAF/APP Due Date Should not be greater than Launch Date',
   },
   success: {
     successPost: 'Log posted successfully',

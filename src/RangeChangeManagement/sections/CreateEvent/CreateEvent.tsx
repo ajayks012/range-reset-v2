@@ -11,15 +11,13 @@ import {
   Dialog,
   useTheme,
   useMediaQuery,
-} from "@material-ui/core";
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import React, { useEffect, useRef, useState } from "react";
-import { Toast } from "primereact/toast";
-import DateFnsUtils from "@date-io/date-fns";
-import { useHistory } from "react-router-dom";
+  Paper,
+} from '@material-ui/core'
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import React, { useEffect, useRef, useState } from 'react'
+import { Toast } from 'primereact/toast'
+import DateFnsUtils from '@date-io/date-fns'
+import { useHistory } from 'react-router-dom'
 import {
   Buyers,
   BuyingAssistants,
@@ -28,88 +26,90 @@ import {
   Merchandisers,
   OwnBrandManagers,
   RangeResetManagers,
+  resetTypes,
   SeniorBuyingManagers,
   SupplyChainSpecialists,
-} from "./DataConstants";
-import Select from "react-select";
-import AutocompleteSelect from "../../components/AutoCompleteSelect/AutocompleteSelect";
-import DialogHeader from "../../components/DialogHeader/DialogHeader";
-import { useStyles } from "./styles";
-import SearchSelect from "../../components/SearchSelect/SearchSelect";
-import { routes } from "../../../util/Constants";
+} from './DataConstants'
+import Select from 'react-select'
+import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
+import DialogHeader from '../../components/DialogHeader/DialogHeader'
+import { useStyles } from './styles'
+import SearchSelect from '../../components/SearchSelect/SearchSelect'
+import { routes } from '../../../util/Constants'
+import { allMessages } from '../../../util/Messages'
 
 function CreateEvent() {
-  const history = useHistory();
-  const classes = useStyles();
-  const theme = useTheme();
-  const small = useMediaQuery(theme.breakpoints.up("md"));
+  const history = useHistory()
+  const classes = useStyles()
+  const theme = useTheme()
+  const small = useMediaQuery(theme.breakpoints.up(768))
 
   const {
     DEFAULT,
     RANGEAMEND_CREATE,
     RANGEAMEND_MANAGE_TASK,
-    RANGEAMEND_EVENTDASH
-  } = routes;
+    RANGEAMEND_EVENTDASH,
+  } = routes
 
   // const [uniqueId, setUniqueId] = useState<any>("");
   // const [uniqueIdError, setUniqueIdError] = useState<any>("");
-  const [resetType, setResetType] = useState<any>();
-  const [resetTypeError, setResetTypeError] = useState<any>("");
-  const [classValues, setClassValues] = useState<any>();
-  const [confirmClassValues, setConfirmClassValues] = useState<any>();
-  const [classFormData, setClassFormData] = useState<any>();
-  const [group, setGroup] = useState<any>();
-  const [groupError, setGroupError] = useState<any>("");
-  const [category, setCategory] = useState<any>();
-  const [categoryError, setCategoryError] = useState<any>("");
-  const [department, setDepartment] = useState<any>();
-  const [departmentError, setDepartmentError] = useState<any>("");
-  const [rafDueDate, setRafDueDate] = useState<any>("");
-  const [rafDueDateError, setRafDueDateError] = useState<any>("");
-  const [launchDate, setLaunchDate] = useState<any>("");
-  const [launchDateError, setLaunchDateError] = useState<any>("");
-  const [eventName, setEventName] = useState<any>("");
-  const [storeWasteProcess, setStoreWasteProcess] = useState<any>();
-  const [buyer, setBuyer] = useState<any>("");
-  const [buyerConfirmed, setBuyerConfirmed] = useState<any>("");
-  const [buyerError, setBuyerError] = useState<any>("");
-  const [buyingAssistant, setBuyingAssistant] = useState<any>("");
-  const [ownBrandManager, setOwnBrandManager] = useState<any>("");
-  const [seniorBuyingManager, setSeniorBuyingManager] = useState<any>("");
-  const [merchandiser, setMerchandiser] = useState<any>("");
-  const [rangeResetManager, setRangeResetManager] = useState<any>("");
-  const [categoryDirector, setCategoryDirector] = useState<any>("");
-  const [supplyChainSpecialist, setSupplyChainSpecialist] = useState<any>("");
-  const [clearancePriceApplied, setClearancePriceApplied] = useState("Yes");
-  const [orderStopDateCheck, setStopDateCheck] = useState("Yes");
-  const [stopOrder, setStopOrder] = useState("Yes");
+  const [resetType, setResetType] = useState<any>()
+  const [resetTypeError, setResetTypeError] = useState<any>('')
+  const [classValues, setClassValues] = useState<any>()
+  const [confirmClassValues, setConfirmClassValues] = useState<any>()
+  const [classFormData, setClassFormData] = useState<any>()
+  const [group, setGroup] = useState<any>()
+  const [groupError, setGroupError] = useState<any>('')
+  const [category, setCategory] = useState<any>()
+  const [categoryError, setCategoryError] = useState<any>('')
+  const [department, setDepartment] = useState<any>()
+  const [departmentError, setDepartmentError] = useState<any>('')
+  const [rafDueDate, setRafDueDate] = useState<any>(null)
+  const [rafDueDateError, setRafDueDateError] = useState<any>('')
+  const [launchDate, setLaunchDate] = useState<any>(null)
+  const [launchDateError, setLaunchDateError] = useState<any>('')
+  const [eventName, setEventName] = useState<any>('')
+  const [storeWasteProcess, setStoreWasteProcess] = useState<any>()
+  const [buyer, setBuyer] = useState<any>('')
+  const [buyerConfirmed, setBuyerConfirmed] = useState<any>('')
+  const [buyerError, setBuyerError] = useState<any>('')
+  const [buyingAssistant, setBuyingAssistant] = useState<any>('')
+  const [ownBrandManager, setOwnBrandManager] = useState<any>('')
+  const [seniorBuyingManager, setSeniorBuyingManager] = useState<any>('')
+  const [merchandiser, setMerchandiser] = useState<any>('')
+  const [rangeResetManager, setRangeResetManager] = useState<any>('')
+  const [categoryDirector, setCategoryDirector] = useState<any>('')
+  const [supplyChainSpecialist, setSupplyChainSpecialist] = useState<any>('')
+  const [clearancePriceApplied, setClearancePriceApplied] = useState('Yes')
+  const [orderStopDateCheck, setStopDateCheck] = useState('Yes')
+  const [stopOrder, setStopOrder] = useState('Yes')
 
-  const [classOpen, setClassOpen] = useState(false);
+  const [classOpen, setClassOpen] = useState(false)
 
-  const toast = useRef<any>(null);
-  const focusResetType = useRef<any>(null);
+  const toast = useRef<any>(null)
+  const focusResetType = useRef<any>(null)
   // const focusUniqueId = useRef<any>(null);
-  const focusGroup = useRef<any>(null);
-  const focusDepartment = useRef<any>(null);
-  const focusCategory = useRef<any>(null);
-  const focusLaunchDate = useRef<any>(null);
-  const focusBuyer = useRef<any>(null);
-  const focusRafDueDate = useRef<any>(null);
+  const focusGroup = useRef<any>(null)
+  const focusDepartment = useRef<any>(null)
+  const focusCategory = useRef<any>(null)
+  const focusLaunchDate = useRef<any>(null)
+  const focusBuyer = useRef<any>(null)
+  const focusRafDueDate = useRef<any>(null)
 
   useEffect(() => {
     if (department && launchDate && !eventName) {
-      var lDate = new Date(launchDate);
-      console.log(lDate);
+      var lDate = new Date(launchDate)
+      console.log(lDate)
       var name =
-        department.replace(/ /g, "_") +
-        "_" +
+        department.replace(/ /g, '_') +
+        '_' +
         lDate.getDate() +
-        lDate.toLocaleString("default", { month: "short" }) +
-        lDate.getFullYear();
-      console.log(name);
-      setEventName(name);
+        lDate.toLocaleString('default', { month: 'short' }) +
+        lDate.getFullYear()
+      console.log(name)
+      setEventName(name)
     }
-  }, [department, launchDate, eventName]);
+  }, [department, launchDate, eventName])
 
   useEffect(() => {
     if (confirmClassValues) {
@@ -120,21 +120,21 @@ function CreateEvent() {
   }, [confirmClassValues])
 
   const goBack = () => {
-    history.goBack();
-  };
+    history.goBack()
+  }
 
   const requiredStar = (
     <>
       &nbsp;
       <span
         style={{
-          color: "#ff0000",
+          color: '#ff0000',
         }}
       >
         *
       </span>
     </>
-  );
+  )
 
   // const handleUniqueId = (e: any) => {
   //   setUniqueId(e.target.value);
@@ -144,94 +144,97 @@ function CreateEvent() {
   // };
 
   const handleResetType = (e: any) => {
-    setResetType(e.target.value);
-    if (e.target.value !== "") {
-      setResetTypeError("");
+    setResetType(e.target.value)
+    if (e.target.value !== '') {
+      setResetTypeError('')
     }
-  };
+  }
 
   const handleGroup = (e: any) => {
-    setGroup(e.target.value);
-    if (e.target.value !== "") {
-      setGroupError("");
+    setGroup(e.target.value)
+    if (e.target.value !== '') {
+      setGroupError('')
     }
-  };
+  }
   const handleCategory = (e: any) => {
-    setCategory(e.target.value);
-    if (e.target.value !== "") {
-      setCategoryError("");
+    setCategory(e.target.value)
+    if (e.target.value !== '') {
+      setCategoryError('')
     }
-  };
+  }
   const handleDepartment = (e: any) => {
-    setDepartment(e.target.value);
-    if (e.target.value !== "") {
-      setDepartmentError("");
+    setDepartment(e.target.value)
+    if (e.target.value !== '') {
+      setDepartmentError('')
     }
-  };
+  }
   const handleBuyer = (e: any) => {
-    setBuyer(e);
+    setBuyer(e)
     if (e) {
-      setBuyerError("");
+      setBuyerError('')
     }
-  };
+  }
 
   const handleClearancePrice = (e: any) => {
-    console.log(e.target.value);
-    setClearancePriceApplied(e.target.value);
-  };
+    console.log(e.target.value)
+    setClearancePriceApplied(e.target.value)
+  }
 
   const handleStopDateCheck = (e: any) => {
-    console.log(e.target.value);
-    setStopDateCheck(e.target.value);
-  };
+    console.log(e.target.value)
+    setStopDateCheck(e.target.value)
+  }
 
   const handleStopOrder = (e: any) => {
-    console.log(e.target.value);
-    setStopOrder(e.target.value);
-  };
+    console.log(e.target.value)
+    setStopOrder(e.target.value)
+  }
   const handleRafDueDate = (e: any) => {
     // const newDate = date.getDate() + "-" + parseInt(date.getMonth() + 1) + "-" + date.getFullYear()
     // console.log(newDate)
-    const date = e.target.value;
-    setRafDueDate(date);
-    const appDate: any = new Date(date);
-    const date1: any = new Date(launchDate && launchDate);
-    console.log(appDate);
-    console.log(date1);
-    if (launchDate) {
-      const diffTime = appDate - date1;
-      console.log(diffTime);
-      if (diffTime > 0) {
-        setRafDueDateError(
-          "‘RAF / App Due Date’ should not be greater than ‘Launch Date’"
-        );
-        focusRafDueDate.current.focus();
-      } else {
-        setRafDueDateError("");
-      }
-    }
-  };
+    // const date = e.target.value
+    // setRafDueDate(date)
+    // const appDate: any = new Date(date)
+    // const date1: any = new Date(launchDate && launchDate)
+    // console.log(appDate)
+    // console.log(date1)
+    // if (launchDate) {
+    //   const diffTime = appDate - date1
+    //   console.log(diffTime)
+    //   if (diffTime > 0) {
+    //     setRafDueDateError(
+    //       '‘RAF / App Due Date’ should not be greater than ‘Launch Date’'
+    //     )
+    //     focusRafDueDate.current.focus()
+    //   } else {
+    //     setRafDueDateError('')
+    //   }
+    // }
+
+    setRafDueDate(e)
+  }
 
   const handleLaunchDate = (e: any) => {
     // const newDate = date.getDate() + "-" + parseInt(date.getMonth() + 1) + "-" + date.getFullYear()
     // console.log(newDate)
-    const date = e.target.value;
-    setLaunchDate(date);
-    const appDate: any = new Date(rafDueDate);
-    const date1: any = new Date(date);
-    if (rafDueDate) {
-      const diffTime = appDate - date1;
-      console.log(diffTime);
-      if (diffTime > 0) {
-        setRafDueDateError(
-          "‘RAF / App Due Date’ should not be greater than ‘Launch Date’"
-        );
-        focusRafDueDate.current.focus();
-      } else {
-        setRafDueDateError("");
-      }
-    }
-  };
+    // const date = e.target.value
+    // setLaunchDate(date)
+    // const appDate: any = new Date(rafDueDate)
+    // const date1: any = new Date(date)
+    // if (rafDueDate) {
+    //   const diffTime = appDate - date1
+    //   console.log(diffTime)
+    //   if (diffTime > 0) {
+    //     setRafDueDateError(
+    //       '‘RAF / App Due Date’ should not be greater than ‘Launch Date’'
+    //     )
+    //     focusRafDueDate.current.focus()
+    //   } else {
+    //     setRafDueDateError('')
+    //   }
+    // }
+    setLaunchDate(e)
+  }
 
   // const handleFinaliseLineDetail = (date: any) => {
   //     const newDate = date.getDate() + "-" + parseInt(date.getMonth() + 1) + "-" + date.getFullYear()
@@ -253,61 +256,61 @@ function CreateEvent() {
   //     />
   // ))
 
-  const buttonText = "Create & Publish Events";
-  const radio = <Radio color="primary" />;
+  const buttonText = 'Create & Publish Events'
+  const radio = <Radio color="primary" />
 
   const handleClassChange = (selected: any) => {
-    console.log(selected);
-    setClassValues(selected);
+    console.log(selected)
+    setClassValues(selected)
     // if (selected.length > 0) setErrorRoles('')
-  };
+  }
 
   const handleClassConfirm = () => {
     // const classData=classValues && classValues.map((class:any)=>{class.value})
     // console.log(classData)
-    setConfirmClassValues(classValues);
-    handleClassClose();
-  };
+    setConfirmClassValues(classValues)
+    handleClassClose()
+  }
 
   const handleClassClose = () => {
-    setClassOpen(false);
-  };
+    setClassOpen(false)
+  }
 
   const handleBuyerClick = () => {
-    let index = Buyers.findIndex(item => item.email === buyer);
+    let index = Buyers.findIndex((item) => item.email === buyer)
     if (index > -1) {
-      setBuyerConfirmed(Buyers[index]["value"]);
-      console.log(Buyers[index]["value"]);
+      setBuyerConfirmed(Buyers[index]['value'])
+      console.log(Buyers[index]['value'])
     } else {
-      setBuyerError("Not found");
+      setBuyerError('Not found')
     }
-  };
+  }
 
   const classDialog = (
     <Dialog open={classOpen} onClose={handleClassClose}>
       <Box
         sx={{
           height: 450,
-          width: "auto",
+          width: 'auto',
           p: 2,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
         }}
         className={classes.classDialog}
       >
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <DialogHeader title="Add Class" onClose={handleClassClose} />
 
           <Box
             sx={{
-              alignItems: "flex-start",
-              marginTop: "30px",
+              alignItems: 'flex-start',
+              marginTop: '30px',
             }}
           >
             <AutocompleteSelect
@@ -320,8 +323,8 @@ function CreateEvent() {
         </Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "end",
+            display: 'flex',
+            justifyContent: 'end',
           }}
         >
           <Button
@@ -335,55 +338,50 @@ function CreateEvent() {
         </Box>
       </Box>
     </Dialog>
-  );
+  )
 
   const validateResetType = () => {
     if (!resetType) {
-      setResetTypeError("Please select a reset type");
-      return false;
+      setResetTypeError('Please select a reset type')
+      return false
+    } else {
+      return true
     }
-    else {
-      return true;
-    }
-  };
+  }
 
   const validateDepartment = () => {
     if (!department) {
-      setDepartmentError("Please select a department");
-      return false;
-    }
-    else {
-      return true;
+      setDepartmentError('Please select a department')
+      return false
+    } else {
+      return true
     }
   }
 
   const validateGroup = () => {
     if (!group) {
-      setGroupError("Please select a group");
-      return false;
-    }
-    else {
-      return true;
+      setGroupError('Please select a group')
+      return false
+    } else {
+      return true
     }
   }
 
   const validateCategory = () => {
     if (!category) {
-      setCategoryError("Please select a category");
-      return false;
-    }
-    else {
-      return true;
+      setCategoryError('Please select a category')
+      return false
+    } else {
+      return true
     }
   }
 
   const validateBuyer = () => {
     if (!buyer) {
-      setBuyerError("Please select a Buyer");
-      return false;
-    }
-    else {
-      return true;
+      setBuyerError('Please select a Buyer')
+      return false
+    } else {
+      return true
     }
   }
 
@@ -394,38 +392,44 @@ function CreateEvent() {
   // });
 
   useEffect(() => {
-    if (resetTypeError !== "") {
-      focusResetType.current.focus();
+    if (resetTypeError !== '') {
+      focusResetType.current.focus()
     }
-  }, [resetTypeError]);
+  }, [resetTypeError])
 
   useEffect(() => {
-    if (groupError !== "") {
-      focusGroup.current.focus();
+    if (groupError !== '') {
+      focusGroup.current.focus()
     }
-  }, [groupError]);
+  }, [groupError])
 
   useEffect(() => {
-    if (categoryError !== "") {
-      focusCategory.current.focus();
+    if (categoryError !== '') {
+      focusCategory.current.focus()
     }
-  }, [categoryError]);
+  }, [categoryError])
 
   useEffect(() => {
-    if (departmentError !== "") {
-      focusDepartment.current.focus();
+    if (departmentError !== '') {
+      focusDepartment.current.focus()
     }
-  }, [departmentError]);
+  }, [departmentError])
 
   useEffect(() => {
-    if (buyerError !== "") {
-      focusBuyer.current.focus();
+    if (buyerError !== '') {
+      focusBuyer.current.focus()
     }
-  }, [buyerError]);
+  }, [buyerError])
 
   const handleCreate = () => {
-    if (validateResetType() && validateGroup() && validateCategory() && validateDepartment() && validateBuyer()) {
-      console.log("success");
+    if (
+      validateResetType() &&
+      validateGroup() &&
+      validateCategory() &&
+      validateDepartment() &&
+      validateBuyer()
+    ) {
+      console.log('success')
 
       const formData = {
         // uniqueId: uniqueId,
@@ -437,7 +441,7 @@ function CreateEvent() {
         rafDueDate: rafDueDate,
         eventName: eventName,
         planogramClass: {
-          className: classFormData
+          className: classFormData,
         },
         storeWasteProcessTiming: storeWasteProcess,
         // buyer: buyer,
@@ -452,29 +456,29 @@ function CreateEvent() {
         clearancePriceApplied: clearancePriceApplied,
         orderStopDateCheck: orderStopDateCheck,
         stopOrder: stopOrder,
-      };
-      console.log(formData);
+      }
+      console.log(formData)
       history.push({
         pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
-        search: `?event=${formData["eventName"]}`, // query string
+        search: `?event=${formData['eventName']}`, // query string
         state: {
           // location state
           data: formData,
         },
-      });
+      })
     } else {
-      console.log("fail");
+      console.log('fail')
       toast.current.show({
-        severity: "error",
-        summary: "",
-        detail: "Please fll all the essential fields",
+        severity: 'error',
+        summary: '',
+        detail: 'Please fll all the essential fields',
         life: 2000,
-      });
+      })
     }
-  };
+  }
 
   const createEventForm = (
-    <Grid container style={{ padding: "30px", justifyContent: "center" }}>
+    <Grid container style={{ padding: '30px', justifyContent: 'center' }}>
       <Grid
         container
         item
@@ -483,14 +487,28 @@ function CreateEvent() {
         md={12}
         sm={12}
         xs={12}
-        style={{ paddingBottom: "20px" }}
+        style={{ paddingBottom: '20px' }}
       >
         <Grid item xl={11} lg={11} md={11} sm={11} xs={12}>
-          <Typography variant="h5">Create Event</Typography>
+          <Typography variant="h5" color="primary">
+            Create Event
+          </Typography>
         </Grid>
 
         <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-          <button className={classes.backButton} onClick={goBack}>
+          <button
+            // className={classes.backButton}
+            className="backButton"
+            onClick={goBack}
+          >
+            <svg
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 34 34"
+              aria-hidden="true"
+            >
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+            </svg>
             Back
           </button>
         </Grid>
@@ -509,14 +527,14 @@ function CreateEvent() {
           >
             {/* <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
               <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+                <Typography variant="subtitle2" color="primary">
                   Unique ID
                   {requiredStar}
                 </Typography>
               </Grid>
 
               <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+                <Typography variant="subtitle2" color="primary">
                   <input
                     type="text"
                     name="uniqueId"
@@ -538,15 +556,15 @@ function CreateEvent() {
               </Grid>
             </Grid> */}
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Reset Type
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <select
                     name="requesttype"
                     id="requesttype"
@@ -563,7 +581,9 @@ function CreateEvent() {
                     <option disabled value="">
                       --- Select Reset Type ---
                     </option>
-                    <option value="Rapid Response">Rapid Response</option>
+                    {/* <option value="Rapid Response">
+                      Rapid Response
+                      </option>
                     <option value="Seasonal Range Reset">
                       Seasonal Range Reset
                     </option>
@@ -573,7 +593,14 @@ function CreateEvent() {
                     <option value="Seasonal Range Change">
                       Seasonal Range Change
                     </option>
-                    <option value="Range Reset">Range Reset</option>
+                    <option value="Range Reset">Range Reset</option> */}
+                    {resetTypes.map((type) => {
+                      return (
+                        <option value={type.name} key={type.name}>
+                          {type.text}
+                        </option>
+                      )
+                    })}
                   </select>
                   <br />
                   <div className={classes.errorMessage}>
@@ -584,8 +611,10 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">RAF/App Due Date</Typography>
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
+                  RAF/App Due Date
+                </Typography>
               </Grid>
 
               <Grid
@@ -593,11 +622,11 @@ function CreateEvent() {
                 xl={7}
                 lg={7}
                 md={7}
-                sm={12}
+                sm={7}
                 xs={12}
-              // style={{height:"38px"}}
+                // style={{height:"38px"}}
               >
-                <Typography variant="subtitle2">
+                <Typography variant="subtitle2" color="primary">
                   {/* <input type="text" value={rafDueDate && rafDueDate.getDate()}
                                         style={{
                                             display: "none",
@@ -605,36 +634,34 @@ function CreateEvent() {
                                         ref={focusRafDueDate}
                                         readOnly
                                     /> */}
-                  {/* <KeyboardDatePicker
-                                        format="dd/MM/yyyy"
-                                        // inputVariant='outlined'
-                                        value={rafDueDate}
-                                        // ref={focusRafDueDate}
-                                        onChange={handleRafDueDate}
-                                        KeyboardButtonProps={{
-                                            'aria-label': 'change date',
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        style={{ border: "1px solid black", padding: "5px" }}
-                                        required
-                                    /> */}
+                  <DatePicker
+                    format="dd/MM/yyyy"
+                    inputVariant="outlined"
+                    value={rafDueDate}
+                    // ref={focusRafDueDate}
+                    onChange={handleRafDueDate}
+                    // KeyboardButtonProps={{
+                    //   'aria-label': 'change date',
+                    // }}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    emptyLabel="Enter RAF/APP Due Date"
+                    maxDate={launchDate && launchDate}
+                    maxDateMessage={allMessages.error.rafDateError}
+                  />
 
-                  <input
+                  {/* <input
                     type="date"
                     value={rafDueDate}
                     // ref={focusRafDueDate}
                     onChange={handleRafDueDate}
                     max={launchDate && launchDate}
                     className={classes.dateFields}
-                    required={resetType &&
-                      resetType === "Rapid Response" ?
-                      true
-                      :
-                      false
+                    required={
+                      resetType && resetType === 'Rapid Response' ? true : false
                     }
-                  />
+                  /> */}
 
                   {/* <RafDueDateComponent ref={focusRafDueDate}/> */}
                   <br />
@@ -646,15 +673,15 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Trading Group
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <select
                     name="group"
                     id="group"
@@ -679,15 +706,15 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Category
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <select
                     name="category"
                     id="category"
@@ -708,15 +735,15 @@ function CreateEvent() {
               </Grid>
             </Grid>
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Department
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <select
                     name="department"
                     id="department"
@@ -740,35 +767,35 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Launch Date
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
-                  {/* <KeyboardDatePicker
-                                        format="dd/MM/yyyy"
-                                        inputVariant='outlined'
-                                        value={launchDate}
-                                        // ref={focusLaunchDate}
-                                        onChange={handleLaunchDate}
-                                        KeyboardButtonProps={{
-                                            'aria-label': 'change date',
-                                        }}
-                                        required
-                                    /> */}
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
+                  <DatePicker
+                    format="dd/MM/yyyy"
+                    inputVariant="outlined"
+                    value={launchDate}
+                    // ref={focusLaunchDate}
+                    onChange={handleLaunchDate}
+                    // KeyboardButtonProps={{
+                    //   'aria-label': 'change date',
+                    // }}
+                    emptyLabel="Enter Launch Date"
+                  />
 
-                  <input
+                  {/* <input
                     type="date"
                     value={launchDate}
                     // ref={focusLaunchDate}
                     onChange={handleLaunchDate}
                     className={classes.dateFields}
                     required
-                  />
+                  /> */}
 
                   <div className={classes.errorMessage}>{launchDateError}</div>
                 </Typography>
@@ -776,19 +803,21 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">Event Name</Typography>
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
+                  Event Name
+                </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <input
                     type="text"
                     placeholder="Event Name"
                     value={eventName}
                     className={classes.inputFields}
-                    onChange={e => {
-                      setEventName(e.target.value);
+                    onChange={(e) => {
+                      setEventName(e.target.value)
                     }}
                     required
                   />
@@ -797,12 +826,14 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">Planogram Class</Typography>
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
+                  Planogram Class
+                </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <button
                     className={classes.backButton}
                     type="button"
@@ -811,7 +842,7 @@ function CreateEvent() {
                     Class(
                     {confirmClassValues && confirmClassValues.length
                       ? confirmClassValues.length
-                      : "0"}
+                      : '0'}
                     )
                   </button>
                 </Typography>
@@ -819,19 +850,19 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Clearance Price Applied
                 </Typography>
               </Grid>
 
-              <Grid item container xl={7} lg={7} md={7} sm={12} xs={12}>
+              <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
                 <FormControl>
                   <RadioGroup
                     name="clearancePrice"
                     value={clearancePriceApplied}
                     onChange={handleClearancePrice}
-                    style={{ display: "inline" }}
+                    style={{ display: 'inline' }}
                   >
                     <FormControlLabel value="Yes" control={radio} label="Yes" />
                     <FormControlLabel value="No" control={radio} label="No" />
@@ -841,19 +872,19 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   GSCOP Date Check Required
                 </Typography>
               </Grid>
 
-              <Grid item container xl={7} lg={7} md={7} sm={12} xs={12}>
+              <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
                 <FormControl>
                   <RadioGroup
                     name="GSCOPDateCheck"
                     value={orderStopDateCheck}
                     onChange={handleStopDateCheck}
-                    style={{ display: "inline" }}
+                    style={{ display: 'inline' }}
                   >
                     <FormControlLabel value="Yes" control={radio} label="Yes" />
                     <FormControlLabel value="No" control={radio} label="No" />
@@ -863,19 +894,19 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Stop Order (Stock rundown)
                 </Typography>
               </Grid>
 
-              <Grid item container xl={7} lg={7} md={7} sm={12} xs={12}>
+              <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
                 <FormControl>
                   <RadioGroup
                     name="stopOrder"
                     value={stopOrder}
                     onChange={handleStopOrder}
-                    style={{ display: "inline" }}
+                    style={{ display: 'inline' }}
                   >
                     <FormControlLabel value="Yes" control={radio} label="Yes" />
                     <FormControlLabel value="No" control={radio} label="No" />
@@ -885,22 +916,22 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Store Waste Process Timing
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   <select
                     name="Store Waste Process Timing"
                     id="storeWasteProcessTiming"
                     className={classes.selectField}
                     defaultValue=""
                     value={storeWasteProcess}
-                    onChange={e => {
-                      setStoreWasteProcess(e.target.value);
+                    onChange={(e) => {
+                      setStoreWasteProcess(e.target.value)
                     }}
                     required
                   >
@@ -917,15 +948,15 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Buyer
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={buyer}
                                         onChange={(e: any) => handleBuyer(e.target.value)}
@@ -959,15 +990,15 @@ function CreateEvent() {
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Buying Assistant
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={buyingAssistant}
                                         onChange={(e: any) => setBuyingAssistant(e.target.value)}
@@ -988,22 +1019,22 @@ function CreateEvent() {
                     value={buyingAssistant}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Buying Assistant"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                   />
                 </Typography>
               </Grid>
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Own Brand Manager
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={ownBrandManager}
                                         onChange={(e: any) => setOwnBrandManager(e.target.value)}
@@ -1024,22 +1055,22 @@ function CreateEvent() {
                     value={ownBrandManager}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Own Brand Manager"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                   />
                 </Typography>
               </Grid>
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Senior Buying Manager
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={seniorBuyingManager}
                                         onChange={(e: any) => setSeniorBuyingManager(e.target.value)}
@@ -1060,22 +1091,22 @@ function CreateEvent() {
                     value={seniorBuyingManager}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Senior Buying Manager"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                   />
                 </Typography>
               </Grid>
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Merchandiser
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={merchandiser}
                                         onChange={(e: any) => setMerchandiser(e.target.value)}
@@ -1097,22 +1128,22 @@ function CreateEvent() {
                     value={merchandiser}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Merchandiser"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                   />
                 </Typography>
               </Grid>
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Range Reset Manager
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={rangeResetManager}
                                         onChange={(e: any) => setRangeResetManager(e.target.value)}
@@ -1134,22 +1165,22 @@ function CreateEvent() {
                     value={rangeResetManager}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Range Reset Manager"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                   />
                 </Typography>
               </Grid>
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Category Director
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={categoryDirector}
                                         onChange={(e: any) => setCategoryDirector(e.target.value)}
@@ -1171,22 +1202,22 @@ function CreateEvent() {
                     value={categoryDirector}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Category Director"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                   />
                 </Typography>
               </Grid>
             </Grid>
 
             <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-              <Grid item xl={5} lg={5} md={5} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   Supply Chain Specialist
                   {requiredStar}
                 </Typography>
               </Grid>
 
-              <Grid item xl={7} lg={7} md={7} sm={12} xs={12}>
-                <Typography variant="subtitle2">
+              <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
+                <Typography variant="subtitle2" color="primary">
                   {/* <select
                                         value={supplyChainSpecialist}
                                         onChange={(e: any) => setSupplyChainSpecialist(e.target.value)}
@@ -1208,7 +1239,7 @@ function CreateEvent() {
                     value={supplyChainSpecialist}
                     onChange={(e: any) => console.log(e.target.value)}
                     placeholder="Search Supply Chain Specialist"
-                    onClick={() => console.log("clicked")}
+                    onClick={() => console.log('clicked')}
                     required
                   />
                 </Typography>
@@ -1225,19 +1256,19 @@ function CreateEvent() {
               xs={12}
               spacing={2}
               style={{
-                textAlign: "center",
-                paddingTop: "20px",
+                textAlign: 'center',
+                paddingTop: '20px',
                 // justifyContent:"right"
               }}
             >
-              <Grid container item xl={5} lg={5} md={5} sm={12} xs={12}></Grid>
+              <Grid container item xl={7} lg={7} md={5} sm={1} xs={12}></Grid>
               <Grid
                 container
                 item
-                xl={7}
-                lg={7}
+                xl={5}
+                lg={5}
                 md={7}
-                sm={12}
+                sm={11}
                 xs={12}
                 spacing={2}
               >
@@ -1246,25 +1277,28 @@ function CreateEvent() {
                     variant="contained"
                     color="primary"
                     className={classes.buttons}
+                    size="small"
                   >
                     Save
                   </Button>
                 </Grid>
-                <Grid item xl={6} lg={6} md={6} sm={5} xs={6}>
+                <Grid item xl={6} lg={6} md={6} sm={5} xs={12}>
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.buttons}
+                    size="small"
                   >
                     {buttonText}
                   </Button>
                 </Grid>
-                <Grid item xl={4} lg={4} md={4} sm={4} xs={6}>
+                <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.buttons}
                     onClick={handleCreate}
+                    size="small"
                   >
                     Create Event
                   </Button>
@@ -1275,19 +1309,28 @@ function CreateEvent() {
         </MuiPickersUtilsProvider>
       </form>
     </Grid>
-  );
+  )
 
   return (
     <>
       <Toast ref={toast} position="bottom-left" />
-      <Grid container>
-        <Grid item lg={9} xl={9} md={10} sm={12} xs={12}>
+      <Paper className={classes.root} elevation={0}>
+        <Grid
+          container
+          item
+          xs={12}
+          alignItems="center"
+          justifyContent="center"
+          className={classes.text}
+        >
+          {/* <Grid item lg={9} xl={9} md={10} sm={12} xs={12}> */}
           {createEventForm}
           {classDialog}
+          {/* </Grid> */}
         </Grid>
-      </Grid>
+      </Paper>
     </>
-  );
+  )
 }
 
-export default CreateEvent;
+export default CreateEvent
