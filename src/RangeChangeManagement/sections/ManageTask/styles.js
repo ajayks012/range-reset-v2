@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, useTheme } from '@material-ui/core'
 import { teal } from '@material-ui/core/colors'
 
 export const useStyles = makeStyles((theme) => {
@@ -95,3 +95,51 @@ export const useStyles = makeStyles((theme) => {
     },
   }
 })
+
+export const PreviewHeaderStyle = (width) => {
+  const theme = useTheme()
+  return {
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
+    width: width,
+    fontSize: '10px',
+    // padding: '8px',
+    // height: '55px',
+  }
+}
+
+export const PreviewBodyStyle = (width) => {
+  const theme = useTheme()
+  return {
+    width: width,
+    fontSize: '10px',
+    // padding: '8px',
+    // height: '49px',
+    overflowX: 'auto',
+  }
+}
+
+export const ConfirmedHeaderStyle = (width) => {
+  const theme = useTheme()
+  return {
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
+    width: width,
+    // fontSize: '0.9rem',
+    fontSize: '12px',
+    // padding: '8px',
+    height: 'auto',
+  }
+}
+
+export const ConfirmedBodyStyle = (width) => {
+  const theme = useTheme()
+  return {
+    width: width,
+    // fontSize: '0.8rem',
+    fontSize: '12px',
+    // padding: '8px',
+    // height: '43px',
+    overflowX: 'auto',
+  }
+}

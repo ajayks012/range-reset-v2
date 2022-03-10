@@ -37,7 +37,13 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { useStyles } from './styles'
+import {
+  ConfirmedBodyStyle,
+  ConfirmedHeaderStyle,
+  PreviewBodyStyle,
+  PreviewHeaderStyle,
+  useStyles,
+} from './styles'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
@@ -306,20 +312,20 @@ function ManageTaskEvent(props: any) {
               category: d['Category'],
               categoryId: 1,
               categoryDirector: d['Category Director'],
-              // "clearancePriceCheck": "Y",
+              clearancePriceCheck: 'Yes',
               department: d['Department'],
               departmentId: 1,
               eventId: d['Event ID'],
               name: 'string',
               eventName: d['Event Name'] ? d['Event Name'] : eventName(),
               // eventName: eventName(),
-              // "orderStopDateCheck": "Y",
+              orderStopDateCheck: 'Yes',
               resetGroup: d['Trading Group'],
               targetDate: converted_date1,
               merchandiser: d['Merchandiser'],
               resetType: d['Reset Type'],
               // "status": d["Status"] ? d["Status"] : "Draft",
-              // "stopOrder": "Y",
+              stopOrder: 'Yes',
               supplyChainAnalyst: d['Supply Chain Specialist'],
               // uniqueId: d["Unique ID"],
               buyerAssistant: d['Buying Assistant'],
@@ -548,50 +554,6 @@ function ManageTaskEvent(props: any) {
     </Dialog>
   )
 
-  const previewHeaderStyle = (width: any) => {
-    return {
-      color: 'white',
-      backgroundColor: theme.palette.primary.main,
-      width: width,
-      fontSize: '10px',
-      // padding: '8px',
-      // height: '55px',
-    }
-  }
-
-  const previewBodyStyle = (width: any) => {
-    return {
-      width: width,
-      fontSize: '10px',
-      // padding: '8px',
-      // height: '49px',
-      overflowX: 'auto',
-    }
-  }
-
-  const confirmedHeaderStyle = (width: any) => {
-    return {
-      color: 'white',
-      backgroundColor: theme.palette.primary.main,
-      width: width,
-      // fontSize: '0.9rem',
-      fontSize: '12px',
-      // padding: '8px',
-      height: 'auto',
-    }
-  }
-
-  const confirmedBodyStyle = (width: any) => {
-    return {
-      width: width,
-      // fontSize: '0.8rem',
-      fontSize: '12px',
-      // padding: '8px',
-      // height: '43px',
-      overflowX: 'auto',
-    }
-  }
-
   const uploadedTable = () => {
     if (confirmTable) {
       return (
@@ -638,10 +600,10 @@ function ManageTaskEvent(props: any) {
                     confirmTable &&
                     classTemplate)
                 }
-                style={confirmedBodyStyle(col.width)}
+                style={ConfirmedBodyStyle(col.width)}
                 // filter filterPlaceholder="Search by name"
                 // bodyStyle={{ overflowX: 'auto' }}
-                headerStyle={confirmedHeaderStyle(col.width)}
+                headerStyle={ConfirmedHeaderStyle(col.width)}
                 sortable
                 // frozen={col.field === 'eventName' ? true : false}
               />
@@ -685,8 +647,8 @@ function ManageTaskEvent(props: any) {
                 header={col.header}
                 body={col.field === 'planogramClass' && classTemplate}
                 bodyStyle={{ overflowX: 'auto' }}
-                style={previewBodyStyle(col.width)}
-                headerStyle={previewHeaderStyle(col.width)}
+                style={PreviewBodyStyle(col.width)}
+                headerStyle={PreviewHeaderStyle(col.width)}
                 sortable
                 // frozen={col.field === "eventName" ? true : false}
               />
@@ -1838,7 +1800,13 @@ function ManageTaskEvent(props: any) {
               No "Event" to display
             </Typography>
           ) : (
-            <Box>{uploadedTable()}</Box>
+            <Box
+              sx={{
+                paddingBottom: '20px',
+              }}
+            >
+              {uploadedTable()}
+            </Box>
           )}
         </Box>
         {confirmTable && (
