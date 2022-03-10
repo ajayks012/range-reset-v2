@@ -12,6 +12,9 @@ import {
   useTheme,
   useMediaQuery,
   Paper,
+  Select,
+  OutlinedInput,
+  MenuItem,
 } from '@material-ui/core'
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import React, { useEffect, useRef, useState } from 'react'
@@ -21,16 +24,20 @@ import { useHistory } from 'react-router-dom'
 import {
   Buyers,
   BuyingAssistants,
+  categories,
   CategoryDirectors,
   classOptions,
+  departments,
+  groups,
   Merchandisers,
   OwnBrandManagers,
   RangeResetManagers,
   resetTypes,
   SeniorBuyingManagers,
   SupplyChainSpecialists,
+  wastageRanges,
+  yesOrNo,
 } from './DataConstants'
-import Select from 'react-select'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { useStyles } from './styles'
@@ -53,23 +60,23 @@ function CreateEvent() {
 
   // const [uniqueId, setUniqueId] = useState<any>("");
   // const [uniqueIdError, setUniqueIdError] = useState<any>("");
-  const [resetType, setResetType] = useState<any>()
+  const [resetType, setResetType] = useState<any>('')
   const [resetTypeError, setResetTypeError] = useState<any>('')
   const [classValues, setClassValues] = useState<any>()
   const [confirmClassValues, setConfirmClassValues] = useState<any>()
   const [classFormData, setClassFormData] = useState<any>()
-  const [group, setGroup] = useState<any>()
+  const [group, setGroup] = useState<any>('')
   const [groupError, setGroupError] = useState<any>('')
-  const [category, setCategory] = useState<any>()
+  const [category, setCategory] = useState<any>('')
   const [categoryError, setCategoryError] = useState<any>('')
-  const [department, setDepartment] = useState<any>()
+  const [department, setDepartment] = useState<any>('')
   const [departmentError, setDepartmentError] = useState<any>('')
   const [rafDueDate, setRafDueDate] = useState<any>(null)
   const [rafDueDateError, setRafDueDateError] = useState<any>('')
   const [launchDate, setLaunchDate] = useState<any>(null)
   const [launchDateError, setLaunchDateError] = useState<any>('')
   const [eventName, setEventName] = useState<any>('')
-  const [storeWasteProcess, setStoreWasteProcess] = useState<any>()
+  const [storeWasteProcess, setStoreWasteProcess] = useState<any>('')
   const [buyer, setBuyer] = useState<any>('')
   const [buyerConfirmed, setBuyerConfirmed] = useState<any>('')
   const [buyerError, setBuyerError] = useState<any>('')
@@ -80,9 +87,9 @@ function CreateEvent() {
   const [rangeResetManager, setRangeResetManager] = useState<any>('')
   const [categoryDirector, setCategoryDirector] = useState<any>('')
   const [supplyChainSpecialist, setSupplyChainSpecialist] = useState<any>('')
-  const [clearancePriceApplied, setClearancePriceApplied] = useState('Yes')
-  const [orderStopDateCheck, setStopDateCheck] = useState('Yes')
-  const [stopOrder, setStopOrder] = useState('Yes')
+  const [clearancePriceApplied, setClearancePriceApplied] = useState('y')
+  const [orderStopDateCheck, setStopDateCheck] = useState('y')
+  const [stopOrder, setStopOrder] = useState('y')
 
   const [classOpen, setClassOpen] = useState(false)
 
@@ -434,7 +441,7 @@ function CreateEvent() {
       const formData = {
         // uniqueId: uniqueId,
         resetType: resetType,
-        group: group,
+        resetGroup: group,
         category: category,
         department: department,
         launchDate: launchDate,
@@ -578,7 +585,7 @@ function CreateEvent() {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <select
+                      {/* <select
                         name="requesttype"
                         id="requesttype"
                         className={classes.selectField}
@@ -594,19 +601,6 @@ function CreateEvent() {
                         <option disabled value="">
                           --- Select Reset Type ---
                         </option>
-                        {/* <option value="Rapid Response">
-                      Rapid Response
-                      </option>
-                    <option value="Seasonal Range Reset">
-                      Seasonal Range Reset
-                    </option>
-                    <option value="Planned Range Reset">
-                      Planned Range Reset
-                    </option>
-                    <option value="Seasonal Range Change">
-                      Seasonal Range Change
-                    </option>
-                    <option value="Range Reset">Range Reset</option> */}
                         {resetTypes.map((type) => {
                           return (
                             <option value={type.name} key={type.name}>
@@ -614,7 +608,38 @@ function CreateEvent() {
                             </option>
                           )
                         })}
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={resetType}
+                        onChange={handleResetType}
+                        color="primary"
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value === '' ? '---Select Reset Type---' : value
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            value={resetType}
+                            className={classes.selectField}
+                            color="primary"
+                          />
+                        }
+                      >
+                        {resetTypes.map((type) => {
+                          return (
+                            <MenuItem
+                              value={type.text}
+                              key={type.name}
+                              className={classes.muiSelect}
+                            >
+                              {type.text}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
+
                       <br />
                       <div className={classes.errorMessage}>
                         {resetTypeError && resetTypeError}
@@ -662,6 +687,15 @@ function CreateEvent() {
                         emptyLabel="Enter RAF/APP Due Date"
                         maxDate={launchDate && launchDate}
                         maxDateMessage={allMessages.error.rafDateError}
+                        TextFieldComponent={(props: any) => (
+                          <OutlinedInput
+                            margin="dense"
+                            onClick={props.onClick}
+                            value={props.value}
+                            onChange={props.onChange}
+                            className={classes.dateFields}
+                          />
+                        )}
                       />
 
                       {/* <input
@@ -698,7 +732,7 @@ function CreateEvent() {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <select
+                      {/* <select
                         name="group"
                         id="group"
                         className={classes.selectField}
@@ -712,10 +746,35 @@ function CreateEvent() {
                           --- Select Group ---
                         </option>
                         <option value="Frozen">Frozen</option>
-                        {/* <option value="Ambient">
-                                            Ambient
-                                        </option> */}
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={group}
+                        onChange={handleGroup}
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value ? value : '--- Select Trading Group ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                          />
+                        }
+                      >
+                        {groups.map((type) => {
+                          return (
+                            <MenuItem
+                              value={type.text}
+                              key={type.name}
+                              className={classes.muiSelect}
+                            >
+                              {type.text}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
+
                       <div className={classes.errorMessage}>{groupError}</div>
                     </Typography>
                   </Grid>
@@ -731,7 +790,7 @@ function CreateEvent() {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <select
+                      {/* <select
                         name="category"
                         id="category"
                         className={classes.selectField}
@@ -745,7 +804,35 @@ function CreateEvent() {
                           --- Select Category ---
                         </option>
                         <option value="Frozen Food">Frozen Food</option>
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={category}
+                        onChange={handleCategory}
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value ? value : '--- Select Category ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                          />
+                        }
+                      >
+                        {categories.map((type) => {
+                          return (
+                            <MenuItem
+                              value={type.text}
+                              key={type.name}
+                              className={classes.muiSelect}
+                            >
+                              {type.text}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
+
                       <div className={classes.errorMessage}>
                         {categoryError}
                       </div>
@@ -762,7 +849,7 @@ function CreateEvent() {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <select
+                      {/* <select
                         name="department"
                         id="department"
                         className={classes.selectField}
@@ -780,7 +867,35 @@ function CreateEvent() {
                           Frozen Vegetables
                         </option>
                         <option value="Frozen Fish">Frozen Fish</option>
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={department}
+                        onChange={handleDepartment}
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value ? value : '--- Select Department ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                          />
+                        }
+                      >
+                        {departments.map((type) => {
+                          return (
+                            <MenuItem
+                              value={type.text}
+                              key={type.name}
+                              className={classes.muiSelect}
+                            >
+                              {type.text}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
+
                       <div className={classes.errorMessage}>
                         {departmentError}
                       </div>
@@ -808,6 +923,15 @@ function CreateEvent() {
                         //   'aria-label': 'change date',
                         // }}
                         emptyLabel="Enter Launch Date"
+                        TextFieldComponent={(props: any) => (
+                          <OutlinedInput
+                            margin="dense"
+                            onClick={props.onClick}
+                            value={props.value}
+                            onChange={props.onChange}
+                            className={classes.dateFields}
+                          />
+                        )}
                       />
 
                       {/* <input
@@ -835,7 +959,7 @@ function CreateEvent() {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <input
+                      {/* <input
                         type="text"
                         placeholder="Event Name"
                         value={eventName}
@@ -844,6 +968,15 @@ function CreateEvent() {
                           setEventName(e.target.value)
                         }}
                         required
+                      /> */}
+                      <OutlinedInput
+                        placeholder="Event Name"
+                        margin="dense"
+                        value={eventName}
+                        className={classes.inputFields}
+                        onChange={(e) => {
+                          setEventName(e.target.value)
+                        }}
                       />
                     </Typography>
                   </Grid>
@@ -888,16 +1021,27 @@ function CreateEvent() {
                         onChange={handleClearancePrice}
                         style={{ display: 'inline' }}
                       >
-                        <FormControlLabel
-                          value="Yes"
+                        {/* <FormControlLabel
+                          value="y"
                           control={radio}
                           label="Yes"
                         />
                         <FormControlLabel
-                          value="No"
+                          value="n"
                           control={radio}
                           label="No"
-                        />
+                        /> */}
+
+                        {yesOrNo.map((type) => {
+                          return (
+                            <FormControlLabel
+                              value={type.name}
+                              key={type.name}
+                              control={radio}
+                              label={type.text}
+                            />
+                          )
+                        })}
                       </RadioGroup>
                     </FormControl>
                   </Grid>
@@ -918,7 +1062,7 @@ function CreateEvent() {
                         onChange={handleStopDateCheck}
                         style={{ display: 'inline' }}
                       >
-                        <FormControlLabel
+                        {/* <FormControlLabel
                           value="Yes"
                           control={radio}
                           label="Yes"
@@ -927,7 +1071,17 @@ function CreateEvent() {
                           value="No"
                           control={radio}
                           label="No"
-                        />
+                        /> */}
+                        {yesOrNo.map((type) => {
+                          return (
+                            <FormControlLabel
+                              value={type.name}
+                              key={type.name}
+                              control={radio}
+                              label={type.text}
+                            />
+                          )
+                        })}
                       </RadioGroup>
                     </FormControl>
                   </Grid>
@@ -948,7 +1102,7 @@ function CreateEvent() {
                         onChange={handleStopOrder}
                         style={{ display: 'inline' }}
                       >
-                        <FormControlLabel
+                        {/* <FormControlLabel
                           value="Yes"
                           control={radio}
                           label="Yes"
@@ -957,7 +1111,17 @@ function CreateEvent() {
                           value="No"
                           control={radio}
                           label="No"
-                        />
+                        /> */}
+                        {yesOrNo.map((type) => {
+                          return (
+                            <FormControlLabel
+                              value={type.name}
+                              key={type.name}
+                              control={radio}
+                              label={type.text}
+                            />
+                          )
+                        })}
                       </RadioGroup>
                     </FormControl>
                   </Grid>
@@ -972,7 +1136,7 @@ function CreateEvent() {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <select
+                      {/* <select
                         name="Store Waste Process Timing"
                         id="storeWasteProcessTiming"
                         className={classes.selectField}
@@ -990,7 +1154,38 @@ function CreateEvent() {
                         <option value="Week +5\ +8">Week +5\ +8</option>
                         <option value="Week +6\ +9">Week +6\ +9</option>
                         <option value="Week +7\ +10">Week +6\ +10</option>
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={storeWasteProcess}
+                        onChange={(e) => {
+                          setStoreWasteProcess(e.target.value)
+                        }}
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value
+                            ? value
+                            : '--- Select Store Waste Process Timing ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                          />
+                        }
+                      >
+                        {wastageRanges.map((type) => {
+                          return (
+                            <MenuItem
+                              value={type.text}
+                              key={type.name}
+                              className={classes.muiSelect}
+                            >
+                              {type.text}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
                     </Typography>
                   </Grid>
                 </Grid>

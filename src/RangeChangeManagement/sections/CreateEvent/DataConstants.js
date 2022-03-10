@@ -203,3 +203,61 @@ export const resetTypes = [
     text: 'Range Reset',
   },
 ]
+
+export const groups = [
+  {
+    name: 'frozen',
+    text: 'Frozen',
+  },
+]
+
+export const categories = [
+  {
+    name: 'frozenfood',
+    text: 'Frozen Food',
+  },
+]
+export const departments = [
+  {
+    name: 'chips',
+    text: 'Frozen Chips',
+  },
+  {
+    name: 'vegetables',
+    text: 'Frozen Vegetables',
+  },
+  {
+    name: 'fish',
+    text: 'Frozen Fish',
+  },
+]
+
+export const wastageRanges = [
+  {
+    name: '4to7',
+    text: 'Week +4\\ +7',
+  },
+  {
+    name: '5to8',
+    text: 'Week +5\\ +8',
+  },
+  {
+    name: '6to9',
+    text: 'Week +6\\ +9',
+  },
+  {
+    name: '7to10',
+    text: 'Week +7\\ +10',
+  },
+]
+
+export const yesOrNo = [
+  {
+    name: 'y',
+    text: 'Yes',
+  },
+  {
+    name: 'n',
+    text: 'No',
+  },
+]

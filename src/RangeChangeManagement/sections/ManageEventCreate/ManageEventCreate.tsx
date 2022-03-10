@@ -268,7 +268,7 @@ function ManageEventCreate() {
             return [
               {
                 ...prevState[0],
-                group: e.target.value,
+                resetGroup: e.target.value,
               },
             ]
           })
