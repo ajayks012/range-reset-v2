@@ -202,7 +202,7 @@ export const confirmedTableCols = [
     width: '200px',
   },
   {
-    field: 'clearancePriceCheck',
+    field: 'clearancePriceApplied',
     header: 'Clearance Pricing Action Required',
     width: '250px',
   },

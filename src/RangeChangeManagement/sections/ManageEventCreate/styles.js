@@ -69,6 +69,16 @@ export const useStyles = makeStyles((theme) => {
     muiSelect: {
       fontSize: '12px',
     },
+    root: {
+      padding: theme.spacing(2),
+      height: '100%',
+    },
+    text: {
+      color: theme.palette.primary.main,
+    },
+    value: {
+      flex: 1,
+    },
   }
 })
 
@@ -86,7 +96,6 @@ export const ConfirmedHeaderStyle = (width) => {
 }
 
 export const ConfirmedBodyStyle = (width) => {
-  const theme = useTheme()
   return {
     width: width,
     // fontSize: '0.8rem',

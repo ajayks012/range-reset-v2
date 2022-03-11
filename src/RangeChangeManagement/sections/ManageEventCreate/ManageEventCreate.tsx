@@ -21,6 +21,7 @@ import {
   departments,
   wastageRanges,
   yesOrNo,
+  userGroupOptions,
 } from './DataConstants'
 import {
   Grid,
@@ -38,6 +39,7 @@ import {
   MenuItem,
   Select,
   OutlinedInput,
+  Paper,
 } from '@material-ui/core'
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
@@ -46,6 +48,7 @@ import AutocompleteSelect from '../../components/AutoCompleteSelect/Autocomplete
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
 import { routes } from '../../../util/Constants'
+import { allMessages } from '../../../util/Messages'
 
 function ManageEventCreate() {
   const location = useLocation<any>()
@@ -235,6 +238,8 @@ function ManageEventCreate() {
             ]
           })
         }}
+        maxDate={rowData['targetDate']}
+        maxDateMessage={allMessages.error.rafDateError}
       />
     )
   }
@@ -254,6 +259,7 @@ function ManageEventCreate() {
             ]
           })
         }}
+        minDate={rowData['appDueDate']}
       />
     )
   }
@@ -548,18 +554,18 @@ function ManageEventCreate() {
 
       <Select
         value={
-          rowData.clearancePriceCheck === 'Yes'
+          rowData.clearancePriceApplied === 'Yes'
             ? 'y'
-            : rowData.clearancePriceCheck === 'No'
+            : rowData.clearancePriceApplied === 'No'
             ? 'n'
-            : rowData.clearancePriceCheck
+            : rowData.clearancePriceApplied
         }
         onChange={(e) => {
           setEventDetails((prevState: any) => {
             return [
               {
                 ...prevState[0],
-                clearancePriceCheck: e.target.value,
+                clearancePriceApplied: e.target.value,
               },
             ]
           })
@@ -1060,7 +1066,7 @@ function ManageEventCreate() {
             }}
           >
             <Box>
-              <select
+              {/* <select
                 value={userGroup && userGroup}
                 onChange={(e: any) => {
                   setUserGroup(e.target.value)
@@ -1074,7 +1080,32 @@ function ManageEventCreate() {
                   Senior Buying Manager
                 </option>
                 <option value="systemTask">System Task</option>
-              </select>
+              </select> */}
+
+              <Select
+                value={userGroup && userGroup}
+                onChange={(e: any) => {
+                  setUserGroup(e.target.value)
+                }}
+                input={
+                  <OutlinedInput
+                    margin="dense"
+                    //   className={classes.muiSelect}
+                  />
+                }
+              >
+                {userGroupOptions.map((type) => {
+                  return (
+                    <MenuItem
+                      value={type.value}
+                      key={type.value}
+                      //   className={classes.muiSelect}
+                    >
+                      {type.label}
+                    </MenuItem>
+                  )
+                })}
+              </Select>
             </Box>
             <Box>
               <FormControl component="fieldset">
@@ -1093,7 +1124,7 @@ function ManageEventCreate() {
                       )
                     })}
                   {userGroup &&
-                    userGroup.toLowerCase() === 'buyerassistant' &&
+                    userGroup.toLowerCase() === 'buying assistant' &&
                     BuyingAssistants.map((b: any) => {
                       return (
                         <FormControlLabel
@@ -1107,7 +1138,7 @@ function ManageEventCreate() {
                     })}
 
                   {userGroup &&
-                    userGroup.toLowerCase() === 'seniorbuyingmanager' &&
+                    userGroup.toLowerCase() === 'senior buying manager' &&
                     SeniorBuyingManagers.map((b: any) => {
                       return (
                         <FormControlLabel
@@ -1176,190 +1207,203 @@ function ManageEventCreate() {
 
   return (
     <>
-      <Grid container spacing={2} style={{ paddingTop: '20px' }}>
-        <Grid
-          container
-          item
-          xl={12}
-          lg={12}
-          md={12}
-          sm={12}
-          xs={12}
-          style={{ paddingBottom: '20px' }}
-        >
-          <Grid item sm={10} xs={12}>
-            <Typography variant="h6">
-              Manage Event - {eventName && eventName}
-            </Typography>
-          </Grid>
-
-          <Grid
-            item
-            sm={2}
-            xs={12}
-            style={{
-              textAlign: aboveSm ? 'right' : 'left',
-            }}
-          >
-            <button className="backButton" onClick={goBack}>
-              <svg
-                className="MuiSvgIcon-root"
-                focusable="false"
-                viewBox="0 0 34 34"
-                aria-hidden="true"
-              >
-                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-              </svg>
-              Back
-            </button>
-          </Grid>
-        </Grid>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-            <DataTable
-              value={eventDetails && eventDetails}
-              scrollable
-              showGridlines
-              style={{
-                height: '100%',
-              }}
-            >
-              {manageEventPublishCols.map((col: any, index: any) => {
-                return (
-                  <Column
-                    key={index}
-                    field={col.field}
-                    header={col.header}
-                    body={
-                      (col.field === 'targetDate' && launchDateTemplate) ||
-                      (col.field === 'resetType' && resetTypeTemplate) ||
-                      (col.field === 'appDueDate' && rafDueDateTemplate) ||
-                      (col.field === 'group' && groupTemplate) ||
-                      (col.field === 'category' && categoryTemplate) ||
-                      (col.field === 'department' && departmentTemplate) ||
-                      (col.field === 'eventName' && eventNameTemplate) ||
-                      (col.field === 'clearancePriceApplied' &&
-                        clearancePriceTemplate) ||
-                      (col.field === 'GSCOPDateCheckRequired' &&
-                        GSCOPDateTemplate) ||
-                      (col.field === 'stopOrder' && stopOrderTemplate) ||
-                      (col.field === 'buyer' && buyerTemplate) ||
-                      (col.field === 'planogramClass' && classTemplate) ||
-                      (col.field === 'storeWasteProcessTiming' &&
-                        storeWasteProcessTemplate) ||
-                      (col.field === 'buyerAssistant' &&
-                        buyingAssistantTemplate) ||
-                      (col.field === 'ownBrandManager' &&
-                        ownBrandManagerTemplate) ||
-                      (col.field === 'seniorBuyingManager' &&
-                        seniorBuyingManagerTemplate) ||
-                      (col.field === 'merchandiser' && merchandiserTemplate) ||
-                      (col.field === 'rangeResetManager' &&
-                        rangeResetManagerTemplate) ||
-                      (col.field === 'categoryDirector' &&
-                        categoryDirectorTemplate) ||
-                      (col.field === 'supplyChainSplst' &&
-                        supplyChainSplstTemplate)
-                    }
-                    style={ConfirmedBodyStyle(col.width)}
-                    headerStyle={ConfirmedHeaderStyle(col.width)}
-                  />
-                )
-              })}
-            </DataTable>
-          </Grid>
-          <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-            <Typography variant="subtitle1">Manage Tasks</Typography>
-          </Grid>
-
-          <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-            <DataTable
-              value={taskDetails && taskDetails}
-              selectionMode="checkbox"
-              selection={selectTasks}
-              onSelectionChange={(e) => setSelectTasks(e.value)}
-              scrollable
-              showGridlines
-              sortField="taskId"
-            >
-              <Column
-                selectionMode="multiple"
-                headerStyle={{
-                  width: '50px',
-                  color: 'white',
-                  backgroundColor: theme1.palette.primary.main,
-                }}
-              ></Column>
-              {manageTaskPublishCols.map((col: any, index: any) => {
-                return (
-                  <Column
-                    key={index}
-                    field={col.field}
-                    header={col.header}
-                    body={
-                      (col.field === 'dueDate' && dueDateTemplate) ||
-                      (col.field === 'notifiedDate' && notifiedDateTemplate) ||
-                      (col.field === 'assignedUserGroup' && userGroupTemplate)
-                    }
-                    style={ConfirmedBodyStyle(col.width)}
-                    sortable={col.field === 'taskId'}
-                    headerStyle={ConfirmedHeaderStyle(col.width)}
-                  />
-                )
-              })}
-            </DataTable>
-          </Grid>
-        </MuiPickersUtilsProvider>
-        <Grid item container xl={12} lg={12} md={12} sm={12} xs={12}>
-          <Grid item xl={5} lg={5} md={5} />
-
-          <Grid item container xl={7} lg={7} md={7} sm={12} xs={12}>
+      {/* <Paper className={classes.root} elevation={0}> */}
+      <div
+        className="manageUser" //className={classes.root}
+      >
+        <div className={classes.value}>
+          <Grid item container spacing={2}>
             <Grid
-              item
               container
+              item
               xl={12}
               lg={12}
               md={12}
               sm={12}
               xs={12}
-              spacing={3}
-              style={{
-                textAlign: 'center',
-              }}
+              style={{ paddingBottom: '20px' }}
             >
-              <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  // type="submit"
-                  onClick={removeTasks}
-                >
-                  Remove/Skip Task
-                </Button>
+              <Grid item sm={10} xs={12}>
+                <Typography variant="h6" color="primary">
+                  Manage Event - {eventName && eventName}
+                </Typography>
               </Grid>
-              <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  // type="submit"
-                >
-                  Save
-                </Button>
+
+              <Grid
+                item
+                sm={2}
+                xs={12}
+                style={{
+                  textAlign: aboveSm ? 'right' : 'left',
+                }}
+              >
+                <Typography color="primary">
+                  <button className="backButton" onClick={goBack}>
+                    <svg
+                      className="MuiSvgIcon-root"
+                      focusable="false"
+                      viewBox="0 0 34 34"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                    </svg>
+                    Back
+                  </button>
+                </Typography>
               </Grid>
-              <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  // type="submit"
-                  onClick={handlePublishEvent}
+            </Grid>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                <DataTable
+                  value={eventDetails && eventDetails}
+                  scrollable
+                  showGridlines
+                  style={{
+                    height: '100%',
+                  }}
                 >
-                  Publish Event
-                </Button>
+                  {manageEventPublishCols.map((col: any, index: any) => {
+                    return (
+                      <Column
+                        key={index}
+                        field={col.field}
+                        header={col.header}
+                        body={
+                          (col.field === 'targetDate' && launchDateTemplate) ||
+                          (col.field === 'resetType' && resetTypeTemplate) ||
+                          (col.field === 'appDueDate' && rafDueDateTemplate) ||
+                          (col.field === 'group' && groupTemplate) ||
+                          (col.field === 'category' && categoryTemplate) ||
+                          (col.field === 'department' && departmentTemplate) ||
+                          (col.field === 'eventName' && eventNameTemplate) ||
+                          (col.field === 'clearancePriceApplied' &&
+                            clearancePriceTemplate) ||
+                          (col.field === 'GSCOPDateCheckRequired' &&
+                            GSCOPDateTemplate) ||
+                          (col.field === 'stopOrder' && stopOrderTemplate) ||
+                          (col.field === 'buyer' && buyerTemplate) ||
+                          (col.field === 'planogramClass' && classTemplate) ||
+                          (col.field === 'storeWasteProcessTiming' &&
+                            storeWasteProcessTemplate) ||
+                          (col.field === 'buyerAssistant' &&
+                            buyingAssistantTemplate) ||
+                          (col.field === 'ownBrandManager' &&
+                            ownBrandManagerTemplate) ||
+                          (col.field === 'seniorBuyingManager' &&
+                            seniorBuyingManagerTemplate) ||
+                          (col.field === 'merchandiser' &&
+                            merchandiserTemplate) ||
+                          (col.field === 'rangeResetManager' &&
+                            rangeResetManagerTemplate) ||
+                          (col.field === 'categoryDirector' &&
+                            categoryDirectorTemplate) ||
+                          (col.field === 'supplyChainSplst' &&
+                            supplyChainSplstTemplate)
+                        }
+                        style={ConfirmedBodyStyle(col.width)}
+                        headerStyle={ConfirmedHeaderStyle(col.width)}
+                      />
+                    )
+                  })}
+                </DataTable>
+              </Grid>
+              <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                <Typography variant="subtitle1">Manage Tasks</Typography>
+              </Grid>
+
+              <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                <DataTable
+                  value={taskDetails && taskDetails}
+                  selectionMode="checkbox"
+                  selection={selectTasks}
+                  onSelectionChange={(e) => setSelectTasks(e.value)}
+                  scrollable
+                  showGridlines
+                  sortField="taskId"
+                >
+                  <Column
+                    selectionMode="multiple"
+                    headerStyle={{
+                      width: '50px',
+                      color: 'white',
+                      backgroundColor: theme1.palette.primary.main,
+                    }}
+                  ></Column>
+                  {manageTaskPublishCols.map((col: any, index: any) => {
+                    return (
+                      <Column
+                        key={index}
+                        field={col.field}
+                        header={col.header}
+                        body={
+                          (col.field === 'dueDate' && dueDateTemplate) ||
+                          (col.field === 'notifiedDate' &&
+                            notifiedDateTemplate) ||
+                          (col.field === 'assignedUserGroup' &&
+                            userGroupTemplate)
+                        }
+                        style={ConfirmedBodyStyle(col.width)}
+                        sortable={col.field === 'taskId'}
+                        headerStyle={ConfirmedHeaderStyle(col.width)}
+                      />
+                    )
+                  })}
+                </DataTable>
+              </Grid>
+            </MuiPickersUtilsProvider>
+            <Grid item container xl={12} lg={12} md={12} sm={12} xs={12}>
+              <Grid item xl={5} lg={5} md={5} />
+
+              <Grid item container xl={7} lg={7} md={7} sm={12} xs={12}>
+                <Grid
+                  item
+                  container
+                  xl={12}
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  xs={12}
+                  spacing={3}
+                  style={{
+                    textAlign: 'center',
+                  }}
+                >
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      // type="submit"
+                      onClick={removeTasks}
+                    >
+                      Remove/Skip Task
+                    </Button>
+                  </Grid>
+                  <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      // type="submit"
+                    >
+                      Save
+                    </Button>
+                  </Grid>
+                  <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      // type="submit"
+                      onClick={handlePublishEvent}
+                    >
+                      Publish Event
+                    </Button>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
+      {/* </Paper> */}
       {classDialog}
       {userGroupDialog}
     </>

@@ -58,9 +58,9 @@ function ManageTaskEvent(props: any) {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
-  const small = useMediaQuery(theme.breakpoints.up('md'))
-  const between = useMediaQuery(theme.breakpoints.between('sm', 'md'))
-  const small1 = useMediaQuery(theme.breakpoints.up(670))
+  const aboveMd = useMediaQuery(theme.breakpoints.up('md'))
+  const betweenSmAndMd = useMediaQuery(theme.breakpoints.between('sm', 'md'))
+  const above670px = useMediaQuery(theme.breakpoints.up(670))
   const [openUploadDialog, setOpenUploadDialog] = useState(false)
   const [openAdvancedSearchDialog, setOpenAdvancedSearchDialog] =
     useState(false)
@@ -94,16 +94,16 @@ function ManageTaskEvent(props: any) {
     resetType: '',
     launchDateFrom: '',
     launchDateTo: '',
-    group: '',
+    resetGroup: '',
     category: '',
     department: '',
     categoryDirector: '',
     buyer: '',
     merchandiser: '',
     supplyChainAnalyst: '',
-    // clearancePriceCheck: "Y",
-    // orderStopDateCheck: "Y",
-    // stopOrder: "Y"
+    clearancePriceApplied: 'y',
+    orderStopDateCheck: 'y',
+    stopOrder: 'y',
   })
 
   const {
@@ -293,10 +293,10 @@ function ManageTaskEvent(props: any) {
               }
             }
 
-            var buyerName = () => {
-              var index = Buyers.findIndex((item) => item.email === d['Buyer'])
-              return Buyers[index].value
-            }
+            // var buyerName = () => {
+            //   var index = Buyers.findIndex((item) => item.email === d['Buyer'])
+            //   return Buyers[index].value
+            // }
 
             var classArray = () => {
               let classes = d['Planogram Class'].split(',')
@@ -308,24 +308,24 @@ function ManageTaskEvent(props: any) {
             }
 
             return {
-              buyer: buyerName(),
+              buyer: d['Buyer'],
               category: d['Category'],
               categoryId: 1,
               categoryDirector: d['Category Director'],
-              clearancePriceCheck: 'Yes',
+              clearancePriceApplied: 'y',
               department: d['Department'],
               departmentId: 1,
               eventId: d['Event ID'],
               name: 'string',
               eventName: d['Event Name'] ? d['Event Name'] : eventName(),
               // eventName: eventName(),
-              orderStopDateCheck: 'Yes',
+              orderStopDateCheck: 'y',
               resetGroup: d['Trading Group'],
               targetDate: converted_date1,
               merchandiser: d['Merchandiser'],
               resetType: d['Reset Type'],
               // "status": d["Status"] ? d["Status"] : "Draft",
-              stopOrder: 'Yes',
+              stopOrder: 'y',
               supplyChainAnalyst: d['Supply Chain Specialist'],
               // uniqueId: d["Unique ID"],
               buyerAssistant: d['Buying Assistant'],
@@ -414,7 +414,7 @@ function ManageTaskEvent(props: any) {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          width: small1 ? '400px' : '230px',
+          width: above670px ? '400px' : '230px',
           // height: "250px",
           // border: "3px solid green",
           borderRadius: 5,
@@ -570,8 +570,8 @@ function ManageTaskEvent(props: any) {
           className="p-datatable-sm"
           showGridlines
           scrollable
-          scrollHeight={small1 ? '350px' : '250px'}
-          // frozenWidth={small1 ? '250px' : '200px'}
+          scrollHeight={above670px ? '450px' : '300px'}
+          // frozenWidth={above670px ? '250px' : '200px'}
         >
           <Column
             selectionMode="multiple"
@@ -627,7 +627,7 @@ function ManageTaskEvent(props: any) {
           showGridlines
           scrollable
           // scrollHeight="flex"
-          scrollHeight={small1 ? '300px' : '250px'}
+          scrollHeight={above670px ? '300px' : '250px'}
           // frozenWidth="300px"
         >
           <Column
@@ -722,7 +722,7 @@ function ManageTaskEvent(props: any) {
           container
           spacing={3}
           style={{
-            justifyContent: small1 ? 'right' : 'center',
+            justifyContent: above670px ? 'right' : 'center',
             paddingTop: '20px',
           }}
         >
@@ -732,7 +732,7 @@ function ManageTaskEvent(props: any) {
             // sm={6}
             // lg={2}
             // xl={1}
-            style={{ textAlign: !small1 ? 'center' : 'right' }}
+            style={{ textAlign: !above670px ? 'center' : 'right' }}
           >
             <Button onClick={removeTasks} className={classes.whiteButton}>
               Delete Event(s)
@@ -744,7 +744,7 @@ function ManageTaskEvent(props: any) {
             // sm={6}
             // lg={1}
             // xl={1}
-            style={{ textAlign: !small1 ? 'center' : 'right' }}
+            style={{ textAlign: !above670px ? 'center' : 'right' }}
           >
             <Button
               onClick={handlePreviewDialogSave}
@@ -940,14 +940,14 @@ function ManageTaskEvent(props: any) {
           setSearchParams((prevState: any) => {
             return {
               ...prevState,
-              clearancePriceCheck: 'Y',
+              clearancePriceCheck: 'y',
             }
           })
         } else {
           setSearchParams((prevState: any) => {
             return {
               ...prevState,
-              clearancePriceCheck: 'N',
+              clearancePriceCheck: 'n',
             }
           })
         }
@@ -959,14 +959,14 @@ function ManageTaskEvent(props: any) {
           setSearchParams((prevState: any) => {
             return {
               ...prevState,
-              orderStopDateCheck: 'Y',
+              orderStopDateCheck: 'y',
             }
           })
         } else {
           setSearchParams((prevState: any) => {
             return {
               ...prevState,
-              orderStopDateCheck: 'N',
+              orderStopDateCheck: 'n',
             }
           })
         }
@@ -1375,7 +1375,7 @@ function ManageTaskEvent(props: any) {
               </Grid>
             </Grid>
 
-            {small && (
+            {aboveMd && (
               <>
                 <Grid item md={1} style={{ height: '100%' }}>
                   <Divider orientation="vertical" variant="middle" />
@@ -1540,299 +1540,307 @@ function ManageTaskEvent(props: any) {
 
   return (
     <>
-      <Grid container spacing={2} className={classes.mainContainer}>
-        {!confirmTable ? (
-          small1 ? (
-            <>
-              <Grid item sm={4} xs={12} md={5} lg={7} xl={7}>
-                <Typography variant="h5" color="primary">
-                  Manage Events
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                sm={3}
-                xs={6}
-                md={2}
-                lg={2}
-                xl={2}
-                style={{ textAlign: 'right' }}
-              >
-                <Typography variant="subtitle1" color="primary">
-                  <button
-                    // style={{ cursor: 'pointer', color: 'blue' }}
-                    // className={classes.greenButtons}
-                    className="backButton"
-                    onClick={handleUploadDialogOpen}
+      <div className="manageUser">
+        <div className={classes.value}>
+          <Grid container spacing={2} className={classes.mainContainer}>
+            {!confirmTable ? (
+              above670px ? (
+                <>
+                  <Grid item sm={4} xs={12} md={5} lg={7} xl={7}>
+                    <Typography variant="h5" color="primary">
+                      Manage Events
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    sm={3}
+                    xs={6}
+                    md={2}
+                    lg={2}
+                    xl={2}
+                    style={{ textAlign: 'right' }}
                   >
-                    Upload Bulk Event
-                  </button>
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                sm={3}
-                xs={6}
-                md={2}
-                lg={2}
-                xl={2}
-                style={{ textAlign: 'right' }}
-              >
-                <Typography variant="subtitle1" color="primary">
-                  <button
-                    // style={{ cursor: 'pointer', color: 'blue' }}
-                    // className={classes.greenButtons}
-                    className="backButton"
-                    onClick={handleCreateEvent}
+                    <Typography variant="subtitle1" color="primary">
+                      <button
+                        // style={{ cursor: 'pointer', color: 'blue' }}
+                        // className={classes.greenButtons}
+                        className="backButton"
+                        onClick={handleUploadDialogOpen}
+                      >
+                        Upload Bulk Event
+                      </button>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    sm={3}
+                    xs={6}
+                    md={2}
+                    lg={2}
+                    xl={2}
+                    style={{ textAlign: 'right' }}
                   >
-                    Create Event
-                  </button>
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                sm={2}
-                xs={12}
-                md={2}
-                lg={1}
-                xl={1}
-                style={{ textAlign: 'right' }}
-              >
-                <Typography variant="subtitle1" color="primary">
-                  <button
-                    // style={{ cursor: 'pointer', color: 'blue' }}
-                    // className={classes.greenButtons}
-                    className="backButton"
-                    onClick={goBack}
+                    <Typography variant="subtitle1" color="primary">
+                      <button
+                        // style={{ cursor: 'pointer', color: 'blue' }}
+                        // className={classes.greenButtons}
+                        className="backButton"
+                        onClick={handleCreateEvent}
+                      >
+                        Create Event
+                      </button>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    sm={2}
+                    xs={12}
+                    md={2}
+                    lg={1}
+                    xl={1}
+                    style={{ textAlign: 'right' }}
                   >
-                    <svg
-                      className="MuiSvgIcon-root"
-                      focusable="false"
-                      viewBox="0 0 34 34"
-                      aria-hidden="true"
+                    <Typography variant="subtitle1" color="primary">
+                      <button
+                        // style={{ cursor: 'pointer', color: 'blue' }}
+                        // className={classes.greenButtons}
+                        className="backButton"
+                        onClick={goBack}
+                      >
+                        <svg
+                          className="MuiSvgIcon-root"
+                          focusable="false"
+                          viewBox="0 0 34 34"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                        </svg>
+                        Back
+                      </button>
+                    </Typography>
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  <Grid item xs={8}>
+                    <Typography variant="h6" color="primary">
+                      Manage Events
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} style={{ textAlign: 'right' }}>
+                    <Typography variant="subtitle1" color="primary">
+                      <button
+                        // style={{ cursor: 'pointer', color: 'blue' }}
+                        // className={classes.greenButtons}
+                        className="backButton"
+                        onClick={goBack}
+                      >
+                        <svg
+                          className="MuiSvgIcon-root"
+                          focusable="false"
+                          viewBox="0 0 34 34"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                        </svg>
+                        Back
+                      </button>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    sm={6}
+                    xs={7}
+                    md={2}
+                    lg={2}
+                    xl={2}
+                    style={{ padding: '0px' }}
+                  >
+                    <Typography variant="subtitle1" color="primary">
+                      <button
+                        // style={{ cursor: 'pointer', color: 'blue' }}
+                        // className={classes.greenButtons}
+                        className="backButton"
+                        onClick={handleUploadDialogOpen}
+                      >
+                        Upload Bulk Event
+                      </button>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    sm={6}
+                    xs={5}
+                    md={2}
+                    lg={2}
+                    xl={2}
+                    style={{ textAlign: 'right', padding: '0px' }}
+                  >
+                    <Typography variant="subtitle1" color="primary">
+                      <button
+                        // style={{ cursor: 'pointer', color: 'blue' }}
+                        // className={classes.greenButtons}
+                        className="backButton"
+                        onClick={handleCreateEvent}
+                      >
+                        Create Event
+                      </button>
+                    </Typography>
+                  </Grid>
+                </>
+              )
+            ) : (
+              <>
+                <Grid item sm={6} xs={12} md={2} lg={2} xl={2}>
+                  <Typography variant="h6" color="primary">
+                    Manage Events
+                  </Typography>
+                </Grid>
+                <Grid item sm={6} xs={12} md={2} lg={2} xl={2}>
+                  {/* <Typography variant="h5"> */}
+                  <input
+                    type="text"
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    placeholder={' Search User details '}
+                    className={classes.globalSearch}
+                  />
+                  {/* </Typography> */}
+                </Grid>
+                <Grid item sm={6} xs={6} md={2} lg={3} xl={3}>
+                  <Typography variant="subtitle1" color="primary">
+                    <button
+                      // style={{ cursor: 'pointer', color: 'blue' }}
+                      // className={classes.greenButtons}
+                      className="backButton"
+                      onClick={handleSearchDialogOpen}
                     >
-                      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-                    </svg>
-                    Back
-                  </button>
-                </Typography>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Grid item xs={8}>
-                <Typography variant="h6" color="primary">
-                  Manage Events
-                </Typography>
-              </Grid>
-              <Grid item xs={4} style={{ textAlign: 'right' }}>
-                <Typography variant="subtitle1" color="primary">
-                  <button
-                    // style={{ cursor: 'pointer', color: 'blue' }}
-                    // className={classes.greenButtons}
-                    className="backButton"
-                    onClick={goBack}
-                  >
-                    <svg
-                      className="MuiSvgIcon-root"
-                      focusable="false"
-                      viewBox="0 0 34 34"
-                      aria-hidden="true"
+                      Advanced Search
+                    </button>
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  sm={6}
+                  xs={6}
+                  md={2}
+                  lg={2}
+                  xl={2}
+                  style={{ padding: 0 }}
+                >
+                  <Typography variant="subtitle1" color="primary">
+                    <button
+                      // style={{ cursor: 'pointer', color: 'blue' }}
+                      // className={classes.greenButtons}
+                      className="backButton"
+                      onClick={handleUploadDialogOpen}
                     >
-                      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-                    </svg>
-                    Back
-                  </button>
+                      Upload Bulk Event
+                    </button>
+                  </Typography>
+                </Grid>
+                <Grid item sm={6} xs={6} md={2} lg={2} xl={2}>
+                  <Typography variant="subtitle1" color="primary">
+                    <button
+                      // style={{ cursor: 'pointer', color: 'blue' }}
+                      // className={classes.greenButtons}
+                      className="backButton"
+                      onClick={handleCreateEvent}
+                    >
+                      Create Event
+                    </button>
+                  </Typography>
+                </Grid>
+                <Grid item sm={6} xs={6} md={2} lg={1} xl={1}>
+                  <Typography variant="subtitle1" color="primary">
+                    <button
+                      // style={{ cursor: 'pointer', color: 'blue' }}
+                      // className={classes.greenButtons}
+                      className="backButton"
+                      onClick={goBack}
+                    >
+                      <svg
+                        className="MuiSvgIcon-root"
+                        focusable="false"
+                        viewBox="0 0 34 34"
+                        aria-hidden="true"
+                      >
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                      </svg>
+                      Back
+                    </button>
+                  </Typography>
+                </Grid>
+              </>
+            )}
+          </Grid>
+          <Box
+            sx={{
+              height: aboveMd ? '500px' : betweenSmAndMd ? '600px' : '400px',
+              marginLeft: '10px',
+              marginRight: '10px',
+              display: 'flex',
+              alignItems: importedData ? 'end' : 'center',
+              justifyContent: !importedData && 'center',
+              paddingTop: '20px',
+              flexDirection: 'column',
+            }}
+            style={
+              confirmTable
+                ? {
+                    border: 'none',
+                  }
+                : {
+                    border: '3px dashed gray',
+                    justifyContent: 'center',
+                  }
+            }
+          >
+            <Box sx={{ width: '100%', textAlign: 'center' }}>
+              {!confirmTable ? (
+                <Typography
+                  variant="h4"
+                  style={{ opacity: '0.5' }}
+                  color="primary"
+                >
+                  No "Event" to display
                 </Typography>
-              </Grid>
-              <Grid
-                item
-                sm={6}
-                xs={7}
-                md={2}
-                lg={2}
-                xl={2}
-                style={{ padding: '0px' }}
-              >
-                <Typography variant="subtitle1" color="primary">
-                  <button
-                    // style={{ cursor: 'pointer', color: 'blue' }}
-                    // className={classes.greenButtons}
-                    className="backButton"
-                    onClick={handleUploadDialogOpen}
-                  >
-                    Upload Bulk Event
-                  </button>
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                sm={6}
-                xs={5}
-                md={2}
-                lg={2}
-                xl={2}
-                style={{ textAlign: 'right', padding: '0px' }}
-              >
-                <Typography variant="subtitle1" color="primary">
-                  <button
-                    // style={{ cursor: 'pointer', color: 'blue' }}
-                    // className={classes.greenButtons}
-                    className="backButton"
-                    onClick={handleCreateEvent}
-                  >
-                    Create Event
-                  </button>
-                </Typography>
-              </Grid>
-            </>
-          )
-        ) : (
-          <>
-            <Grid item sm={6} xs={12} md={2} lg={2} xl={2}>
-              <Typography variant="h6" color="primary">
-                Manage Events
-              </Typography>
-            </Grid>
-            <Grid item sm={6} xs={12} md={2} lg={2} xl={2}>
-              {/* <Typography variant="h5"> */}
-              <input
-                type="text"
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                placeholder={' Search User details '}
-                className={classes.globalSearch}
-              />
-              {/* </Typography> */}
-            </Grid>
-            <Grid item sm={6} xs={6} md={2} lg={3} xl={3}>
-              <Typography variant="subtitle1" color="primary">
-                <button
-                  // style={{ cursor: 'pointer', color: 'blue' }}
-                  // className={classes.greenButtons}
-                  className="backButton"
-                  onClick={handleSearchDialogOpen}
+              ) : (
+                <Box
+                  sx={{
+                    paddingBottom: '20px',
+                  }}
                 >
-                  Advanced Search
-                </button>
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              sm={6}
-              xs={6}
-              md={2}
-              lg={2}
-              xl={2}
-              style={{ padding: 0 }}
-            >
-              <Typography variant="subtitle1" color="primary">
-                <button
-                  // style={{ cursor: 'pointer', color: 'blue' }}
-                  // className={classes.greenButtons}
-                  className="backButton"
-                  onClick={handleUploadDialogOpen}
-                >
-                  Upload Bulk Event
-                </button>
-              </Typography>
-            </Grid>
-            <Grid item sm={6} xs={6} md={2} lg={2} xl={2}>
-              <Typography variant="subtitle1" color="primary">
-                <button
-                  // style={{ cursor: 'pointer', color: 'blue' }}
-                  // className={classes.greenButtons}
-                  className="backButton"
-                  onClick={handleCreateEvent}
-                >
-                  Create Event
-                </button>
-              </Typography>
-            </Grid>
-            <Grid item sm={6} xs={6} md={2} lg={1} xl={1}>
-              <Typography variant="subtitle1" color="primary">
-                <button
-                  // style={{ cursor: 'pointer', color: 'blue' }}
-                  // className={classes.greenButtons}
-                  className="backButton"
-                  onClick={goBack}
-                >
-                  <svg
-                    className="MuiSvgIcon-root"
-                    focusable="false"
-                    viewBox="0 0 34 34"
-                    aria-hidden="true"
-                  >
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-                  </svg>
-                  Back
-                </button>
-              </Typography>
-            </Grid>
-          </>
-        )}
-      </Grid>
-      <Box
-        sx={{
-          height: small ? '500px' : between ? '600px' : '400px',
-          marginLeft: '10px',
-          marginRight: '10px',
-          display: 'flex',
-          alignItems: importedData ? 'end' : 'center',
-          justifyContent: !importedData && 'center',
-          paddingTop: '20px',
-          flexDirection: 'column',
-        }}
-        style={
-          confirmTable
-            ? {
-                border: 'none',
-              }
-            : {
-                border: '3px dashed gray',
-                justifyContent: 'center',
-              }
-        }
-      >
-        <Box sx={{ width: '100%', textAlign: 'center' }}>
-          {!confirmTable ? (
-            <Typography variant="h4" style={{ opacity: '0.5' }} color="primary">
-              No "Event" to display
-            </Typography>
-          ) : (
-            <Box
-              sx={{
-                paddingBottom: '20px',
-              }}
-            >
-              {uploadedTable()}
+                  {uploadedTable()}
+                </Box>
+              )}
             </Box>
-          )}
-        </Box>
-        {confirmTable && (
-          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            <Box sx={{ padding: '10px' }}>
-              <Button onClick={removeTasks} className={classes.whiteButton}>
-                Delete Event
-              </Button>
-            </Box>
-            <Box sx={{ padding: '10px' }}>
-              <Button
-                className={classes.submitButtons}
-                onClick={() => {
-                  selectedImportedData.length > 0 && handlePublish()
-                }}
-              >
-                Publish
-              </Button>
-            </Box>
+            {confirmTable && (
+              <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                <Box sx={{ padding: '10px' }}>
+                  <Button onClick={removeTasks} className={classes.whiteButton}>
+                    Delete Event
+                  </Button>
+                </Box>
+                <Box sx={{ padding: '10px' }}>
+                  <Button
+                    className={classes.submitButtons}
+                    onClick={() => {
+                      selectedImportedData.length > 0 && handlePublish()
+                    }}
+                  >
+                    Publish
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Box>
-        )}
-      </Box>
-      {uploadDialog}
-      {importedData && importedCols && previewDialog}
-      {/* {sampleExcel} */}
-      {advancedSearch}
+          {uploadDialog}
+          {importedData && importedCols && previewDialog}
+          {/* {sampleExcel} */}
+          {advancedSearch}
+        </div>
+      </div>
     </>
   )
 }

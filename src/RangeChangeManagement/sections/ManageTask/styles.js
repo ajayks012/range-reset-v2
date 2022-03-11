@@ -93,6 +93,16 @@ export const useStyles = makeStyles((theme) => {
       backgroundColor: 'white',
       color: theme.palette.primary.error,
     },
+    root: {
+      display: 'flex',
+      flex: 1,
+      flexDirection: 'column',
+      height: '100%',
+      color: theme.palette.background.paper,
+    },
+    value: {
+      flex: 1,
+    },
   }
 })
 

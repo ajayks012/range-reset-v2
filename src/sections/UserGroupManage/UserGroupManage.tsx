@@ -29,6 +29,7 @@ function UserGroupManage(props: any) {
   const history = useHistory()
   const { DEFAULT, USERCONFIG_GROUPUPDATE, USERCONFIG_GROUPCREATE } = routes
   const active = useMediaQuery(theme.breakpoints.down(700))
+  const active1 = useMediaQuery(theme.breakpoints.between(400, 700))
   const width = useMediaQuery(theme.breakpoints.up('md'))
   const dialogwidth = width ? 600 : fieldWidth
   const [globalFilter, setGlobalFilter] = React.useState('')
@@ -389,202 +390,220 @@ function UserGroupManage(props: any) {
   //end
 
   return (
-<div className="manageUser">
-    <div className="manageRequest">
-    <div className={classes.root}>
-      <Grid container className={`${classes.container} ${classes.text}`}>
-        <Grid item lg={12} md={12} sm={12} xs={12}>
-          {!active ? (
-            <Box className='colorSecondary'
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                p: 3,
-                paddingBottom: 1,
-                paddingTop: '32px',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexGrow: 1,
-                }}
-              >
-                <Typography variant="h6">Manage User Groups</Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                }}
-              >
-                <input
-                  type="text"
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  placeholder={' Search Group details '}
-                  style={{
-                    width: '300px',
-                  }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  paddingLeft: 20,
-                }}
-              >
-                <button
-                  type="button"
-                  className={classes.exploreButton}
-                  onClick={() =>
-                    history.push(`${DEFAULT}${USERCONFIG_GROUPCREATE}`)
-                  }
-                >
-                  <span className='buttonCreateGroup'> Create Group</span>
-                </button>
-              </Box>
-            </Box>
-          ) : (
-            <Box className='colorSecondary displayTable'
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                p: 3,
-                paddingBottom: 1,
-                paddingTop: '32px',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
+    <div className="manageUser">
+      <div className="manageRequest">
+        <div className={classes.root}>
+          <Grid container className={`${classes.container} ${classes.text}`}>
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              {!active ? (
                 <Box
+                  className="colorSecondary"
                   sx={{
                     display: 'flex',
-                    paddingRight: '10px',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    p: 3,
+                    paddingBottom: 1,
+                    paddingTop: '32px',
                   }}
                 >
-                  <Typography variant="h6">Manage User Groups</Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                  }}
-                >
-                  <input
-                    type="text"
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                    placeholder={' Search Group details '}
-                    style={{
-                      width: '200px',
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexGrow: 1,
                     }}
-                  />
+                  >
+                    <Typography variant="h6">Manage User Groups</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                    }}
+                  >
+                    <input
+                      type="text"
+                      value={globalFilter}
+                      onChange={(e) => setGlobalFilter(e.target.value)}
+                      placeholder={' Search Group details '}
+                      style={{
+                        width: '300px',
+                      }}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      paddingLeft: 20,
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className={classes.exploreButton}
+                      onClick={() =>
+                        history.push(`${DEFAULT}${USERCONFIG_GROUPCREATE}`)
+                      }
+                    >
+                      <span className="buttonCreateGroup"> Create Group</span>
+                    </button>
+                  </Box>
                 </Box>
-              </Box>
-              <Box className='createGroup'
-                sx={{
-                  display: 'flex',
-                  justifySelf: 'end',
-                }}
-              >
-                <button
-                  type="button"
-                  className={classes.exploreButton}
-                  onClick={() =>
-                    history.push(`${DEFAULT}${USERCONFIG_GROUPCREATE}`)
-                  }
+              ) : (
+                <Box
+                  className="colorSecondary displayTable"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    p: 3,
+                    paddingBottom: 1,
+                    paddingTop: '32px',
+                  }}
                 >
-                  <span className='buttonCreateGroup'> Create Group</span>
-                </button>
-              </Box>
-            </Box>
-          )}
-        </Grid>
-      </Grid>
-      <Box
-        sx={{
-          textAlign: 'center',
-          p: 2,
-        }}
-      >
-        <DataTable
-          value={userGroupsData}
-          rowHover
-          paginator
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-          currentPageReportTemplate="{first} - {last} of {totalRecords}"
-          stateStorage="session"
-          stateKey="dt-state-demo-session-groupmanage"
-          rows={6}
-          style={{
-            // fontSize: "10px",
-            // backgroundColor: "#f7f7f7",
-            width: '100%',
-          }}
-          scrollable
-          scrollHeight="flex"
-          //   className="p-datatable-sm"
-          globalFilter={globalFilter}
-          emptyMessage="No groups found."
-          showGridlines
-          loading={userGroupLoading}
-        >
-          {constants.userGroupTableHeaders.map((column: any) => {
-            return column.field === 'productHierarchy' ||
-              column.field === 'locationHierarchy' ? (
-              <Column
-                key={column.field}
-                field={column.field}
-                header={column.headerName}
-                bodyStyle={{
-                  fontSize: '14px',
-                  width: column.width,
-                  overflowX: 'auto',
-                }}
-                headerStyle={{
-                  fontSize: '14px',
-                  width: column.width,
-                  backgroundColor: teal[900],
-                  color: 'white',
-                }}
-                body={
-                  (column.field === 'productHierarchy' && productTemplate) ||
-                  (column.field === 'locationHierarchy' && locationTemplate)
-                }
-              />
-            ) : (
-              <Column
-                key={column.field}
-                field={column.field}
-                header={column.headerName}
-                bodyStyle={{
-                  fontSize: '14px',
-                  width: column.width,
-                  overflowX: 'auto',
-                }}
-                headerStyle={{
-                  fontSize: '14px',
-                  width: column.width,
-                  backgroundColor: teal[900],
-                  color: 'white',
-                }}
-                body={column.field === 'groupId' && groupIDTemplate}
-                sortable
-              />
-            )
-          })}
-        </DataTable>
-      </Box>
-      {viewProductHierarchyLog}
-      {viewLocationHierarchyLog}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        paddingRight: '10px',
+                      }}
+                    >
+                      <Typography variant="h6">Manage User Groups</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: active1 ? 'row' : 'column',
+                        alignItems: 'start',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                        }}
+                      >
+                        <input
+                          type="text"
+                          value={globalFilter}
+                          onChange={(e) => setGlobalFilter(e.target.value)}
+                          placeholder={' Search Group details '}
+                          style={{
+                            width: '200px',
+                          }}
+                        />
+                      </Box>
+
+                      <Box
+                        // className="createGroup"
+                        sx={{
+                          display: 'flex',
+                          width: '100%',
+                          justifyContent: active1 ? 'end' : 'start',
+                          paddingTop: !active1 && '10px',
+                        }}
+                      >
+                        <button
+                          type="button"
+                          className={classes.exploreButton}
+                          onClick={() =>
+                            history.push(`${DEFAULT}${USERCONFIG_GROUPCREATE}`)
+                          }
+                        >
+                          <span className="buttonCreateGroup">
+                            {' '}
+                            Create Group
+                          </span>
+                        </button>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+            </Grid>
+          </Grid>
+          <Box
+            sx={{
+              textAlign: 'center',
+              p: 2,
+            }}
+          >
+            <DataTable
+              value={userGroupsData}
+              rowHover
+              paginator
+              paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+              currentPageReportTemplate="{first} - {last} of {totalRecords}"
+              stateStorage="session"
+              stateKey="dt-state-demo-session-groupmanage"
+              rows={6}
+              style={{
+                // fontSize: "10px",
+                // backgroundColor: "#f7f7f7",
+                width: '100%',
+              }}
+              scrollable
+              scrollHeight="flex"
+              //   className="p-datatable-sm"
+              globalFilter={globalFilter}
+              emptyMessage="No groups found."
+              showGridlines
+              loading={userGroupLoading}
+            >
+              {constants.userGroupTableHeaders.map((column: any) => {
+                return column.field === 'productHierarchy' ||
+                  column.field === 'locationHierarchy' ? (
+                  <Column
+                    key={column.field}
+                    field={column.field}
+                    header={column.headerName}
+                    bodyStyle={{
+                      fontSize: '14px',
+                      width: column.width,
+                      overflowX: 'auto',
+                    }}
+                    headerStyle={{
+                      fontSize: '14px',
+                      width: column.width,
+                      backgroundColor: teal[900],
+                      color: 'white',
+                    }}
+                    body={
+                      (column.field === 'productHierarchy' &&
+                        productTemplate) ||
+                      (column.field === 'locationHierarchy' && locationTemplate)
+                    }
+                  />
+                ) : (
+                  <Column
+                    key={column.field}
+                    field={column.field}
+                    header={column.headerName}
+                    bodyStyle={{
+                      fontSize: '14px',
+                      width: column.width,
+                      overflowX: 'auto',
+                    }}
+                    headerStyle={{
+                      fontSize: '14px',
+                      width: column.width,
+                      backgroundColor: teal[900],
+                      color: 'white',
+                    }}
+                    body={column.field === 'groupId' && groupIDTemplate}
+                    sortable
+                  />
+                )
+              })}
+            </DataTable>
+          </Box>
+          {viewProductHierarchyLog}
+          {viewLocationHierarchyLog}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   )
 }
 

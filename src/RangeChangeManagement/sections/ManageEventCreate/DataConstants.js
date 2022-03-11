@@ -243,7 +243,7 @@ export const manageEventPublishCols = [
   {
     field: 'resetType',
     header: 'Reset Type',
-    width: '200px',
+    width: '220px',
   },
   {
     field: 'appDueDate',
@@ -412,5 +412,24 @@ export const classOptions = [
   {
     value: 'Class 5',
     label: 'Class 5',
+  },
+]
+
+export const userGroupOptions = [
+  {
+    value: 'Buyer',
+    label: 'Buyer',
+  },
+  {
+    value: 'Buying Assistant',
+    label: 'Buying Assistant',
+  },
+  {
+    value: 'Senior Buying Manager',
+    label: 'Senior Buying Manager',
+  },
+  {
+    value: 'System Task',
+    label: 'System Task',
   },
 ]
