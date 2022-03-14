@@ -40,7 +40,8 @@ function GroupPendingAction(props: any) {
   //
   const [isProgressLoader, setIsProgressLoader] = React.useState(false)
   //
-  const active = useMediaQuery(theme.breakpoints.down('sm'))
+  const active = useMediaQuery(theme.breakpoints.down(700))
+  const active1 = useMediaQuery(theme.breakpoints.between(370, 700))
 
   const goBack = () => {
     reset_mygrouppendingAction()
@@ -166,123 +167,150 @@ function GroupPendingAction(props: any) {
           history.push(`${DEFAULT}${DASHBOARD}`)
         }}
       />
-<div className="manageUser">
-<div className="manageRequest">
-      <div className={classes.root}>
-        <div className={classes.value}>
-          <Grid container className={classes.container}>
-            <Grid item sm={12} xs={12}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  p: 2,
-                  width: '100%',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexGrow: 1,
-                  }}
-                >
-                  <Typography variant="h6">Group Task {'>'} Pending</Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                  }}
-                >
-                  <input
-                    type="text"
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                    placeholder={' Search details here '}
-                    style={{
-                      width: '200px',
+      <div className="manageUser">
+        <div className="manageRequest">
+          <div className={classes.root}>
+            <div className={classes.value}>
+              <Grid container className={classes.container}>
+                <Grid item sm={12} xs={12}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: active ? 'column' : 'row',
+                      justifyContent: 'space-between',
+                      p: 2,
+                      width: '100%',
+                      flexWrap: 'wrap',
                     }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    paddingLeft: 20,
-                  }}
-                >
-              <button
-                  //className={classes.backButton}
-                  className="backButton" 
-                  onClick={goBack}
-                  type="button"
-                >
-              <svg className="MuiSvgIcon-root" focusable="false" viewBox="0 0 34 34" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg> 
-              Back
-              </button>
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  textAlign: 'center',
-                  p: 2,
-                }}
-              >
-                {/* {!active ? ( */}
-                <DataTable
-                  value={myGroupPendingActionDetails}
-                  rowHover
-                  paginator
-                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                  currentPageReportTemplate="{first} - {last} of {totalRecords}"
-                  stateStorage="session"
-                  stateKey="dt-state-demo-session-grouppendingaction"
-                  rows={10}
-                  style={{
-                    width: '100%',
-                  }}
-                  selection={unassignUser}
-                  onSelectionChange={(e) => setUnassignUser(e.value)}
-                  scrollable
-                  scrollHeight="flex"
-                  globalFilter={globalFilter}
-                  emptyMessage="No users found."
-                  showGridlines
-                  //loading={manageUserLoading}
-                >
-                  <Column
-                    selectionMode="multiple"
-                    headerStyle={{
-                      width: '3em',
-                      backgroundColor: teal[900],
-                      color: 'white',
-                    }}
-                  ></Column>
-                  {groupPendingActionTableHeaders.map((column) => {
-                    return (
-                      <Column
-                        key={column.field}
-                        field={column.field}
-                        header={column.headerName}
-                        bodyStyle={{
-                          fontSize: '12px',
-                          width: column.width,
-                          overflowX: 'auto',
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexGrow: 1,
+                      }}
+                    >
+                      <Typography variant="h6">
+                        Group Task {'>'} Pending
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: active
+                          ? active1
+                            ? 'row'
+                            : 'column'
+                          : 'row',
+                        alignItems: 'start',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
                         }}
+                      >
+                        <input
+                          type="text"
+                          value={globalFilter}
+                          onChange={(e) => setGlobalFilter(e.target.value)}
+                          placeholder={' Search details here '}
+                          style={{
+                            width: '200px',
+                          }}
+                        />
+                      </Box>
+                      <Box
+                        // sx={{
+                        //   paddingLeft: 20,
+                        // }}
+                        sx={{
+                          paddingLeft: !active ? 20 : 0,
+                          paddingTop: active && !active1 && '10px',
+                          width: '100%',
+                          textAlign: active1 ? 'end' : 'start',
+                        }}
+                      >
+                        <button
+                          //className={classes.backButton}
+                          className="backButton"
+                          onClick={goBack}
+                          type="button"
+                        >
+                          <svg
+                            className="MuiSvgIcon-root"
+                            focusable="false"
+                            viewBox="0 0 34 34"
+                            aria-hidden="true"
+                          >
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                          </svg>
+                          Back
+                        </button>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      textAlign: 'center',
+                      p: 2,
+                    }}
+                  >
+                    {/* {!active ? ( */}
+                    <DataTable
+                      value={myGroupPendingActionDetails}
+                      rowHover
+                      paginator
+                      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                      currentPageReportTemplate="{first} - {last} of {totalRecords}"
+                      stateStorage="session"
+                      stateKey="dt-state-demo-session-grouppendingaction"
+                      rows={10}
+                      style={{
+                        width: '100%',
+                      }}
+                      selection={unassignUser}
+                      onSelectionChange={(e) => setUnassignUser(e.value)}
+                      scrollable
+                      scrollHeight="flex"
+                      globalFilter={globalFilter}
+                      emptyMessage="No users found."
+                      showGridlines
+                      //loading={manageUserLoading}
+                    >
+                      <Column
+                        selectionMode="multiple"
                         headerStyle={{
-                          fontSize: '12px',
-                          width: column.width,
+                          width: '3em',
                           backgroundColor: teal[900],
                           color: 'white',
                         }}
-                        // body={
-                        //   column.field === 'requestedId' && requestIdTemplate
-                        // }
-                        sortable
-                      />
-                    )
-                  })}
-                </DataTable>
-                {/* ) : (
+                      ></Column>
+                      {groupPendingActionTableHeaders.map((column) => {
+                        return (
+                          <Column
+                            key={column.field}
+                            field={column.field}
+                            header={column.headerName}
+                            bodyStyle={{
+                              fontSize: '12px',
+                              width: column.width,
+                              overflowX: 'auto',
+                            }}
+                            headerStyle={{
+                              fontSize: '12px',
+                              width: column.width,
+                              backgroundColor: teal[900],
+                              color: 'white',
+                            }}
+                            // body={
+                            //   column.field === 'requestedId' && requestIdTemplate
+                            // }
+                            sortable
+                          />
+                        )
+                      })}
+                    </DataTable>
+                    {/* ) : (
                   <DataTable
                     value={myGroupPendingActionDetails}
                     rowHover
@@ -338,34 +366,34 @@ function GroupPendingAction(props: any) {
                     })}
                   </DataTable>
                 )} */}
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  p: 2,
-                  width: '100%',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  // type="submit"
-                  size="small"
-                  onClick={handleAssign}
-                >
-                  Assign to Me
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-          <LoadingComponent showLoader={isProgressLoader} />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      p: 2,
+                      width: '100%',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      // type="submit"
+                      size="small"
+                      onClick={handleAssign}
+                    >
+                      Assign to Me
+                    </Button>
+                  </Box>
+                </Grid>
+              </Grid>
+              <LoadingComponent showLoader={isProgressLoader} />
+            </div>
+          </div>
         </div>
       </div>
-</div>
-</div>
     </>
   )
 }

@@ -20,7 +20,7 @@ export const eventUploadTableCols = [
     width: '180px',
   },
   {
-    field: 'group',
+    field: 'tradeGroup',
     header: 'Trading Group',
     width: '150px',
   },
@@ -127,7 +127,7 @@ export const confirmedTableCols = [
     width: '150px',
   },
   {
-    field: 'group',
+    field: 'tradeGroup',
     header: 'Trading Group',
     width: '150px',
   },

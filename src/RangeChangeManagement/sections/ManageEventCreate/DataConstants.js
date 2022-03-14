@@ -251,7 +251,7 @@ export const manageEventPublishCols = [
     width: '150px',
   },
   {
-    field: 'group',
+    field: 'tradeGroup',
     header: 'Group',
     width: '150px',
   },

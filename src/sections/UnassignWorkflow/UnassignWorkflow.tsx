@@ -29,6 +29,8 @@ function UnassignWorkflow(props: any) {
     props
   const { DEFAULT, DASHBOARD } = routes
   const theme = useTheme()
+  const active = useMediaQuery(theme.breakpoints.down(700))
+  const active1 = useMediaQuery(theme.breakpoints.between(370, 700))
   const classes = useStyles()
   const history = useHistory()
   const [globalFilter, setGlobalFilter] = useState('')
@@ -36,7 +38,6 @@ function UnassignWorkflow(props: any) {
   const [checkCount, setCheckCount] = React.useState(1)
   const [failureCount, setFailureCount] = React.useState(0)
   const toast = useRef<any>(null)
-  const active = useMediaQuery(theme.breakpoints.down('sm'))
   const [myGroupUnassignedTasks, setMyGroupUnassignedTasks] = useState([])
   //
   const [isProgressLoader, setIsProgressLoader] = React.useState(false)
@@ -176,7 +177,7 @@ function UnassignWorkflow(props: any) {
                   <Box
                     sx={{
                       display: 'flex',
-                      flexDirection: 'row',
+                      flexDirection: active ? 'column' : 'row',
                       justifyContent: 'space-between',
                       p: 2,
                       width: '100%',
@@ -196,39 +197,57 @@ function UnassignWorkflow(props: any) {
                     <Box
                       sx={{
                         display: 'flex',
+                        flexDirection: active
+                          ? active1
+                            ? 'row'
+                            : 'column'
+                          : 'row',
+                        alignItems: 'start',
                       }}
                     >
-                      <input
-                        type="text"
-                        value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                        placeholder={' Search details here '}
-                        style={{
-                          width: '200px',
+                      <Box
+                        sx={{
+                          display: 'flex',
                         }}
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        paddingLeft: 20,
-                      }}
-                    >
-                      <button
-                        //className={classes.backButton}
-                        className="backButton"
-                        onClick={goBack}
-                        type="button"
                       >
-                        <svg
-                          className="MuiSvgIcon-root"
-                          focusable="false"
-                          viewBox="0 0 34 34"
-                          aria-hidden="true"
+                        <input
+                          type="text"
+                          value={globalFilter}
+                          onChange={(e) => setGlobalFilter(e.target.value)}
+                          placeholder={' Search details here '}
+                          style={{
+                            width: '200px',
+                          }}
+                        />
+                      </Box>
+                      <Box
+                        // sx={{
+                        //   paddingLeft: 20,
+                        // }}
+                        sx={{
+                          paddingLeft: !active ? 20 : 0,
+                          paddingTop: active && !active1 && '10px',
+                          width: '100%',
+                          textAlign: active1 ? 'end' : 'start',
+                        }}
+                      >
+                        <button
+                          //className={classes.backButton}
+                          className="backButton"
+                          onClick={goBack}
+                          type="button"
                         >
-                          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-                        </svg>
-                        Back
-                      </button>
+                          <svg
+                            className="MuiSvgIcon-root"
+                            focusable="false"
+                            viewBox="0 0 34 34"
+                            aria-hidden="true"
+                          >
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                          </svg>
+                          Back
+                        </button>
+                      </Box>
                     </Box>
                   </Box>
                   <Box

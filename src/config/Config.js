@@ -4,6 +4,8 @@ const envDetails = {
     BASE_URL_SIT: 'https://sit-api.morrisons.com/',
     API_KEY: 'vqaiDRZzSQhA6CPAy0rSotsQAkRepprX',
     PRODUCT_HIERARCHY_GET: 'product/v1/hierarchies/reporting',
+    PRODUCT_HIERARCHY_LIST_GET:
+      'product/v1/hierarchylists/reporting/nodetype/{nodetype}',
     GET_APP_MENU_ID: 'commercial-user/v1/apps/{appMenuId}',
     GET_APP_MENU_ALL: 'commercial-user/v1/apps',
     GET_USER_DETAILS_ID: 'commercial-user/v1/userdetails/{userId}',
@@ -40,6 +42,8 @@ const envDetails = {
     BASE_URL_SIT: 'https://sit-api.morrisons.com/',
     API_KEY: 'vqaiDRZzSQhA6CPAy0rSotsQAkRepprX',
     PRODUCT_HIERARCHY_GET: 'product/v1/hierarchies/reporting',
+    PRODUCT_HIERARCHY_LIST_GET:
+      'product/v1/hierarchylists/reporting/nodetype/{nodetype}',
     GET_APP_MENU_ID: 'commercial-user/v1/apps/{appMenuId}',
     GET_APP_MENU_ALL: 'commercial-user/v1/apps',
     GET_USER_DETAILS_ID: 'commercial-user/v1/userdetails/{userId}',
@@ -76,6 +80,8 @@ const envDetails = {
     BASE_URL_SIT: 'https://pre-api.morrisons.com/',
     API_KEY: 'vqaiDRZzSQhA6CPAy0rSotsQAkRepprX',
     PRODUCT_HIERARCHY_GET: 'product/v1/hierarchies/reporting',
+    PRODUCT_HIERARCHY_LIST_GET:
+      'product/v1/hierarchylists/reporting/nodetype/{nodetype}',
     GET_APP_MENU_ID: 'commercial-user/v1/apps/{appMenuId}',
     GET_APP_MENU_ALL: 'commercial-user/v1/apps',
     GET_USER_DETAILS_ID: 'commercial-user/v1/userdetails/{userId}',
@@ -112,6 +118,8 @@ const envDetails = {
     BASE_URL_SIT: 'https://api.morrisons.com/',
     API_KEY: 'vqaiDRZzSQhA6CPAy0rSotsQAkRepprX',
     PRODUCT_HIERARCHY_GET: 'product/v1/hierarchies/reporting',
+    PRODUCT_HIERARCHY_LIST_GET:
+      'product/v1/hierarchylists/reporting/nodetype/{nodetype}',
     GET_APP_MENU_ID: 'commercial-user/v1/apps/{appMenuId}',
     GET_APP_MENU_ALL: 'commercial-user/v1/apps',
     GET_USER_DETAILS_ID: 'commercial-user/v1/userdetails/{userId}',
@@ -148,6 +156,8 @@ const envDetails = {
     BASE_URL_SIT: 'https://sit-api.morrisons.com/',
     API_KEY: 'vqaiDRZzSQhA6CPAy0rSotsQAkRepprX',
     PRODUCT_HIERARCHY_GET: 'product/v1/hierarchies/reporting',
+    PRODUCT_HIERARCHY_LIST_GET:
+      'product/v1/hierarchylists/reporting/nodetype/{nodetype}',
     GET_APP_MENU_ID: 'commercial-user/v1/apps/{appMenuId}',
     GET_APP_MENU_ALL: 'commercial-user/v1/apps',
     GET_USER_DETAILS_ID: 'commercial-user/v1/userdetails/{userId}',

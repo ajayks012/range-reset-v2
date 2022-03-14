@@ -265,16 +265,16 @@ function ManageEventCreate() {
   }
 
   const groupTemplate = (rowData: any) => {
-    const val = groups.findIndex((group) => rowData.resetGroup === group.text)
+    const val = groups.findIndex((group) => rowData.tradeGroup === group.text)
     return (
       <Select
-        value={val > -1 ? groups[val].name : rowData.resetGroup}
+        value={val > -1 ? groups[val].name : rowData.tradeGroup}
         onChange={(e) => {
           setEventDetails((prevState: any) => {
             return [
               {
                 ...prevState[0],
-                resetGroup: e.target.value,
+                tradeGroup: e.target.value,
               },
             ]
           })
@@ -1272,7 +1272,7 @@ function ManageEventCreate() {
                           (col.field === 'targetDate' && launchDateTemplate) ||
                           (col.field === 'resetType' && resetTypeTemplate) ||
                           (col.field === 'appDueDate' && rafDueDateTemplate) ||
-                          (col.field === 'group' && groupTemplate) ||
+                          (col.field === 'tradeGroup' && groupTemplate) ||
                           (col.field === 'category' && categoryTemplate) ||
                           (col.field === 'department' && departmentTemplate) ||
                           (col.field === 'eventName' && eventNameTemplate) ||

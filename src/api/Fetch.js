@@ -31,6 +31,7 @@ const {
   POST_ATTACHMENT,
   PUT_COMPLETE_TASK_CAMUNDA,
   PUT_REJECT_TASK_CAMUNDA,
+  PRODUCT_HIERARCHY_LIST_GET,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -275,6 +276,12 @@ export const putRejectTaskAPI = (req, businessKey) => {
 
 export const getProductHierarchyAPI = (url) => {
   return serviceRequestForProduct(url, 'GET', undefined)
+}
+
+export const getProductHierarchyListAPI = (nodetype) => {
+  let url = `${BASE_URL}${PRODUCT_HIERARCHY_LIST_GET}`
+  url = url.replace('{nodetype}', nodetype)
+  return serviceRequest(url, 'GET', undefined)
 }
 
 export const getAllUsersAPI = () => {

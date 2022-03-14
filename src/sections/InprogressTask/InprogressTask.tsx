@@ -27,7 +27,8 @@ function InprogressTask(props: any) {
   const classes = useStyles()
   const [globalFilter, setGlobalFilter] = useState('')
   const [inProgressTasksDetails, setInprogressTasksDetails] = useState([])
-  const active = useMediaQuery(theme.breakpoints.down('sm'))
+  const active = useMediaQuery(theme.breakpoints.down(700))
+  const active1 = useMediaQuery(theme.breakpoints.between(370, 700))
 
   const goBack = () => {
     reset_myinprogressAction()
@@ -47,113 +48,140 @@ function InprogressTask(props: any) {
     }
   }, [myinprogressTasks])
   return (
-<div className="manageUser">
-  <div className="manageRequest">
-    <div className={classes.root}>
-      <div className={classes.value}>
-        <Grid container className={classes.container}>
-          <Grid item sm={12} xs={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                p: 2,
-                width: '100%',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexGrow: 1,
-                }}
-              >
-                <Typography variant="h6">My Task {'>'} Requested</Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                }}
-              >
-                <input
-                  type="text"
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  placeholder={' Search details here '}
-                  style={{
-                    width: '200px',
+    <div className="manageUser">
+      <div className="manageRequest">
+        <div className={classes.root}>
+          <div className={classes.value}>
+            <Grid container className={classes.container}>
+              <Grid item sm={12} xs={12}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: active ? 'column' : 'row',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    width: '100%',
+                    flexWrap: 'wrap',
                   }}
-                />
-              </Box>
-              <Box
-                sx={{
-                  paddingLeft: 20,
-                }}
-              >
-              <button
-                  //className={classes.backButton}
-                  className="backButton" 
-                  onClick={goBack}
-                  type="button"
                 >
-              <svg className="MuiSvgIcon-root" focusable="false" viewBox="0 0 34 34" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg> 
-              Back
-              </button>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                textAlign: 'center',
-                p: 2,
-              }}
-            >
-              {/* {!active ? ( */}
-              <DataTable
-                value={inProgressTasksDetails}
-                rowHover
-                paginator
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                currentPageReportTemplate="{first} - {last} of {totalRecords}"
-                stateStorage="session"
-                stateKey="dt-state-demo-session-inprogresstask"
-                rows={10}
-                style={{
-                  width: '100%',
-                }}
-                scrollable
-                scrollHeight="flex"
-                globalFilter={globalFilter}
-                emptyMessage="No users found."
-                showGridlines
-                //loading={manageUserLoading}
-              >
-                {inprogressTaskTableHeaders.map((column) => {
-                  return (
-                    <Column
-                      key={column.field}
-                      field={column.field}
-                      header={column.headerName}
-                      bodyStyle={{
-                        fontSize: '12px',
-                        width: column.width,
-                        overflowX: 'auto',
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexGrow: 1,
+                    }}
+                  >
+                    <Typography variant="h6">
+                      My Task {'>'} Requested
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: active
+                        ? active1
+                          ? 'row'
+                          : 'column'
+                        : 'row',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
                       }}
-                      headerStyle={{
-                        fontSize: '12px',
-                        width: column.width,
-                        backgroundColor: teal[900],
-                        color: 'white',
+                    >
+                      <input
+                        type="text"
+                        value={globalFilter}
+                        onChange={(e) => setGlobalFilter(e.target.value)}
+                        placeholder={' Search details here '}
+                        style={{
+                          width: '200px',
+                        }}
+                      />
+                    </Box>
+                    <Box
+                      // sx={{
+                      //   paddingLeft: 20,
+                      // }}
+                      sx={{
+                        paddingLeft: !active ? 20 : 0,
+                        paddingTop: active && !active1 && '10px',
+                        width: '100%',
+                        textAlign: active1 ? 'end' : 'start',
                       }}
-                      // body={
-                      //   column.field === 'requestedId' && requestIdTemplate
-                      // }
-                      sortable
-                    />
-                  )
-                })}
-              </DataTable>
-              {/* ) : (
+                    >
+                      <button
+                        //className={classes.backButton}
+                        className="backButton"
+                        onClick={goBack}
+                        type="button"
+                      >
+                        <svg
+                          className="MuiSvgIcon-root"
+                          focusable="false"
+                          viewBox="0 0 34 34"
+                          aria-hidden="true"
+                        >
+                          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                        </svg>
+                        Back
+                      </button>
+                    </Box>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: 2,
+                  }}
+                >
+                  {/* {!active ? ( */}
+                  <DataTable
+                    value={inProgressTasksDetails}
+                    rowHover
+                    paginator
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                    currentPageReportTemplate="{first} - {last} of {totalRecords}"
+                    stateStorage="session"
+                    stateKey="dt-state-demo-session-inprogresstask"
+                    rows={10}
+                    style={{
+                      width: '100%',
+                    }}
+                    scrollable
+                    scrollHeight="flex"
+                    globalFilter={globalFilter}
+                    emptyMessage="No users found."
+                    showGridlines
+                    //loading={manageUserLoading}
+                  >
+                    {inprogressTaskTableHeaders.map((column) => {
+                      return (
+                        <Column
+                          key={column.field}
+                          field={column.field}
+                          header={column.headerName}
+                          bodyStyle={{
+                            fontSize: '12px',
+                            width: column.width,
+                            overflowX: 'auto',
+                          }}
+                          headerStyle={{
+                            fontSize: '12px',
+                            width: column.width,
+                            backgroundColor: teal[900],
+                            color: 'white',
+                          }}
+                          // body={
+                          //   column.field === 'requestedId' && requestIdTemplate
+                          // }
+                          sortable
+                        />
+                      )
+                    })}
+                  </DataTable>
+                  {/* ) : (
                 <DataTable
                   value={inProgressTasksDetails}
                   rowHover
@@ -199,13 +227,13 @@ function InprogressTask(props: any) {
                   })}
                 </DataTable>
               )} */}
-            </Box>
-          </Grid>
-        </Grid>
+                </Box>
+              </Grid>
+            </Grid>
+          </div>
+        </div>
       </div>
     </div>
-</div>
-</div>
   )
 }
 const mapStateToProps = (state: any) => {

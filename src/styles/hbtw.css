@@ -134,9 +134,10 @@
   background-color: #e0e1e2;
   padding: 2px 15px 2px 10px;
   cursor: pointer;
-  font-size: 14px !important;
+  font-size: 16px !important;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  min-width: 80px;
 }
 .backButton svg {
   position: relative;
@@ -220,6 +221,11 @@
   font-size: 16px;
   display: block;
 }
+.createRequest button:disabled {
+  color: inherit;
+  /* font-size: 16px;
+  display: block; */
+}
 .createRequest .univPadding {
   padding: 5px;
 }
@@ -262,6 +268,10 @@
 }
 .p-datatable-tbody button {
   color: #299630;
+  font-size: 13px;
+}
+.p-datatable-tbody button:disabled {
+  color: inherit;
   font-size: 13px;
 }
 .p-datatable-tbody td {
@@ -308,7 +318,7 @@
 }
 .manageUser .createGroup {
   flex-direction: column;
-  width: 28%;
+  /* width: 28%; */
   margin-top: 7px;
   float: left;
   margin-top: 30px;
@@ -319,9 +329,9 @@
   }
   .manageUser .createGroup {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
     display: block;
-    text-align: right;
+    padding-left: 0px;
   }
 }
 .manageUser .buttonCreateGroup {

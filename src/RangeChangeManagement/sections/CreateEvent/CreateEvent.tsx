@@ -44,6 +44,7 @@ import { useStyles } from './styles'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
+import '../../../index.css'
 
 function CreateEvent() {
   const history = useHistory()
@@ -92,6 +93,39 @@ function CreateEvent() {
   const [stopOrder, setStopOrder] = useState('y')
 
   const [classOpen, setClassOpen] = useState(false)
+
+  const [errReset, setErrReset] = useState<any>(false)
+  const [errHandle, setErrHandle] = useState<any>(false)
+  const [errCategory, setErrCategory] = useState<any>(false)
+  const [errDepartment, setErrDepartment] = useState<any>(false)
+  const [errLaunchDate, setErrLaunchDate] = useState<any>(false)
+  const [errBuyer, setErrBuyer] = useState<any>(false)
+  const [errBuyerAssisant, setErrBuyerAssisant] = useState<any>(false)
+  const [errOwnBrandManager, setErrOwnBrandManager] = useState<any>(false)
+  const [errSeniorBuyingManager, setErrSeniorBuyingManager] =
+    useState<any>(false)
+  const [errMerchandiser, setErrMerchandiser] = useState<any>(false)
+  const [errRangeResetManager, setErrRangeResetManager] = useState<any>(false)
+  const [errCategoryDirector, setErrCategoryDirector] = useState<any>(false)
+  const [errSupplyChainSpecialist, setErrSupplyChainSpecialist] =
+    useState<any>(false)
+
+  const [resetError1, setResetError1] = useState<any>('')
+  const [tradingGError1, settradingGError1] = useState<any>('')
+  const [categoryError1, setCategoryGError1] = useState<any>('')
+  const [departmentError1, setDepartmentError1] = useState<any>('')
+  const [launchError1, setLaunchError1] = useState<any>('')
+  const [buyerError1, setBuyerError1] = useState<any>('')
+  const [buyingAssistentError1, setBuyingAssistentError1] = useState<any>('')
+  const [ownBrandManagerError1, setOwnBrandManagerError1] = useState<any>('')
+  const [seniorBuyingManagerError1, setSeniorBuyingManagerError1] =
+    useState<any>('')
+  const [merchandiserError1, setMerchandiserError1] = useState<any>('')
+  const [rangeResetManagerError1, setRangeResetManagerError1] =
+    useState<any>('')
+  const [categoryDirectorError1, setCategoryDirectorError1] = useState<any>('')
+  const [supChainSpecialistError1, setSupChainSpecialistError1] =
+    useState<any>('')
 
   const toast = useRef<any>(null)
   const focusResetType = useRef<any>(null)
@@ -151,34 +185,140 @@ function CreateEvent() {
   // };
 
   const handleResetType = (e: any) => {
-    setResetType(e.target.value)
-    if (e.target.value !== '') {
-      setResetTypeError('')
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setResetType('')
+    } else {
+      setErrReset(false)
+      setResetType(value)
+      console.log(value)
     }
+    // setResetType(e.target.value)
+    // if (e.target.value !== '') {
+    //   setResetTypeError('')
+    // }
   }
 
   const handleGroup = (e: any) => {
-    setGroup(e.target.value)
-    if (e.target.value !== '') {
-      setGroupError('')
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setGroup('')
+    } else {
+      setErrHandle(false)
+      setGroup(value)
     }
+
+    // setGroup(e.target.value)
+    // if (e.target.value !== '') {
+    //   setGroupError('')
+    // }
   }
   const handleCategory = (e: any) => {
-    setCategory(e.target.value)
-    if (e.target.value !== '') {
-      setCategoryError('')
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setCategory('')
+    } else {
+      setErrCategory(false)
+      setCategory(value)
     }
+
+    // setCategory(e.target.value)
+    // if (e.target.value !== '') {
+    //   setCategoryError('')
+    // }
   }
   const handleDepartment = (e: any) => {
-    setDepartment(e.target.value)
-    if (e.target.value !== '') {
-      setDepartmentError('')
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setDepartment('')
+    } else {
+      setErrDepartment(false)
+      setDepartment(value)
     }
+
+    // setDepartment(e.target.value)
+    // if (e.target.value !== '') {
+    //   setDepartmentError('')
+    // }
   }
   const handleBuyer = (e: any) => {
-    setBuyer(e)
-    if (e) {
-      setBuyerError('')
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setBuyer('')
+    } else {
+      setErrBuyer(false)
+      setBuyer(value)
+    }
+
+    // setBuyer(e)
+    // if (e) {
+    //   setBuyerError('')
+    // }
+  }
+
+  const handleBuyingAssistant = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setBuyingAssistant('')
+    } else {
+      setErrBuyerAssisant(false)
+      setBuyingAssistant(value)
+    }
+  }
+
+  const handleOwnBrandManager = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setOwnBrandManager('')
+    } else {
+      setErrOwnBrandManager(false)
+      setOwnBrandManager(value)
+    }
+  }
+  const handleSeniorBuyingManager = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setSeniorBuyingManager('')
+    } else {
+      setErrSeniorBuyingManager(false)
+      setSeniorBuyingManager(value)
+    }
+  }
+  const handleMerchandiser = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setMerchandiser('')
+    } else {
+      setErrMerchandiser(false)
+      setMerchandiser(value)
+    }
+  }
+
+  const handleRangeResetManager = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setRangeResetManager('')
+    } else {
+      setErrRangeResetManager(false)
+      setRangeResetManager(value)
+    }
+  }
+  const handleCategoryDirector = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setCategoryDirector('')
+    } else {
+      setErrCategoryDirector(false)
+      setCategoryDirector(value)
+    }
+  }
+  const handleSupplyChainSpecialist = (e: any) => {
+    const value = e.target.value
+    if (value === null || value === undefined || value === '') {
+      setSupplyChainSpecialist('')
+    } else {
+      setErrSupplyChainSpecialist(false)
+      setSupplyChainSpecialist(value)
     }
   }
 
@@ -428,20 +568,210 @@ function CreateEvent() {
     }
   }, [buyerError])
 
-  const handleCreate = () => {
-    if (
-      validateResetType() &&
-      validateGroup() &&
-      validateCategory() &&
-      validateDepartment() &&
-      validateBuyer()
-    ) {
-      console.log('success')
+  // const handleCreate = () => {
+  //   if (
+  //     validateResetType() &&
+  //     validateGroup() &&
+  //     validateCategory() &&
+  //     validateDepartment() &&
+  //     validateBuyer()
+  //   ) {
+  //     console.log('success')
 
+  //     const formData = {
+  //       // uniqueId: uniqueId,
+  //       resetType: resetType,
+  //       tradeGroup: group,
+  //       category: category,
+  //       department: department,
+  //       launchDate: launchDate,
+  //       rafDueDate: rafDueDate,
+  //       eventName: eventName,
+  //       planogramClass: {
+  //         className: classFormData,
+  //       },
+  //       storeWasteProcessTiming: storeWasteProcess,
+  //       // buyer: buyer,
+  //       buyer: buyerConfirmed,
+  //       buyerAssistant: buyingAssistant,
+  //       ownBrandManager: ownBrandManager,
+  //       seniorBuyingManager: seniorBuyingManager,
+  //       merchandiser: merchandiser,
+  //       rangeResetManager: rangeResetManager,
+  //       categoryDirector: categoryDirector,
+  //       supplyChainAnalyst: supplyChainSpecialist,
+  //       clearancePriceApplied: clearancePriceApplied,
+  //       orderStopDateCheck: orderStopDateCheck,
+  //       stopOrder: stopOrder,
+  //     }
+  //     console.log(formData)
+  //     history.push({
+  //       pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
+  //       search: `?event=${formData['eventName']}`, // query string
+  //       state: {
+  //         // location state
+  //         data: formData,
+  //       },
+  //     })
+  //   } else {
+  //     console.log('fail')
+  //     toast.current.show({
+  //       severity: 'error',
+  //       summary: '',
+  //       detail: 'Please fll all the essential fields',
+  //       life: 2000,
+  //     })
+  //   }
+  // }
+
+  const handleCreateSubmit = (e: any) => {
+    e.preventDefault()
+    // console.log('Sridhar')
+    // console.log('RAF Date', rafDueDate.getTime())
+    // console.log('Launch Date', launchDate.getTime())
+
+    if (!resetType || resetType === null || resetType === undefined) {
+      setErrReset(true)
+      setResetError1('Please select request type')
+    } else {
+      setErrReset(false)
+      setResetError1('')
+    }
+    if (!group || group === null || group === undefined) {
+      setErrHandle(true)
+      settradingGError1('Please select trading group')
+    } else {
+      setErrHandle(false)
+      settradingGError1('')
+    }
+    if (!category || category === null || category === undefined) {
+      setErrCategory(true)
+      setCategoryGError1('Please select category')
+    } else {
+      setErrCategory(false)
+      setCategoryGError1('')
+    }
+    if (!department || department === null || department === undefined) {
+      setErrDepartment(true)
+      setDepartmentError1('Please select department')
+    } else {
+      setErrDepartment(false)
+      setDepartmentError1('')
+    }
+    if (!launchDate || launchDate === null || launchDate === undefined) {
+      setErrLaunchDate(true)
+      setLaunchError1('Please select launch date')
+    } else {
+      setErrLaunchDate(false)
+      setLaunchError1('')
+    }
+    // if (launchDate.getTime() <= rafDueDate.getTime()) {
+    //   setErrLaunchDate(true)
+    //   setLaunchError1(
+    //     'RAF/App due date shouldn' + ' t be greater than launch date'
+    //   )
+    // } else {
+    //   setErrLaunchDate(false)
+    //   setLaunchError1('')
+    // }
+    if (!buyer || buyer === null || buyer === undefined) {
+      setErrBuyer(true)
+      setBuyerError1('Please select buyer')
+    } else {
+      setErrBuyer(false)
+      setBuyerError1('')
+    }
+    if (
+      !buyingAssistant ||
+      buyingAssistant === null ||
+      buyingAssistant === undefined
+    ) {
+      setErrBuyerAssisant(true)
+      setBuyingAssistentError1('Please select buying assistant')
+    } else {
+      setErrBuyerAssisant(false)
+      setBuyingAssistentError1('')
+    }
+    if (
+      !ownBrandManager ||
+      ownBrandManager === null ||
+      ownBrandManager === undefined
+    ) {
+      setErrOwnBrandManager(true)
+      setOwnBrandManagerError1('Please select own brand manager')
+    } else {
+      setErrOwnBrandManager(false)
+      setOwnBrandManagerError1('')
+    }
+    if (
+      !seniorBuyingManager ||
+      seniorBuyingManager === null ||
+      seniorBuyingManager === undefined
+    ) {
+      setErrSeniorBuyingManager(true)
+      setSeniorBuyingManagerError1('Please select senior buying manager')
+    } else {
+      setErrSeniorBuyingManager(false)
+      setSeniorBuyingManagerError1('')
+    }
+    if (!merchandiser || merchandiser === null || merchandiser === undefined) {
+      setErrMerchandiser(true)
+      setMerchandiserError1('Please select merchandiser')
+    } else {
+      setErrMerchandiser(false)
+      setMerchandiserError1('')
+    }
+    if (
+      !rangeResetManager ||
+      rangeResetManager === null ||
+      rangeResetManager === undefined
+    ) {
+      setErrRangeResetManager(true)
+      setRangeResetManagerError1('Please select range reset manager')
+    } else {
+      setErrRangeResetManager(false)
+      setRangeResetManagerError1('')
+    }
+    if (
+      !categoryDirector ||
+      categoryDirector === null ||
+      categoryDirector === undefined
+    ) {
+      setErrCategoryDirector(true)
+      setCategoryDirectorError1('Please select categiry director')
+    } else {
+      setErrCategoryDirector(false)
+      setCategoryDirectorError1('')
+    }
+    if (
+      !supplyChainSpecialist ||
+      supplyChainSpecialist === null ||
+      supplyChainSpecialist === undefined
+    ) {
+      setErrSupplyChainSpecialist(true)
+      setSupChainSpecialistError1('Please select sup. chain specialist')
+    } else {
+      setErrSupplyChainSpecialist(false)
+      setSupChainSpecialistError1('')
+    }
+    if (
+      resetType &&
+      group &&
+      category &&
+      department &&
+      buyer &&
+      buyingAssistant &&
+      ownBrandManager &&
+      seniorBuyingManager &&
+      merchandiser &&
+      rangeResetManager &&
+      categoryDirector &&
+      supplyChainSpecialist
+    ) {
       const formData = {
         // uniqueId: uniqueId,
         resetType: resetType,
-        resetGroup: group,
+        tradeGroup: group,
         category: category,
         department: department,
         launchDate: launchDate,
@@ -478,12 +808,11 @@ function CreateEvent() {
       toast.current.show({
         severity: 'error',
         summary: '',
-        detail: 'Please fll all the essential fields',
+        detail: 'Please fill all the essential fields',
         life: 2000,
       })
     }
   }
-
   const createEventForm = (
     <Box
       className="createRequest"
@@ -639,11 +968,16 @@ function CreateEvent() {
                           )
                         })}
                       </Select>
+                      {errReset && (
+                        <span className={classes.errorMessageColor}>
+                          {resetError1}
+                        </span>
+                      )}
 
-                      <br />
+                      {/* <br />
                       <div className={classes.errorMessage}>
                         {resetTypeError && resetTypeError}
-                      </div>
+                      </div> */}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -775,7 +1109,13 @@ function CreateEvent() {
                         })}
                       </Select>
 
-                      <div className={classes.errorMessage}>{groupError}</div>
+                      {errHandle && (
+                        <span className={classes.errorMessageColor}>
+                          {tradingGError1}
+                        </span>
+                      )}
+
+                      {/* <div className={classes.errorMessage}>{groupError}</div> */}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -833,9 +1173,15 @@ function CreateEvent() {
                         })}
                       </Select>
 
-                      <div className={classes.errorMessage}>
+                      {errCategory && (
+                        <span className={classes.errorMessageColor}>
+                          {categoryError1}
+                        </span>
+                      )}
+
+                      {/* <div className={classes.errorMessage}>
                         {categoryError}
-                      </div>
+                      </div> */}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -896,9 +1242,15 @@ function CreateEvent() {
                         })}
                       </Select>
 
-                      <div className={classes.errorMessage}>
+                      {errDepartment && (
+                        <span className={classes.errorMessageColor}>
+                          {departmentError1}
+                        </span>
+                      )}
+
+                      {/* <div className={classes.errorMessage}>
                         {departmentError}
-                      </div>
+                      </div> */}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -943,9 +1295,16 @@ function CreateEvent() {
                     required
                   /> */}
 
-                      <div className={classes.errorMessage}>
+                      <br />
+                      {errLaunchDate && (
+                        <span className={classes.errorMessageColor}>
+                          {launchError1}
+                        </span>
+                      )}
+
+                      {/* <div className={classes.errorMessage}>
                         {launchDateError}
-                      </div>
+                      </div> */}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1220,14 +1579,21 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={buyer}
-                        onChange={(e: any) => setBuyer(e.target.value)}
+                        // onChange={(e: any) => setBuyer(e.target.value)}
+                        onChange={handleBuyer}
                         placeholder="Search Buyer"
                         onClick={handleBuyerClick}
                       />
 
-                      <div className={classes.errorMessage} ref={focusBuyer}>
+                      {errBuyer && (
+                        <span className={classes.errorMessageColor}>
+                          {buyerError1}
+                        </span>
+                      )}
+
+                      {/* <div className={classes.errorMessage} ref={focusBuyer}>
                         {buyerError}
-                      </div>
+                      </div> */}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1260,10 +1626,16 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={buyingAssistant}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleBuyingAssistant}
                         placeholder="Search Buying Assistant"
                         onClick={() => console.log('clicked')}
                       />
+                      {errBuyerAssisant && (
+                        <span className={classes.errorMessageColor}>
+                          {buyingAssistentError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1296,10 +1668,17 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={ownBrandManager}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleOwnBrandManager}
                         placeholder="Search Own Brand Manager"
                         onClick={() => console.log('clicked')}
                       />
+
+                      {errOwnBrandManager && (
+                        <span className={classes.errorMessageColor}>
+                          {ownBrandManagerError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1332,10 +1711,17 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={seniorBuyingManager}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleSeniorBuyingManager}
                         placeholder="Search Senior Buying Manager"
                         onClick={() => console.log('clicked')}
                       />
+
+                      {errSeniorBuyingManager && (
+                        <span className={classes.errorMessageColor}>
+                          {seniorBuyingManagerError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1369,10 +1755,17 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={merchandiser}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleMerchandiser}
                         placeholder="Search Merchandiser"
                         onClick={() => console.log('clicked')}
                       />
+
+                      {errMerchandiser && (
+                        <span className={classes.errorMessageColor}>
+                          {merchandiserError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1406,10 +1799,17 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={rangeResetManager}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleRangeResetManager}
                         placeholder="Search Range Reset Manager"
                         onClick={() => console.log('clicked')}
                       />
+
+                      {errRangeResetManager && (
+                        <span className={classes.errorMessageColor}>
+                          {rangeResetManagerError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1443,10 +1843,17 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={categoryDirector}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleCategoryDirector}
                         placeholder="Search Category Director"
                         onClick={() => console.log('clicked')}
                       />
+
+                      {errCategoryDirector && (
+                        <span className={classes.errorMessageColor}>
+                          {categoryDirectorError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1480,11 +1887,17 @@ function CreateEvent() {
 
                       <SearchSelect
                         value={supplyChainSpecialist}
-                        onChange={(e: any) => console.log(e.target.value)}
+                        // onChange={(e: any) => console.log(e.target.value)}
+                        onChange={handleSupplyChainSpecialist}
                         placeholder="Search Supply Chain Specialist"
                         onClick={() => console.log('clicked')}
                         required
                       />
+                      {errSupplyChainSpecialist && (
+                        <span className={classes.errorMessageColor}>
+                          {supChainSpecialistError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1548,7 +1961,8 @@ function CreateEvent() {
                         variant="contained"
                         color="primary"
                         className={classes.buttons}
-                        onClick={handleCreate}
+                        // onClick={handleCreate}
+                        onClick={handleCreateSubmit}
                         size="small"
                       >
                         Create Event

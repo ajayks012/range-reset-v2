@@ -153,37 +153,71 @@ export const constants = {
     { field: 'comments', headerName: 'Comments', width: 200 },
   ],
 
+  // requestTypes: [
+  //   {
+  //     name: 'new',
+  //     text: 'Create New User',
+  //   },
+  //   {
+  //     name: 'modify',
+  //     text: 'Modify Existing User',
+  //   },
+  //   {
+  //     name: 'remove',
+  //     text: 'Remove Existing User',
+  //   },
+  // ],
   requestTypes: [
     {
-      name: 'new',
-      text: 'Create New User',
+      value: 'new',
+      label: 'Create New User',
     },
     {
-      name: 'modify',
-      text: 'Modify Existing User',
+      value: 'modify',
+      label: 'Modify Existing User',
     },
     {
-      name: 'remove',
-      text: 'Remove Existing User',
+      value: 'remove',
+      label: 'Remove Existing User',
     },
   ],
 
+  // statuses: [
+  //   {
+  //     statusID: 'A',
+  //     text: 'Active',
+  //   },
+  //   {
+  //     statusID: 'W',
+  //     text: 'Inprogress',
+  //   },
+  //   {
+  //     statusID: 'I',
+  //     text: 'Inactive',
+  //   },
+  //   {
+  //     statusID: 'D',
+  //     text: 'Deleted',
+  //   },
+  // ],
+
   statuses: [
     {
-      statusID: 'A',
-      text: 'Active',
+      value: 'A',
+      label: 'Active',
     },
     {
-      statusID: 'W',
-      text: 'Inprogress',
+      value: 'W',
+      label: 'Inprogress',
+      isDisabled: true,
     },
     {
-      statusID: 'I',
-      text: 'Inactive',
+      value: 'I',
+      label: 'Inactive',
     },
     {
-      statusID: 'D',
-      text: 'Deleted',
+      value: 'D',
+      label: 'Deleted',
     },
   ],
 

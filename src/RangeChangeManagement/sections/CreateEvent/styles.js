@@ -151,6 +151,14 @@ export const useStyles = makeStyles((theme) => {
     errorMessage: {
       color: 'red',
     },
+    errorMessageColor: {
+      color: '#d32f22',
+      marginLeft: '14px',
+      marginRight: '14px',
+      marginTop: '4px',
+      paddingTop: '10px',
+      lineHeight: 3,
+    },
     inputFieldBox: {
       width: 400,
       [theme.breakpoints.down(750)]: {

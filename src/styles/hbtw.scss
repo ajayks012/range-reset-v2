@@ -134,6 +134,7 @@
   font-size: 16px !important;
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
     0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  min-width: 80px;
   svg {
     position: relative;
     top: 8px;
@@ -263,6 +264,9 @@
   button {
     color: $fresh-green-550;
     font-size: 13px;
+    &:disabled {
+      color: inherit;
+    }
   }
   td {
     font-size: 12px !important;
@@ -309,7 +313,7 @@
   }
   .createGroup {
     flex-direction: column;
-    width: 28%;
+    // width: 28%;
     margin-top: 7px;
     float: left;
     margin-top: 30px;
@@ -320,9 +324,9 @@
     }
     .createGroup {
       width: 100%;
-      margin-top: 10px;
+      margin-top: 20px;
       display: block;
-      text-align: right;
+      padding-left: 0px;
     }
   }
   .buttonCreateGroup {

@@ -58,8 +58,10 @@ function UserManage(props: any) {
               additionalInfo: user.user.additionalInfo,
               designation: user.user.designation,
               status: constants.statuses
-                .filter((stat: any) => stat.statusID === user.user.status)
-                .map((stat: any) => stat.text)
+                // .filter((stat: any) => stat.statusID === user.user.status)
+                .filter((stat: any) => stat.value === user.user.status)
+                //.map((stat: any) => stat.text)
+                .map((stat: any) => stat.label)
                 .toString(),
               // status: user.user.status,
               roles: user.roles,
@@ -145,12 +147,13 @@ function UserManage(props: any) {
   //   };
 
   return (
-    <div className="manageUser" //className={classes.root}
+    <div
+      className="manageUser" //className={classes.root}
     >
       <div className={classes.value}>
         <Grid container className={classes.container}>
-          <Grid item sm={12} xs={12} className="manageRequest"> 
-            <Box 
+          <Grid item sm={12} xs={12} className="manageRequest">
+            <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'row',

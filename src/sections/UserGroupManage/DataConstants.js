@@ -39,18 +39,32 @@ export const constants = {
     { field: 'endDate', headerName: 'End Date', width: 100 },
   ],
 
+  // groupstatuses: [
+  //   {
+  //     statusID: 'A',
+  //     text: 'Active',
+  //   },
+  //   {
+  //     statusID: 'I',
+  //     text: 'Inactive',
+  //   },
+  //   {
+  //     statusID: 'D',
+  //     text: 'Deleted',
+  //   },
+  // ],
   groupstatuses: [
     {
-      statusID: 'A',
-      text: 'Active',
+      value: 'A',
+      label: 'Active',
     },
     {
-      statusID: 'I',
-      text: 'Inactive',
+      value: 'I',
+      label: 'Inactive',
     },
     {
-      statusID: 'D',
-      text: 'Deleted',
+      value: 'D',
+      label: 'Deleted',
     },
   ],
 }
