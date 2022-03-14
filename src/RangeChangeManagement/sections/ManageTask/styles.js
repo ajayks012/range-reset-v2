@@ -103,6 +103,20 @@ export const useStyles = makeStyles((theme) => {
     value: {
       flex: 1,
     },
+    selectField: {
+      [theme.breakpoints.up('sm')]: {
+        width: '100%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+      padding: '8px',
+      height: 38,
+      fontSize: '12px',
+    },
+    muiSelect: {
+      fontSize: '12px',
+    },
   }
 })
 

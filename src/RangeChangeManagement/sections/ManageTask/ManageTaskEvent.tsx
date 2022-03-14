@@ -10,6 +10,9 @@ import {
   Checkbox,
   Tooltip,
   Radio,
+  Select,
+  OutlinedInput,
+  MenuItem,
 } from '@material-ui/core'
 import { red, teal } from '@material-ui/core/colors'
 import { styled } from '@material-ui/styles'
@@ -47,6 +50,7 @@ import {
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
+import { getProductHierarchyListAPI } from '../../../api/Fetch'
 
 const Input = styled('input')({
   display: 'none',
@@ -112,6 +116,93 @@ function ManageTaskEvent(props: any) {
     RANGEAMEND_MANAGE_TASK,
     RANGEAMEND_EVENTDASH,
   } = routes
+
+  const [groupOptions, setGroupOptions] = useState<any>([])
+  const [categoryOptions, setCategoryOptions] = useState<any>([])
+  const [departmentOptions, setDepartmentOptions] = useState<any>([])
+
+  useEffect(() => {
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('group')
+        .then((res: any) => {
+          const grpList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.groupName,
+              label: item.groupName,
+              id: item.group,
+              hierGroup: 'group',
+            }
+          })
+          setGroupOptions(grpList)
+          console.log('group length: ', grpList.length)
+        })
+        .catch((err: any) => setGroupOptions([]))
+  }, [])
+
+  useEffect(() => {
+    console.log(group)
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('category')
+        .then((res: any) => {
+          const categoryList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.categoryName,
+              label: item.categoryName,
+              id: item.category,
+              hierGroup: 'category',
+              groupName: item.groupName,
+            }
+          })
+
+          group &&
+            setCategoryOptions(
+              categoryList.filter((cat: any) => cat.groupName === group)
+            )
+          group &&
+            console.log(
+              'category length: ',
+              categoryList.filter((cat: any) => cat.groupName === group)
+            )
+        })
+        .catch((err: any) => setCategoryOptions([]))
+  }, [group])
+
+  useEffect(() => {
+    if (group && category) {
+      getProductHierarchyListAPI &&
+        getProductHierarchyListAPI('department')
+          .then((res: any) => {
+            const depList = res.data.hierarchyNode.map((item: any) => {
+              return {
+                value: item.departmentName,
+                label: item.departmentName,
+                id: item.department,
+                hierGroup: 'department',
+                groupName: item.groupName,
+                categoryName: item.categoryName,
+              }
+            })
+            setDepartmentOptions(
+              depList.filter(
+                (dep: any) =>
+                  dep.groupName === group && dep.categoryName === category
+              )
+            )
+            console.log(
+              'department length: ',
+              depList.filter(
+                (dep: any) =>
+                  dep.groupName === group && dep.categoryName === category
+              )
+            )
+            // setLoaded(true)
+          })
+          .catch((err: any) => {
+            setDepartmentOptions([])
+            // setLoaded(true)
+          })
+    }
+  }, [category])
 
   const goBack = () => {
     history.goBack()
@@ -855,7 +946,7 @@ function ManageTaskEvent(props: any) {
         setSearchParams((prevState: any) => {
           return {
             ...prevState,
-            group: e.target.value,
+            tradeGroup: e.target.value,
           }
         })
         // }
@@ -1028,7 +1119,9 @@ function ManageTaskEvent(props: any) {
             ? file.targetDate <= searchParams.launchDateTo
             : true
         let groupFilter =
-          searchParams.group !== '' ? file.group === searchParams.group : true
+          searchParams.tradeGroup !== ''
+            ? file.tradeGroup === searchParams.tradeGroup
+            : true
         let categoryFilter =
           searchParams.category !== ''
             ? file.category === searchParams.category
@@ -1275,7 +1368,7 @@ function ManageTaskEvent(props: any) {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography color="primary" variant="body2">
-                      <select
+                      {/* <select
                         name="group"
                         id="group"
                         className={classes.searchTextField}
@@ -1286,7 +1379,36 @@ function ManageTaskEvent(props: any) {
                       >
                         <option value="">--- Select Group ---</option>
                         <option value="Frozen">Frozen</option>
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={group}
+                        onChange={(e: any) => handleSearchParams(e, 'group')}
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value ? value : '--- Select Group ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                            disabled={groupOptions.length > 0 ? false : true}
+                          />
+                        }
+                        disabled={groupOptions.length > 0 ? false : true}
+                      >
+                        {groupOptions.map((type: any) => {
+                          return (
+                            <MenuItem
+                              value={type.value}
+                              key={type.value}
+                              className={classes.muiSelect}
+                            >
+                              {type.label}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1298,7 +1420,7 @@ function ManageTaskEvent(props: any) {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography color="primary" variant="body2">
-                      <select
+                      {/* <select
                         className={classes.searchTextField}
                         // defaultValue=""
                         value={category}
@@ -1308,7 +1430,35 @@ function ManageTaskEvent(props: any) {
                         <option value="">--- Select Category ---</option>
 
                         <option value="Frozen Food">Frozen Food</option>
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={category}
+                        onChange={(e: any) => handleSearchParams(e, 'category')}
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value ? value : '--- Select Category ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                          />
+                        }
+                        disabled={categoryOptions.length > 0 ? false : true}
+                      >
+                        {categoryOptions.map((type: any) => {
+                          return (
+                            <MenuItem
+                              value={type.value}
+                              key={type.value}
+                              className={classes.muiSelect}
+                            >
+                              {type.label}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1320,7 +1470,7 @@ function ManageTaskEvent(props: any) {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography color="primary" variant="body2">
-                      <select
+                      {/* <select
                         className={classes.searchTextField}
                         // defaultValue=""
                         value={department}
@@ -1336,7 +1486,37 @@ function ManageTaskEvent(props: any) {
                           Frozen Vegetables
                         </option>
                         <option value="Frozen Fish">Frozen Fish</option>
-                      </select>
+                      </select> */}
+
+                      <Select
+                        value={department}
+                        onChange={(e: any) =>
+                          handleSearchParams(e, 'department')
+                        }
+                        displayEmpty
+                        renderValue={(value: any) =>
+                          value ? value : '--- Select Department ---'
+                        }
+                        input={
+                          <OutlinedInput
+                            margin="dense"
+                            className={classes.selectField}
+                          />
+                        }
+                        disabled={departmentOptions.length > 0 ? false : true}
+                      >
+                        {departmentOptions.map((type: any) => {
+                          return (
+                            <MenuItem
+                              value={type.value}
+                              key={type.value}
+                              className={classes.muiSelect}
+                            >
+                              {type.label}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
                     </Typography>
                   </Grid>
                 </Grid>

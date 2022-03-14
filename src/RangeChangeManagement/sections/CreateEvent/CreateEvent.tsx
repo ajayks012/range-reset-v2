@@ -45,6 +45,11 @@ import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
 import '../../../index.css'
+import {
+  // getProductHierarchyAPI,
+  // putUserGroupAPI,
+  getProductHierarchyListAPI,
+} from '../../../api/Fetch'
 
 function CreateEvent() {
   const history = useHistory()
@@ -136,6 +141,93 @@ function CreateEvent() {
   const focusLaunchDate = useRef<any>(null)
   const focusBuyer = useRef<any>(null)
   const focusRafDueDate = useRef<any>(null)
+
+  const [groupOptions, setGroupOptions] = useState<any>([])
+  const [categoryOptions, setCategoryOptions] = useState<any>([])
+  const [departmentOptions, setDepartmentOptions] = useState<any>([])
+
+  useEffect(() => {
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('group')
+        .then((res: any) => {
+          const grpList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.groupName,
+              label: item.groupName,
+              id: item.group,
+              hierGroup: 'group',
+            }
+          })
+          setGroupOptions(grpList)
+          console.log('group length: ', grpList.length)
+        })
+        .catch((err: any) => setGroupOptions([]))
+  }, [])
+
+  useEffect(() => {
+    console.log(group)
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('category')
+        .then((res: any) => {
+          const categoryList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.categoryName,
+              label: item.categoryName,
+              id: item.category,
+              hierGroup: 'category',
+              groupName: item.groupName,
+            }
+          })
+
+          group &&
+            setCategoryOptions(
+              categoryList.filter((cat: any) => cat.groupName === group)
+            )
+          group &&
+            console.log(
+              'category length: ',
+              categoryList.filter((cat: any) => cat.groupName === group)
+            )
+        })
+        .catch((err: any) => setCategoryOptions([]))
+  }, [group])
+
+  useEffect(() => {
+    if (group && category) {
+      getProductHierarchyListAPI &&
+        getProductHierarchyListAPI('department')
+          .then((res: any) => {
+            const depList = res.data.hierarchyNode.map((item: any) => {
+              return {
+                value: item.departmentName,
+                label: item.departmentName,
+                id: item.department,
+                hierGroup: 'department',
+                groupName: item.groupName,
+                categoryName: item.categoryName,
+              }
+            })
+            setDepartmentOptions(
+              depList.filter(
+                (dep: any) =>
+                  dep.groupName === group && dep.categoryName === category
+              )
+            )
+            console.log(
+              'department length: ',
+              depList.filter(
+                (dep: any) =>
+                  dep.groupName === group && dep.categoryName === category
+              )
+            )
+            // setLoaded(true)
+          })
+          .catch((err: any) => {
+            setDepartmentOptions([])
+            // setLoaded(true)
+          })
+    }
+  }, [category])
 
   useEffect(() => {
     if (department && launchDate && !eventName) {
@@ -1096,17 +1188,18 @@ function CreateEvent() {
                           />
                         }
                       >
-                        {groups.map((type) => {
-                          return (
-                            <MenuItem
-                              value={type.text}
-                              key={type.name}
-                              className={classes.muiSelect}
-                            >
-                              {type.text}
-                            </MenuItem>
-                          )
-                        })}
+                        {groupOptions &&
+                          groupOptions.map((type: any) => {
+                            return (
+                              <MenuItem
+                                value={type.value}
+                                key={type.value}
+                                className={classes.muiSelect}
+                              >
+                                {type.label}
+                              </MenuItem>
+                            )
+                          })}
                       </Select>
 
                       {errHandle && (
@@ -1159,15 +1252,16 @@ function CreateEvent() {
                             className={classes.selectField}
                           />
                         }
+                        disabled={categoryOptions.length > 0 ? false : true}
                       >
-                        {categories.map((type) => {
+                        {categoryOptions.map((type: any) => {
                           return (
                             <MenuItem
-                              value={type.text}
-                              key={type.name}
+                              value={type.value}
+                              key={type.value}
                               className={classes.muiSelect}
                             >
-                              {type.text}
+                              {type.label}
                             </MenuItem>
                           )
                         })}
@@ -1228,15 +1322,16 @@ function CreateEvent() {
                             className={classes.selectField}
                           />
                         }
+                        disabled={departmentOptions.length > 0 ? false : true}
                       >
-                        {departments.map((type) => {
+                        {departmentOptions.map((type: any) => {
                           return (
                             <MenuItem
-                              value={type.text}
-                              key={type.name}
+                              value={type.value}
+                              key={type.value}
                               className={classes.muiSelect}
                             >
-                              {type.text}
+                              {type.label}
                             </MenuItem>
                           )
                         })}
