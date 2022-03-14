@@ -694,7 +694,10 @@ function ManageTaskEvent(props: any) {
                 style={ConfirmedBodyStyle(col.width)}
                 // filter filterPlaceholder="Search by name"
                 // bodyStyle={{ overflowX: 'auto' }}
-                headerStyle={ConfirmedHeaderStyle(col.width)}
+                headerStyle={ConfirmedHeaderStyle(
+                  col.width,
+                  theme.palette.primary.main
+                )}
                 sortable
                 // frozen={col.field === 'eventName' ? true : false}
               />
@@ -739,7 +742,10 @@ function ManageTaskEvent(props: any) {
                 body={col.field === 'planogramClass' && classTemplate}
                 bodyStyle={{ overflowX: 'auto' }}
                 style={PreviewBodyStyle(col.width)}
-                headerStyle={PreviewHeaderStyle(col.width)}
+                headerStyle={PreviewHeaderStyle(
+                  col.width,
+                  theme.palette.primary.main
+                )}
                 sortable
                 // frozen={col.field === "eventName" ? true : false}
               />
@@ -942,11 +948,15 @@ function ManageTaskEvent(props: any) {
       }
       case 'group': {
         setGroup(e.target.value)
+        setCategory('')
+        setDepartment('')
         // if (e.target.value) {
         setSearchParams((prevState: any) => {
           return {
             ...prevState,
             tradeGroup: e.target.value,
+            category: '',
+            department: '',
           }
         })
         // }
@@ -954,11 +964,13 @@ function ManageTaskEvent(props: any) {
       }
       case 'category': {
         setCategory(e.target.value)
+        setDepartment('')
         // if (e.target.value ) {
         setSearchParams((prevState: any) => {
           return {
             ...prevState,
             category: e.target.value,
+            department: '',
           }
         })
         // }
@@ -1367,8 +1379,8 @@ function ManageTaskEvent(props: any) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      {/* <select
+                    {/* <Typography color="primary" variant="body2"> */}
+                    {/* <select
                         name="group"
                         id="group"
                         className={classes.searchTextField}
@@ -1381,35 +1393,35 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen">Frozen</option>
                       </select> */}
 
-                      <Select
-                        value={group}
-                        onChange={(e: any) => handleSearchParams(e, 'group')}
-                        displayEmpty
-                        renderValue={(value: any) =>
-                          value ? value : '--- Select Group ---'
-                        }
-                        input={
-                          <OutlinedInput
-                            margin="dense"
-                            className={classes.selectField}
-                            disabled={groupOptions.length > 0 ? false : true}
-                          />
-                        }
-                        disabled={groupOptions.length > 0 ? false : true}
-                      >
-                        {groupOptions.map((type: any) => {
-                          return (
-                            <MenuItem
-                              value={type.value}
-                              key={type.value}
-                              className={classes.muiSelect}
-                            >
-                              {type.label}
-                            </MenuItem>
-                          )
-                        })}
-                      </Select>
-                    </Typography>
+                    <Select
+                      value={group}
+                      onChange={(e: any) => handleSearchParams(e, 'group')}
+                      displayEmpty
+                      renderValue={(value: any) =>
+                        value ? value : '--- Select Group ---'
+                      }
+                      input={
+                        <OutlinedInput
+                          margin="dense"
+                          className={classes.selectField}
+                          disabled={groupOptions.length > 0 ? false : true}
+                        />
+                      }
+                      disabled={groupOptions.length > 0 ? false : true}
+                    >
+                      {groupOptions.map((type: any) => {
+                        return (
+                          <MenuItem
+                            value={type.value}
+                            key={type.value}
+                            className={classes.muiSelect}
+                          >
+                            {type.label}
+                          </MenuItem>
+                        )
+                      })}
+                    </Select>
+                    {/* </Typography> */}
                   </Grid>
                 </Grid>
                 <Grid item container>
@@ -1419,8 +1431,8 @@ function ManageTaskEvent(props: any) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      {/* <select
+                    {/* <Typography color="primary" variant="body2"> */}
+                    {/* <select
                         className={classes.searchTextField}
                         // defaultValue=""
                         value={category}
@@ -1432,34 +1444,34 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen Food">Frozen Food</option>
                       </select> */}
 
-                      <Select
-                        value={category}
-                        onChange={(e: any) => handleSearchParams(e, 'category')}
-                        displayEmpty
-                        renderValue={(value: any) =>
-                          value ? value : '--- Select Category ---'
-                        }
-                        input={
-                          <OutlinedInput
-                            margin="dense"
-                            className={classes.selectField}
-                          />
-                        }
-                        disabled={categoryOptions.length > 0 ? false : true}
-                      >
-                        {categoryOptions.map((type: any) => {
-                          return (
-                            <MenuItem
-                              value={type.value}
-                              key={type.value}
-                              className={classes.muiSelect}
-                            >
-                              {type.label}
-                            </MenuItem>
-                          )
-                        })}
-                      </Select>
-                    </Typography>
+                    <Select
+                      value={category}
+                      onChange={(e: any) => handleSearchParams(e, 'category')}
+                      displayEmpty
+                      renderValue={(value: any) =>
+                        value ? value : '--- Select Category ---'
+                      }
+                      input={
+                        <OutlinedInput
+                          margin="dense"
+                          className={classes.selectField}
+                        />
+                      }
+                      disabled={categoryOptions.length > 0 ? false : true}
+                    >
+                      {categoryOptions.map((type: any) => {
+                        return (
+                          <MenuItem
+                            value={type.value}
+                            key={type.value}
+                            className={classes.muiSelect}
+                          >
+                            {type.label}
+                          </MenuItem>
+                        )
+                      })}
+                    </Select>
+                    {/* </Typography> */}
                   </Grid>
                 </Grid>
                 <Grid item container>
@@ -1469,8 +1481,8 @@ function ManageTaskEvent(props: any) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      {/* <select
+                    {/* <Typography color="primary" variant="body2"> */}
+                    {/* <select
                         className={classes.searchTextField}
                         // defaultValue=""
                         value={department}
@@ -1488,36 +1500,34 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen Fish">Frozen Fish</option>
                       </select> */}
 
-                      <Select
-                        value={department}
-                        onChange={(e: any) =>
-                          handleSearchParams(e, 'department')
-                        }
-                        displayEmpty
-                        renderValue={(value: any) =>
-                          value ? value : '--- Select Department ---'
-                        }
-                        input={
-                          <OutlinedInput
-                            margin="dense"
-                            className={classes.selectField}
-                          />
-                        }
-                        disabled={departmentOptions.length > 0 ? false : true}
-                      >
-                        {departmentOptions.map((type: any) => {
-                          return (
-                            <MenuItem
-                              value={type.value}
-                              key={type.value}
-                              className={classes.muiSelect}
-                            >
-                              {type.label}
-                            </MenuItem>
-                          )
-                        })}
-                      </Select>
-                    </Typography>
+                    <Select
+                      value={department}
+                      onChange={(e: any) => handleSearchParams(e, 'department')}
+                      displayEmpty
+                      renderValue={(value: any) =>
+                        value ? value : '--- Select Department ---'
+                      }
+                      input={
+                        <OutlinedInput
+                          margin="dense"
+                          className={classes.selectField}
+                        />
+                      }
+                      disabled={departmentOptions.length > 0 ? false : true}
+                    >
+                      {departmentOptions.map((type: any) => {
+                        return (
+                          <MenuItem
+                            value={type.value}
+                            key={type.value}
+                            className={classes.muiSelect}
+                          >
+                            {type.label}
+                          </MenuItem>
+                        )
+                      })}
+                    </Select>
+                    {/* </Typography> */}
                   </Grid>
                 </Grid>
                 <Grid item container>
