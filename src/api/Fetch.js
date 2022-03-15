@@ -290,6 +290,12 @@ export const getAllUsersAPI = () => {
   return serviceRequest(url, 'GET', undefined, params)
 }
 
+export const getUsersAPIByEmailAndRole = (roleId, emailId) => {
+  const url = `${BASE_URL}${GET_USER_DETAILS_ALL}`
+  const params = `roleIdIn=${roleId}&statusIn=A,I,D&emailIdIn=${emailId}`
+  return serviceRequest(url, 'GET', undefined, params)
+}
+
 export const getAllUsersWithGroupAPI = (groupId) => {
   const url = `${BASE_URL}${GET_USER_DETAILS_ALL}`
   const params = `limit=1000&groupIdIn=${groupId}`

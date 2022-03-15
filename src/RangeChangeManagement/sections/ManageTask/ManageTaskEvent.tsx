@@ -30,6 +30,7 @@ import {
   CategoryDirectors,
   Merchandisers,
   SupplyChainSpecialists,
+  resetTypes,
 } from './DataConstants'
 
 import ErrorIcon from '@material-ui/icons/Error'
@@ -51,6 +52,7 @@ import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
 import { getProductHierarchyListAPI } from '../../../api/Fetch'
+import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 
 const Input = styled('input')({
   display: 'none',
@@ -151,17 +153,18 @@ function ManageTaskEvent(props: any) {
               id: item.category,
               hierGroup: 'category',
               groupName: item.groupName,
+              groupId: item.group,
             }
           })
 
           group &&
             setCategoryOptions(
-              categoryList.filter((cat: any) => cat.groupName === group)
+              categoryList.filter((cat: any) => cat.groupId === group.id)
             )
           group &&
             console.log(
               'category length: ',
-              categoryList.filter((cat: any) => cat.groupName === group)
+              categoryList.filter((cat: any) => cat.groupId === group.id)
             )
         })
         .catch((err: any) => setCategoryOptions([]))
@@ -180,19 +183,21 @@ function ManageTaskEvent(props: any) {
                 hierGroup: 'department',
                 groupName: item.groupName,
                 categoryName: item.categoryName,
+                groupId: item.group,
+                categoryId: item.category,
               }
             })
             setDepartmentOptions(
               depList.filter(
                 (dep: any) =>
-                  dep.groupName === group && dep.categoryName === category
+                  dep.groupId === group.id && dep.categoryId === category.id
               )
             )
             console.log(
               'department length: ',
               depList.filter(
                 (dep: any) =>
-                  dep.groupName === group && dep.categoryName === category
+                  dep.groupId === group.id && dep.categoryId === category.id
               )
             )
             // setLoaded(true)
@@ -859,15 +864,23 @@ function ManageTaskEvent(props: any) {
     // console.log(e.target.value, key)
     switch (key) {
       case 'resetType': {
-        setResetType(e.target.value)
-        // if (e.target.value ) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            resetType: e.target.value,
-          }
-        })
-        // }
+        if (e) {
+          setResetType(e)
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              resetType: e.label,
+            }
+          })
+        } else {
+          setResetType('')
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              resetType: '',
+            }
+          })
+        }
         break
       }
       case 'launchDateFrom': {
@@ -947,45 +960,75 @@ function ManageTaskEvent(props: any) {
         break
       }
       case 'group': {
-        setGroup(e.target.value)
-        setCategory('')
-        setDepartment('')
-        // if (e.target.value) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            tradeGroup: e.target.value,
-            category: '',
-            department: '',
-          }
-        })
-        // }
+        if (e) {
+          setGroup(e)
+          setCategory('')
+          setDepartment('')
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              tradeGroup: e.value,
+              category: '',
+              department: '',
+            }
+          })
+        } else {
+          setGroup('')
+          setCategory('')
+          setDepartment('')
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              tradeGroup: '',
+              category: '',
+              department: '',
+            }
+          })
+        }
         break
       }
       case 'category': {
-        setCategory(e.target.value)
-        setDepartment('')
-        // if (e.target.value ) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            category: e.target.value,
-            department: '',
-          }
-        })
-        // }
+        if (e) {
+          setCategory(e)
+          setDepartment('')
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              category: e.value,
+              department: '',
+            }
+          })
+        } else {
+          setCategory('')
+          setDepartment('')
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              category: '',
+              department: '',
+            }
+          })
+        }
         break
       }
       case 'department': {
-        setDepartment(e.target.value)
-        // if (e.target.value) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            department: e.target.value,
-          }
-        })
-        // }
+        if (e) {
+          setDepartment(e)
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              department: e.value,
+            }
+          })
+        } else {
+          setDepartment('')
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              department: '',
+            }
+          })
+        }
         break
       }
       case 'categoryDirector': {
@@ -1209,7 +1252,7 @@ function ManageTaskEvent(props: any) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
+                  {/* <Typography color="primary" variant="body2">
                     <select
                       name="requesttype"
                       id="requesttype"
@@ -1234,7 +1277,15 @@ function ManageTaskEvent(props: any) {
                       </option>
                       <option value="Range Reset">Range Reset</option>
                     </select>
-                  </Typography>
+                    
+                  </Typography> */}
+
+                  <AutocompleteSelect
+                    value={resetType}
+                    options={resetTypes}
+                    onChange={(e: any) => handleSearchParams(e, 'resetType')}
+                    placeholder="Select Reset Type"
+                  />
                 </Grid>
                 <Grid item container>
                   <Grid item xs={12}>
@@ -1393,7 +1444,7 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen">Frozen</option>
                       </select> */}
 
-                    <Select
+                    {/* <Select
                       value={group}
                       onChange={(e: any) => handleSearchParams(e, 'group')}
                       displayEmpty
@@ -1420,7 +1471,15 @@ function ManageTaskEvent(props: any) {
                           </MenuItem>
                         )
                       })}
-                    </Select>
+                    </Select> */}
+
+                    <AutocompleteSelect
+                      value={group}
+                      options={groupOptions}
+                      onChange={(e: any) => handleSearchParams(e, 'group')}
+                      placeholder="Select Trading Group"
+                    />
+
                     {/* </Typography> */}
                   </Grid>
                 </Grid>
@@ -1444,7 +1503,7 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen Food">Frozen Food</option>
                       </select> */}
 
-                    <Select
+                    {/* <Select
                       value={category}
                       onChange={(e: any) => handleSearchParams(e, 'category')}
                       displayEmpty
@@ -1470,7 +1529,15 @@ function ManageTaskEvent(props: any) {
                           </MenuItem>
                         )
                       })}
-                    </Select>
+                    </Select> */}
+
+                    <AutocompleteSelect
+                      value={category}
+                      options={categoryOptions}
+                      onChange={(e: any) => handleSearchParams(e, 'category')}
+                      placeholder="Select Category"
+                    />
+
                     {/* </Typography> */}
                   </Grid>
                 </Grid>
@@ -1500,7 +1567,7 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen Fish">Frozen Fish</option>
                       </select> */}
 
-                    <Select
+                    {/* <Select
                       value={department}
                       onChange={(e: any) => handleSearchParams(e, 'department')}
                       displayEmpty
@@ -1526,7 +1593,15 @@ function ManageTaskEvent(props: any) {
                           </MenuItem>
                         )
                       })}
-                    </Select>
+                    </Select> */}
+
+                    <AutocompleteSelect
+                      value={department}
+                      options={departmentOptions}
+                      onChange={(e: any) => handleSearchParams(e, 'department')}
+                      placeholder="Select Department"
+                    />
+
                     {/* </Typography> */}
                   </Grid>
                 </Grid>

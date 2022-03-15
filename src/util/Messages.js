@@ -27,6 +27,7 @@ export const allMessages = {
     errorReassign:
       'Cannot reassign in case the status of requestor is Inactive/Deleted',
     rafDateError: 'RAF/APP Due Date Should not be greater than Launch Date',
+    emailError: 'Please enter a valid Email ID',
   },
   success: {
     successPost: 'Log posted successfully',

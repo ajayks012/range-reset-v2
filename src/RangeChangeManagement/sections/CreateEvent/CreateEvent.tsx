@@ -49,7 +49,9 @@ import {
   // getProductHierarchyAPI,
   // putUserGroupAPI,
   getProductHierarchyListAPI,
+  getUsersAPIByEmailAndRole,
 } from '../../../api/Fetch'
+// import styled from 'styled-components'
 
 function CreateEvent() {
   const history = useHistory()
@@ -176,17 +178,18 @@ function CreateEvent() {
               id: item.category,
               hierGroup: 'category',
               groupName: item.groupName,
+              groupId: item.group,
             }
           })
 
           group &&
             setCategoryOptions(
-              categoryList.filter((cat: any) => cat.groupName === group)
+              categoryList.filter((cat: any) => cat.groupId === group.id)
             )
           group &&
             console.log(
               'category length: ',
-              categoryList.filter((cat: any) => cat.groupName === group)
+              categoryList.filter((cat: any) => cat.groupId === group.id)
             )
         })
         .catch((err: any) => setCategoryOptions([]))
@@ -205,19 +208,21 @@ function CreateEvent() {
                 hierGroup: 'department',
                 groupName: item.groupName,
                 categoryName: item.categoryName,
+                groupId: item.group,
+                categoryId: item.category,
               }
             })
             setDepartmentOptions(
               depList.filter(
                 (dep: any) =>
-                  dep.groupName === group && dep.categoryName === category
+                  dep.groupId === group.id && dep.categoryId === category.id
               )
             )
             console.log(
               'department length: ',
               depList.filter(
                 (dep: any) =>
-                  dep.groupName === group && dep.categoryName === category
+                  dep.groupId === group.id && dep.categoryId === category.id
               )
             )
             // setLoaded(true)
@@ -230,19 +235,21 @@ function CreateEvent() {
   }, [category])
 
   useEffect(() => {
-    if (department && launchDate && !eventName) {
+    if (department && launchDate) {
       var lDate = new Date(launchDate)
       console.log(lDate)
       var name =
-        department.replace(/ /g, '_') +
+        department.value.replace(/ /g, '_') +
         '_' +
         lDate.getDate() +
         lDate.toLocaleString('default', { month: 'short' }) +
         lDate.getFullYear()
       console.log(name)
       setEventName(name)
+    } else {
+      setEventName('')
     }
-  }, [department, launchDate, eventName])
+  }, [group, category, department, launchDate, eventName])
 
   useEffect(() => {
     if (confirmClassValues) {
@@ -277,13 +284,12 @@ function CreateEvent() {
   // };
 
   const handleResetType = (e: any) => {
-    const value = e.target.value
-    if (value === null || value === undefined || value === '') {
-      setResetType('')
-    } else {
+    if (e) {
       setErrReset(false)
-      setResetType(value)
-      console.log(value)
+      setResetType(e)
+      console.log(e)
+    } else {
+      setResetType('')
     }
     // setResetType(e.target.value)
     // if (e.target.value !== '') {
@@ -292,26 +298,33 @@ function CreateEvent() {
   }
 
   const handleGroup = (e: any) => {
-    const value = e.target.value
-    if (value === null || value === undefined || value === '') {
-      setGroup('')
-    } else {
+    if (e) {
       setErrHandle(false)
-      setGroup(value)
-    }
-
-    // setGroup(e.target.value)
-    // if (e.target.value !== '') {
-    //   setGroupError('')
-    // }
-  }
-  const handleCategory = (e: any) => {
-    const value = e.target.value
-    if (value === null || value === undefined || value === '') {
+      setGroup(e)
       setCategory('')
+      setDepartment('')
+      setDepartmentOptions([])
     } else {
+      setGroup('')
+      setCategory('')
+      setDepartment('')
+      setCategoryOptions([])
+      setDepartmentOptions([])
+    }
+  }
+  // setGroup(e.target.value)
+  // if (e.target.value !== '') {
+  //   setGroupError('')
+  // }
+  const handleCategory = (e: any) => {
+    if (e) {
       setErrCategory(false)
-      setCategory(value)
+      setCategory(e)
+      setDepartment('')
+    } else {
+      setCategory('')
+      setDepartment('')
+      setDepartmentOptions([])
     }
 
     // setCategory(e.target.value)
@@ -320,12 +333,11 @@ function CreateEvent() {
     // }
   }
   const handleDepartment = (e: any) => {
-    const value = e.target.value
-    if (value === null || value === undefined || value === '') {
-      setDepartment('')
-    } else {
+    if (e) {
       setErrDepartment(false)
-      setDepartment(value)
+      setDepartment(e)
+    } else {
+      setDepartment('')
     }
 
     // setDepartment(e.target.value)
@@ -516,13 +528,131 @@ function CreateEvent() {
   }
 
   const handleBuyerClick = () => {
-    let index = Buyers.findIndex((item) => item.email === buyer)
-    if (index > -1) {
-      setBuyerConfirmed(Buyers[index]['value'])
-      console.log(Buyers[index]['value'])
-    } else {
-      setBuyerError('Not found')
-    }
+    // let index = Buyers.findIndex((item) => item.email === buyer)
+    // if (index > -1) {
+    //   setBuyerConfirmed(Buyers[index]['value'])
+    //   console.log(Buyers[index]['value'])
+    // } else {
+    //   setBuyerError('Not found')
+    // }
+
+    let roleId = 'BUYER'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, buyer)
+        .then((res: any) => {
+          console.log('matched')
+        })
+        .catch((err: any) => {
+          console.log('not')
+          setBuyer('')
+          setErrBuyer(true)
+          setBuyerError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleBuyingAssistantClick = () => {
+    let roleId = 'BYAST'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, buyingAssistant)
+        .then((res: any) => {
+          console.log('matched')
+        })
+        .catch((err: any) => {
+          console.log('not')
+          setBuyingAssistant('')
+          setErrBuyerAssisant(true)
+          setBuyingAssistentError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleOwnBrandManagerClick = () => {
+    let roleId = 'OWNBRM'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, ownBrandManager)
+        .then((res) => {
+          console.log('matched')
+        })
+        .catch((err) => {
+          console.log('not')
+          setOwnBrandManager('')
+          setErrOwnBrandManager(true)
+          setOwnBrandManagerError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleSeniorBuyingManagerClick = () => {
+    let roleId = 'SRBYM'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, seniorBuyingManager)
+        .then((res) => {
+          console.log('matched')
+        })
+        .catch((err) => {
+          console.log('not')
+          setSeniorBuyingManager('')
+          setErrSeniorBuyingManager(true)
+          setSeniorBuyingManagerError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleMerchandiserClick = () => {
+    let roleId = 'MERCH'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, merchandiser)
+        .then((res) => {
+          console.log('matched')
+        })
+        .catch((err) => {
+          console.log('not')
+          setMerchandiser('')
+          setErrMerchandiser(true)
+          setMerchandiserError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleRangeResetManagerClick = () => {
+    let roleId = 'RRMNGR'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, rangeResetManager)
+        .then((res) => {
+          console.log('matched')
+        })
+        .catch((err) => {
+          console.log('not')
+          setRangeResetManager('')
+          setErrRangeResetManager(true)
+          setRangeResetManagerError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleCategoryDirectorClick = () => {
+    let roleId = 'CTDIR'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, categoryDirector)
+        .then((res) => {
+          console.log('matched')
+        })
+        .catch((err) => {
+          console.log('not')
+          setErrCategoryDirector(true)
+          setCategoryDirector('')
+          setCategoryDirectorError1(allMessages.error.emailError)
+        })
+  }
+
+  const handleSupplyChainSpecialistClick = () => {
+    let roleId = 'SCSPL'
+    getUsersAPIByEmailAndRole &&
+      getUsersAPIByEmailAndRole(roleId, supplyChainSpecialist)
+        .then((res) => {
+          console.log('matched')
+        })
+        .catch((err) => {
+          console.log('not')
+          setSupplyChainSpecialist('')
+          setErrSupplyChainSpecialist(true)
+          setSupChainSpecialistError1(allMessages.error.emailError)
+        })
   }
 
   const classDialog = (
@@ -579,50 +709,50 @@ function CreateEvent() {
     </Dialog>
   )
 
-  const validateResetType = () => {
-    if (!resetType) {
-      setResetTypeError('Please select a reset type')
-      return false
-    } else {
-      return true
-    }
-  }
+  // const validateResetType = () => {
+  //   if (!resetType) {
+  //     setResetTypeError('Please select a reset type')
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // }
 
-  const validateDepartment = () => {
-    if (!department) {
-      setDepartmentError('Please select a department')
-      return false
-    } else {
-      return true
-    }
-  }
+  // const validateDepartment = () => {
+  //   if (!department) {
+  //     setDepartmentError('Please select a department')
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // }
 
-  const validateGroup = () => {
-    if (!group) {
-      setGroupError('Please select a group')
-      return false
-    } else {
-      return true
-    }
-  }
+  // const validateGroup = () => {
+  //   if (!group) {
+  //     setGroupError('Please select a group')
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // }
 
-  const validateCategory = () => {
-    if (!category) {
-      setCategoryError('Please select a category')
-      return false
-    } else {
-      return true
-    }
-  }
+  // const validateCategory = () => {
+  //   if (!category) {
+  //     setCategoryError('Please select a category')
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // }
 
-  const validateBuyer = () => {
-    if (!buyer) {
-      setBuyerError('Please select a Buyer')
-      return false
-    } else {
-      return true
-    }
-  }
+  // const validateBuyer = () => {
+  //   if (!buyer) {
+  //     setBuyerError('Please select a Buyer')
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // }
 
   // useEffect(() => {
   //   if (uniqueIdError !== "") {
@@ -654,11 +784,11 @@ function CreateEvent() {
     }
   }, [departmentError])
 
-  useEffect(() => {
-    if (buyerError !== '') {
-      focusBuyer.current.focus()
-    }
-  }, [buyerError])
+  // useEffect(() => {
+  //   if (buyerError !== '') {
+  //     focusBuyer.current.focus()
+  //   }
+  // }, [buyerError])
 
   // const handleCreate = () => {
   //   if (
@@ -862,17 +992,17 @@ function CreateEvent() {
     ) {
       const formData = {
         // uniqueId: uniqueId,
-        resetType: resetType,
-        tradeGroup: group,
-        category: category,
-        department: department,
+        resetType: resetType.value,
+        tradeGroup: group.value,
+        category: category.value,
+        department: department.value,
         launchDate: launchDate,
         rafDueDate: rafDueDate,
         eventName: eventName,
         planogramClass: {
           className: classFormData,
         },
-        storeWasteProcessTiming: storeWasteProcess,
+        storeWasteProcessTiming: storeWasteProcess.value,
         // buyer: buyer,
         buyer: buyerConfirmed,
         buyerAssistant: buyingAssistant,
@@ -1031,7 +1161,7 @@ function CreateEvent() {
                         })}
                       </select> */}
 
-                      <Select
+                      {/* <Select
                         value={resetType}
                         onChange={handleResetType}
                         color="primary"
@@ -1059,7 +1189,15 @@ function CreateEvent() {
                             </MenuItem>
                           )
                         })}
-                      </Select>
+                      </Select> */}
+
+                      <AutocompleteSelect
+                        value={resetType}
+                        options={resetTypes}
+                        onChange={handleResetType}
+                        placeholder="Select Reset Type"
+                      />
+
                       {errReset && (
                         <span className={classes.errorMessageColor}>
                           {resetError1}
@@ -1174,7 +1312,7 @@ function CreateEvent() {
                         <option value="Frozen">Frozen</option>
                       </select> */}
 
-                      <Select
+                      {/* <Select
                         value={group}
                         onChange={handleGroup}
                         displayEmpty
@@ -1187,6 +1325,9 @@ function CreateEvent() {
                             className={classes.selectField}
                           />
                         }
+                        // classes={{
+                        //   select: classes.text,
+                        // }}
                       >
                         {groupOptions &&
                           groupOptions.map((type: any) => {
@@ -1195,12 +1336,22 @@ function CreateEvent() {
                                 value={type.value}
                                 key={type.value}
                                 className={classes.muiSelect}
+                                classes={{
+                                  selected: classes.selectColor,
+                                }}
                               >
                                 {type.label}
                               </MenuItem>
                             )
                           })}
-                      </Select>
+                      </Select> */}
+
+                      <AutocompleteSelect
+                        value={group}
+                        options={groupOptions}
+                        onChange={handleGroup}
+                        placeholder="Select Trading Group"
+                      />
 
                       {errHandle && (
                         <span className={classes.errorMessageColor}>
@@ -1239,7 +1390,7 @@ function CreateEvent() {
                         <option value="Frozen Food">Frozen Food</option>
                       </select> */}
 
-                      <Select
+                      {/* <Select
                         value={category}
                         onChange={handleCategory}
                         displayEmpty
@@ -1265,7 +1416,15 @@ function CreateEvent() {
                             </MenuItem>
                           )
                         })}
-                      </Select>
+                      </Select> */}
+
+                      <AutocompleteSelect
+                        value={category}
+                        options={categoryOptions}
+                        onChange={handleCategory}
+                        placeholder="Select Category"
+                        isDisabled={categoryOptions.length > 0 ? false : true}
+                      />
 
                       {errCategory && (
                         <span className={classes.errorMessageColor}>
@@ -1309,7 +1468,7 @@ function CreateEvent() {
                         <option value="Frozen Fish">Frozen Fish</option>
                       </select> */}
 
-                      <Select
+                      {/* <Select
                         value={department}
                         onChange={handleDepartment}
                         displayEmpty
@@ -1335,7 +1494,15 @@ function CreateEvent() {
                             </MenuItem>
                           )
                         })}
-                      </Select>
+                      </Select> */}
+
+                      <AutocompleteSelect
+                        value={department}
+                        options={departmentOptions}
+                        onChange={handleDepartment}
+                        placeholder="Select Department"
+                        isDisabled={departmentOptions.length > 0 ? false : true}
+                      />
 
                       {errDepartment && (
                         <span className={classes.errorMessageColor}>
@@ -1610,7 +1777,7 @@ function CreateEvent() {
                         <option value="Week +7\ +10">Week +6\ +10</option>
                       </select> */}
 
-                      <Select
+                      {/* <Select
                         value={storeWasteProcess}
                         onChange={(e) => {
                           setStoreWasteProcess(e.target.value)
@@ -1639,7 +1806,16 @@ function CreateEvent() {
                             </MenuItem>
                           )
                         })}
-                      </Select>
+                      </Select> */}
+
+                      <AutocompleteSelect
+                        value={storeWasteProcess}
+                        options={wastageRanges}
+                        onChange={(e: any) => {
+                          setStoreWasteProcess(e)
+                        }}
+                        placeholder="Select Store Waste Process Timing"
+                      />
                     </Typography>
                   </Grid>
                 </Grid>
@@ -1724,7 +1900,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleBuyingAssistant}
                         placeholder="Search Buying Assistant"
-                        onClick={() => console.log('clicked')}
+                        onClick={handleBuyingAssistantClick}
                       />
                       {errBuyerAssisant && (
                         <span className={classes.errorMessageColor}>
@@ -1766,7 +1942,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleOwnBrandManager}
                         placeholder="Search Own Brand Manager"
-                        onClick={() => console.log('clicked')}
+                        onClick={handleOwnBrandManagerClick}
                       />
 
                       {errOwnBrandManager && (
@@ -1809,7 +1985,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleSeniorBuyingManager}
                         placeholder="Search Senior Buying Manager"
-                        onClick={() => console.log('clicked')}
+                        onClick={handleSeniorBuyingManagerClick}
                       />
 
                       {errSeniorBuyingManager && (
@@ -1853,7 +2029,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleMerchandiser}
                         placeholder="Search Merchandiser"
-                        onClick={() => console.log('clicked')}
+                        onClick={handleMerchandiserClick}
                       />
 
                       {errMerchandiser && (
@@ -1897,7 +2073,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleRangeResetManager}
                         placeholder="Search Range Reset Manager"
-                        onClick={() => console.log('clicked')}
+                        onClick={handleRangeResetManagerClick}
                       />
 
                       {errRangeResetManager && (
@@ -1941,7 +2117,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleCategoryDirector}
                         placeholder="Search Category Director"
-                        onClick={() => console.log('clicked')}
+                        onClick={handleCategoryDirectorClick}
                       />
 
                       {errCategoryDirector && (
@@ -1985,8 +2161,7 @@ function CreateEvent() {
                         // onChange={(e: any) => console.log(e.target.value)}
                         onChange={handleSupplyChainSpecialist}
                         placeholder="Search Supply Chain Specialist"
-                        onClick={() => console.log('clicked')}
-                        required
+                        onClick={handleSupplyChainSpecialistClick}
                       />
                       {errSupplyChainSpecialist && (
                         <span className={classes.errorMessageColor}>

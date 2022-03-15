@@ -295,3 +295,26 @@ export const SupplyChainSpecialists = [
     label: 'Lamp Henry',
   },
 ]
+
+export const resetTypes = [
+  {
+    value: 'rapid',
+    label: 'Rapid Response',
+  },
+  {
+    value: 'seasonal',
+    label: 'Seasonal Range Reset',
+  },
+  {
+    value: 'planned',
+    label: 'Planned Range Reset',
+  },
+  {
+    value: 'seasonalchange',
+    label: 'Seasonal Range Change',
+  },
+  {
+    value: 'range',
+    label: 'Range Reset',
+  },
+]

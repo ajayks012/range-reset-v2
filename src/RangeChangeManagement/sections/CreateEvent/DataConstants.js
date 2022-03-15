@@ -183,24 +183,24 @@ export const classOptions = [
 
 export const resetTypes = [
   {
-    name: 'rapid',
-    text: 'Rapid Response',
+    value: 'rapid',
+    label: 'Rapid Response',
   },
   {
-    name: 'seasonal',
-    text: 'Seasonal Range Reset',
+    value: 'seasonal',
+    label: 'Seasonal Range Reset',
   },
   {
-    name: 'planned',
-    text: 'Planned Range Reset',
+    value: 'planned',
+    label: 'Planned Range Reset',
   },
   {
-    name: 'seasonalchange',
-    text: 'Seasonal Range Change',
+    value: 'seasonalchange',
+    label: 'Seasonal Range Change',
   },
   {
-    name: 'range',
-    text: 'Range Reset',
+    value: 'range',
+    label: 'Range Reset',
   },
 ]
 
@@ -234,20 +234,20 @@ export const departments = [
 
 export const wastageRanges = [
   {
-    name: '4to7',
-    text: 'Week +4\\ +7',
+    value: '4to7',
+    label: 'Week +4\\ +7',
   },
   {
-    name: '5to8',
-    text: 'Week +5\\ +8',
+    value: '5to8',
+    label: 'Week +5\\ +8',
   },
   {
-    name: '6to9',
-    text: 'Week +6\\ +9',
+    value: '6to9',
+    label: 'Week +6\\ +9',
   },
   {
-    name: '7to10',
-    text: 'Week +7\\ +10',
+    value: '7to10',
+    label: 'Week +7\\ +10',
   },
 ]
 

@@ -153,7 +153,7 @@ export const useStyles = makeStyles((theme) => {
     },
     errorMessageColor: {
       color: '#d32f22',
-      marginLeft: '14px',
+      // marginLeft: '14px',
       marginRight: '14px',
       marginTop: '4px',
       paddingTop: '10px',
@@ -183,6 +183,14 @@ export const useStyles = makeStyles((theme) => {
     },
     muiSelect: {
       fontSize: '12px',
+    },
+    selectColor: {
+      background: theme.palette.primary.main,
+      color: 'white',
+      '&:hover': {
+        color: 'white',
+        backgroundColor: theme.palette.primary.main,
+      },
     },
   }
 })
