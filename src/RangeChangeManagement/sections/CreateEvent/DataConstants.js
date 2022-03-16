@@ -234,19 +234,19 @@ export const departments = [
 
 export const wastageRanges = [
   {
-    value: '4to7',
+    value: 'Week +4 +7',
     label: 'Week +4\\ +7',
   },
   {
-    value: '5to8',
+    value: 'Week +5 +8',
     label: 'Week +5\\ +8',
   },
   {
-    value: '6to9',
+    value: 'Week +6 +9',
     label: 'Week +6\\ +9',
   },
   {
-    value: '7to10',
+    value: 'Week +7 +10',
     label: 'Week +7\\ +10',
   },
 ]

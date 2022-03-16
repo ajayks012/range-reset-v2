@@ -49,6 +49,7 @@ import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
+import { getProductHierarchyListAPI } from '../../../api/Fetch'
 
 function ManageEventCreate() {
   const location = useLocation<any>()
@@ -61,6 +62,9 @@ function ManageEventCreate() {
 
   const [eventDetails, setEventDetails] = useState<any>()
   const [eventName, setEventName] = useState<any>('')
+  const [group, setGroup] = useState<any>('')
+  const [category, setCategory] = useState<any>('')
+  const [department, setDepartment] = useState<any>('')
   const [taskDetails, setTaskDetails] = useState<any>(manageTaskPublishRows)
   const [singleTask, setSingleTask] = useState<any>()
   const [selectTasks, setSelectTasks] = useState<any>()
@@ -71,6 +75,96 @@ function ManageEventCreate() {
 
   const [classOpen, setClassOpen] = useState(false)
   const [groupsOpen, setGroupsOpen] = useState(false)
+
+  const [groupOptions, setGroupOptions] = useState<any>([])
+  const [categoryOptions, setCategoryOptions] = useState<any>([])
+  const [departmentOptions, setDepartmentOptions] = useState<any>([])
+
+  useEffect(() => {
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('group')
+        .then((res: any) => {
+          const grpList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.groupName,
+              label: item.groupName,
+              id: item.group,
+              hierGroup: 'group',
+            }
+          })
+          setGroupOptions(grpList)
+          console.log('group length: ', grpList.length)
+        })
+        .catch((err: any) => setGroupOptions([]))
+  }, [])
+
+  useEffect(() => {
+    console.log(group)
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('category')
+        .then((res: any) => {
+          const categoryList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.categoryName,
+              label: item.categoryName,
+              id: item.category,
+              hierGroup: 'category',
+              groupName: item.groupName,
+              groupId: item.group,
+            }
+          })
+
+          group &&
+            setCategoryOptions(
+              categoryList.filter((cat: any) => cat.groupId === group.id)
+            )
+          group &&
+            console.log(
+              'category length: ',
+              categoryList.filter((cat: any) => cat.groupId === group.id)
+            )
+        })
+        .catch((err: any) => setCategoryOptions([]))
+  }, [group])
+
+  useEffect(() => {
+    if (group && category) {
+      getProductHierarchyListAPI &&
+        getProductHierarchyListAPI('department')
+          .then((res: any) => {
+            const depList = res.data.hierarchyNode.map((item: any) => {
+              return {
+                value: item.departmentName,
+                label: item.departmentName,
+                id: item.department,
+                hierGroup: 'department',
+                groupName: item.groupName,
+                categoryName: item.categoryName,
+                groupId: item.group,
+                categoryId: item.category,
+              }
+            })
+            setDepartmentOptions(
+              depList.filter(
+                (dep: any) =>
+                  dep.groupId === group.id && dep.categoryId === category.id
+              )
+            )
+            console.log(
+              'department length: ',
+              depList.filter(
+                (dep: any) =>
+                  dep.groupId === group.id && dep.categoryId === category.id
+              )
+            )
+            // setLoaded(true)
+          })
+          .catch((err: any) => {
+            setDepartmentOptions([])
+            // setLoaded(true)
+          })
+    }
+  }, [category])
 
   const goBack = () => {
     history.goBack()
@@ -267,32 +361,61 @@ function ManageEventCreate() {
   const groupTemplate = (rowData: any) => {
     const val = groups.findIndex((group) => rowData.tradeGroup === group.text)
     return (
-      <Select
-        value={val > -1 ? groups[val].name : rowData.tradeGroup}
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                tradeGroup: e.target.value,
-              },
-            ]
-          })
+      // <Select
+      //   value={val > -1 ? groups[val].name : rowData.tradeGroup}
+      //   onChange={(e) => {
+      //     setEventDetails((prevState: any) => {
+      //       return [
+      //         {
+      //           ...prevState[0],
+      //           tradeGroup: e.target.value,
+      //         },
+      //       ]
+      //     })
+      //   }}
+      //   input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+      // >
+      //   {groups.map((type) => {
+      //     return (
+      //       <MenuItem
+      //         value={type.value}
+      //         key={type.value}
+      //         className={classes.muiSelect}
+      //       >
+      //         {type.label}
+      //       </MenuItem>
+      //     )
+      //   })}
+      // </Select>
+
+      <AutocompleteSelect
+        value={group}
+        options={groupOptions}
+        // onChange={handleGroup}
+        onChange={(e: any) => {
+          if (e) {
+            setGroup(e)
+            setCategory('')
+            setDepartment('')
+            setDepartmentOptions([])
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  tradeGroup: e.value,
+                },
+              ]
+            })
+          } else {
+            setGroup('')
+            setCategory('')
+            setDepartment('')
+            setCategoryOptions([])
+            setDepartmentOptions([])
+          }
         }}
-        input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
-      >
-        {groups.map((type) => {
-          return (
-            <MenuItem
-              value={type.name}
-              key={type.name}
-              className={classes.muiSelect}
-            >
-              {type.text}
-            </MenuItem>
-          )
-        })}
-      </Select>
+        placeholder="Select Trading Group"
+      />
     )
   }
 
@@ -479,7 +602,7 @@ function ManageEventCreate() {
 
   const storeWasteProcessTemplate = (rowData: any) => {
     const val = wastageRanges.findIndex(
-      (group) => rowData.wastageRange === group.text
+      (group) => rowData.wastageRange === group.label
     )
     return (
       //   <select
@@ -501,7 +624,7 @@ function ManageEventCreate() {
       //     <option value="Week +7\ +10">Week +6\ +10</option>
       //   </select>
       <Select
-        value={val > -1 ? wastageRanges[val].name : rowData.wastageRange}
+        value={val > -1 ? wastageRanges[val].value : rowData.wastageRange}
         onChange={(e) => {
           setEventDetails((prevState: any) => {
             return [
@@ -517,11 +640,11 @@ function ManageEventCreate() {
         {wastageRanges.map((type) => {
           return (
             <MenuItem
-              value={type.name}
-              key={type.name}
+              value={type.value}
+              key={type.value}
               className={classes.muiSelect}
             >
-              {type.text}
+              {type.label}
             </MenuItem>
           )
         })}

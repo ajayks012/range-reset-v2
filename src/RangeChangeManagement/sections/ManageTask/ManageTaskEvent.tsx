@@ -51,7 +51,10 @@ import {
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
-import { getProductHierarchyListAPI } from '../../../api/Fetch'
+import {
+  getProductHierarchyListAPI,
+  getUsersAPIByRole,
+} from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 
 const Input = styled('input')({
@@ -89,7 +92,7 @@ function ManageTaskEvent(props: any) {
   const [launchDateTo, setLaunchDateTo] = useState<any>('')
   const [launchWeekFrom, setLaunchWeekFrom] = useState<any>('')
   const [launchWeekTo, setLaunchWeekTo] = useState<any>('')
-  const [categoryDirector, setCategoryDirector] = useState<any>()
+  const [categoryDirector, setCategoryDirector] = useState<any>('')
   const [buyer, setBuyer] = useState<any>('')
   const [merchandiser, setMerchandiser] = useState<any>('')
   const [supplyChainSpecialist, setSupplyChainSpecialist] = useState<any>('')
@@ -107,7 +110,7 @@ function ManageTaskEvent(props: any) {
     buyer: '',
     merchandiser: '',
     supplyChainAnalyst: '',
-    clearancePriceApplied: 'y',
+    clearancePriceCheck: 'y',
     orderStopDateCheck: 'y',
     stopOrder: 'y',
   })
@@ -122,6 +125,12 @@ function ManageTaskEvent(props: any) {
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
+  const [merchandiserOptions, setMerchandiserOptions] = useState<any>([])
+  const [supplyChainOptions, setSupplyChainOptions] = useState<any>([])
+  const [categoryDirectorOptions, setCategoryDirectorOptions] = useState<any>(
+    []
+  )
+  const [buyerOptions, setBuyerOptions] = useState<any>([])
 
   useEffect(() => {
     getProductHierarchyListAPI &&
@@ -208,6 +217,92 @@ function ManageTaskEvent(props: any) {
           })
     }
   }, [category])
+
+  useEffect(() => {
+    let roleId = 'BUYER'
+    getUsersAPIByRole &&
+      getUsersAPIByRole(roleId)
+        .then((res) => {
+          const buyerValues = res.data.userdetails.map((item: any) => {
+            return {
+              value: item.user.emailId,
+              label: item.user.middleName
+                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
+                : `${item.user.firstName} ${item.user.lastName}`,
+            }
+          })
+          setBuyerOptions(buyerValues)
+          console.log(buyerValues)
+        })
+        .catch((err) => {
+          console.log('error')
+        })
+  }, [])
+
+  useEffect(() => {
+    let roleId = 'CTDIR'
+    getUsersAPIByRole &&
+      getUsersAPIByRole(roleId)
+        .then((res) => {
+          const categoryDirectorValues = res.data.userdetails.map(
+            (item: any) => {
+              return {
+                value: item.user.emailId,
+                label: item.user.middleName
+                  ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
+                  : `${item.user.firstName} ${item.user.lastName}`,
+              }
+            }
+          )
+          setCategoryDirectorOptions(categoryDirectorValues)
+          console.log(categoryDirectorValues)
+        })
+        .catch((err) => {
+          console.log('error')
+        })
+  }, [])
+
+  useEffect(() => {
+    let roleId = 'MERCH'
+    getUsersAPIByRole &&
+      getUsersAPIByRole(roleId)
+        .then((res) => {
+          const merchandiserValues = res.data.userdetails.map((item: any) => {
+            return {
+              value: item.user.emailId,
+              label: item.user.middleName
+                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
+                : `${item.user.firstName} ${item.user.lastName}`,
+            }
+          })
+          setMerchandiserOptions(merchandiserValues)
+          console.log(merchandiserValues)
+        })
+        .catch((err) => {
+          console.log('error')
+        })
+  }, [])
+
+  useEffect(() => {
+    let roleId = 'SCSPL'
+    getUsersAPIByRole &&
+      getUsersAPIByRole(roleId)
+        .then((res) => {
+          const supplyChainValues = res.data.userdetails.map((item: any) => {
+            return {
+              value: item.user.emailId,
+              label: item.user.middleName
+                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
+                : `${item.user.firstName} ${item.user.lastName}`,
+            }
+          })
+          setSupplyChainOptions(supplyChainValues)
+          console.log(supplyChainValues)
+        })
+        .catch((err) => {
+          console.log('error')
+        })
+  }, [])
 
   const goBack = () => {
     history.goBack()
@@ -1032,50 +1127,94 @@ function ManageTaskEvent(props: any) {
         break
       }
       case 'categoryDirector': {
-        setCategoryDirector(e.target.value)
-        // if (e.target.value) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            categoryDirector: e.target.value,
-          }
-        })
+        if (e) {
+          console.log(e)
+          setCategoryDirector(e)
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              categoryDirector: e.value,
+            }
+          })
+        } else {
+          setCategoryDirector([])
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              categoryDirector: '',
+            }
+          })
+        }
         // }
         break
       }
       case 'buyer': {
-        setBuyer(e.target.value)
-        // if (e.target.value) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            buyer: e.target.value,
-          }
-        })
+        if (e) {
+          setBuyer(e)
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              buyer: e.value,
+            }
+          })
+        } else {
+          setBuyer([])
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              buyer: '',
+            }
+          })
+        }
         // }
         break
       }
       case 'merchandiser': {
-        setMerchandiser(e.target.value)
-        // if (e.target.value) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            merchandiser: e.target.value,
-          }
-        })
+        if (e) {
+          setMerchandiser(e)
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              merchandiser: e.value,
+            }
+          })
+        } else {
+          setMerchandiser([])
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              merchandiser: '',
+            }
+          })
+        }
         // }
         break
       }
       case 'supplyChainAnalyst': {
-        setSupplyChainSpecialist(e.target.value)
-        // if (e.target.value) {
-        setSearchParams((prevState: any) => {
-          return {
-            ...prevState,
-            supplyChainAnalyst: e.target.value,
-          }
-        })
+        if (e) {
+          setSupplyChainSpecialist(e)
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              supplyChainAnalyst: e.value,
+            }
+          })
+        } else {
+          setSupplyChainSpecialist([])
+          // if (e.target.value) {
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              supplyChainAnalyst: '',
+            }
+          })
+        }
         // }
         break
       }
@@ -1211,10 +1350,11 @@ function ManageTaskEvent(props: any) {
           categoryDirectorFilter &&
           buyerFilter &&
           merchandiserFilter &&
-          supplyChainFilter &&
-          clearancePriceFilter &&
-          orderStopDateFilter &&
-          stopOrderFilter
+          supplyChainFilter
+          // &&
+          // clearancePriceFilter &&
+          // orderStopDateFilter &&
+          // stopOrderFilter
         )
       })
       setFilteredImportedData(newData)
@@ -1536,6 +1676,7 @@ function ManageTaskEvent(props: any) {
                       options={categoryOptions}
                       onChange={(e: any) => handleSearchParams(e, 'category')}
                       placeholder="Select Category"
+                      isDisabled={group.length <= 0}
                     />
 
                     {/* </Typography> */}
@@ -1612,7 +1753,7 @@ function ManageTaskEvent(props: any) {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
+                    {/* <Typography color="primary" variant="body2">
                       <select
                         className={classes.searchTextField}
                         // defaultValue=""
@@ -1633,8 +1774,18 @@ function ManageTaskEvent(props: any) {
                             </option>
                           )
                         })}
-                      </select>
-                    </Typography>
+                      </select> */}
+
+                    <AutocompleteSelect
+                      value={categoryDirector}
+                      options={categoryDirectorOptions}
+                      onChange={(e: any) =>
+                        handleSearchParams(e, 'categoryDirector')
+                      }
+                      placeholder="Select Category Director"
+                    />
+
+                    {/* </Typography> */}
                   </Grid>
                 </Grid>
               </Grid>
@@ -1656,8 +1807,8 @@ function ManageTaskEvent(props: any) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <select
+                  {/* <Typography color="primary" variant="body2"> */}
+                  {/* <select
                       className={classes.searchTextField}
                       // defaultValue=""
                       value={buyer}
@@ -1673,8 +1824,15 @@ function ManageTaskEvent(props: any) {
                           </option>
                         )
                       })}
-                    </select>
-                  </Typography>
+                    </select> */}
+
+                  <AutocompleteSelect
+                    value={buyer}
+                    options={buyerOptions}
+                    onChange={(e: any) => handleSearchParams(e, 'buyer')}
+                    placeholder="Select Buyer"
+                  />
+                  {/* </Typography> */}
                 </Grid>
               </Grid>
 
@@ -1685,8 +1843,8 @@ function ManageTaskEvent(props: any) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <select
+                  {/* <Typography color="primary" variant="body2"> */}
+                  {/* <select
                       className={classes.searchTextField}
                       // defaultValue=""
                       value={merchandiser}
@@ -1704,8 +1862,15 @@ function ManageTaskEvent(props: any) {
                           </option>
                         )
                       })}
-                    </select>
-                  </Typography>
+                    </select> */}
+
+                  <AutocompleteSelect
+                    value={merchandiser}
+                    options={merchandiserOptions}
+                    onChange={(e: any) => handleSearchParams(e, 'merchandiser')}
+                    placeholder="Select Merchandiser"
+                  />
+                  {/* </Typography> */}
                 </Grid>
               </Grid>
               <Grid item container>
@@ -1715,8 +1880,8 @@ function ManageTaskEvent(props: any) {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <select
+                  {/* <Typography color="primary" variant="body2"> */}
+                  {/* <select
                       className={classes.searchTextField}
                       // defaultValue=""
                       value={supplyChainSpecialist}
@@ -1736,8 +1901,17 @@ function ManageTaskEvent(props: any) {
                           </option>
                         )
                       })}
-                    </select>
-                  </Typography>
+                    </select> */}
+
+                  <AutocompleteSelect
+                    value={supplyChainSpecialist}
+                    options={supplyChainOptions}
+                    onChange={(e: any) =>
+                      handleSearchParams(e, 'supplyChainAnalyst')
+                    }
+                    placeholder="Select Supply Chain Specialist"
+                  />
+                  {/* </Typography> */}
                 </Grid>
               </Grid>
               <Grid item container>

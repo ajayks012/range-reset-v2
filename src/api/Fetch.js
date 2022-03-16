@@ -296,6 +296,12 @@ export const getUsersAPIByEmailAndRole = (roleId, emailId) => {
   return serviceRequest(url, 'GET', undefined, params)
 }
 
+export const getUsersAPIByRole = (roleId) => {
+  const url = `${BASE_URL}${GET_USER_DETAILS_ALL}`
+  const params = `roleIdIn=${roleId}&statusIn=A,I,D`
+  return serviceRequest(url, 'GET', undefined, params)
+}
+
 export const getAllUsersWithGroupAPI = (groupId) => {
   const url = `${BASE_URL}${GET_USER_DETAILS_ALL}`
   const params = `limit=1000&groupIdIn=${groupId}`
