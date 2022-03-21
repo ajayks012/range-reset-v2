@@ -56,6 +56,7 @@ import {
   getUsersAPIByRole,
 } from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
+import { bulkUploadFileType } from '../../../util/Constants'
 
 const Input = styled('input')({
   display: 'none',
@@ -313,7 +314,7 @@ function ManageTaskEvent(props: any) {
   }
 
   const excelDatetoDate = (eDate: any) => {
-    return new Date(Math.round((eDate - (25567 + 1)) * 86400 * 1000))
+    return new Date(Math.round((eDate - (25568 + 1)) * 86400 * 1000))
       .toISOString()
       .split('T')[0]
   }
@@ -372,7 +373,7 @@ function ManageTaskEvent(props: any) {
     return (
       <button
         // className={classes.exploreButton}
-        value={rowData['eventName']}
+        value={rowData.eventName}
         // onClick={handleNameClick}
         // style={{
         //   cursor: 'pointer',
@@ -383,13 +384,13 @@ function ManageTaskEvent(props: any) {
         className={classes.greenButtons}
         onClick={() => handleSingleEvent(rowData)}
       >
-        {rowData['eventName']}
+        {rowData.eventName}
       </button>
     )
   }
 
   const statusTemplate = (rowData: any) => {
-    if (rowData['status'] === 'Error') {
+    if (rowData.status === 'Error') {
       return (
         <div className={classes.errorDialog}>
           Error
@@ -411,16 +412,39 @@ function ManageTaskEvent(props: any) {
         </div>
       )
     } else {
-      return rowData['status']
+      return rowData.status
     }
   }
 
-  const rafDueDateTemplate = (rowData: any) => {
-    if (rowData['status'] === 'Error') {
-      return <div style={{ color: 'red' }}>{rowData['appDueDate']}</div>
+  const convertedAppDueDateTemplate = (rowData: any) => {
+    if (rowData.appDueDate) {
+      const date = new Date(rowData.appDueDate)
+      const formattedDate = date
+        .toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })
+        .replace(/ /g, '-')
+      if (rowData.status === 'Error') {
+        return <div style={{ color: 'red' }}>{formattedDate}</div>
+      } else {
+        return formattedDate
+      }
     } else {
-      return rowData['appDueDate']
+      return 'NA'
     }
+  }
+  const convertedTargetDateTemplate = (rowData: any) => {
+    const date = new Date(rowData.targetDate)
+    const formattedDate = date
+      .toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+      .replace(/ /g, '-')
+    return formattedDate
   }
 
   const classTemplate = (rowData: any) => {
@@ -428,14 +452,35 @@ function ManageTaskEvent(props: any) {
     return planogramClass
   }
 
+  const classArray = (data: any) => {
+    console.log(data)
+    let classes = data.split(',')
+    let classValues = []
+    for (var i in classes) {
+      classValues.push(classes[i].trim())
+    }
+    return data
+  }
+
   const handleUpload = (event: any) => {
     event.preventDefault()
+    // const fileSize = (uploadedFile.size / 1024 / 1024).toFixed(2)
+    // console.log(fileSize)
+    // const i = bulkUploadFileType.findIndex((type: any) => {
+    //   return type === uploadedFile.type
+    // })
+    // console.log(i)
     if (
       uploadedFile &&
-      (uploadedFile.type === 'text/csv' ||
-        uploadedFile.type === 'application/vnd.ms-excel' ||
-        uploadedFile.type ===
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      // (uploadedFile.type === 'text/csv' ||
+      //   uploadedFile.type === 'application/vnd.ms-excel' ||
+      //   uploadedFile.type ===
+      //     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      bulkUploadFileType.findIndex((type: any) => {
+        return type === uploadedFile.type
+      }) != -1
+      // &&
+      // Number(fileSize) > 0.0
     ) {
       console.log(uploadedFile)
       import('xlsx').then((xlsx) => {
@@ -452,6 +497,7 @@ function ManageTaskEvent(props: any) {
           // Prepare DataTable
           const cols: any = data1[0]
           console.log(cols)
+          console.log(data1)
 
           // let _importedCols = cols.map((col: any) => ({ field: col, header: toCapitalize(col) }));
           // let _importedData = data.map((d: any) => {
@@ -461,20 +507,19 @@ function ManageTaskEvent(props: any) {
           //     }, {});
           // });
           const newData = data.map((d: any) => {
-            var converted_date1 = d['Launch Date']
-              ? excelDatetoDate(d['Launch Date']).toString() + ' 01:00:00.00'
+            var converted_date1 = d[cols[6]]
+              ? excelDatetoDate(d[cols[6]]).toString()
               : 'NA'
-            var converted_date3 = d['RAF/App Due Date']
-              ? excelDatetoDate(d['RAF/App Due Date']).toString() +
-                ' 01:00:00.00'
+            var converted_date3 = d[cols[2]]
+              ? excelDatetoDate(d[cols[2]]).toString()
               : null
 
             var eventName = () => {
-              if (d['Department'] && converted_date1) {
+              if (d[cols[5]] && converted_date1) {
                 var lDate = new Date(converted_date1)
                 console.log(lDate)
                 var name =
-                  d['Department'].replace(/ /g, '_') +
+                  d[cols[5]].replace(/ /g, '_') +
                   '_' +
                   lDate.getDate() +
                   lDate.toLocaleString('default', { month: 'short' }) +
@@ -489,45 +534,47 @@ function ManageTaskEvent(props: any) {
             //   return Buyers[index].value
             // }
 
-            var classArray = () => {
-              let classes = d['Planogram Class'].split(',')
-              let classValues = []
-              for (var i in classes) {
-                classValues.push(classes[i].trim())
-              }
-              return classValues
-            }
+            // var classArray = () => {
+            //   console.log(d[7])
+            //   let classes = d[7].split(',')
+            //   let classValues = []
+            //   for (var i in classes) {
+            //     classValues.push(classes[i].trim())
+            //   }
+            //   return d[7]
+            // }
 
             return {
-              buyer: d['Buyer'],
-              category: d['Category'],
-              categoryId: 1,
-              categoryDirector: d['Category Director'],
-              clearancePriceCheck: 'y',
-              department: d['Department'],
-              departmentId: 1,
-              eventId: d['Event ID'],
-              name: 'string',
-              eventName: d['Event Name'] ? d['Event Name'] : eventName(),
-              // eventName: eventName(),
-              orderStopDateCheck: 'y',
-              tradeGroup: d['Trading Group'],
-              targetDate: converted_date1,
-              merchandiser: d['Merchandiser'],
-              resetType: d['Reset Type'],
-              // "status": d["Status"] ? d["Status"] : "Draft",
-              stopOrder: 'y',
-              supplyChainAnalyst: d['Supply Chain Specialist'],
-              // uniqueId: d["Unique ID"],
-              buyerAssistant: d['Buying Assistant'],
-              ownBrandManager: d['Own Brand Manager'],
-              seniorBuyingManager: d['Senior Buying Manager'],
-              rangeResetManager: d['Range Reset Manager'],
-              planogramClass: {
-                className: classArray(),
-              },
-              wastageRange: d['Store Waste Process Timing'],
+              eventName: d[cols[0]] ? d[cols[0]] : eventName(),
+              resetType: d[cols[1]],
               appDueDate: converted_date3,
+              tradeGroup: d[cols[3]],
+              category: d[cols[4]],
+              // categoryId: 1,
+              department: d[cols[5]],
+              // departmentId: 1,
+              targetDate: converted_date1,
+              planogramClass: {
+                className: classArray(d[cols[7]]),
+              },
+              wastageRange: d[cols[8]],
+              buyer: d[cols[9]],
+              categoryDirector: d[cols[10]],
+              seniorBuyingManager: d[cols[11]],
+              buyerAssistant: d[cols[12]],
+              merchandiser: d[cols[13]],
+              supplyChainAnalyst: d[cols[14]],
+              ownBrandManager: d[cols[15]],
+              rangeResetManager: d[cols[16]],
+
+              // eventId: d['Event ID'],
+              // name: 'string',
+              // eventName: eventName(),
+
+              // "status": d["Status"] ? d["Status"] : "Draft",
+              clearancePriceCheck: 'y',
+              orderStopDateCheck: 'y',
+              stopOrder: 'y',
             }
           })
           console.log(newData)
@@ -732,11 +779,7 @@ function ManageTaskEvent(props: any) {
               justifyContent: 'right',
             }}
           >
-            <Button
-              className={classes.submitButtons}
-              type="submit"
-              onClick={handleUpload}
-            >
+            <Button className={classes.submitButtons} onClick={handleUpload}>
               Upload
             </Button>
           </Box>
@@ -786,10 +829,13 @@ function ManageTaskEvent(props: any) {
                   (col.field === 'status' && confirmTable && statusTemplate) ||
                   (col.field === 'appDueDate' &&
                     confirmTable &&
-                    rafDueDateTemplate) ||
+                    convertedAppDueDateTemplate) ||
                   (col.field === 'planogramClass' &&
                     confirmTable &&
-                    classTemplate)
+                    classTemplate) ||
+                  (col.field === 'targetDate' &&
+                    confirmTable &&
+                    convertedTargetDateTemplate)
                 }
                 style={ConfirmedBodyStyle(col.width)}
                 // filter filterPlaceholder="Search by name"
@@ -839,7 +885,11 @@ function ManageTaskEvent(props: any) {
                 key={index}
                 field={col.field}
                 header={col.header}
-                body={col.field === 'planogramClass' && classTemplate}
+                body={
+                  (col.field === 'appDueDate' && convertedAppDueDateTemplate) ||
+                  (col.field === 'planogramClass' && classTemplate) ||
+                  (col.field === 'targetDate' && convertedTargetDateTemplate)
+                }
                 bodyStyle={{ overflowX: 'auto' }}
                 style={PreviewBodyStyle(col.width)}
                 headerStyle={PreviewHeaderStyle(
@@ -1298,7 +1348,7 @@ function ManageTaskEvent(props: any) {
 
   const handleAdvancedSearch = () => {
     if (searchParams) {
-      console.log(Object.keys(searchParams).length)
+      // console.log(Object.keys(searchParams).length)
       let newData = fileData.filter((file: any) => {
         let resetTypeFilter =
           searchParams.resetType !== ''

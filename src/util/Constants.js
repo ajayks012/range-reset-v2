@@ -108,3 +108,8 @@ export const extensions = [
   '.csv',
   '.xlsm',
 ]
+
+export const bulkUploadFileType = [
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+]

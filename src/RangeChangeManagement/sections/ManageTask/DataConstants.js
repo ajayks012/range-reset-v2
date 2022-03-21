@@ -55,13 +55,8 @@ export const eventUploadTableCols = [
     width: '250px',
   },
   {
-    field: 'buyerAssistant',
-    header: 'Buying Assistant',
-    width: '250px',
-  },
-  {
-    field: 'ownBrandManager',
-    header: 'Own Brand Manager',
+    field: 'categoryDirector',
+    header: 'Category Director',
     width: '250px',
   },
   {
@@ -70,18 +65,13 @@ export const eventUploadTableCols = [
     width: '250px',
   },
   {
+    field: 'buyerAssistant',
+    header: 'Buying Assistant',
+    width: '250px',
+  },
+  {
     field: 'merchandiser',
     header: 'Merchandiser',
-    width: '250px',
-  },
-  {
-    field: 'rangeResetManager',
-    header: 'Range Reset Manager',
-    width: '250px',
-  },
-  {
-    field: 'categoryDirector',
-    header: 'Category Director',
     width: '250px',
   },
   {
@@ -89,6 +79,17 @@ export const eventUploadTableCols = [
     header: 'Supply Chain Specialist.',
     width: '200px',
   },
+  {
+    field: 'ownBrandManager',
+    header: 'Own Brand Manager',
+    width: '250px',
+  },
+  {
+    field: 'rangeResetManager',
+    header: 'Range Reset Manager',
+    width: '250px',
+  },
+
   // {
   //   field: "clearancePriceCheck",
   //   header: "Clearance Pricing Action required",
@@ -167,13 +168,8 @@ export const confirmedTableCols = [
     width: '250px',
   },
   {
-    field: 'buyerAssistant',
-    header: 'Buying Assistant',
-    width: '250px',
-  },
-  {
-    field: 'ownBrandManager',
-    header: 'Own Brand Manager',
+    field: 'categoryDirector',
+    header: 'Category Director',
     width: '250px',
   },
   {
@@ -182,8 +178,23 @@ export const confirmedTableCols = [
     width: '250px',
   },
   {
+    field: 'buyerAssistant',
+    header: 'Buying Assistant',
+    width: '250px',
+  },
+  {
     field: 'merchandiser',
     header: 'Merchandiser',
+    width: '250px',
+  },
+  {
+    field: 'supplyChainAnalyst',
+    header: 'Supply Chain Specialist.',
+    width: '200px',
+  },
+  {
+    field: 'ownBrandManager',
+    header: 'Own Brand Manager',
     width: '250px',
   },
   {
@@ -192,17 +203,7 @@ export const confirmedTableCols = [
     width: '250px',
   },
   {
-    field: 'categoryDirector',
-    header: 'Category Director',
-    width: '250px',
-  },
-  {
-    field: 'supplyChainAnalyst',
-    header: 'Supply Chain Specialist',
-    width: '200px',
-  },
-  {
-    field: 'clearancePriceApplied',
+    field: 'clearancePriceCheck',
     header: 'Clearance Pricing Action Required',
     width: '250px',
   },
