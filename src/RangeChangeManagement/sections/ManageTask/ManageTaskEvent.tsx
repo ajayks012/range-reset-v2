@@ -503,7 +503,7 @@ function ManageTaskEvent(props: any) {
               category: d['Category'],
               categoryId: 1,
               categoryDirector: d['Category Director'],
-              clearancePriceApplied: 'y',
+              clearancePriceCheck: 'y',
               department: d['Department'],
               departmentId: 1,
               eventId: d['Event ID'],
@@ -1350,11 +1350,10 @@ function ManageTaskEvent(props: any) {
           categoryDirectorFilter &&
           buyerFilter &&
           merchandiserFilter &&
-          supplyChainFilter
-          // &&
-          // clearancePriceFilter &&
-          // orderStopDateFilter &&
-          // stopOrderFilter
+          supplyChainFilter &&
+          clearancePriceFilter &&
+          orderStopDateFilter &&
+          stopOrderFilter
         )
       })
       setFilteredImportedData(newData)
