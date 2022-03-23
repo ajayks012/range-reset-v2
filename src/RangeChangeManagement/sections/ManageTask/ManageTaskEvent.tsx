@@ -343,6 +343,7 @@ function ManageTaskEvent(props: any) {
 
   const handleUploadDialogOpen = () => {
     setOpenUploadDialog(true)
+    setImportedData([])
     setConfirmtable(false)
   }
   const handleUploadDialogClose = () => {
@@ -383,8 +384,8 @@ function ManageTaskEvent(props: any) {
   }
 
   useEffect(() => {
-    console.log(buyerValidatedRows)
     if (buyerValidatedRows.length === importedData.length) {
+      console.log(buyerValidatedRows)
       buyerValidatedRows.map((d: any) => {
         let roleId = 'CTDIR'
         getUsersAPIByEmailAndRole &&
@@ -476,12 +477,12 @@ function ManageTaskEvent(props: any) {
   }, [buyerValidatedRows])
 
   useEffect(() => {
-    console.log(categoryDirectorValidatedRows)
-    if (buyerValidatedRows.length === categoryDirectorValidatedRows.length) {
+    if (importedData.length === categoryDirectorValidatedRows.length) {
+      console.log(categoryDirectorValidatedRows)
       categoryDirectorValidatedRows.map((d: any) => {
         let roleId = 'SRBYM'
         getUsersAPIByEmailAndRole &&
-          getUsersAPIByEmailAndRole(roleId, d.categoryDirector)
+          getUsersAPIByEmailAndRole(roleId, d.seniorBuyingManager)
             .then((res: any) => {
               setSeniorBuyingManagerValidatedRows((prevState: any) => {
                 return [
@@ -569,8 +570,501 @@ function ManageTaskEvent(props: any) {
   }, [categoryDirectorValidatedRows])
 
   useEffect(() => {
-    console.log(seniorBuyingManagerValidatedRows)
+    if (seniorBuyingManagerValidatedRows.length === importedData.length) {
+      console.log(seniorBuyingManagerValidatedRows)
+      seniorBuyingManagerValidatedRows.map((d: any) => {
+        let roleId = 'BYAST'
+        getUsersAPIByEmailAndRole &&
+          getUsersAPIByEmailAndRole(roleId, d.buyerAssistant)
+            .then((res: any) => {
+              setBuyingAssistantValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: {
+                      value: d.buyerAssistant,
+                      error: false,
+                      errorMsg: '',
+                    },
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+            .catch((err: any) => {
+              setBuyingAssistantValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: {
+                      value: d.buyerAssistant,
+                      error: true,
+                      errorMsg: 'Inavlid buying assistant',
+                    },
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+      })
+    }
   }, [seniorBuyingManagerValidatedRows])
+
+  useEffect(() => {
+    if (buyingAssistantValidatedRows.length === importedData.length) {
+      console.log(buyingAssistantValidatedRows)
+      buyingAssistantValidatedRows.map((d: any) => {
+        let roleId = 'MERCH'
+        getUsersAPIByEmailAndRole &&
+          getUsersAPIByEmailAndRole(roleId, d.merchandiser)
+            .then((res: any) => {
+              setMerchandiserValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: {
+                      value: d.merchandiser,
+                      error: false,
+                      errorMsg: '',
+                    },
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+            .catch((err: any) => {
+              setMerchandiserValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: {
+                      value: d.merchandiser,
+                      error: true,
+                      errorMsg: 'Invalid Merchandiser',
+                    },
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+      })
+    }
+  }, [buyingAssistantValidatedRows])
+
+  useEffect(() => {
+    if (merchandiserValidatedRows.length === importedData.length) {
+      console.log(merchandiserValidatedRows)
+      merchandiserValidatedRows.map((d: any) => {
+        let roleId = 'SCSPL'
+        getUsersAPIByEmailAndRole &&
+          getUsersAPIByEmailAndRole(roleId, d.supplyChainAnalyst)
+            .then((res: any) => {
+              setSupplyChainValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: {
+                      value: d.supplyChainAnalyst,
+                      error: false,
+                      errorMsg: '',
+                    },
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+            .catch((err: any) => {
+              setSupplyChainValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: {
+                      value: d.supplyChainAnalyst,
+                      error: true,
+                      errorMsg: 'Invalid supply chain specialist',
+                    },
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+      })
+    }
+  }, [merchandiserValidatedRows])
+
+  useEffect(() => {
+    if (supplyChainValidatedRows.length === importedData.length) {
+      console.log(supplyChainValidatedRows)
+      supplyChainValidatedRows.map((d: any) => {
+        let roleId = 'OWNBRM'
+        getUsersAPIByEmailAndRole &&
+          getUsersAPIByEmailAndRole(roleId, d.ownBrandManager)
+            .then((res: any) => {
+              setOwnBrandManagerValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: {
+                      value: d.ownBrandManager,
+                      error: false,
+                      errorMsg: '',
+                    },
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+            .catch((err: any) => {
+              setOwnBrandManagerValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: {
+                      value: d.ownBrandManager,
+                      error: true,
+                      errorMsg: 'Inavlid own brand manager',
+                    },
+                    rangeResetManager: d.rangeResetManager,
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+      })
+    }
+  }, [supplyChainValidatedRows])
+
+  useEffect(() => {
+    if (ownBrandManagerValidatedRows.length === importedData.length) {
+      console.log(ownBrandManagerValidatedRows)
+      ownBrandManagerValidatedRows.map((d: any) => {
+        let roleId = 'RRMNGR'
+        getUsersAPIByEmailAndRole &&
+          getUsersAPIByEmailAndRole(roleId, d.rangeResetManager)
+            .then((res: any) => {
+              setRangeResetManagerValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: {
+                      value: d.rangeResetManager,
+                      error: false,
+                      errorMsg: '',
+                    },
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+            .catch((err: any) => {
+              setRangeResetManagerValidatedRows((prevState: any) => {
+                return [
+                  ...prevState,
+                  {
+                    eventName: d.eventName,
+                    resetType: d.resetType,
+                    appDueDate: d.appDueDate,
+                    tradeGroup: d.tradeGroup,
+                    category: d.category,
+                    // categoryId: 1,
+                    department: d.department,
+                    // departmentId: 1,
+                    targetDate: d.targetDate,
+                    planogramClass: d.planogramClass,
+                    wastageRange: d.wastageRange,
+                    buyer: d.buyer,
+                    categoryDirector: d.categoryDirector,
+                    seniorBuyingManager: d.seniorBuyingManager,
+                    buyerAssistant: d.buyerAssistant,
+                    merchandiser: d.merchandiser,
+                    supplyChainAnalyst: d.supplyChainAnalyst,
+                    ownBrandManager: d.ownBrandManager,
+                    rangeResetManager: {
+                      value: d.rangeResetManager,
+                      error: true,
+                      errorMsg: 'Invalid Range Reset Manager',
+                    },
+
+                    // eventId: d['Event ID'],
+                    // name: 'string',
+                    // eventName: eventName(),
+
+                    // "status": d["Status"] ? d["Status"] : "Draft",
+                    clearancePriceCheck: 'y',
+                    orderStopDateCheck: 'y',
+                    stopOrder: 'y',
+                  },
+                ]
+              })
+            })
+      })
+    }
+  }, [ownBrandManagerValidatedRows])
+
+  useEffect(() => {
+    if (rangeResetManagerValidatedRows.length === importedData.length) {
+      console.log(rangeResetManagerValidatedRows)
+      // let correct: any = []
+      // let error: any = []
+      // rangeResetManagerValidatedRows.map((d: any) => {
+      //   let buyer = d.buyer
+      //   let categoryDirector = d.categoryDirector
+      //   let seniorBuyingManager = d.seniorBuyingManager
+      //   let buyingAssistant = d.buyingAssistant
+      //   let merchandiser = d.merchandiser
+      //   let supplyChainAnalyst = d.supplyChainAnalyst
+      //   let ownBrandManager = d.ownBrandManager
+      //   let rangeResetManager = d.rangeResetManager
+
+      //   buyer.error &&
+      //   categoryDirector.error &&
+      //   seniorBuyingManager.error &&
+      //   buyingAssistant.error &&
+      //   merchandiser.error &&
+      //   supplyChainAnalyst.error &&
+      //   ownBrandManager.error &&
+      //   rangeResetManager.error
+      //     ? error.push(d)
+      //     : correct.push(d)
+      //   // console.log(d)
+      // })
+      // console.log(correct)
+      // console.log(error)
+    }
+  }, [rangeResetManagerValidatedRows])
 
   const handlePreviewDialogSave = () => {
     setConfirmtable(true)
