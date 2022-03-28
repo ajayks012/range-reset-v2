@@ -77,7 +77,7 @@ export const eventUploadTableCols = [
   {
     field: 'supplyChainAnalyst',
     header: 'Supply Chain Specialist.',
-    width: '200px',
+    width: '250px',
   },
   {
     field: 'ownBrandManager',
@@ -190,7 +190,7 @@ export const confirmedTableCols = [
   {
     field: 'supplyChainAnalyst',
     header: 'Supply Chain Specialist.',
-    width: '200px',
+    width: '250px',
   },
   {
     field: 'ownBrandManager',

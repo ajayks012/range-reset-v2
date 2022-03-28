@@ -100,7 +100,7 @@ export const ConfirmedBodyStyle = (width) => {
     width: width,
     // fontSize: '0.8rem',
     fontSize: '12px',
-    // padding: '8px',
+    padding: '8px',
     // height: '43px',
     overflowX: 'auto',
   }

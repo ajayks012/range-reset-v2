@@ -955,6 +955,9 @@ function CreateEvent() {
     if (!buyer || buyer === null || buyer === undefined) {
       setErrBuyer(true)
       setBuyerError1('Please select buyer')
+    } else if (!buyerConfirmed) {
+      setErrBuyer(true)
+      setBuyerError1('Please Enter Valid Buyer')
     } else {
       setErrBuyer(false)
       setBuyerError1('')
@@ -966,6 +969,9 @@ function CreateEvent() {
     ) {
       setErrBuyerAssisant(true)
       setBuyingAssistentError1('Please select buying assistant')
+    } else if (!buyingAssistantConfirmed) {
+      setErrBuyerAssisant(true)
+      setBuyingAssistentError1('Please enter valid buying assistant')
     } else {
       setErrBuyerAssisant(false)
       setBuyingAssistentError1('')
@@ -977,6 +983,9 @@ function CreateEvent() {
     ) {
       setErrOwnBrandManager(true)
       setOwnBrandManagerError1('Please select own brand manager')
+    } else if (!ownBrandManagerConfirmed) {
+      setErrOwnBrandManager(true)
+      setOwnBrandManagerError1('Please enter valid own brand manager')
     } else {
       setErrOwnBrandManager(false)
       setOwnBrandManagerError1('')
@@ -988,6 +997,9 @@ function CreateEvent() {
     ) {
       setErrSeniorBuyingManager(true)
       setSeniorBuyingManagerError1('Please select senior buying manager')
+    } else if (!seniorBuyingManagerConfirmed) {
+      setErrSeniorBuyingManager(true)
+      setSeniorBuyingManagerError1('Please enter valid senior buying manager')
     } else {
       setErrSeniorBuyingManager(false)
       setSeniorBuyingManagerError1('')
@@ -995,6 +1007,9 @@ function CreateEvent() {
     if (!merchandiser || merchandiser === null || merchandiser === undefined) {
       setErrMerchandiser(true)
       setMerchandiserError1('Please select merchandiser')
+    } else if (!merchandiserConfirmed) {
+      setErrMerchandiser(true)
+      setMerchandiserError1('Please enter valid merchandiser')
     } else {
       setErrMerchandiser(false)
       setMerchandiserError1('')
@@ -1006,6 +1021,9 @@ function CreateEvent() {
     ) {
       setErrRangeResetManager(true)
       setRangeResetManagerError1('Please select range reset manager')
+    } else if (!rangeResetManagerConfirmed) {
+      setErrRangeResetManager(true)
+      setRangeResetManagerError1('Please enter valid range reset manager')
     } else {
       setErrRangeResetManager(false)
       setRangeResetManagerError1('')
@@ -1016,7 +1034,10 @@ function CreateEvent() {
       categoryDirector === undefined
     ) {
       setErrCategoryDirector(true)
-      setCategoryDirectorError1('Please select categiry director')
+      setCategoryDirectorError1('Please select category director')
+    } else if (!categoryDirectorConfirmed) {
+      setErrCategoryDirector(true)
+      setCategoryDirectorError1('Please enter valid category director')
     } else {
       setErrCategoryDirector(false)
       setCategoryDirectorError1('')
@@ -1027,7 +1048,10 @@ function CreateEvent() {
       supplyChainSpecialist === undefined
     ) {
       setErrSupplyChainSpecialist(true)
-      setSupChainSpecialistError1('Please select sup. chain specialist')
+      setSupChainSpecialistError1('Please select supply chain specialist')
+    } else if (!supplyChainSpecialistConfirmed) {
+      setErrSupplyChainSpecialist(true)
+      setSupChainSpecialistError1('Please enter valid supply chain specialist')
     } else {
       setErrSupplyChainSpecialist(false)
       setSupChainSpecialistError1('')
@@ -1037,14 +1061,14 @@ function CreateEvent() {
       group &&
       category &&
       department &&
-      buyer &&
-      buyingAssistant &&
-      ownBrandManager &&
-      seniorBuyingManager &&
-      merchandiser &&
-      rangeResetManager &&
-      categoryDirector &&
-      supplyChainSpecialist
+      buyerConfirmed &&
+      buyingAssistantConfirmed &&
+      ownBrandManagerConfirmed &&
+      seniorBuyingManagerConfirmed &&
+      merchandiserConfirmed &&
+      rangeResetManagerConfirmed &&
+      categoryDirectorConfirmed &&
+      supplyChainSpecialistConfirmed
     ) {
       const formData = {
         // uniqueId: uniqueId,
@@ -1947,23 +1971,24 @@ function CreateEvent() {
                 <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      Buying Assistant
+                      Category Director
                       {requiredStar}
                     </Typography>
                   </Grid>
 
                   <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
                     {/* <select
-                                        value={buyingAssistant}
-                                        onChange={(e: any) => setBuyingAssistant(e.target.value)}
+                                        value={categoryDirector}
+                                        onChange={(e: any) => setCategoryDirector(e.target.value)}
                                         className={classes.selectField}
                                         defaultValue=""
+                                        ref={focusBuyer}
                                     >
                                         <option value="" disabled>
-                                            --- Select Buying Assistant ---
+                                            --- Select Category Director ---
                                         </option>
                                         {
-                                            BuyingAssistants.map((b: any) => {
+                                            CategoryDirectors.map((b: any) => {
                                                 return (<option key={b.value} value={b.value}>{b.label}</option>)
                                             })
                                         }
@@ -1971,14 +1996,15 @@ function CreateEvent() {
                     <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
-                          value={buyingAssistant}
+                          value={categoryDirector}
                           // onChange={(e: any) => console.log(e.target.value)}
-                          onChange={handleBuyingAssistant}
-                          placeholder="Search Buying Assistant"
-                          onClick={handleBuyingAssistantClick}
+                          onChange={handleCategoryDirector}
+                          placeholder="Search Category Director"
+                          onClick={handleCategoryDirectorClick}
                         />
                       </Typography>
                     </Grid>
+
                     <Grid
                       item
                       xl={1}
@@ -1989,72 +2015,14 @@ function CreateEvent() {
                       style={{ textAlign: 'center' }}
                     >
                       <ConfirmCheckSign
-                        confirmValue={buyingAssistantConfirmed}
-                      />
-                    </Grid>
-                    <Typography variant="subtitle2" color="primary">
-                      {errBuyerAssisant && (
-                        <span className={classes.errorMessageColor}>
-                          {buyingAssistentError1}
-                        </span>
-                      )}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                    <Typography variant="subtitle2" color="primary">
-                      Own Brand Manager
-                      {requiredStar}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
-                    {/* <select
-                                        value={ownBrandManager}
-                                        onChange={(e: any) => setOwnBrandManager(e.target.value)}
-                                        className={classes.selectField}
-                                        defaultValue=""
-                                    >
-                                        <option value="" disabled>
-                                            --- Select Own Brand Manager ---
-                                        </option>
-                                        {
-                                            OwnBrandManagers.map((b: any) => {
-                                                return (<option key={b.value} value={b.value}>{b.label}</option>)
-                                            })
-                                        }
-                                    </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
-                      <Typography variant="subtitle2" color="primary">
-                        <SearchSelect
-                          value={ownBrandManager}
-                          // onChange={(e: any) => console.log(e.target.value)}
-                          onChange={handleOwnBrandManager}
-                          placeholder="Search Own Brand Manager"
-                          onClick={handleOwnBrandManagerClick}
-                        />
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      item
-                      xl={1}
-                      lg={1}
-                      md={1}
-                      sm={2}
-                      xs={2}
-                      style={{ textAlign: 'center' }}
-                    >
-                      <ConfirmCheckSign
-                        confirmValue={ownBrandManagerConfirmed}
+                        confirmValue={categoryDirectorConfirmed}
                       />
                     </Grid>
 
                     <Typography variant="subtitle2" color="primary">
-                      {errOwnBrandManager && (
+                      {errCategoryDirector && (
                         <span className={classes.errorMessageColor}>
-                          {ownBrandManagerError1}
+                          {categoryDirectorError1}
                         </span>
                       )}
                     </Typography>
@@ -2124,6 +2092,64 @@ function CreateEvent() {
                 <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
+                      Buying Assistant
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    {/* <select
+                                        value={buyingAssistant}
+                                        onChange={(e: any) => setBuyingAssistant(e.target.value)}
+                                        className={classes.selectField}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled>
+                                            --- Select Buying Assistant ---
+                                        </option>
+                                        {
+                                            BuyingAssistants.map((b: any) => {
+                                                return (<option key={b.value} value={b.value}>{b.label}</option>)
+                                            })
+                                        }
+                                    </select> */}
+                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                      <Typography variant="subtitle2" color="primary">
+                        <SearchSelect
+                          value={buyingAssistant}
+                          // onChange={(e: any) => console.log(e.target.value)}
+                          onChange={handleBuyingAssistant}
+                          placeholder="Search Buying Assistant"
+                          onClick={handleBuyingAssistantClick}
+                        />
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xl={1}
+                      lg={1}
+                      md={1}
+                      sm={2}
+                      xs={2}
+                      style={{ textAlign: 'center' }}
+                    >
+                      <ConfirmCheckSign
+                        confirmValue={buyingAssistantConfirmed}
+                      />
+                    </Grid>
+                    <Typography variant="subtitle2" color="primary">
+                      {errBuyerAssisant && (
+                        <span className={classes.errorMessageColor}>
+                          {buyingAssistentError1}
+                        </span>
+                      )}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
                       Merchandiser
                       {requiredStar}
                     </Typography>
@@ -2174,128 +2200,6 @@ function CreateEvent() {
                       {errMerchandiser && (
                         <span className={classes.errorMessageColor}>
                           {merchandiserError1}
-                        </span>
-                      )}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                    <Typography variant="subtitle2" color="primary">
-                      Range Reset Manager
-                      {requiredStar}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
-                    {/* <select
-                                        value={rangeResetManager}
-                                        onChange={(e: any) => setRangeResetManager(e.target.value)}
-                                        className={classes.selectField}
-                                        defaultValue=""
-                                        ref={focusBuyer}
-                                    >
-                                        <option value="" disabled>
-                                            --- Select Range Reset Manager ---
-                                        </option>
-                                        {
-                                            RangeResetManagers.map((b: any) => {
-                                                return (<option key={b.value} value={b.value}>{b.label}</option>)
-                                            })
-                                        }
-                                    </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
-                      <Typography variant="subtitle2" color="primary">
-                        <SearchSelect
-                          value={rangeResetManager}
-                          // onChange={(e: any) => console.log(e.target.value)}
-                          onChange={handleRangeResetManager}
-                          placeholder="Search Range Reset Manager"
-                          onClick={handleRangeResetManagerClick}
-                        />
-                      </Typography>
-                    </Grid>
-
-                    <Grid
-                      item
-                      xl={1}
-                      lg={1}
-                      md={1}
-                      sm={2}
-                      xs={2}
-                      style={{ textAlign: 'center' }}
-                    >
-                      <ConfirmCheckSign
-                        confirmValue={rangeResetManagerConfirmed}
-                      />
-                    </Grid>
-
-                    <Typography variant="subtitle2" color="primary">
-                      {errRangeResetManager && (
-                        <span className={classes.errorMessageColor}>
-                          {rangeResetManagerError1}
-                        </span>
-                      )}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
-                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                    <Typography variant="subtitle2" color="primary">
-                      Category Director
-                      {requiredStar}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
-                    {/* <select
-                                        value={categoryDirector}
-                                        onChange={(e: any) => setCategoryDirector(e.target.value)}
-                                        className={classes.selectField}
-                                        defaultValue=""
-                                        ref={focusBuyer}
-                                    >
-                                        <option value="" disabled>
-                                            --- Select Category Director ---
-                                        </option>
-                                        {
-                                            CategoryDirectors.map((b: any) => {
-                                                return (<option key={b.value} value={b.value}>{b.label}</option>)
-                                            })
-                                        }
-                                    </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
-                      <Typography variant="subtitle2" color="primary">
-                        <SearchSelect
-                          value={categoryDirector}
-                          // onChange={(e: any) => console.log(e.target.value)}
-                          onChange={handleCategoryDirector}
-                          placeholder="Search Category Director"
-                          onClick={handleCategoryDirectorClick}
-                        />
-                      </Typography>
-                    </Grid>
-
-                    <Grid
-                      item
-                      xl={1}
-                      lg={1}
-                      md={1}
-                      sm={2}
-                      xs={2}
-                      style={{ textAlign: 'center' }}
-                    >
-                      <ConfirmCheckSign
-                        confirmValue={categoryDirectorConfirmed}
-                      />
-                    </Grid>
-
-                    <Typography variant="subtitle2" color="primary">
-                      {errCategoryDirector && (
-                        <span className={classes.errorMessageColor}>
-                          {categoryDirectorError1}
                         </span>
                       )}
                     </Typography>
@@ -2357,6 +2261,126 @@ function CreateEvent() {
                       {errSupplyChainSpecialist && (
                         <span className={classes.errorMessageColor}>
                           {supChainSpecialistError1}
+                        </span>
+                      )}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Own Brand Manager
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    {/* <select
+                                        value={ownBrandManager}
+                                        onChange={(e: any) => setOwnBrandManager(e.target.value)}
+                                        className={classes.selectField}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled>
+                                            --- Select Own Brand Manager ---
+                                        </option>
+                                        {
+                                            OwnBrandManagers.map((b: any) => {
+                                                return (<option key={b.value} value={b.value}>{b.label}</option>)
+                                            })
+                                        }
+                                    </select> */}
+                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                      <Typography variant="subtitle2" color="primary">
+                        <SearchSelect
+                          value={ownBrandManager}
+                          // onChange={(e: any) => console.log(e.target.value)}
+                          onChange={handleOwnBrandManager}
+                          placeholder="Search Own Brand Manager"
+                          onClick={handleOwnBrandManagerClick}
+                        />
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xl={1}
+                      lg={1}
+                      md={1}
+                      sm={2}
+                      xs={2}
+                      style={{ textAlign: 'center' }}
+                    >
+                      <ConfirmCheckSign
+                        confirmValue={ownBrandManagerConfirmed}
+                      />
+                    </Grid>
+
+                    <Typography variant="subtitle2" color="primary">
+                      {errOwnBrandManager && (
+                        <span className={classes.errorMessageColor}>
+                          {ownBrandManagerError1}
+                        </span>
+                      )}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      Range Reset Manager
+                      {requiredStar}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    {/* <select
+                                        value={rangeResetManager}
+                                        onChange={(e: any) => setRangeResetManager(e.target.value)}
+                                        className={classes.selectField}
+                                        defaultValue=""
+                                        ref={focusBuyer}
+                                    >
+                                        <option value="" disabled>
+                                            --- Select Range Reset Manager ---
+                                        </option>
+                                        {
+                                            RangeResetManagers.map((b: any) => {
+                                                return (<option key={b.value} value={b.value}>{b.label}</option>)
+                                            })
+                                        }
+                                    </select> */}
+                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                      <Typography variant="subtitle2" color="primary">
+                        <SearchSelect
+                          value={rangeResetManager}
+                          // onChange={(e: any) => console.log(e.target.value)}
+                          onChange={handleRangeResetManager}
+                          placeholder="Search Range Reset Manager"
+                          onClick={handleRangeResetManagerClick}
+                        />
+                      </Typography>
+                    </Grid>
+
+                    <Grid
+                      item
+                      xl={1}
+                      lg={1}
+                      md={1}
+                      sm={2}
+                      xs={2}
+                      style={{ textAlign: 'center' }}
+                    >
+                      <ConfirmCheckSign
+                        confirmValue={rangeResetManagerConfirmed}
+                      />
+                    </Grid>
+
+                    <Typography variant="subtitle2" color="primary">
+                      {errRangeResetManager && (
+                        <span className={classes.errorMessageColor}>
+                          {rangeResetManagerError1}
                         </span>
                       )}
                     </Typography>

@@ -50,6 +50,8 @@ import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
 import { getProductHierarchyListAPI } from '../../../api/Fetch'
+import SearchSelect from '../../components/SearchSelect/SearchSelect'
+import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 
 function ManageEventCreate() {
   const location = useLocation<any>()
@@ -72,6 +74,38 @@ function ManageEventCreate() {
   const [classConfirmed, setClassConfirmed] = useState<any>()
   const [userGroup, setUserGroup] = useState<any>()
   const [userGroupValue, setUserGroupValue] = useState<any>()
+  const [buyer, setBuyer] = useState<any>('')
+  const [buyerValue, setBuyerValue] = useState<any>('')
+  const [buyerConfirmed, setBuyerConfirmed] = useState<any>(false)
+  const [buyingAssistant, setBuyingAssistant] = useState<any>('')
+  const [buyingAssistantValue, setBuyingAssistantValue] = useState<any>('')
+  const [buyingAssistantConfirmed, setBuyingAssistantConfirmed] =
+    useState<any>(false)
+  const [ownBrandManager, setOwnBrandManager] = useState<any>('')
+  const [ownBrandManagerValue, setOwnBrandManagerValue] = useState<any>('')
+  const [ownBrandManagerConfirmed, setOwnBrandManagerConfirmed] =
+    useState<any>(false)
+  const [seniorBuyingManager, setSeniorBuyingManager] = useState<any>('')
+  const [seniorBuyingManagerValue, setSeniorBuyingManagerValue] =
+    useState<any>('')
+  const [seniorBuyingManagerConfirmed, setSeniorBuyingManagerConfirmed] =
+    useState<any>(false)
+  const [merchandiser, setMerchandiser] = useState<any>('')
+  const [merchandiserValue, setMerchandiserValue] = useState<any>('')
+  const [merchandiserConfirmed, setMerchandiserConfirmed] = useState<any>(false)
+  const [rangeResetManager, setRangeResetManager] = useState<any>('')
+  const [rangeResetManagerValue, setRangeResetManagerValue] = useState<any>('')
+  const [rangeResetManagerConfirmed, setRangeResetManagerConfirmed] =
+    useState<any>(false)
+  const [categoryDirector, setCategoryDirector] = useState<any>('')
+  const [categoryDirectorValue, setCategoryDirectorValue] = useState<any>('')
+  const [categoryDirectorConfirmed, setCategoryDirectorConfirmed] =
+    useState<any>(false)
+  const [supplyChainSpecialist, setSupplyChainSpecialist] = useState<any>('')
+  const [supplyChainSpecialistValue, setSupplyChainSpecialistValue] =
+    useState<any>('')
+  const [supplyChainSpecialistConfirmed, setSupplyChainSpecialistConfirmed] =
+    useState<any>(false)
 
   const [classOpen, setClassOpen] = useState(false)
   const [groupsOpen, setGroupsOpen] = useState(false)
@@ -823,30 +857,79 @@ function ManageEventCreate() {
 
   const buyerTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.buyer}
-        options={Buyers.map((buyer) => {
-          return buyer.value
-        })}
-        // options={Buyers}
-        onChange={(event, newValue) => {
-          console.log(newValue)
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  buyer: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.buyer}
+      //   options={Buyers.map((buyer) => {
+      //     return buyer.value
+      //   })}
+      //   // options={Buyers}
+      //   onChange={(event, newValue) => {
+      //     console.log(newValue)
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             buyer: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+      <Grid
+        container
+        item
+        // xl={7}
+        // lg={7}
+        // md={7}
+        // sm={7}
+        xs={12}
+        spacing={1}
+      >
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          <Typography variant="body2" color="primary">
+            <SearchSelect
+              value={rowData.buyer}
+              // onChange={handleBuyer}
+              onChange={(event: any) => {
+                console.log(event.target.value)
+                if (event.target.value !== null) {
+                  setEventDetails((prevState: any) => {
+                    return [
+                      {
+                        ...prevState[0],
+                        buyer: event.target.value,
+                      },
+                    ]
+                  })
+                }
+              }}
+              placeholder="Search Buyer"
+              // onClick={handleBuyerClick}
+              onClick={() => console.log('clicked')}
+              styles={{
+                fontSize: '12px',
+              }}
+            />
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={buyerConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
