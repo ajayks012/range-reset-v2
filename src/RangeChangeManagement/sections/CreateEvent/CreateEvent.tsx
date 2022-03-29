@@ -50,15 +50,18 @@ import {
   // putUserGroupAPI,
   getProductHierarchyListAPI,
   getUsersAPIByEmailAndRole,
+  patchRangeResetEvents,
 } from '../../../api/Fetch'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
+import { connect } from 'react-redux'
 // import styled from 'styled-components'
 
-function CreateEvent() {
+function CreateEvent(props: any) {
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
   const small = useMediaQuery(theme.breakpoints.up(768))
+  const { userDetail } = props
 
   const {
     DEFAULT,
@@ -69,6 +72,7 @@ function CreateEvent() {
 
   // const [uniqueId, setUniqueId] = useState<any>("");
   // const [uniqueIdError, setUniqueIdError] = useState<any>("");
+
   const [resetType, setResetType] = useState<any>('')
   const [resetTypeError, setResetTypeError] = useState<any>('')
   const [classValues, setClassValues] = useState<any>()
@@ -902,7 +906,7 @@ function CreateEvent() {
   //   }
   // }
 
-  const handleCreateSubmit = (e: any) => {
+  const handleCreateSave = (e: any) => {
     e.preventDefault()
     // console.log('Sridhar')
     // console.log('RAF Date', rafDueDate.getTime())
@@ -1071,40 +1075,94 @@ function CreateEvent() {
       supplyChainSpecialistConfirmed
     ) {
       const formData = {
-        // uniqueId: uniqueId,
-        resetType: resetType.value,
-        tradeGroup: group.value,
-        category: category.value,
-        department: department.value,
-        launchDate: launchDate,
-        rafDueDate: rafDueDate,
-        eventName: eventName,
-        planogramClass: {
-          className: classFormData,
-        },
-        storeWasteProcessTiming: storeWasteProcess.value,
-        // buyer: buyer,
-        buyer: buyerValue.emailId,
-        buyerAssistant: buyingAssistantValue.emailId,
-        ownBrandManager: ownBrandManagerValue.emailId,
-        seniorBuyingManager: seniorBuyingManagerValue.emailId,
-        merchandiser: merchandiserValue.emailId,
-        rangeResetManager: rangeResetManagerValue.emailId,
-        categoryDirector: categoryDirectorValue.emailId,
-        supplyChainAnalyst: supplyChainSpecialistValue.emailId,
-        clearancePriceApplied: clearancePriceApplied,
-        orderStopDateCheck: orderStopDateCheck,
-        stopOrder: stopOrder,
+        rangeResets: [
+          {
+            // uniqueId: uniqueId,
+            resetType: resetType.value,
+            tradeGroup: group.value,
+            categoryId: category.id,
+            category: category.value,
+            department: department.value,
+            departmentId: department.id,
+            targetDate: launchDate,
+            appDueDate: rafDueDate ? rafDueDate : '',
+            eventName: eventName,
+            planogramClass: {
+              className: classFormData ? classFormData : [''],
+            },
+            storeWasteProcessTiming: storeWasteProcess.value
+              ? storeWasteProcess.value
+              : '',
+            // buyer: buyer,
+            buyerId: buyerValue.userId,
+            buyerEmailId: buyerValue.emailId,
+            buyer: buyerValue.middleName
+              ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+              : `${buyerValue.firstName} ${buyerValue.lastName}`,
+            buyerAssistantId: buyingAssistantValue.userId,
+            buyerAssistantEmailId: buyingAssistantValue.emailId,
+            buyerAssistant: buyingAssistantValue.middleName
+              ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+              : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+            ownBrandManagerId: ownBrandManagerValue.userId,
+            ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+            ownBrandManager: ownBrandManagerValue.middleName
+              ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+              : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+            seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+            seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+            seniorBuyingManager: seniorBuyingManagerValue.middleName
+              ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+              : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+            merchandiserId: merchandiserValue.userId,
+            merchandiserEmailId: merchandiserValue.emailId,
+            merchandiser: merchandiserValue.middleName
+              ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+              : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+            rangeResetManagerId: rangeResetManagerValue.userId,
+            rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+            rangeResetManager: rangeResetManagerValue.middleName
+              ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+              : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+            categoryDirectorId: categoryDirectorValue.userId,
+            categoryDirectorEmailId: categoryDirectorValue.emailId,
+            categoryDirector: categoryDirectorValue.middleName
+              ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+              : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+            supplyChainAnalystId: supplyChainSpecialistValue.userId,
+            supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+            supplyChainAnalyst: supplyChainSpecialistValue.middleName
+              ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+              : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+            clearancePriceApplied: clearancePriceApplied,
+            orderStopDateCheck: orderStopDateCheck,
+            stopOrder: stopOrder,
+            fileName: 'string',
+            createdById: userDetail && userDetail.userdetails[0].user.userId,
+            createdByName:
+              userDetail && userDetail.userdetails[0].user.middleName
+                ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+          },
+        ],
       }
       console.log(formData)
-      history.push({
-        pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
-        search: `?event=${formData['eventName']}`, // query string
-        state: {
-          // location state
-          data: formData,
-        },
-      })
+
+      patchRangeResetEvents(formData)
+        .then((res: any) => {
+          console.log(res.data)
+        })
+        .catch((err: any) => {
+          console.log(err)
+        })
+      // history.push({
+      //   pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
+      //   search: `?event=${formData['eventName']}`, // query string
+      //   state: {
+      //     // location state
+      //     data: formData,
+      //   },
+      // })
     } else {
       console.log('fail')
       toast.current.show({
@@ -1321,7 +1379,9 @@ function CreateEvent() {
                         inputVariant="outlined"
                         value={rafDueDate}
                         // ref={focusRafDueDate}
-                        onChange={handleRafDueDate}
+                        onChange={(e: any) => {
+                          handleRafDueDate(e.toISOString().split('T')[0])
+                        }}
                         // KeyboardButtonProps={{
                         //   'aria-label': 'change date',
                         // }}
@@ -1612,7 +1672,9 @@ function CreateEvent() {
                         inputVariant="outlined"
                         value={launchDate}
                         // ref={focusLaunchDate}
-                        onChange={handleLaunchDate}
+                        onChange={(e: any) => {
+                          handleLaunchDate(e.toISOString().split('T')[0])
+                        }}
                         // KeyboardButtonProps={{
                         //   'aria-label': 'change date',
                         // }}
@@ -2426,6 +2488,7 @@ function CreateEvent() {
                         variant="contained"
                         color="primary"
                         className={classes.buttons}
+                        onClick={handleCreateSave}
                         size="small"
                       >
                         Save
@@ -2447,7 +2510,6 @@ function CreateEvent() {
                         color="primary"
                         className={classes.buttons}
                         // onClick={handleCreate}
-                        onClick={handleCreateSubmit}
                         size="small"
                       >
                         Create Event
@@ -2485,4 +2547,10 @@ function CreateEvent() {
   )
 }
 
-export default CreateEvent
+const mapStateToProps = (state: any) => {
+  return {
+    userDetail: state.loginReducer.userDetail,
+  }
+}
+
+export default connect(mapStateToProps, null)(CreateEvent)

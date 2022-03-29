@@ -33,6 +33,7 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -71,6 +72,7 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -109,6 +111,7 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -147,6 +150,7 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -185,6 +189,7 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',

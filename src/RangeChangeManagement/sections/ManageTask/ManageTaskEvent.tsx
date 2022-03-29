@@ -87,6 +87,9 @@ function ManageTaskEvent(props: any) {
   const [confirmTable, setConfirmtable] = useState(false)
   const [fileError, setFileError] = useState('')
 
+  const [validatedRows, setValidatedRows] = useState<any>([])
+  const [correctRows, setCorrectRows] = useState<any>([])
+  const [errorRows, setErrorRows] = useState<any>([])
   const [buyerValid, setBuyerValid] = useState<any>(null)
   const [categoryDirectorValid, setCategoryDirectorValid] = useState<any>(null)
   const [seniorBuyingManagerValid, setSeniorBuyingManagerValid] =
@@ -1201,7 +1204,7 @@ function ManageTaskEvent(props: any) {
   const validateBuyingAssistant = (value: any, index: any) => {
     let roleId = 'BYAST'
     console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.buyingAssistant)
+    getUsersAPIByEmailAndRole(roleId, value.buyerAssistant)
       .then((res: any) => {
         // setBuyerValid(true)
         let field = {
@@ -1634,6 +1637,85 @@ function ManageTaskEvent(props: any) {
     //   })
   }
 
+  useEffect(() => {
+    // if (categoryDirectorColumns.length === importedData.length) {
+    //   console.log(categoryDirectorColumns)
+    // }
+    if (
+      buyerColumns &&
+      categoryDirectorColumns &&
+      seniorBuyingManagerColumns &&
+      buyingAssistantColumns &&
+      merchandiserColumns &&
+      supplyChainColumns &&
+      ownBrandManagerColumns &&
+      rangeResetManagerColumns
+    ) {
+      // if (
+      //   buyerColumns.length === importedData.length &&
+      //   categoryDirectorColumns.length === importedData.length &&
+      //   seniorBuyingManagerColumns.length === importedData.length &&
+      //   buyingAssistantColumns.length === importedData.length &&
+      //   merchandiserColumns.length === importedData.length &&
+      //   supplyChainColumns.length === importedData.length &&
+      //   ownBrandManagerColumns.length === importedData.length &&
+      //   rangeResetManagerColumns.length === importedData.length
+      // ) {
+      //   console.log(buyerColumns)
+      let newData = []
+      for (var i = 0; i < importedData.length; i++) {
+        let newVal = {
+          ...importedData[i],
+          buyer: buyerColumns[i],
+          categoryDirector: categoryDirectorColumns[i],
+          seniorBuyingManager: seniorBuyingManagerColumns[i],
+          buyerAssistant: buyingAssistantColumns[i],
+          merchandiser: merchandiserColumns[i],
+          supplyChainAnalyst: supplyChainColumns[i],
+          ownBrandManager: ownBrandManagerColumns[i],
+          rangeResetManager: rangeResetManagerColumns[i],
+        }
+        newData.push(newVal)
+      }
+      console.log(newData)
+      setValidatedRows(newData)
+      // }
+      // else {
+      //   console.log('error')
+    }
+  }, [
+    buyerColumns,
+    categoryDirectorColumns,
+    seniorBuyingManagerColumns,
+    buyingAssistantColumns,
+    merchandiserColumns,
+    supplyChainColumns,
+    ownBrandManagerColumns,
+    rangeResetManagerColumns,
+  ])
+
+  // useEffect(() => {
+  //   console.log(validatedRows)
+  //   if (validatedRows.length === importedData.length) {
+  //     validatedRows.map((d: any) => {
+  //       let buyer = d.buyer
+  //       if (buyer && buyer.error) {
+  //         setErrorRows((prevState: any) => {
+  //           return [...prevState, d]
+  //         })
+  //       } else {
+  //         setCorrectRows((prevState: any) => {
+  //           return [...prevState, d]
+  //         })
+  //       }
+  //     })
+  //   }
+  // }, [validatedRows])
+  // useEffect(() => {
+  //   console.log(correctRows)
+  //   console.log(errorRows)
+  // }, [correctRows, errorRows])
+
   const validateBuyer1 = (value: any) => {
     if (value != '') {
       let roleId = 'BUYER'
@@ -1671,51 +1753,6 @@ function ManageTaskEvent(props: any) {
       })
     }
   }
-  useEffect(() => {
-    if (categoryDirectorColumns.length === importedData.length) {
-      console.log(categoryDirectorColumns)
-    }
-    if (
-      buyerColumns.length === importedData.length &&
-      categoryDirectorColumns.length === importedData.length &&
-      seniorBuyingManagerColumns.length === importedData.length &&
-      buyingAssistantColumns.length === importedData.length &&
-      merchandiserColumns.length === importedData.length &&
-      supplyChainColumns.length === importedData.length &&
-      ownBrandManagerColumns.length === importedData.length &&
-      rangeResetManagerColumns.length === importedData.length
-    ) {
-      console.log(buyerColumns)
-      let newData = []
-      for (var i = 0; i < importedData.length; i++) {
-        let newVal = {
-          ...importedData[i],
-          buyer: buyerColumns[i],
-          categoryDirector: categoryDirectorColumns[i],
-          seniorBuyingManager: seniorBuyingManagerColumns[i],
-          buyerAssistant: buyingAssistantColumns[i],
-          merchandiser: merchandiserColumns[i],
-          supplyChainAnalyst: supplyChainColumns[i],
-          ownBrandManager: ownBrandManagerColumns[i],
-          rangeResetManager: rangeResetManagerColumns[i],
-        }
-        newData.push(newVal)
-      }
-      console.log(newData)
-    }
-    // else {
-    //   console.log('error')
-    // }
-  }, [
-    buyerColumns,
-    categoryDirectorColumns,
-    seniorBuyingManagerColumns,
-    buyingAssistantColumns,
-    merchandiserColumns,
-    supplyChainColumns,
-    ownBrandManagerColumns,
-    rangeResetManagerColumns,
-  ])
 
   const validateCategoryDirector1 = (value: any) => {
     if (value != '') {
@@ -2648,8 +2685,8 @@ function ManageTaskEvent(props: any) {
             style={{ textAlign: !above670px ? 'center' : 'right' }}
           >
             <Button
-              // onClick={handlePreviewDialogSave}
-              onClick={handlePreviewDialogSave1}
+              onClick={handlePreviewDialogSave}
+              // onClick={handlePreviewDialogSave1}
               className={classes.submitButtons}
             >
               Save

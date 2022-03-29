@@ -32,6 +32,7 @@ const {
   PUT_COMPLETE_TASK_CAMUNDA,
   PUT_REJECT_TASK_CAMUNDA,
   PRODUCT_HIERARCHY_LIST_GET,
+  PATCH_RANGERESET_EVENTS,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -331,6 +332,14 @@ export const getTasklogsAPI = (requestId) => {
   url = url.replace('{requestId}', requestId)
   return serviceRequestBasic(url, 'GET', undefined)
 }
+
+export const patchRangeResetEvents = (req) => {
+  let url = `${BASE_URL}${PATCH_RANGERESET_EVENTS}`
+  // url = url.replace('{userId}', req.user.employeeId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'PATCH', reqBody)
+}
+
 // export const getItemWeekStoreViewForecastAPI = (
 //   rangeResetId,
 //   productMinCode,
