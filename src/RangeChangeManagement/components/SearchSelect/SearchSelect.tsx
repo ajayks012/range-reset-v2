@@ -3,7 +3,7 @@ import { OutlinedInput, IconButton, InputAdornment } from '@material-ui/core'
 import { SearchOutlined } from '@material-ui/icons'
 import { useStyles } from './styles'
 
-function SearchSelect(props: any) {
+const SearchSelect = React.forwardRef((props: any, ref: any) => {
   const classes = useStyles()
   const { value, onChange, placeholder, onClick, styles } = props
   return (
@@ -13,6 +13,7 @@ function SearchSelect(props: any) {
         onChange={onChange}
         className={classes.inputFields}
         // style={{ backgroundColor: 'white' }}
+        ref={ref}
         style={styles}
         placeholder={placeholder}
         required={true}
@@ -26,6 +27,6 @@ function SearchSelect(props: any) {
       />
     </>
   )
-}
+})
 
 export default SearchSelect

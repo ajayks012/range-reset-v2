@@ -4,7 +4,7 @@ import React from 'react'
 import Select from 'react-select'
 import { components } from 'react-select'
 
-function AutocompleteSelect(props: any) {
+const AutocompleteSelect = React.forwardRef((props: any, ref: any) => {
   const { value, options, isMulti, onChange } = props
   const theme = useTheme()
 
@@ -53,6 +53,7 @@ function AutocompleteSelect(props: any) {
         closeMenuOnSelect={false}
         // hideSelectedOptions={true}
         styles={customStyles}
+        ref={ref}
         //   className={classes.multiSelect}
         //   styles={customStyles}
         //   isDisabled={
@@ -73,7 +74,7 @@ function AutocompleteSelect(props: any) {
         isSearchable={true}
         styles={customStyles}
         // options={optionValues}
-        // ref={ref}
+        ref={ref}
         // // className={classes.inputFields}
         // onChange={(e: any) => {
         //     e && e.value && onChangeFn(e.value)
@@ -97,6 +98,6 @@ function AutocompleteSelect(props: any) {
   //         />
   //     )
   // }
-}
+})
 
 export default AutocompleteSelect

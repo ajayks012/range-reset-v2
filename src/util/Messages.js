@@ -28,6 +28,12 @@ export const allMessages = {
       'Cannot reassign in case the status of requestor is Inactive/Deleted',
     rafDateError: 'RAF/APP Due Date Should not be greater than Launch Date',
     emailError: 'Please enter a valid Email ID',
+    emailSearcherror: 'Please enter a Email Id & Click on search icon',
+    emailEmptyerror: 'Please enter a Email Id and Search',
+    noTradingGroup: 'Please select a Trading Group',
+    noCategory: 'Please select a Category',
+    noDepartment: 'Please select a Department',
+    noLaunchDate: 'Please select a Launch Date',
   },
   success: {
     successPost: 'Log posted successfully',

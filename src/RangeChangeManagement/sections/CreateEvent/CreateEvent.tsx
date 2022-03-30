@@ -54,6 +54,7 @@ import {
 } from '../../../api/Fetch'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
+import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 // import styled from 'styled-components'
 
 function CreateEvent(props: any) {
@@ -87,7 +88,9 @@ function CreateEvent(props: any) {
   const [departmentError, setDepartmentError] = useState<any>('')
   const [rafDueDate, setRafDueDate] = useState<any>(null)
   const [rafDueDateError, setRafDueDateError] = useState<any>('')
-  const [launchDate, setLaunchDate] = useState<any>(null)
+  const [launchDate, setLaunchDate] = useState<any>(
+    `${new Date().toISOString().split('T')[0]}`
+  )
   const [launchDateError, setLaunchDateError] = useState<any>('')
   const [eventName, setEventName] = useState<any>('')
   const [storeWasteProcess, setStoreWasteProcess] = useState<any>('')
@@ -169,12 +172,21 @@ function CreateEvent(props: any) {
   const focusDepartment = useRef<any>(null)
   const focusCategory = useRef<any>(null)
   const focusLaunchDate = useRef<any>(null)
-  const focusBuyer = useRef<any>(null)
   const focusRafDueDate = useRef<any>(null)
+  const focusBuyer = useRef<any>(null)
+  const focusCategoryDirector = useRef<any>(null)
+  const focusSeniorBuyingManager = useRef<any>(null)
+  const focusBuyingAssistant = useRef<any>(null)
+  const focusMerchandiser = useRef<any>(null)
+  const focusSupplyChainSpecialist = useRef<any>(null)
+  const focusOwnBrandManager = useRef<any>(null)
+  const focusRangeRestManager = useRef<any>(null)
 
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
+
+  const [cancelOpenApprove, setCancelOpenApprove] = React.useState(false)
 
   useEffect(() => {
     getProductHierarchyListAPI &&
@@ -478,6 +490,7 @@ function CreateEvent(props: any) {
   }
 
   const handleBuyingAssistant = (e: any) => {
+    setBuyingAssistantConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setBuyingAssistant('')
@@ -488,6 +501,7 @@ function CreateEvent(props: any) {
   }
 
   const handleOwnBrandManager = (e: any) => {
+    setOwnBrandManagerConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setOwnBrandManager('')
@@ -497,6 +511,7 @@ function CreateEvent(props: any) {
     }
   }
   const handleSeniorBuyingManager = (e: any) => {
+    setSeniorBuyingManagerConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setSeniorBuyingManager('')
@@ -506,6 +521,7 @@ function CreateEvent(props: any) {
     }
   }
   const handleMerchandiser = (e: any) => {
+    setMerchandiserConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setMerchandiser('')
@@ -516,6 +532,7 @@ function CreateEvent(props: any) {
   }
 
   const handleRangeResetManager = (e: any) => {
+    setRangeResetManagerConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setRangeResetManager('')
@@ -525,6 +542,7 @@ function CreateEvent(props: any) {
     }
   }
   const handleCategoryDirector = (e: any) => {
+    setCategoryDirectorConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setCategoryDirector('')
@@ -534,6 +552,7 @@ function CreateEvent(props: any) {
     }
   }
   const handleSupplyChainSpecialist = (e: any) => {
+    setSupplyChainSpecialistConfirmed(false)
     const value = e.target.value
     if (value === null || value === undefined || value === '') {
       setSupplyChainSpecialist('')
@@ -602,6 +621,8 @@ function CreateEvent(props: any) {
     //   }
     // }
     setLaunchDate(e)
+    setErrLaunchDate(false)
+    setLaunchError1('')
   }
 
   // const handleFinaliseLineDetail = (date: any) => {
@@ -645,163 +666,182 @@ function CreateEvent(props: any) {
   }
 
   const handleBuyerClick = () => {
-    // let index = Buyers.findIndex((item) => item.email === buyer)
-    // if (index > -1) {
-    //   setbuyerValue(Buyers[index]['value'])
-    //   console.log(Buyers[index]['value'])
-    // } else {
-    //   setBuyerError('Not found')
-    // }
-
+    console.log('clicked')
     let roleId = 'BUYER'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, buyer)
-        .then((res: any) => {
-          console.log('matched')
-          setBuyerConfirmed(true)
-          setBuyerValue(res.data.userdetails[0].user)
-        })
-        .catch((err: any) => {
-          console.log('not')
-          setBuyer('')
-          setBuyerConfirmed(false)
-          setErrBuyer(true)
-          setBuyerValue('')
-          setBuyerError1(allMessages.error.emailError)
-        })
+    buyer !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, buyer)
+          .then((res: any) => {
+            console.log('matched')
+            setBuyerConfirmed(true)
+            setBuyerValue(res.data.userdetails[0].user)
+            setErrBuyer(false)
+            setBuyerError1('')
+          })
+          .catch((err: any) => {
+            console.log('not')
+            setBuyer('')
+            setBuyerConfirmed(false)
+            setErrBuyer(true)
+            setBuyerValue('')
+            setBuyerError1(allMessages.error.emailError)
+          })
+      : setErrBuyer(true)
+    setBuyerError1(allMessages.error.emailSearcherror)
   }
 
   const handleBuyingAssistantClick = () => {
     let roleId = 'BYAST'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, buyingAssistant)
-        .then((res: any) => {
-          console.log('matched')
-          setBuyingAssistantConfirmed(true)
-          setBuyingAssistantValue(res.data.userdetails[0].user)
-        })
-        .catch((err: any) => {
-          console.log('not')
-          setBuyingAssistant('')
-          setBuyingAssistantConfirmed(false)
-          setBuyingAssistantValue('')
-          setErrBuyerAssisant(true)
-          setBuyingAssistentError1(allMessages.error.emailError)
-        })
+    buyingAssistant !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, buyingAssistant)
+          .then((res: any) => {
+            console.log('matched')
+            setBuyingAssistantConfirmed(true)
+            setBuyingAssistantValue(res.data.userdetails[0].user)
+          })
+          .catch((err: any) => {
+            console.log('not')
+            setBuyingAssistant('')
+            setBuyingAssistantConfirmed(false)
+            setBuyingAssistantValue('')
+            setErrBuyerAssisant(true)
+            setBuyingAssistentError1(allMessages.error.emailError)
+          })
+      : setErrBuyerAssisant(true)
+    setBuyingAssistentError1(allMessages.error.emailSearcherror)
   }
 
   const handleOwnBrandManagerClick = () => {
     let roleId = 'OWNBRM'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, ownBrandManager)
-        .then((res) => {
-          console.log('matched')
-          setOwnBrandManagerConfirmed(true)
-          setOwnBrandManagerValue(res.data.userdetails[0].user)
-        })
-        .catch((err) => {
-          console.log('not')
-          setOwnBrandManager('')
-          setOwnBrandManagerConfirmed(false)
-          setOwnBrandManagerValue('')
-          setErrOwnBrandManager(true)
-          setOwnBrandManagerError1(allMessages.error.emailError)
-        })
+    ownBrandManager !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, ownBrandManager)
+          .then((res) => {
+            console.log('matched')
+            setOwnBrandManagerConfirmed(true)
+            setOwnBrandManagerValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setOwnBrandManager('')
+            setOwnBrandManagerConfirmed(false)
+            setOwnBrandManagerValue('')
+            setErrOwnBrandManager(true)
+            setOwnBrandManagerError1(allMessages.error.emailError)
+          })
+      : setErrOwnBrandManager(true)
+    setOwnBrandManagerError1(allMessages.error.emailSearcherror)
   }
 
   const handleSeniorBuyingManagerClick = () => {
     let roleId = 'SRBYM'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, seniorBuyingManager)
-        .then((res) => {
-          console.log('matched')
-          setSeniorBuyingManagerConfirmed(true)
-          setSeniorBuyingManagerValue(res.data.userdetails[0].user)
-        })
-        .catch((err) => {
-          console.log('not')
-          setSeniorBuyingManager('')
-          setSeniorBuyingManagerConfirmed(false)
-          setSeniorBuyingManagerValue('')
-          setErrSeniorBuyingManager(true)
-          setSeniorBuyingManagerError1(allMessages.error.emailError)
-        })
+    seniorBuyingManager !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, seniorBuyingManager)
+          .then((res) => {
+            console.log('matched')
+            setSeniorBuyingManagerConfirmed(true)
+            setSeniorBuyingManagerValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setSeniorBuyingManager('')
+            setSeniorBuyingManagerConfirmed(false)
+            setSeniorBuyingManagerValue('')
+            setErrSeniorBuyingManager(true)
+            setSeniorBuyingManagerError1(allMessages.error.emailError)
+          })
+      : setErrSeniorBuyingManager(true)
+    setSeniorBuyingManagerError1(allMessages.error.emailSearcherror)
   }
 
   const handleMerchandiserClick = () => {
     let roleId = 'MERCH'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, merchandiser)
-        .then((res) => {
-          console.log('matched')
-          setMerchandiserConfirmed(true)
-          setMerchandiserValue(res.data.userdetails[0].user)
-        })
-        .catch((err) => {
-          console.log('not')
-          setMerchandiser('')
-          setMerchandiserConfirmed(false)
-          setMerchandiserValue('')
-          setErrMerchandiser(true)
-          setMerchandiserError1(allMessages.error.emailError)
-        })
+    merchandiser !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, merchandiser)
+          .then((res) => {
+            console.log('matched')
+            setMerchandiserConfirmed(true)
+            setMerchandiserValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setMerchandiser('')
+            setMerchandiserConfirmed(false)
+            setMerchandiserValue('')
+            setErrMerchandiser(true)
+            setMerchandiserError1(allMessages.error.emailError)
+          })
+      : setErrMerchandiser(true)
+    setMerchandiserError1(allMessages.error.emailSearcherror)
   }
 
   const handleRangeResetManagerClick = () => {
     let roleId = 'RRMNGR'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, rangeResetManager)
-        .then((res) => {
-          console.log('matched')
-          setRangeResetManagerConfirmed(true)
-          setRangeResetManagerValue(res.data.userdetails[0].user)
-        })
-        .catch((err) => {
-          console.log('not')
-          setRangeResetManager('')
-          setRangeResetManagerConfirmed(false)
-          setRangeResetManagerValue('')
-          setErrRangeResetManager(true)
-          setRangeResetManagerError1(allMessages.error.emailError)
-        })
+    rangeResetManager !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, rangeResetManager)
+          .then((res) => {
+            console.log('matched')
+            setRangeResetManagerConfirmed(true)
+            setRangeResetManagerValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setRangeResetManager('')
+            setRangeResetManagerConfirmed(false)
+            setRangeResetManagerValue('')
+            setErrRangeResetManager(true)
+            setRangeResetManagerError1(allMessages.error.emailError)
+          })
+      : setErrRangeResetManager(true)
+    setRangeResetManagerError1(allMessages.error.emailSearcherror)
   }
 
   const handleCategoryDirectorClick = () => {
     let roleId = 'CTDIR'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, categoryDirector)
-        .then((res) => {
-          console.log('matched')
-          setCategoryDirectorConfirmed(true)
-          setCategoryDirectorValue(res.data.userdetails[0].user)
-        })
-        .catch((err) => {
-          console.log('not')
-          setErrCategoryDirector(true)
-          setCategoryDirector('')
-          setCategoryDirectorConfirmed(false)
-          setCategoryDirectorValue('')
-          setCategoryDirectorError1(allMessages.error.emailError)
-        })
+    categoryDirector !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, categoryDirector)
+          .then((res) => {
+            console.log('matched')
+            setCategoryDirectorConfirmed(true)
+            setCategoryDirectorValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setErrCategoryDirector(true)
+            setCategoryDirector('')
+            setCategoryDirectorConfirmed(false)
+            setCategoryDirectorValue('')
+            setCategoryDirectorError1(allMessages.error.emailError)
+          })
+      : setErrCategoryDirector(true)
+    setCategoryDirectorError1(allMessages.error.emailSearcherror)
   }
 
   const handleSupplyChainSpecialistClick = () => {
     let roleId = 'SCSPL'
-    getUsersAPIByEmailAndRole &&
-      getUsersAPIByEmailAndRole(roleId, supplyChainSpecialist)
-        .then((res) => {
-          console.log('matched')
-          setSupplyChainSpecialistConfirmed(true)
-          setSupplyChainSpecialistValue(res.data.userdetails[0].user)
-        })
-        .catch((err) => {
-          console.log('not')
-          setSupplyChainSpecialist('')
-          setErrSupplyChainSpecialist(true)
-          setSupplyChainSpecialistConfirmed(false)
-          setSupplyChainSpecialistValue('')
-          setSupChainSpecialistError1(allMessages.error.emailError)
-        })
+    supplyChainSpecialist !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, supplyChainSpecialist)
+          .then((res) => {
+            console.log('matched')
+            setSupplyChainSpecialistConfirmed(true)
+            setSupplyChainSpecialistValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setSupplyChainSpecialist('')
+            setErrSupplyChainSpecialist(true)
+            setSupplyChainSpecialistConfirmed(false)
+            setSupplyChainSpecialistValue('')
+            setSupChainSpecialistError1(allMessages.error.emailError)
+          })
+      : setErrSupplyChainSpecialist(true)
+    setSupChainSpecialistError1(allMessages.error.emailSearcherror)
   }
 
   const classDialog = (
@@ -909,359 +949,315 @@ function CreateEvent(props: any) {
   //   }
   // });
 
-  useEffect(() => {
-    if (resetTypeError !== '') {
-      focusResetType.current.focus()
-    }
-  }, [resetTypeError])
-
-  useEffect(() => {
-    if (groupError !== '') {
-      focusGroup.current.focus()
-    }
-  }, [groupError])
-
-  useEffect(() => {
-    if (categoryError !== '') {
-      focusCategory.current.focus()
-    }
-  }, [categoryError])
-
-  useEffect(() => {
-    if (departmentError !== '') {
-      focusDepartment.current.focus()
-    }
-  }, [departmentError])
+  // useEffect(() => {
+  //   if (resetTypeError !== '') {
+  //     focusResetType.current.focus()
+  //   }
+  // }, [resetTypeError])
 
   // useEffect(() => {
-  //   if (buyerError !== '') {
-  //     focusBuyer.current.focus()
+  //   if (groupError !== '') {
+  //     focusGroup.current.focus()
   //   }
-  // }, [buyerError])
+  // }, [groupError])
 
-  // const handleCreate = () => {
-  //   if (
-  //     validateResetType() &&
-  //     validateGroup() &&
-  //     validateCategory() &&
-  //     validateDepartment() &&
-  //     validateBuyer()
-  //   ) {
-  //     console.log('success')
-
-  //     const formData = {
-  //       // uniqueId: uniqueId,
-  //       resetType: resetType,
-  //       tradeGroup: group,
-  //       category: category,
-  //       department: department,
-  //       launchDate: launchDate,
-  //       rafDueDate: rafDueDate,
-  //       eventName: eventName,
-  //       planogramClass: {
-  //         className: classFormData,
-  //       },
-  //       storeWasteProcessTiming: storeWasteProcess,
-  //       // buyer: buyer,
-  //       buyer: buyerValue,
-  //       buyerAssistant: buyingAssistant,
-  //       ownBrandManager: ownBrandManager,
-  //       seniorBuyingManager: seniorBuyingManager,
-  //       merchandiser: merchandiser,
-  //       rangeResetManager: rangeResetManager,
-  //       categoryDirector: categoryDirector,
-  //       supplyChainAnalyst: supplyChainSpecialist,
-  //       clearancePriceApplied: clearancePriceApplied,
-  //       orderStopDateCheck: orderStopDateCheck,
-  //       stopOrder: stopOrder,
-  //     }
-  //     console.log(formData)
-  //     history.push({
-  //       pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
-  //       search: `?event=${formData['eventName']}`, // query string
-  //       state: {
-  //         // location state
-  //         data: formData,
-  //       },
-  //     })
-  //   } else {
-  //     console.log('fail')
-  //     toast.current.show({
-  //       severity: 'error',
-  //       summary: '',
-  //       detail: 'Please fll all the essential fields',
-  //       life: 2000,
-  //     })
+  // useEffect(() => {
+  //   if (categoryError !== '') {
+  //     focusCategory.current.focus()
   //   }
-  // }
+  // }, [categoryError])
 
-  const handleCreateSave = (e: any) => {
-    e.preventDefault()
-    // console.log('Sridhar')
-    // console.log('RAF Date', rafDueDate.getTime())
-    // console.log('Launch Date', launchDate.getTime())
+  // useEffect(() => {
+  //   if (departmentError !== '') {
+  //     focusDepartment.current.focus()
+  //   }
+  // }, [departmentError])
 
+  const checkForm = async (btnName: string) => {
+    let flag = 1
     if (!resetType || resetType === null || resetType === undefined) {
+      flag = 0
       setErrReset(true)
-      setResetError1('Please select request type')
-    } else {
-      setErrReset(false)
-      setResetError1('')
+      setResetError1(allMessages.error.noRequestType)
+      focusResetType.current.focus()
     }
     if (!group || group === null || group === undefined) {
+      flag = 0
       setErrHandle(true)
-      settradingGError1('Please select trading group')
-    } else {
-      setErrHandle(false)
-      settradingGError1('')
+      settradingGError1(allMessages.error.noTradingGroup)
+      focusGroup.current.focus()
     }
     if (!category || category === null || category === undefined) {
+      flag = 0
       setErrCategory(true)
-      setCategoryGError1('Please select category')
-    } else {
-      setErrCategory(false)
-      setCategoryGError1('')
+      setCategoryGError1(allMessages.error.noCategory)
+      focusCategory.current.focus()
     }
     if (!department || department === null || department === undefined) {
+      flag = 0
       setErrDepartment(true)
-      setDepartmentError1('Please select department')
-    } else {
-      setErrDepartment(false)
-      setDepartmentError1('')
+      setDepartmentError1(allMessages.error.noDepartment)
+      focusDepartment.current.focus()
     }
     if (!launchDate || launchDate === null || launchDate === undefined) {
+      flag = 0
       setErrLaunchDate(true)
-      setLaunchError1('Please select launch date')
-    } else {
-      setErrLaunchDate(false)
-      setLaunchError1('')
+      setLaunchError1(allMessages.error.noLaunchDate)
+      focusLaunchDate.current.focus()
     }
-    // if (launchDate.getTime() <= rafDueDate.getTime()) {
-    //   setErrLaunchDate(true)
-    //   setLaunchError1(
-    //     'RAF/App due date shouldn' + ' t be greater than launch date'
-    //   )
-    // } else {
-    //   setErrLaunchDate(false)
-    //   setLaunchError1('')
+    if (
+      !buyer ||
+      buyer === null ||
+      buyer === undefined ||
+      buyerConfirmed === false
+    ) {
+      flag = 0
+      setErrBuyer(true)
+      setBuyerError1(allMessages.error.emailSearcherror)
+      focusBuyer.current.focus()
+    }
+    // if (buyerConfirmed === false && buyer !== '') {
+    //   flag = 0
+    //   setErrBuyer(true)
+    //   setBuyerError1(allMessages.error.emailSearcherror)
     // }
-    if (!buyer || buyer === null || buyer === undefined) {
-      setErrBuyer(true)
-      setBuyerError1('Please select buyer')
-    } else if (!buyerConfirmed) {
-      setErrBuyer(true)
-      setBuyerError1('Please Enter Valid Buyer')
-    } else {
-      setErrBuyer(false)
-      setBuyerError1('')
-    }
     if (
       !buyingAssistant ||
       buyingAssistant === null ||
-      buyingAssistant === undefined
+      buyingAssistant === undefined ||
+      buyingAssistantConfirmed === false
     ) {
+      flag = 0
       setErrBuyerAssisant(true)
-      setBuyingAssistentError1('Please select buying assistant')
-    } else if (!buyingAssistantConfirmed) {
-      setErrBuyerAssisant(true)
-      setBuyingAssistentError1('Please enter valid buying assistant')
-    } else {
-      setErrBuyerAssisant(false)
-      setBuyingAssistentError1('')
+      setBuyingAssistentError1(allMessages.error.emailSearcherror)
+      focusBuyingAssistant.current.focus()
     }
+    // if (buyingAssistantConfirmed === false) {
+    //   flag = 0
+    //   setErrBuyerAssisant(true)
+    //   setBuyingAssistentError1('please search buying assitant')
+    // }
+
     if (
       !ownBrandManager ||
       ownBrandManager === null ||
-      ownBrandManager === undefined
+      ownBrandManager === undefined ||
+      buyingAssistantConfirmed === false
     ) {
+      flag = 0
       setErrOwnBrandManager(true)
-      setOwnBrandManagerError1('Please select own brand manager')
-    } else if (!ownBrandManagerConfirmed) {
-      setErrOwnBrandManager(true)
-      setOwnBrandManagerError1('Please enter valid own brand manager')
-    } else {
-      setErrOwnBrandManager(false)
-      setOwnBrandManagerError1('')
+      setOwnBrandManagerError1(allMessages.error.emailSearcherror)
+      focusOwnBrandManager.current.focus()
     }
+    // if (ownBrandManagerConfirmed === false) {
+    //   flag = 0
+    //   setErrOwnBrandManager(true)
+    //   setOwnBrandManagerError1('search own brande manager')
+    // }
     if (
       !seniorBuyingManager ||
       seniorBuyingManager === null ||
-      seniorBuyingManager === undefined
+      seniorBuyingManager === undefined ||
+      seniorBuyingManagerConfirmed === false
     ) {
+      flag = 0
       setErrSeniorBuyingManager(true)
-      setSeniorBuyingManagerError1('Please select senior buying manager')
-    } else if (!seniorBuyingManagerConfirmed) {
-      setErrSeniorBuyingManager(true)
-      setSeniorBuyingManagerError1('Please enter valid senior buying manager')
-    } else {
-      setErrSeniorBuyingManager(false)
-      setSeniorBuyingManagerError1('')
+      setSeniorBuyingManagerError1(allMessages.error.emailSearcherror)
+      focusSeniorBuyingManager.current.focus()
     }
-    if (!merchandiser || merchandiser === null || merchandiser === undefined) {
+    // if (seniorBuyingManagerConfirmed === false) {
+    //   flag = 0
+    //   setErrSeniorBuyingManager(true)
+    //   setSeniorBuyingManagerError1('Please search senior buying manager')
+    // }
+    if (
+      !merchandiser ||
+      merchandiser === null ||
+      merchandiser === undefined ||
+      merchandiserConfirmed === false
+    ) {
+      flag = 0
       setErrMerchandiser(true)
-      setMerchandiserError1('Please select merchandiser')
-    } else if (!merchandiserConfirmed) {
-      setErrMerchandiser(true)
-      setMerchandiserError1('Please enter valid merchandiser')
-    } else {
-      setErrMerchandiser(false)
-      setMerchandiserError1('')
+      setMerchandiserError1(allMessages.error.emailSearcherror)
+      focusMerchandiser.current.focus()
     }
+    // if (merchandiserConfirmed === false) {
+    //   flag = 0
+    //   setErrMerchandiser(true)
+    //   setMerchandiserError1('Please search merchandiser')
+    // }
     if (
       !rangeResetManager ||
       rangeResetManager === null ||
-      rangeResetManager === undefined
+      rangeResetManager === undefined ||
+      rangeResetManagerConfirmed === false
     ) {
+      flag = 0
       setErrRangeResetManager(true)
-      setRangeResetManagerError1('Please select range reset manager')
-    } else if (!rangeResetManagerConfirmed) {
-      setErrRangeResetManager(true)
-      setRangeResetManagerError1('Please enter valid range reset manager')
-    } else {
-      setErrRangeResetManager(false)
-      setRangeResetManagerError1('')
+      setRangeResetManagerError1(allMessages.error.emailSearcherror)
+      focusRangeRestManager.current.focus()
     }
+    // if (rangeResetManagerConfirmed === false) {
+    //   flag = 0
+    //   setErrRangeResetManager(true)
+    //   setRangeResetManagerError1('Please search range reset manager')
+    // }
     if (
       !categoryDirector ||
       categoryDirector === null ||
-      categoryDirector === undefined
+      categoryDirector === undefined ||
+      categoryDirectorConfirmed === false
     ) {
+      flag = 0
       setErrCategoryDirector(true)
-      setCategoryDirectorError1('Please select category director')
-    } else if (!categoryDirectorConfirmed) {
-      setErrCategoryDirector(true)
-      setCategoryDirectorError1('Please enter valid category director')
-    } else {
-      setErrCategoryDirector(false)
-      setCategoryDirectorError1('')
+      setCategoryDirectorError1(allMessages.error.emailSearcherror)
+      focusCategoryDirector.current.focus()
     }
+    // if (categoryDirectorConfirmed === false) {
+    //   flag = 0
+    //   setErrCategoryDirector(true)
+    //   setCategoryDirectorError1('Please search category director')
+    // }
     if (
       !supplyChainSpecialist ||
       supplyChainSpecialist === null ||
-      supplyChainSpecialist === undefined
+      supplyChainSpecialist === undefined ||
+      supplyChainSpecialistConfirmed === false
     ) {
+      flag = 0
       setErrSupplyChainSpecialist(true)
-      setSupChainSpecialistError1('Please select supply chain specialist')
-    } else if (!supplyChainSpecialistConfirmed) {
-      setErrSupplyChainSpecialist(true)
-      setSupChainSpecialistError1('Please enter valid supply chain specialist')
-    } else {
-      setErrSupplyChainSpecialist(false)
-      setSupChainSpecialistError1('')
+      setSupChainSpecialistError1(allMessages.error.emailSearcherror)
+      focusSupplyChainSpecialist.current.focus()
     }
-    if (
-      resetType &&
-      group &&
-      category &&
-      department &&
-      buyerConfirmed &&
-      buyingAssistantConfirmed &&
-      ownBrandManagerConfirmed &&
-      seniorBuyingManagerConfirmed &&
-      merchandiserConfirmed &&
-      rangeResetManagerConfirmed &&
-      categoryDirectorConfirmed &&
-      supplyChainSpecialistConfirmed
-    ) {
-      const formData = {
-        rangeResets: [
-          {
-            // uniqueId: uniqueId,
-            resetType: resetType.value,
-            tradeGroup: group.value,
-            categoryId: category.id,
-            category: category.value,
-            department: department.value,
-            departmentId: department.id,
-            targetDate: launchDate,
-            appDueDate: rafDueDate ? rafDueDate : '',
-            eventName: eventName,
-            planogramClass: {
-              className: classFormData ? classFormData : [''],
-            },
-            storeWasteProcessTiming: storeWasteProcess.value
-              ? storeWasteProcess.value
-              : '',
-            // buyer: buyer,
-            buyerId: buyerValue.userId,
-            buyerEmailId: buyerValue.emailId,
-            buyer: buyerValue.middleName
-              ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
-              : `${buyerValue.firstName} ${buyerValue.lastName}`,
-            buyerAssistantId: buyingAssistantValue.userId,
-            buyerAssistantEmailId: buyingAssistantValue.emailId,
-            buyerAssistant: buyingAssistantValue.middleName
-              ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
-              : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
-            ownBrandManagerId: ownBrandManagerValue.userId,
-            ownBrandManagerEmailId: ownBrandManagerValue.emailId,
-            ownBrandManager: ownBrandManagerValue.middleName
-              ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
-              : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
-            seniorBuyingManagerId: seniorBuyingManagerValue.userId,
-            seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
-            seniorBuyingManager: seniorBuyingManagerValue.middleName
-              ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
-              : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
-            merchandiserId: merchandiserValue.userId,
-            merchandiserEmailId: merchandiserValue.emailId,
-            merchandiser: merchandiserValue.middleName
-              ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
-              : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
-            rangeResetManagerId: rangeResetManagerValue.userId,
-            rangeResetManagerEmailId: rangeResetManagerValue.emailId,
-            rangeResetManager: rangeResetManagerValue.middleName
-              ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
-              : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
-            categoryDirectorId: categoryDirectorValue.userId,
-            categoryDirectorEmailId: categoryDirectorValue.emailId,
-            categoryDirector: categoryDirectorValue.middleName
-              ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
-              : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
-            supplyChainAnalystId: supplyChainSpecialistValue.userId,
-            supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
-            supplyChainAnalyst: supplyChainSpecialistValue.middleName
-              ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
-              : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
-            clearancePriceApplied: clearancePriceApplied,
-            orderStopDateCheck: orderStopDateCheck,
-            stopOrder: stopOrder,
-            fileName: 'string',
-            createdById: userDetail && userDetail.userdetails[0].user.userId,
-            createdByName:
-              userDetail && userDetail.userdetails[0].user.middleName
-                ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-          },
-        ],
-      }
-      console.log(formData)
-
-      patchRangeResetEvents(formData)
-        .then((res: any) => {
-          console.log(res.data)
-        })
-        .catch((err: any) => {
-          console.log(err)
-        })
-      // history.push({
-      //   pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
-      //   search: `?event=${formData['eventName']}`, // query string
-      //   state: {
-      //     // location state
-      //     data: formData,
-      //   },
-      // })
-    } else {
-      console.log('fail')
-      toast.current.show({
-        severity: 'error',
-        summary: '',
-        detail: 'Please fill all the essential fields',
-        life: 2000,
-      })
+    // if (supplyChainSpecialistConfirmed === false) {
+    //   flag = 0
+    //   setErrSupplyChainSpecialist(true)
+    //   setSupChainSpecialistError1('Please search supply chain specialist')
+    // }
+    if (flag === 1 && btnName === 'save') {
+      setCancelOpenApprove(true)
     }
   }
+
+  const handleSaveAfterDialog = (e: any) => {
+    e.preventDefault()
+    checkForm('save')
+  }
+  const handleCancelSave = (e: any) => {
+    e.preventDefault()
+    setCancelOpenApprove((p) => !p)
+  }
+  const handleCreateSave = (e: any) => {
+    const formData = {
+      rangeResets: [
+        {
+          // uniqueId: uniqueId,
+          resetType: resetType.value,
+          tradeGroup: group.value,
+          categoryId: category.id,
+          category: category.value,
+          department: department.value,
+          departmentId: department.id,
+          targetDate: launchDate,
+          appDueDate: rafDueDate ? rafDueDate : '',
+          eventName: eventName,
+          planogramClass: {
+            className: classFormData ? classFormData : [''],
+          },
+          storeWasteProcessTiming: storeWasteProcess.value
+            ? storeWasteProcess.value
+            : '',
+          // buyer: buyer,
+          buyerId: buyerValue.userId,
+          buyerEmailId: buyerValue.emailId,
+          buyer: buyerValue.middleName
+            ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+            : `${buyerValue.firstName} ${buyerValue.lastName}`,
+          buyerAssistantId: buyingAssistantValue.userId,
+          buyerAssistantEmailId: buyingAssistantValue.emailId,
+          buyerAssistant: buyingAssistantValue.middleName
+            ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+            : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+          ownBrandManagerId: ownBrandManagerValue.userId,
+          ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+          ownBrandManager: ownBrandManagerValue.middleName
+            ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+            : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+          seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+          seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+          seniorBuyingManager: seniorBuyingManagerValue.middleName
+            ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+            : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+          merchandiserId: merchandiserValue.userId,
+          merchandiserEmailId: merchandiserValue.emailId,
+          merchandiser: merchandiserValue.middleName
+            ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+            : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+          rangeResetManagerId: rangeResetManagerValue.userId,
+          rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+          rangeResetManager: rangeResetManagerValue.middleName
+            ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+            : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+          categoryDirectorId: categoryDirectorValue.userId,
+          categoryDirectorEmailId: categoryDirectorValue.emailId,
+          categoryDirector: categoryDirectorValue.middleName
+            ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+            : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+          supplyChainAnalystId: supplyChainSpecialistValue.userId,
+          supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+          supplyChainAnalyst: supplyChainSpecialistValue.middleName
+            ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+            : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          clearancePriceApplied: clearancePriceApplied,
+          orderStopDateCheck: orderStopDateCheck,
+          stopOrder: stopOrder,
+          fileName: 'string',
+          createdById: userDetail && userDetail.userdetails[0].user.userId,
+          createdByName:
+            userDetail && userDetail.userdetails[0].user.middleName
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+        },
+      ],
+    }
+    console.log(formData)
+
+    patchRangeResetEvents(formData)
+      .then((res: any) => {
+        console.log(res.data)
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+    // history.push({
+    //   pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
+    //   search: `?event=${formData['eventName']}`, // query string
+    //   state: {
+    //     // location state
+    //     data: formData,
+    //   },
+    // })
+    // } else {
+    //   console.log('fail')
+    //   toast.current.show({
+    //     severity: 'error',
+    //     summary: '',
+    //     detail: 'Please fill all the essential fields',
+    //     life: 2000,
+    //   })
+    // }
+  }
+
+  const viewConfirmSave = (
+    <ConfirmBox
+      cancelOpen={cancelOpenApprove}
+      handleCancel={handleCancelSave}
+      handleProceed={handleCreateSave}
+      label1="Are you sure to Save?"
+      label2="Please click Ok to proceed"
+    />
+  )
+
   const createEventForm = (
     <Box
       className="createRequest"
@@ -1423,8 +1419,8 @@ function CreateEvent(props: any) {
                         options={resetTypes}
                         onChange={handleResetType}
                         placeholder="Select Reset Type"
+                        ref={focusResetType}
                       />
-
                       {errReset && (
                         <span className={classes.errorMessageColor}>
                           {resetError1}
@@ -1580,6 +1576,7 @@ function CreateEvent(props: any) {
                         options={groupOptions}
                         onChange={handleGroup}
                         placeholder="Select Trading Group"
+                        ref={focusGroup}
                       />
 
                       {errHandle && (
@@ -1653,6 +1650,7 @@ function CreateEvent(props: any) {
                         onChange={handleCategory}
                         placeholder="Select Category"
                         isDisabled={categoryOptions.length > 0 ? false : true}
+                        ref={focusCategory}
                       />
 
                       {errCategory && (
@@ -1731,6 +1729,7 @@ function CreateEvent(props: any) {
                         onChange={handleDepartment}
                         placeholder="Select Department"
                         isDisabled={departmentOptions.length > 0 ? false : true}
+                        ref={focusDepartment}
                       />
 
                       {errDepartment && (
@@ -1760,7 +1759,6 @@ function CreateEvent(props: any) {
                         format="dd/MM/yyyy"
                         inputVariant="outlined"
                         value={launchDate}
-                        // ref={focusLaunchDate}
                         onChange={(e: any) => {
                           handleLaunchDate(e.toISOString().split('T')[0])
                         }}
@@ -1774,6 +1772,7 @@ function CreateEvent(props: any) {
                             onClick={props.onClick}
                             value={props.value}
                             onChange={props.onChange}
+                            ref={focusLaunchDate}
                             className={classes.dateFields}
                           />
                         )}
@@ -2092,6 +2091,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={buyer}
                           // onChange={(e: any) => setBuyer(e.target.value)}
+                          ref={focusBuyer}
                           onChange={handleBuyer}
                           placeholder="Search Buyer"
                           onClick={handleBuyerClick}
@@ -2149,6 +2149,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={categoryDirector}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusCategoryDirector}
                           onChange={handleCategoryDirector}
                           placeholder="Search Category Director"
                           onClick={handleCategoryDirectorClick}
@@ -2209,6 +2210,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={seniorBuyingManager}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusSeniorBuyingManager}
                           onChange={handleSeniorBuyingManager}
                           placeholder="Search Senior Buying Manager"
                           onClick={handleSeniorBuyingManagerClick}
@@ -2269,6 +2271,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={buyingAssistant}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusBuyingAssistant}
                           onChange={handleBuyingAssistant}
                           placeholder="Search Buying Assistant"
                           onClick={handleBuyingAssistantClick}
@@ -2328,6 +2331,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={merchandiser}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusMerchandiser}
                           onChange={handleMerchandiser}
                           placeholder="Search Merchandiser"
                           onClick={handleMerchandiserClick}
@@ -2387,6 +2391,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={supplyChainSpecialist}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusSupplyChainSpecialist}
                           onChange={handleSupplyChainSpecialist}
                           placeholder="Search Supply Chain Specialist"
                           onClick={handleSupplyChainSpecialistClick}
@@ -2447,6 +2452,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={ownBrandManager}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusOwnBrandManager}
                           onChange={handleOwnBrandManager}
                           placeholder="Search Own Brand Manager"
                           onClick={handleOwnBrandManagerClick}
@@ -2507,6 +2513,7 @@ function CreateEvent(props: any) {
                         <SearchSelect
                           value={rangeResetManager}
                           // onChange={(e: any) => console.log(e.target.value)}
+                          ref={focusRangeRestManager}
                           onChange={handleRangeResetManager}
                           placeholder="Search Range Reset Manager"
                           onClick={handleRangeResetManagerClick}
@@ -2577,7 +2584,7 @@ function CreateEvent(props: any) {
                         variant="contained"
                         color="primary"
                         className={classes.buttons}
-                        onClick={handleCreateSave}
+                        onClick={handleSaveAfterDialog}
                         size="small"
                       >
                         Save
@@ -2629,6 +2636,7 @@ function CreateEvent(props: any) {
           {/* <Grid item lg={9} xl={9} md={10} sm={12} xs={12}> */}
           {createEventForm}
           {classDialog}
+          {viewConfirmSave}
           {/* </Grid> */}
         </Grid>
       </Paper>
