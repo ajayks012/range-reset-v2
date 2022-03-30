@@ -78,6 +78,7 @@ function CreateEvent(props: any) {
   const [classValues, setClassValues] = useState<any>()
   const [confirmClassValues, setConfirmClassValues] = useState<any>()
   const [classFormData, setClassFormData] = useState<any>()
+  const [productHierValues, setProductHierValues] = useState<any>([])
   const [group, setGroup] = useState<any>('')
   const [groupError, setGroupError] = useState<any>('')
   const [category, setCategory] = useState<any>('')
@@ -177,89 +178,177 @@ function CreateEvent(props: any) {
 
   useEffect(() => {
     getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('group')
+      getProductHierarchyListAPI('department')
         .then((res: any) => {
-          const grpList = res.data.hierarchyNode.map((item: any) => {
+          const hierarchyList = res.data.hierarchyNode.map((item: any) => {
             return {
-              value: item.groupName,
-              label: item.groupName,
-              id: item.group,
-              hierGroup: 'group',
+              groupId: item.group,
+              groupName: item.groupName,
+              categoryId: item.category,
+              categoryName: item.categoryName,
+              departmentId: item.department,
+              departmentName: item.departmentName,
             }
           })
-          setGroupOptions(grpList)
-          console.log('group length: ', grpList.length)
+          setProductHierValues(hierarchyList)
+          console.log(hierarchyList)
         })
-        .catch((err: any) => setGroupOptions([]))
+        .catch((err: any) => setProductHierValues([]))
   }, [])
 
   useEffect(() => {
-    console.log(group)
-    getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('category')
-        .then((res: any) => {
-          const categoryList = res.data.hierarchyNode.map((item: any) => {
-            return {
+    if (productHierValues) {
+      let data: any = []
+      productHierValues.map((item: any) => {
+        if (!data) {
+          data.push({
+            value: item.groupName,
+            label: item.groupName,
+            groupId: item.groupId,
+          })
+        } else if (
+          data.findIndex((d: any) => d.groupId === item.groupId) === -1
+        ) {
+          data.push({
+            value: item.groupName,
+            label: item.groupName,
+            groupId: item.groupId,
+          })
+        }
+      })
+      console.log(data)
+      setGroupOptions(data)
+    }
+  }, [productHierValues])
+
+  useEffect(() => {
+    if (group) {
+      let data: any = []
+      productHierValues.map((item: any) => {
+        if (
+          data.findIndex((d: any) => d.categoryId === item.categoryId) === -1
+        ) {
+          if (item.groupId === group.groupId) {
+            data.push({
               value: item.categoryName,
               label: item.categoryName,
-              id: item.category,
-              hierGroup: 'category',
-              groupName: item.groupName,
-              groupId: item.group,
-            }
-          })
-
-          group &&
-            setCategoryOptions(
-              categoryList.filter((cat: any) => cat.groupId === group.id)
-            )
-          group &&
-            console.log(
-              'category length: ',
-              categoryList.filter((cat: any) => cat.groupId === group.id)
-            )
-        })
-        .catch((err: any) => setCategoryOptions([]))
+              categoryId: item.categoryId,
+            })
+          }
+        }
+      })
+      console.log(data)
+      setCategoryOptions(data)
+    }
   }, [group])
 
   useEffect(() => {
-    if (group && category) {
-      getProductHierarchyListAPI &&
-        getProductHierarchyListAPI('department')
-          .then((res: any) => {
-            const depList = res.data.hierarchyNode.map((item: any) => {
-              return {
-                value: item.departmentName,
-                label: item.departmentName,
-                id: item.department,
-                hierGroup: 'department',
-                groupName: item.groupName,
-                categoryName: item.categoryName,
-                groupId: item.group,
-                categoryId: item.category,
-              }
+    if (category) {
+      let data: any = []
+      productHierValues.map((item: any) => {
+        if (
+          data.findIndex((d: any) => d.departmentId === item.departmentId) ===
+          -1
+        ) {
+          if (item.categoryId === category.categoryId) {
+            data.push({
+              value: item.departmentName,
+              label: item.departmentName,
+              departmentId: item.departmentId,
             })
-            setDepartmentOptions(
-              depList.filter(
-                (dep: any) =>
-                  dep.groupId === group.id && dep.categoryId === category.id
-              )
-            )
-            console.log(
-              'department length: ',
-              depList.filter(
-                (dep: any) =>
-                  dep.groupId === group.id && dep.categoryId === category.id
-              )
-            )
-            // setLoaded(true)
-          })
-          .catch((err: any) => {
-            setDepartmentOptions([])
-            // setLoaded(true)
-          })
+          }
+        }
+      })
+      console.log(data)
+      setDepartmentOptions(data)
     }
   }, [category])
+
+  // useEffect(() => {
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('group')
+  //       .then((res: any) => {
+  //         const grpList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.groupName,
+  //             label: item.groupName,
+  //             id: item.group,
+  //             hierGroup: 'group',
+  //           }
+  //         })
+  //         setGroupOptions(grpList)
+  //         console.log('group length: ', grpList.length)
+  //       })
+  //       .catch((err: any) => setGroupOptions([]))
+  // }, [])
+
+  // useEffect(() => {
+  //   console.log(group)
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('category')
+  //       .then((res: any) => {
+  //         const categoryList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.categoryName,
+  //             label: item.categoryName,
+  //             id: item.category,
+  //             hierGroup: 'category',
+  //             groupName: item.groupName,
+  //             groupId: item.group,
+  //           }
+  //         })
+
+  //         group &&
+  //           setCategoryOptions(
+  //             categoryList.filter((cat: any) => cat.groupId === group.id)
+  //           )
+  //         group &&
+  //           console.log(
+  //             'category length: ',
+  //             categoryList.filter((cat: any) => cat.groupId === group.id)
+  //           )
+  //       })
+  //       .catch((err: any) => setCategoryOptions([]))
+  // }, [group])
+
+  // useEffect(() => {
+  //   if (group && category) {
+  //     getProductHierarchyListAPI &&
+  //       getProductHierarchyListAPI('department')
+  //         .then((res: any) => {
+  //           const depList = res.data.hierarchyNode.map((item: any) => {
+  //             return {
+  //               value: item.departmentName,
+  //               label: item.departmentName,
+  //               id: item.department,
+  //               hierGroup: 'department',
+  //               groupName: item.groupName,
+  //               categoryName: item.categoryName,
+  //               groupId: item.group,
+  //               categoryId: item.category,
+  //             }
+  //           })
+  //           setDepartmentOptions(
+  //             depList.filter(
+  //               (dep: any) =>
+  //                 dep.groupId === group.id && dep.categoryId === category.id
+  //             )
+  //           )
+  //           console.log(
+  //             'department length: ',
+  //             depList.filter(
+  //               (dep: any) =>
+  //                 dep.groupId === group.id && dep.categoryId === category.id
+  //             )
+  //           )
+  //           // setLoaded(true)
+  //         })
+  //         .catch((err: any) => {
+  //           setDepartmentOptions([])
+  //           // setLoaded(true)
+  //         })
+  //   }
+  // }, [category])
 
   useEffect(() => {
     if (department && launchDate) {

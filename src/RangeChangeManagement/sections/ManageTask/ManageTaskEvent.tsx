@@ -2685,8 +2685,8 @@ function ManageTaskEvent(props: any) {
             style={{ textAlign: !above670px ? 'center' : 'right' }}
           >
             <Button
-              onClick={handlePreviewDialogSave}
-              // onClick={handlePreviewDialogSave1}
+              // onClick={handlePreviewDialogSave}
+              onClick={handlePreviewDialogSave1}
               className={classes.submitButtons}
             >
               Save
