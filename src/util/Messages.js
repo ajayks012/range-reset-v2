@@ -34,6 +34,7 @@ export const allMessages = {
     noCategory: 'Please select a Category',
     noDepartment: 'Please select a Department',
     noLaunchDate: 'Please select a Launch Date',
+    noRafDueDate: 'Please select a Raf due date',
   },
   success: {
     successPost: 'Log posted successfully',

@@ -55,18 +55,20 @@ import {
   getProductHierarchyListAPI,
   getUsersAPIByRole,
   getUsersAPIByEmailAndRole,
+  getRangeResetEvents,
 } from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import { bulkUploadFileType } from '../../../util/Constants'
-import { FormatListNumberedSharp } from '@material-ui/icons'
+import { Dns, FormatListNumberedSharp } from '@material-ui/icons'
 import { setTimeout } from 'timers'
+import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 
 const Input = styled('input')({
   display: 'none',
 })
 
 function ManageTaskEvent(props: any) {
-  const { uploadFile, deleteFile, fileData } = props
+  const { userDetail } = props
 
   const classes = useStyles()
   const theme = useTheme()
@@ -79,6 +81,8 @@ function ManageTaskEvent(props: any) {
     useState(false)
   const [uploadedFile, setUploadedFile] = useState<any>()
   const [importedData, setImportedData] = useState<any>([])
+  const [confirmedRows, setConfirmedRows] = useState<any>([])
+  const [fetchRangeResets, setFetchRangeResets] = useState<any>([])
   const [filteredImportedData, setFilteredImportedData] = useState<any>()
   const [selectedImportedData, setSelectedImportedData] = useState<any>()
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false)
@@ -86,10 +90,8 @@ function ManageTaskEvent(props: any) {
   const [globalFilter, setGlobalFilter] = React.useState('')
   const [confirmTable, setConfirmtable] = useState(false)
   const [fileError, setFileError] = useState('')
+  const [isProgressLoader, setIsProgressLoader] = useState(false)
 
-  const [validatedRows, setValidatedRows] = useState<any>([])
-  const [correctRows, setCorrectRows] = useState<any>([])
-  const [errorRows, setErrorRows] = useState<any>([])
   const [buyerValid, setBuyerValid] = useState<any>(null)
   const [categoryDirectorValid, setCategoryDirectorValid] = useState<any>(null)
   const [seniorBuyingManagerValid, setSeniorBuyingManagerValid] =
@@ -100,25 +102,6 @@ function ManageTaskEvent(props: any) {
   const [ownBrandManagerValid, setOwnBrandManagerValid] = useState<any>(null)
   const [rangeResetManagerValid, setRangeResetManagerValid] =
     useState<any>(null)
-
-  const [buyerValidatedRows, setBuyerValidatedRows] = useState<any>([])
-  const [categoryDirectorValidatedRows, setCategoryDirectorValidatedRows] =
-    useState<any>([])
-  const [
-    seniorBuyingManagerValidatedRows,
-    setSeniorBuyingManagerValidatedRows,
-  ] = useState<any>([])
-  const [merchandiserValidatedRows, setMerchandiserValidatedRows] =
-    useState<any>([])
-  const [buyingAssistantValidatedRows, setBuyingAssistantValidatedRows] =
-    useState<any>([])
-  const [supplyChainValidatedRows, setSupplyChainValidatedRows] = useState<any>(
-    []
-  )
-  const [ownBrandManagerValidatedRows, setOwnBrandManagerValidatedRows] =
-    useState<any>([])
-  const [rangeResetManagerValidatedRows, setRangeResetManagerValidatedRows] =
-    useState<any>([])
 
   const [buyerColumns, setBuyerColumns] = useState<any>([])
   const [categoryDirectorColumns, setCategoryDirectorColumns] = useState<any>(
@@ -135,6 +118,7 @@ function ManageTaskEvent(props: any) {
   )
 
   const [resetType, setResetType] = useState<any>('')
+  const [productHierValues, setProductHierValues] = useState<any>([])
   const [group, setGroup] = useState<any>('')
   const [category, setCategory] = useState<any>('')
   const [department, setDepartment] = useState<any>('')
@@ -161,9 +145,9 @@ function ManageTaskEvent(props: any) {
     buyer: '',
     merchandiser: '',
     supplyChainAnalyst: '',
-    clearancePriceCheck: 'y',
-    orderStopDateCheck: 'y',
-    stopOrder: 'y',
+    clearancePriceCheck: 'Yes',
+    orderStopDateCheck: 'Yes',
+    stopOrder: 'Yes',
   })
 
   const {
@@ -184,90 +168,243 @@ function ManageTaskEvent(props: any) {
   const [buyerOptions, setBuyerOptions] = useState<any>([])
 
   useEffect(() => {
-    getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('group')
-        .then((res: any) => {
-          const grpList = res.data.hierarchyNode.map((item: any) => {
-            return {
-              value: item.groupName,
-              label: item.groupName,
-              id: item.group,
-              hierGroup: 'group',
-            }
-          })
-          setGroupOptions(grpList)
-          console.log('group length: ', grpList.length)
+    setIsProgressLoader(true)
+    // const createdBy = 'system'
+    getRangeResetEvents(userDetail && userDetail.userdetails[0].user.userId)
+      .then((res: any) => {
+        const data = res.data.map((d: any) => {
+          return {
+            eventName: d.name,
+            eventId: d.id,
+            resetType: d.resetType,
+            appDueDate: d.appDueDate,
+            tradeGroup: d.tradeGroup,
+            category: d.category,
+            categoryId: d.categoryId,
+            department: d.department,
+            departmentId: d.departmentId,
+            targetDate: d.targetDate,
+            planogramClass: d.planogramClass,
+            wastageRange: d.wastageRange,
+            buyer: d.buyer,
+            buyerId: d.buyerId,
+            buyerEmailId: d.buyerEmailId,
+            categoryDirector: d.categoryDirector,
+            categoryDirectorId: d.categoryDirectorId,
+            categoryDirectorEmailId: d.categoryDirectorEmailId,
+            seniorBuyingManager: d.seniorBuyingManager,
+            seniorBuyingManagerId: d.seniorBuyingManagerId,
+            seniorBuyingManagerEmailId: d.seniorBuyingManagerEmailId,
+            buyerAssistant: d.buyerAssistant,
+            buyerAssistantId: d.buyerAssistantId,
+            buyerAssistantEmailId: d.buyerAssistantEmailId,
+            merchandiser: d.merchandiser,
+            merchandiserId: d.merchandiserId,
+            merchandiserEmailId: d.merchandiserEmailId,
+            supplyChainAnalyst: d.supplyChainAnalyst,
+            supplyChainAnalystId: d.supplyChainAnalystId,
+            supplyChainAnalystEmailId: d.supplyChainAnalystEmailId,
+            ownBrandManager: d.ownBrandManager,
+            ownBrandManagerId: d.ownBrandManagerId,
+            ownBrandManagerEmailId: d.ownBrandManagerEmailId,
+            rangeResetManager: d.rangeResetManager,
+            rangeResetManagerId: d.rangeResetManagerId,
+            rangeResetManagerEmailId: d.rangeResetManagerEmailId,
+
+            // eventId: d['Event ID'],
+            // name: 'string',
+            // eventName: eventName(),
+
+            status: d.status,
+            clearancePriceCheck: d.clearancePriceCheck,
+            orderStopDateCheck: d.orderStopDateheck,
+            stopOrder: d.stopOrder,
+          }
         })
-        .catch((err: any) => setGroupOptions([]))
+        console.log(data)
+        setFetchRangeResets(data)
+        setConfirmtable(true)
+        setIsProgressLoader(false)
+      })
+      .catch((err: any) => {
+        console.log(err)
+        setIsProgressLoader(false)
+      })
   }, [])
 
   useEffect(() => {
-    console.log(group)
     getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('category')
+      getProductHierarchyListAPI('department')
         .then((res: any) => {
-          const categoryList = res.data.hierarchyNode.map((item: any) => {
+          const hierarchyList = res.data.hierarchyNode.map((item: any) => {
             return {
-              value: item.categoryName,
-              label: item.categoryName,
-              id: item.category,
-              hierGroup: 'category',
-              groupName: item.groupName,
               groupId: item.group,
+              groupName: item.groupName,
+              categoryId: item.category,
+              categoryName: item.categoryName,
+              departmentId: item.department,
+              departmentName: item.departmentName,
             }
           })
-
-          group &&
-            setCategoryOptions(
-              categoryList.filter((cat: any) => cat.groupId === group.id)
-            )
-          group &&
-            console.log(
-              'category length: ',
-              categoryList.filter((cat: any) => cat.groupId === group.id)
-            )
+          setProductHierValues(hierarchyList)
+          console.log(hierarchyList)
         })
-        .catch((err: any) => setCategoryOptions([]))
+        .catch((err: any) => setProductHierValues([]))
+  }, [])
+
+  useEffect(() => {
+    if (productHierValues) {
+      let data: any = []
+      productHierValues.map((item: any) => {
+        if (!data) {
+          data.push({
+            value: item.groupName,
+            label: item.groupName,
+            groupId: item.groupId,
+          })
+        } else if (
+          data.findIndex((d: any) => d.groupId === item.groupId) === -1
+        ) {
+          data.push({
+            value: item.groupName,
+            label: item.groupName,
+            groupId: item.groupId,
+          })
+        }
+      })
+      console.log(data)
+      setGroupOptions(data)
+    }
+  }, [productHierValues])
+
+  useEffect(() => {
+    if (group) {
+      let data: any = []
+      productHierValues.map((item: any) => {
+        if (
+          data.findIndex((d: any) => d.categoryId === item.categoryId) === -1
+        ) {
+          if (item.groupId === group.groupId) {
+            data.push({
+              value: item.categoryName,
+              label: item.categoryName,
+              categoryId: item.categoryId,
+            })
+          }
+        }
+      })
+      console.log(data)
+      setCategoryOptions(data)
+    }
   }, [group])
 
   useEffect(() => {
-    if (group && category) {
-      getProductHierarchyListAPI &&
-        getProductHierarchyListAPI('department')
-          .then((res: any) => {
-            const depList = res.data.hierarchyNode.map((item: any) => {
-              return {
-                value: item.departmentName,
-                label: item.departmentName,
-                id: item.department,
-                hierGroup: 'department',
-                groupName: item.groupName,
-                categoryName: item.categoryName,
-                groupId: item.group,
-                categoryId: item.category,
-              }
+    if (category) {
+      let data: any = []
+      productHierValues.map((item: any) => {
+        if (
+          data.findIndex((d: any) => d.departmentId === item.departmentId) ===
+          -1
+        ) {
+          if (item.categoryId === category.categoryId) {
+            data.push({
+              value: item.departmentName,
+              label: item.departmentName,
+              departmentId: item.departmentId,
             })
-            setDepartmentOptions(
-              depList.filter(
-                (dep: any) =>
-                  dep.groupId === group.id && dep.categoryId === category.id
-              )
-            )
-            console.log(
-              'department length: ',
-              depList.filter(
-                (dep: any) =>
-                  dep.groupId === group.id && dep.categoryId === category.id
-              )
-            )
-            // setLoaded(true)
-          })
-          .catch((err: any) => {
-            setDepartmentOptions([])
-            // setLoaded(true)
-          })
+          }
+        }
+      })
+      console.log(data)
+      setDepartmentOptions(data)
     }
   }, [category])
+
+  // useEffect(() => {
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('group')
+  //       .then((res: any) => {
+  //         const grpList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.groupName,
+  //             label: item.groupName,
+  //             id: item.group,
+  //             hierGroup: 'group',
+  //           }
+  //         })
+  //         setGroupOptions(grpList)
+  //         console.log('group length: ', grpList.length)
+  //       })
+  //       .catch((err: any) => setGroupOptions([]))
+  // }, [])
+
+  // useEffect(() => {
+  //   console.log(group)
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('category')
+  //       .then((res: any) => {
+  //         const categoryList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.categoryName,
+  //             label: item.categoryName,
+  //             id: item.category,
+  //             hierGroup: 'category',
+  //             groupName: item.groupName,
+  //             groupId: item.group,
+  //           }
+  //         })
+
+  //         group &&
+  //           setCategoryOptions(
+  //             categoryList.filter((cat: any) => cat.groupId === group.id)
+  //           )
+  //         group &&
+  //           console.log(
+  //             'category length: ',
+  //             categoryList.filter((cat: any) => cat.groupId === group.id)
+  //           )
+  //       })
+  //       .catch((err: any) => setCategoryOptions([]))
+  // }, [group])
+
+  // useEffect(() => {
+  //   if (group && category) {
+  //     getProductHierarchyListAPI &&
+  //       getProductHierarchyListAPI('department')
+  //         .then((res: any) => {
+  //           const depList = res.data.hierarchyNode.map((item: any) => {
+  //             return {
+  //               value: item.departmentName,
+  //               label: item.departmentName,
+  //               id: item.department,
+  //               hierGroup: 'department',
+  //               groupName: item.groupName,
+  //               categoryName: item.categoryName,
+  //               groupId: item.group,
+  //               categoryId: item.category,
+  //             }
+  //           })
+  //           setDepartmentOptions(
+  //             depList.filter(
+  //               (dep: any) =>
+  //                 dep.groupId === group.id && dep.categoryId === category.id
+  //             )
+  //           )
+  //           console.log(
+  //             'department length: ',
+  //             depList.filter(
+  //               (dep: any) =>
+  //                 dep.groupId === group.id && dep.categoryId === category.id
+  //             )
+  //           )
+  //           // setLoaded(true)
+  //         })
+  //         .catch((err: any) => {
+  //           setDepartmentOptions([])
+  //           // setLoaded(true)
+  //         })
+  //   }
+  // }, [category])
 
   useEffect(() => {
     let roleId = 'BUYER'
@@ -1075,624 +1212,625 @@ function ManageTaskEvent(props: any) {
   //   }
   // }, [rangeResetManagerValidatedRows])
 
-  const validateBuyer = (value: any, index: any) => {
-    let roleId = 'BUYER'
-    getUsersAPIByEmailAndRole(roleId, value.buyer)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        setBuyerValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        setBuyerValid(field)
-      })
-  }
-  useEffect(() => {
-    if (buyerValid) {
-      let index = buyerValid.index
-      let valid = buyerValid.valid
-      let value = buyerValid.value
-      let buyerVal = [valid, value.buyer]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        buyer: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateCategoryDirector(value, index)
-    }
-  }, [buyerValid])
+  // const validateBuyer = (value: any, index: any) => {
+  //   let roleId = 'BUYER'
+  //   getUsersAPIByEmailAndRole(roleId, value.buyer)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       setBuyerValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       setBuyerValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (buyerValid) {
+  //     let index = buyerValid.index
+  //     let valid = buyerValid.valid
+  //     let value = buyerValid.value
+  //     let buyerVal = [valid, value.buyer]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       buyer: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateCategoryDirector(value, index)
+  //   }
+  // }, [buyerValid])
 
-  const validateCategoryDirector = (value: any, index: any) => {
-    let roleId = 'CTDIR'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.categoryDirector)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setCategoryDirectorValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setCategoryDirectorValid(field)
-      })
-  }
-  useEffect(() => {
-    if (categoryDirectorValid) {
-      let index = categoryDirectorValid.index
-      let valid = categoryDirectorValid.valid
-      let value = categoryDirectorValid.value
-      let buyerVal = [valid, value.categoryDirector]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        categoryDirector: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateSeniorBuyingManager(value, index)
-    }
-  }, [categoryDirectorValid])
+  // const validateCategoryDirector = (value: any, index: any) => {
+  //   let roleId = 'CTDIR'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.categoryDirector)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setCategoryDirectorValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setCategoryDirectorValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (categoryDirectorValid) {
+  //     let index = categoryDirectorValid.index
+  //     let valid = categoryDirectorValid.valid
+  //     let value = categoryDirectorValid.value
+  //     let buyerVal = [valid, value.categoryDirector]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       categoryDirector: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateSeniorBuyingManager(value, index)
+  //   }
+  // }, [categoryDirectorValid])
 
-  const validateSeniorBuyingManager = (value: any, index: any) => {
-    let roleId = 'SRBYM'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.seniorBuyingManager)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setSeniorBuyingManagerValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setSeniorBuyingManagerValid(field)
-      })
-  }
-  useEffect(() => {
-    if (seniorBuyingManagerValid) {
-      let index = seniorBuyingManagerValid.index
-      let valid = seniorBuyingManagerValid.valid
-      let value = seniorBuyingManagerValid.value
-      let buyerVal = [valid, value.seniorBuyingManager]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        seniorBuyingManager: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateBuyingAssistant(value, index)
-    }
-  }, [seniorBuyingManagerValid])
+  // const validateSeniorBuyingManager = (value: any, index: any) => {
+  //   let roleId = 'SRBYM'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.seniorBuyingManager)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setSeniorBuyingManagerValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setSeniorBuyingManagerValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (seniorBuyingManagerValid) {
+  //     let index = seniorBuyingManagerValid.index
+  //     let valid = seniorBuyingManagerValid.valid
+  //     let value = seniorBuyingManagerValid.value
+  //     let buyerVal = [valid, value.seniorBuyingManager]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       seniorBuyingManager: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateBuyingAssistant(value, index)
+  //   }
+  // }, [seniorBuyingManagerValid])
 
-  const validateBuyingAssistant = (value: any, index: any) => {
-    let roleId = 'BYAST'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.buyerAssistant)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setBuyingAssistantValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setBuyingAssistantValid(field)
-      })
-  }
-  useEffect(() => {
-    if (buyingAssistantValid) {
-      let index = buyingAssistantValid.index
-      let valid = buyingAssistantValid.valid
-      let value = buyingAssistantValid.value
-      let buyerVal = [valid, value.buyerAssistant]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        buyerAssistant: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateMerchandiser(value, index)
-    }
-  }, [buyingAssistantValid])
+  // const validateBuyingAssistant = (value: any, index: any) => {
+  //   let roleId = 'BYAST'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.buyerAssistant)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setBuyingAssistantValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setBuyingAssistantValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (buyingAssistantValid) {
+  //     let index = buyingAssistantValid.index
+  //     let valid = buyingAssistantValid.valid
+  //     let value = buyingAssistantValid.value
+  //     let buyerVal = [valid, value.buyerAssistant]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       buyerAssistant: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateMerchandiser(value, index)
+  //   }
+  // }, [buyingAssistantValid])
 
-  const validateMerchandiser = (value: any, index: any) => {
-    let roleId = 'MERCH'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.merchandiser)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setMerchandiserValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setMerchandiserValid(field)
-      })
-  }
-  useEffect(() => {
-    if (merchandiserValid) {
-      let index = merchandiserValid.index
-      let valid = merchandiserValid.valid
-      let value = merchandiserValid.value
-      let buyerVal = [valid, value.merchandiser]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        merchandiser: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateSupplyChain(value, index)
-    }
-  }, [merchandiserValid])
+  // const validateMerchandiser = (value: any, index: any) => {
+  //   let roleId = 'MERCH'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.merchandiser)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setMerchandiserValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setMerchandiserValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (merchandiserValid) {
+  //     let index = merchandiserValid.index
+  //     let valid = merchandiserValid.valid
+  //     let value = merchandiserValid.value
+  //     let buyerVal = [valid, value.merchandiser]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       merchandiser: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateSupplyChain(value, index)
+  //   }
+  // }, [merchandiserValid])
 
-  const validateSupplyChain = (value: any, index: any) => {
-    let roleId = 'MERCH'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.supplyChainAnalyst)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setSupplyChainValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setSupplyChainValid(field)
-      })
-  }
-  useEffect(() => {
-    if (supplyChainValid) {
-      let index = supplyChainValid.index
-      let valid = supplyChainValid.valid
-      let value = supplyChainValid.value
-      let buyerVal = [valid, value.supplyChainAnalyst]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        supplyChainAnalyst: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateOwnBrandManager(value, index)
-    }
-  }, [supplyChainValid])
+  // const validateSupplyChain = (value: any, index: any) => {
+  //   let roleId = 'MERCH'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.supplyChainAnalyst)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setSupplyChainValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setSupplyChainValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (supplyChainValid) {
+  //     let index = supplyChainValid.index
+  //     let valid = supplyChainValid.valid
+  //     let value = supplyChainValid.value
+  //     let buyerVal = [valid, value.supplyChainAnalyst]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       supplyChainAnalyst: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateOwnBrandManager(value, index)
+  //   }
+  // }, [supplyChainValid])
 
-  const validateOwnBrandManager = (value: any, index: any) => {
-    let roleId = 'OWNBRM'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.ownBrandManager)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setOwnBrandManagerValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setOwnBrandManagerValid(field)
-      })
-  }
-  useEffect(() => {
-    if (ownBrandManagerValid) {
-      let index = ownBrandManagerValid.index
-      let valid = ownBrandManagerValid.valid
-      let value = ownBrandManagerValid.value
-      let buyerVal = [valid, value.ownBrandManager]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        ownBrandManager: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      validateRangeResetManager(value, index)
-    }
-  }, [ownBrandManagerValid])
+  // const validateOwnBrandManager = (value: any, index: any) => {
+  //   let roleId = 'OWNBRM'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.ownBrandManager)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setOwnBrandManagerValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setOwnBrandManagerValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (ownBrandManagerValid) {
+  //     let index = ownBrandManagerValid.index
+  //     let valid = ownBrandManagerValid.valid
+  //     let value = ownBrandManagerValid.value
+  //     let buyerVal = [valid, value.ownBrandManager]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       ownBrandManager: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     validateRangeResetManager(value, index)
+  //   }
+  // }, [ownBrandManagerValid])
 
-  const validateRangeResetManager = (value: any, index: any) => {
-    let roleId = 'OWNBRM'
-    console.log(index, value)
-    getUsersAPIByEmailAndRole(roleId, value.rangeResetManager)
-      .then((res: any) => {
-        // setBuyerValid(true)
-        let field = {
-          index: index,
-          valid: true,
-          value: value,
-        }
-        console.log(field)
-        setRangeResetManagerValid(field)
-      })
-      .catch((err: any) => {
-        // setBuyerValid(false)
-        let field = {
-          index: index,
-          valid: false,
-          value: value,
-        }
-        console.log(field)
-        setRangeResetManagerValid(field)
-      })
-  }
-  useEffect(() => {
-    if (rangeResetManagerValid) {
-      let index = rangeResetManagerValid.index
-      let valid = rangeResetManagerValid.valid
-      let value = rangeResetManagerValid.value
-      let buyerVal = [valid, value.rangeResetManager]
-      console.log(buyerVal)
-      let newData = [...importedData]
-      newData[index] = {
-        ...importedData[index],
-        rangeResetManager: buyerVal,
-      }
-      console.log(newData)
-      setImportedData(newData)
-      // validateCategoryDirector(index, value)
-    }
-  }, [rangeResetManagerValid])
+  // const validateRangeResetManager = (value: any, index: any) => {
+  //   let roleId = 'OWNBRM'
+  //   console.log(index, value)
+  //   getUsersAPIByEmailAndRole(roleId, value.rangeResetManager)
+  //     .then((res: any) => {
+  //       // setBuyerValid(true)
+  //       let field = {
+  //         index: index,
+  //         valid: true,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setRangeResetManagerValid(field)
+  //     })
+  //     .catch((err: any) => {
+  //       // setBuyerValid(false)
+  //       let field = {
+  //         index: index,
+  //         valid: false,
+  //         value: value,
+  //       }
+  //       console.log(field)
+  //       setRangeResetManagerValid(field)
+  //     })
+  // }
+  // useEffect(() => {
+  //   if (rangeResetManagerValid) {
+  //     let index = rangeResetManagerValid.index
+  //     let valid = rangeResetManagerValid.valid
+  //     let value = rangeResetManagerValid.value
+  //     let buyerVal = [valid, value.rangeResetManager]
+  //     console.log(buyerVal)
+  //     let newData = [...importedData]
+  //     newData[index] = {
+  //       ...importedData[index],
+  //       rangeResetManager: buyerVal,
+  //     }
+  //     console.log(newData)
+  //     setImportedData(newData)
+  //     // validateCategoryDirector(index, value)
+  //   }
+  // }, [rangeResetManagerValid])
 
-  const handlePreviewDialogSave = () => {
-    setConfirmtable(true)
-    setOpenPreviewDialog(false)
-    uploadFile(importedData && importedData)
+  // const handlePreviewDialogSave = () => {
+  //   setConfirmtable(true)
+  //   setOpenPreviewDialog(false)
+  //   setConfirmedRows(importedData && importedData)
 
-    importedData.map((d: any, index: any) => {
-      validateBuyer(d, index)
-      // if (buyerValid != null) {
-      //   if (buyerValid) {
-      //     let firstData: any = [...importedData]
-      //     let buyerData = [d.buyer, false]
-      //     firstData[index].buyer = buyerData
-      //     setImportedData(firstData)
-      //   } else {
-      //     let firstData: any = [...importedData]
-      //     let buyerData = [d.buyer, true]
-      //     firstData[index].buyer = buyerData
-      //     setImportedData(firstData)
-      //   }
-      // }
-      // validateCategoryDirector(d.categoryDirector, index)
-      // if (categoryDirectorValid != null) {
-      //   if (categoryDirectorValid) {
-      //     let firstData: any = [...importedData]
-      //     let categoryDirectorData = [d.categoryDirector, false]
-      //     firstData[index].categoryDirector = categoryDirectorData
-      //     setImportedData(firstData)
-      //   } else {
-      //     let firstData: any = [...importedData]
-      //     let categoryDirectorData = [d.categoryDirector, true]
-      //     firstData[index].categoryDirector = categoryDirectorData
-      //     setImportedData(firstData)
-      //   }
-      // }
+  //   importedData.map((d: any, index: any) => {
+  //     validateBuyer(d, index)
+  // if (buyerValid != null) {
+  //   if (buyerValid) {
+  //     let firstData: any = [...importedData]
+  //     let buyerData = [d.buyer, false]
+  //     firstData[index].buyer = buyerData
+  //     setImportedData(firstData)
+  //   } else {
+  //     let firstData: any = [...importedData]
+  //     let buyerData = [d.buyer, true]
+  //     firstData[index].buyer = buyerData
+  //     setImportedData(firstData)
+  //   }
+  // }
+  // validateCategoryDirector(d.categoryDirector, index)
+  // if (categoryDirectorValid != null) {
+  //   if (categoryDirectorValid) {
+  //     let firstData: any = [...importedData]
+  //     let categoryDirectorData = [d.categoryDirector, false]
+  //     firstData[index].categoryDirector = categoryDirectorData
+  //     setImportedData(firstData)
+  //   } else {
+  //     let firstData: any = [...importedData]
+  //     let categoryDirectorData = [d.categoryDirector, true]
+  //     firstData[index].categoryDirector = categoryDirectorData
+  //     setImportedData(firstData)
+  //   }
+  // }
 
-      // console.log(verifyBuyer(d.buyer))
-      // let roleId = 'BUYER'
-      // let buyerValue: any =
-      // console.log(buyerValue)
+  // console.log(verifyBuyer(d.buyer))
+  // let roleId = 'BUYER'
+  // let buyerValue: any =
+  // console.log(buyerValue)
 
-      // let roleId = 'BUYER'
-      // getUsersAPIByEmailAndRole &&
-      //   getUsersAPIByEmailAndRole(roleId, d.buyer)
-      //     .then((res: any) => {
-      //       // setImportedData((prevState: any) => {
-      //       setBuyerValidatedRows((prevState: any) => {
-      //         return [
-      //           ...prevState,
-      //           {
-      //             eventName: d.eventName,
-      //             resetType: d.resetType,
-      //             appDueDate: d.appDueDate,
-      //             tradeGroup: d.tradeGroup,
-      //             category: d.category,
-      //             // categoryId: 1,
-      //             department: d.department,
-      //             // departmentId: 1,
-      //             targetDate: d.targetDate,
-      //             planogramClass: d.planogramClass,
-      //             wastageRange: d.wastageRange,
-      //             buyer: {
-      //               value: d.buyer,
-      //               error: false,
-      //               errorMsg: '',
-      //             },
-      //             categoryDirector: d.categoryDirector,
-      //             seniorBuyingManager: d.seniorBuyingManager,
-      //             buyerAssistant: d.buyerAssistant,
-      //             merchandiser: d.merchandiser,
-      //             supplyChainAnalyst: d.supplyChainAnalyst,
-      //             ownBrandManager: d.ownBrandManager,
-      //             rangeResetManager: d.rangeResetManager,
+  // let roleId = 'BUYER'
+  // getUsersAPIByEmailAndRole &&
+  //   getUsersAPIByEmailAndRole(roleId, d.buyer)
+  //     .then((res: any) => {
+  //       // setImportedData((prevState: any) => {
+  //       setBuyerValidatedRows((prevState: any) => {
+  //         return [
+  //           ...prevState,
+  //           {
+  //             eventName: d.eventName,
+  //             resetType: d.resetType,
+  //             appDueDate: d.appDueDate,
+  //             tradeGroup: d.tradeGroup,
+  //             category: d.category,
+  //             // categoryId: 1,
+  //             department: d.department,
+  //             // departmentId: 1,
+  //             targetDate: d.targetDate,
+  //             planogramClass: d.planogramClass,
+  //             wastageRange: d.wastageRange,
+  //             buyer: {
+  //               value: d.buyer,
+  //               error: false,
+  //               errorMsg: '',
+  //             },
+  //             categoryDirector: d.categoryDirector,
+  //             seniorBuyingManager: d.seniorBuyingManager,
+  //             buyerAssistant: d.buyerAssistant,
+  //             merchandiser: d.merchandiser,
+  //             supplyChainAnalyst: d.supplyChainAnalyst,
+  //             ownBrandManager: d.ownBrandManager,
+  //             rangeResetManager: d.rangeResetManager,
 
-      //             // eventId: d['Event ID'],
-      //             // name: 'string',
-      //             // eventName: eventName(),
+  //             // eventId: d['Event ID'],
+  //             // name: 'string',
+  //             // eventName: eventName(),
 
-      //             // "status": d["Status"] ? d["Status"] : "Draft",
-      //             clearancePriceCheck: 'y',
-      //             orderStopDateCheck: 'y',
-      //             stopOrder: 'y',
-      //           },
-      //         ]
-      //       })
-      //     })
-      //     .catch((err: any) => {
-      //       // setImportedData((prevState: any) => {
-      //       setBuyerValidatedRows((prevState: any) => {
-      //         return [
-      //           ...prevState,
-      //           {
-      //             eventName: d.eventName,
-      //             resetType: d.resetType,
-      //             appDueDate: d.appDueDate,
-      //             tradeGroup: d.tradeGroup,
-      //             category: d.category,
-      //             // categoryId: 1,
-      //             department: d.department,
-      //             // departmentId: 1,
-      //             targetDate: d.targetDate,
-      //             planogramClass: d.planogramClass,
-      //             wastageRange: d.wastageRange,
-      //             buyer: {
-      //               value: d.buyer,
-      //               error: true,
-      //               errorMsg: 'Buyer is invalid',
-      //             },
-      //             categoryDirector: d.categoryDirector,
-      //             seniorBuyingManager: d.seniorBuyingManager,
-      //             buyerAssistant: d.buyerAssistant,
-      //             merchandiser: d.merchandiser,
-      //             supplyChainAnalyst: d.supplyChainAnalyst,
-      //             ownBrandManager: d.ownBrandManager,
-      //             rangeResetManager: d.rangeResetManager,
+  //             // "status": d["Status"] ? d["Status"] : "Draft",
+  //             clearancePriceCheck: 'y',
+  //             orderStopDateCheck: 'y',
+  //             stopOrder: 'y',
+  //           },
+  //         ]
+  //       })
+  //     })
+  //     .catch((err: any) => {
+  //       // setImportedData((prevState: any) => {
+  //       setBuyerValidatedRows((prevState: any) => {
+  //         return [
+  //           ...prevState,
+  //           {
+  //             eventName: d.eventName,
+  //             resetType: d.resetType,
+  //             appDueDate: d.appDueDate,
+  //             tradeGroup: d.tradeGroup,
+  //             category: d.category,
+  //             // categoryId: 1,
+  //             department: d.department,
+  //             // departmentId: 1,
+  //             targetDate: d.targetDate,
+  //             planogramClass: d.planogramClass,
+  //             wastageRange: d.wastageRange,
+  //             buyer: {
+  //               value: d.buyer,
+  //               error: true,
+  //               errorMsg: 'Buyer is invalid',
+  //             },
+  //             categoryDirector: d.categoryDirector,
+  //             seniorBuyingManager: d.seniorBuyingManager,
+  //             buyerAssistant: d.buyerAssistant,
+  //             merchandiser: d.merchandiser,
+  //             supplyChainAnalyst: d.supplyChainAnalyst,
+  //             ownBrandManager: d.ownBrandManager,
+  //             rangeResetManager: d.rangeResetManager,
 
-      //             // eventId: d['Event ID'],
-      //             // name: 'string',
-      //             // eventName: eventName(),
+  //             // eventId: d['Event ID'],
+  //             // name: 'string',
+  //             // eventName: eventName(),
 
-      //             // "status": d["Status"] ? d["Status"] : "Draft",
-      //             clearancePriceCheck: 'y',
-      //             orderStopDateCheck: 'y',
-      //             stopOrder: 'y',
-      //           },
-      //         ]
-      //       })
-      // })
-    })
-    // console.log(firstData)
+  //             // "status": d["Status"] ? d["Status"] : "Draft",
+  //             clearancePriceCheck: 'y',
+  //             orderStopDateCheck: 'y',
+  //             stopOrder: 'y',
+  //           },
+  //         ]
+  //       })
+  // })
+  // })
 
-    // buyerValidatedRows.length > 0 &&
-    //   buyerValidatedRows.map((d: any) => {
-    //     let roleId = 'CTDIR'
-    //     getUsersAPIByEmailAndRole &&
-    //       getUsersAPIByEmailAndRole('CTDIR', d.categoryDirector)
-    //         .then((res: any) => {
-    //           setCategoryDirectorValidatedRows((prevState: any) => {
-    //             return [
-    //               ...prevState,
-    //               {
-    //                 eventName: d.eventName,
-    //                 resetType: d.resetType,
-    //                 appDueDate: d.appDueDate,
-    //                 tradeGroup: d.tradeGroup,
-    //                 category: d.category,
-    //                 // categoryId: 1,
-    //                 department: d.department,
-    //                 // departmentId: 1,
-    //                 targetDate: d.targetDate,
-    //                 planogramClass: d.planogramClass,
-    //                 wastageRange: d.wastageRange,
-    //                 buyer: d.buyer,
-    //                 categoryDirector: {
-    //                   value: d.categoryDirector,
-    //                   error: false,
-    //                   errorMsg: '',
-    //                 },
-    //                 seniorBuyingManager: d.seniorBuyingManager,
-    //                 buyerAssistant: d.buyerAssistant,
-    //                 merchandiser: d.merchandiser,
-    //                 supplyChainAnalyst: d.supplyChainAnalyst,
-    //                 ownBrandManager: d.ownBrandManager,
-    //                 rangeResetManager: d.rangeResetManager,
+  // console.log(firstData)
 
-    //                 // eventId: d['Event ID'],
-    //                 // name: 'string',
-    //                 // eventName: eventName(),
+  // buyerValidatedRows.length > 0 &&
+  //   buyerValidatedRows.map((d: any) => {
+  //     let roleId = 'CTDIR'
+  //     getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole('CTDIR', d.categoryDirector)
+  //         .then((res: any) => {
+  //           setCategoryDirectorValidatedRows((prevState: any) => {
+  //             return [
+  //               ...prevState,
+  //               {
+  //                 eventName: d.eventName,
+  //                 resetType: d.resetType,
+  //                 appDueDate: d.appDueDate,
+  //                 tradeGroup: d.tradeGroup,
+  //                 category: d.category,
+  //                 // categoryId: 1,
+  //                 department: d.department,
+  //                 // departmentId: 1,
+  //                 targetDate: d.targetDate,
+  //                 planogramClass: d.planogramClass,
+  //                 wastageRange: d.wastageRange,
+  //                 buyer: d.buyer,
+  //                 categoryDirector: {
+  //                   value: d.categoryDirector,
+  //                   error: false,
+  //                   errorMsg: '',
+  //                 },
+  //                 seniorBuyingManager: d.seniorBuyingManager,
+  //                 buyerAssistant: d.buyerAssistant,
+  //                 merchandiser: d.merchandiser,
+  //                 supplyChainAnalyst: d.supplyChainAnalyst,
+  //                 ownBrandManager: d.ownBrandManager,
+  //                 rangeResetManager: d.rangeResetManager,
 
-    //                 // "status": d["Status"] ? d["Status"] : "Draft",
-    //                 clearancePriceCheck: 'y',
-    //                 orderStopDateCheck: 'y',
-    //                 stopOrder: 'y',
-    //               },
-    //             ]
-    //           })
+  //                 // eventId: d['Event ID'],
+  //                 // name: 'string',
+  //                 // eventName: eventName(),
 
-    //         })
-    //         .catch((err: any) => {
-    //           setCategoryDirectorValidatedRows((prevState: any) => {
-    //             return [
-    //               ...prevState,
-    //               {
-    //                 eventName: d.eventName,
-    //                 resetType: d.resetType,
-    //                 appDueDate: d.appDueDate,
-    //                 tradeGroup: d.tradeGroup,
-    //                 category: d.category,
-    //                 // categoryId: 1,
-    //                 department: d.department,
-    //                 // departmentId: 1,
-    //                 targetDate: d.targetDate,
-    //                 planogramClass: d.planogramClass,
-    //                 wastageRange: d.wastageRange,
-    //                 buyer: d.buyer,
-    //                 categoryDirector: {
-    //                   value: d.categoryDirector,
-    //                   error: true,
-    //                   errorMsg: 'Invalid Category Director',
-    //                 },
-    //                 seniorBuyingManager: d.seniorBuyingManager,
-    //                 buyerAssistant: d.buyerAssistant,
-    //                 merchandiser: d.merchandiser,
-    //                 supplyChainAnalyst: d.supplyChainAnalyst,
-    //                 ownBrandManager: d.ownBrandManager,
-    //                 rangeResetManager: d.rangeResetManager,
+  //                 // "status": d["Status"] ? d["Status"] : "Draft",
+  //                 clearancePriceCheck: 'y',
+  //                 orderStopDateCheck: 'y',
+  //                 stopOrder: 'y',
+  //               },
+  //             ]
+  //           })
 
-    //                 // eventId: d['Event ID'],
-    //                 // name: 'string',
-    //                 // eventName: eventName(),
+  //         })
+  //         .catch((err: any) => {
+  //           setCategoryDirectorValidatedRows((prevState: any) => {
+  //             return [
+  //               ...prevState,
+  //               {
+  //                 eventName: d.eventName,
+  //                 resetType: d.resetType,
+  //                 appDueDate: d.appDueDate,
+  //                 tradeGroup: d.tradeGroup,
+  //                 category: d.category,
+  //                 // categoryId: 1,
+  //                 department: d.department,
+  //                 // departmentId: 1,
+  //                 targetDate: d.targetDate,
+  //                 planogramClass: d.planogramClass,
+  //                 wastageRange: d.wastageRange,
+  //                 buyer: d.buyer,
+  //                 categoryDirector: {
+  //                   value: d.categoryDirector,
+  //                   error: true,
+  //                   errorMsg: 'Invalid Category Director',
+  //                 },
+  //                 seniorBuyingManager: d.seniorBuyingManager,
+  //                 buyerAssistant: d.buyerAssistant,
+  //                 merchandiser: d.merchandiser,
+  //                 supplyChainAnalyst: d.supplyChainAnalyst,
+  //                 ownBrandManager: d.ownBrandManager,
+  //                 rangeResetManager: d.rangeResetManager,
 
-    //                 // "status": d["Status"] ? d["Status"] : "Draft",
-    //                 clearancePriceCheck: 'y',
-    //                 orderStopDateCheck: 'y',
-    //                 stopOrder: 'y',
-    //               },
-    //             ]
-    //           })
-    //         })
-    //   })
-  }
+  //                 // eventId: d['Event ID'],
+  //                 // name: 'string',
+  //                 // eventName: eventName(),
 
-  useEffect(() => {
-    // if (categoryDirectorColumns.length === importedData.length) {
-    //   console.log(categoryDirectorColumns)
-    // }
-    if (
-      buyerColumns &&
-      categoryDirectorColumns &&
-      seniorBuyingManagerColumns &&
-      buyingAssistantColumns &&
-      merchandiserColumns &&
-      supplyChainColumns &&
-      ownBrandManagerColumns &&
-      rangeResetManagerColumns
-    ) {
-      // if (
-      //   buyerColumns.length === importedData.length &&
-      //   categoryDirectorColumns.length === importedData.length &&
-      //   seniorBuyingManagerColumns.length === importedData.length &&
-      //   buyingAssistantColumns.length === importedData.length &&
-      //   merchandiserColumns.length === importedData.length &&
-      //   supplyChainColumns.length === importedData.length &&
-      //   ownBrandManagerColumns.length === importedData.length &&
-      //   rangeResetManagerColumns.length === importedData.length
-      // ) {
-      //   console.log(buyerColumns)
-      let newData = []
-      for (var i = 0; i < importedData.length; i++) {
-        let newVal = {
-          ...importedData[i],
-          buyer: buyerColumns[i],
-          categoryDirector: categoryDirectorColumns[i],
-          seniorBuyingManager: seniorBuyingManagerColumns[i],
-          buyerAssistant: buyingAssistantColumns[i],
-          merchandiser: merchandiserColumns[i],
-          supplyChainAnalyst: supplyChainColumns[i],
-          ownBrandManager: ownBrandManagerColumns[i],
-          rangeResetManager: rangeResetManagerColumns[i],
-        }
-        newData.push(newVal)
-      }
-      console.log(newData)
-      setValidatedRows(newData)
-      // }
-      // else {
-      //   console.log('error')
-    }
-  }, [
-    buyerColumns,
-    categoryDirectorColumns,
-    seniorBuyingManagerColumns,
-    buyingAssistantColumns,
-    merchandiserColumns,
-    supplyChainColumns,
-    ownBrandManagerColumns,
-    rangeResetManagerColumns,
-  ])
+  //                 // "status": d["Status"] ? d["Status"] : "Draft",
+  //                 clearancePriceCheck: 'y',
+  //                 orderStopDateCheck: 'y',
+  //                 stopOrder: 'y',
+  //               },
+  //             ]
+  //           })
+  //         })
+  //   })
+  // }
+
+  // useEffect(() => {
+  //   // if (categoryDirectorColumns.length === importedData.length) {
+  //   //   console.log(categoryDirectorColumns)
+  //   // }
+  //   if (
+  //     buyerColumns &&
+  //     categoryDirectorColumns &&
+  //     seniorBuyingManagerColumns &&
+  //     buyingAssistantColumns &&
+  //     merchandiserColumns &&
+  //     supplyChainColumns &&
+  //     ownBrandManagerColumns &&
+  //     rangeResetManagerColumns
+  //   ) {
+  //     // if (
+  //     //   buyerColumns.length === importedData.length &&
+  //     //   categoryDirectorColumns.length === importedData.length &&
+  //     //   seniorBuyingManagerColumns.length === importedData.length &&
+  //     //   buyingAssistantColumns.length === importedData.length &&
+  //     //   merchandiserColumns.length === importedData.length &&
+  //     //   supplyChainColumns.length === importedData.length &&
+  //     //   ownBrandManagerColumns.length === importedData.length &&
+  //     //   rangeResetManagerColumns.length === importedData.length
+  //     // ) {
+  //     //   console.log(buyerColumns)
+  //     let newData = []
+  //     for (var i = 0; i < importedData.length; i++) {
+  //       let newVal = {
+  //         ...importedData[i],
+  //         buyer: buyerColumns[i],
+  //         categoryDirector: categoryDirectorColumns[i],
+  //         seniorBuyingManager: seniorBuyingManagerColumns[i],
+  //         buyerAssistant: buyingAssistantColumns[i],
+  //         merchandiser: merchandiserColumns[i],
+  //         supplyChainAnalyst: supplyChainColumns[i],
+  //         ownBrandManager: ownBrandManagerColumns[i],
+  //         rangeResetManager: rangeResetManagerColumns[i],
+  //       }
+  //       newData.push(newVal)
+  //     }
+  //     console.log(newData)
+  //     setValidatedRows(newData)
+  //     // }
+  //     // else {
+  //     //   console.log('error')
+  //   }
+  // }, [
+  //   buyerColumns,
+  //   categoryDirectorColumns,
+  //   seniorBuyingManagerColumns,
+  //   buyingAssistantColumns,
+  //   merchandiserColumns,
+  //   supplyChainColumns,
+  //   ownBrandManagerColumns,
+  //   rangeResetManagerColumns,
+  // ])
 
   // useEffect(() => {
   //   console.log(validatedRows)
@@ -1716,323 +1854,323 @@ function ManageTaskEvent(props: any) {
   //   console.log(errorRows)
   // }, [correctRows, errorRows])
 
-  const validateBuyer1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'BUYER'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setBuyerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid Buyer',
-          }
-          setBuyerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setBuyerColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
+  // const validateBuyer1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'BUYER'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setBuyerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid Buyer',
+  //         }
+  //         setBuyerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setBuyerColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
 
-  const validateCategoryDirector1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'CTDIR'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setCategoryDirectorColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid Buyer',
-          }
-          setCategoryDirectorColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setCategoryDirectorColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
+  // const validateCategoryDirector1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'CTDIR'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setCategoryDirectorColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid Buyer',
+  //         }
+  //         setCategoryDirectorColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setCategoryDirectorColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
 
-  const validateSeniorBuyingManager1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'SRBYM'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setSeniorBuyingManagerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid category director',
-          }
-          setSeniorBuyingManagerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setSeniorBuyingManagerColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
+  // const validateSeniorBuyingManager1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'SRBYM'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setSeniorBuyingManagerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid category director',
+  //         }
+  //         setSeniorBuyingManagerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setSeniorBuyingManagerColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
 
-  const validateBuyingAssistant1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'BYAST'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setBuyingAssistantColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid Buying Assistant',
-          }
-          setBuyingAssistantColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setBuyingAssistantColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
+  // const validateBuyingAssistant1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'BYAST'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setBuyingAssistantColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid Buying Assistant',
+  //         }
+  //         setBuyingAssistantColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setBuyingAssistantColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
 
-  const validateMerchandiser1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'MERCH'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setMerchandiserColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid Merchandiser',
-          }
-          setMerchandiserColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setMerchandiserColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
+  // const validateMerchandiser1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'MERCH'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setMerchandiserColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid Merchandiser',
+  //         }
+  //         setMerchandiserColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setMerchandiserColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
 
-  const validateSupplyChain1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'SCSPL'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setSupplyChainColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid Supply Chain Specialist',
-          }
-          setSupplyChainColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setSupplyChainColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
-  const validateOwnBrandManager1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'OWNBRM'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setOwnBrandManagerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid Own brand manager',
-          }
-          setOwnBrandManagerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setOwnBrandManagerColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
-  const validateRangeResetManager1 = (value: any) => {
-    if (value != '') {
-      let roleId = 'RRMNGR'
-      getUsersAPIByEmailAndRole(roleId, value)
-        .then((res: any) => {
-          // setBuyerValid(true)
-          let field = {
-            value: value,
-            error: false,
-            errorMsg: '',
-          }
-          setRangeResetManagerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-        .catch((err: any) => {
-          // setBuyerValid(false)
-          let field = {
-            value: value,
-            error: true,
-            errorMsg: 'Invalid range reset manager',
-          }
-          setRangeResetManagerColumns((prevState: any) => {
-            return [...prevState, field]
-          })
-        })
-    } else {
-      let field = {
-        value: value,
-        error: true,
-        errorMsg: 'Empty field',
-      }
-      setRangeResetManagerColumns((prevState: any) => {
-        return [...prevState, field]
-      })
-    }
-  }
+  // const validateSupplyChain1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'SCSPL'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setSupplyChainColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid Supply Chain Specialist',
+  //         }
+  //         setSupplyChainColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setSupplyChainColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
+  // const validateOwnBrandManager1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'OWNBRM'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setOwnBrandManagerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid Own brand manager',
+  //         }
+  //         setOwnBrandManagerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setOwnBrandManagerColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
+  // const validateRangeResetManager1 = (value: any) => {
+  //   if (value != '') {
+  //     let roleId = 'RRMNGR'
+  //     getUsersAPIByEmailAndRole(roleId, value)
+  //       .then((res: any) => {
+  //         // setBuyerValid(true)
+  //         let field = {
+  //           value: value,
+  //           error: false,
+  //           errorMsg: '',
+  //         }
+  //         setRangeResetManagerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //       .catch((err: any) => {
+  //         // setBuyerValid(false)
+  //         let field = {
+  //           value: value,
+  //           error: true,
+  //           errorMsg: 'Invalid range reset manager',
+  //         }
+  //         setRangeResetManagerColumns((prevState: any) => {
+  //           return [...prevState, field]
+  //         })
+  //       })
+  //   } else {
+  //     let field = {
+  //       value: value,
+  //       error: true,
+  //       errorMsg: 'Empty field',
+  //     }
+  //     setRangeResetManagerColumns((prevState: any) => {
+  //       return [...prevState, field]
+  //     })
+  //   }
+  // }
 
   const handlePreviewDialogSave1 = () => {
     setConfirmtable(true)
     setOpenPreviewDialog(false)
-    uploadFile(importedData && importedData)
+    setConfirmedRows(importedData && importedData)
 
-    importedData.map((d: any, index: any) => {
-      validateBuyer1(d.buyer)
-      validateCategoryDirector1(d.categoryDirector)
-      validateSeniorBuyingManager1(d.seniorBuyingManager)
-      validateBuyingAssistant1(d.buyerAssistant)
-      validateMerchandiser1(d.merchandiser)
-      validateSupplyChain1(d.supplyChainAnalyst)
-      validateOwnBrandManager1(d.ownBrandManager)
-      validateRangeResetManager1(d.rangeResetManager)
-    })
+    // importedData.map((d: any, index: any) => {
+    //   validateBuyer1(d.buyer)
+    //   validateCategoryDirector1(d.categoryDirector)
+    //   validateSeniorBuyingManager1(d.seniorBuyingManager)
+    //   validateBuyingAssistant1(d.buyerAssistant)
+    //   validateMerchandiser1(d.merchandiser)
+    //   validateSupplyChain1(d.supplyChainAnalyst)
+    //   validateOwnBrandManager1(d.ownBrandManager)
+    //   validateRangeResetManager1(d.rangeResetManager)
+    // })
   }
 
   const handleSearchDialogOpen = () => {
@@ -2139,18 +2277,24 @@ function ManageTaskEvent(props: any) {
   }
 
   const classTemplate = (rowData: any) => {
-    var planogramClass = rowData['planogramClass']['className'].toString()
-    return planogramClass
+    if (rowData.planogramClass) {
+      var planogramClass = rowData['planogramClass']['className'].toString()
+      return planogramClass
+    }
   }
 
   const classArray = (data: any) => {
-    console.log(data)
-    let classes = data.split(',')
-    let classValues = []
-    for (var i in classes) {
-      classValues.push(classes[i].trim())
+    if (data) {
+      console.log(data)
+      let classes = data.split(',')
+      let classValues = []
+      for (var i in classes) {
+        classValues.push(classes[i].trim())
+      }
+      return data
+    } else {
+      return []
     }
-    return data
   }
 
   const handleUpload = (event: any) => {
@@ -2161,6 +2305,7 @@ function ManageTaskEvent(props: any) {
     //   return type === uploadedFile.type
     // })
     // console.log(i)
+    setFetchRangeResets([])
     if (
       uploadedFile &&
       // (uploadedFile.type === 'text/csv' ||
@@ -2200,10 +2345,10 @@ function ManageTaskEvent(props: any) {
           const newData = data.map((d: any) => {
             var converted_date1 = d[cols[6]]
               ? excelDatetoDate(d[cols[6]]).toString()
-              : 'NA'
+              : ''
             var converted_date3 = d[cols[2]]
               ? excelDatetoDate(d[cols[2]]).toString()
-              : null
+              : ''
 
             var eventName = () => {
               if (d[cols[5]] && converted_date1) {
@@ -2237,35 +2382,35 @@ function ManageTaskEvent(props: any) {
 
             return {
               eventName: d[cols[0]] ? d[cols[0]] : eventName(),
-              resetType: d[cols[1]],
+              resetType: d[cols[1]] ? d[cols[1]] : '',
               appDueDate: converted_date3,
-              tradeGroup: d[cols[3]],
-              category: d[cols[4]],
+              tradeGroup: d[cols[3]] ? d[cols[3]] : '',
+              category: d[cols[4]] ? d[cols[4]] : '',
               // categoryId: 1,
-              department: d[cols[5]],
+              department: d[cols[5]] ? d[cols[5]] : '',
               // departmentId: 1,
               targetDate: converted_date1,
               planogramClass: {
                 className: classArray(d[cols[7]]),
               },
-              wastageRange: d[cols[8]],
-              buyer: d[cols[9]],
-              categoryDirector: d[cols[10]],
-              seniorBuyingManager: d[cols[11]],
-              buyerAssistant: d[cols[12]],
-              merchandiser: d[cols[13]],
-              supplyChainAnalyst: d[cols[14]],
-              ownBrandManager: d[cols[15]],
-              rangeResetManager: d[cols[16]],
+              wastageRange: d[cols[8]] ? d[cols[8]] : '',
+              buyer: d[cols[9]] ? d[cols[9]] : '',
+              categoryDirector: d[cols[10]] ? d[cols[10]] : '',
+              seniorBuyingManager: d[cols[11]] ? d[cols[11]] : '',
+              buyerAssistant: d[cols[12]] ? d[cols[12]] : '',
+              merchandiser: d[cols[13]] ? d[cols[13]] : '',
+              supplyChainAnalyst: d[cols[14]] ? d[cols[14]] : '',
+              ownBrandManager: d[cols[15]] ? d[cols[15]] : '',
+              rangeResetManager: d[cols[16]] ? d[cols[16]] : '',
 
               // eventId: d['Event ID'],
               // name: 'string',
               // eventName: eventName(),
 
               // "status": d["Status"] ? d["Status"] : "Draft",
-              clearancePriceCheck: 'y',
-              orderStopDateCheck: 'y',
-              stopOrder: 'y',
+              // clearancePriceCheck: 'y',
+              // orderStopDateCheck: 'y',
+              // stopOrder: 'y',
             }
           })
           console.log(newData)
@@ -2292,8 +2437,8 @@ function ManageTaskEvent(props: any) {
     console.log(importedData)
   }, [importedData])
   useEffect(() => {
-    console.log(fileData)
-  }, [fileData])
+    console.log(confirmedRows)
+  }, [confirmedRows])
 
   const removeTasks = () => {
     let _tasks = importedData.filter(
@@ -2301,41 +2446,41 @@ function ManageTaskEvent(props: any) {
     )
     console.log(_tasks)
     setImportedData(_tasks)
-    uploadFile(_tasks)
+    setConfirmedRows(_tasks)
     setSelectedImportedData(null)
   }
 
-  const sampleExcel = (
-    <table id="sample" style={{ display: 'none' }}>
-      <thead>
-        <tr>
-          {/* <th>Unique ID</th> */}
-          <th>Event ID</th>
-          <th>Reset Type</th>
-          <th>RAF/App Due Date</th>
-          <th>Trading Group</th>
-          <th>Category</th>
-          <th>Department</th>
-          <th>Event ID</th>
-          <th>Event Name</th>
-          <th>LaunchDate</th>
-          <th>Planogram Class</th>
-          <th>Store Waste Process Timing</th>
-          <th>Buyer</th>
-          <th>Buying Assistant</th>
-          <th>Own Brand Manager</th>
-          <th>Senior Buying Manager</th>
-          <th>Merchandiser</th>
-          <th>Range Reset Manager</th>
-          <th>Category Director</th>
-          <th>Supply Chain Specialist</th>
-          <th>Clearance Pricing Action required</th>
-          <th>GSCOP Date check Required</th>
-          <th>Stop Order</th>
-        </tr>
-      </thead>
-    </table>
-  )
+  // const sampleExcel = (
+  //   <table id="sample" style={{ display: 'none' }}>
+  //     <thead>
+  //       <tr>
+  //         {/* <th>Unique ID</th> */}
+  //         <th>Event ID</th>
+  //         <th>Reset Type</th>
+  //         <th>RAF/App Due Date</th>
+  //         <th>Trading Group</th>
+  //         <th>Category</th>
+  //         <th>Department</th>
+  //         <th>Event ID</th>
+  //         <th>Event Name</th>
+  //         <th>LaunchDate</th>
+  //         <th>Planogram Class</th>
+  //         <th>Store Waste Process Timing</th>
+  //         <th>Buyer</th>
+  //         <th>Buying Assistant</th>
+  //         <th>Own Brand Manager</th>
+  //         <th>Senior Buying Manager</th>
+  //         <th>Merchandiser</th>
+  //         <th>Range Reset Manager</th>
+  //         <th>Category Director</th>
+  //         <th>Supply Chain Specialist</th>
+  //         <th>Clearance Pricing Action required</th>
+  //         <th>GSCOP Date check Required</th>
+  //         <th>Stop Order</th>
+  //       </tr>
+  //     </thead>
+  //   </table>
+  // )
 
   const uploadDialog = (
     <Dialog onClose={handleUploadDialogClose} open={openUploadDialog}>
@@ -2481,74 +2626,158 @@ function ManageTaskEvent(props: any) {
 
   const uploadedTable = () => {
     if (confirmTable) {
-      return (
-        <DataTable
-          rowHover
-          value={
-            fileData && filteredImportedData ? filteredImportedData : fileData
-          }
-          selectionMode="checkbox"
-          selection={selectedImportedData}
-          onSelectionChange={(e) => setSelectedImportedData(e.value)}
-          globalFilter={globalFilter}
-          emptyMessage="No Events found."
-          className="p-datatable-sm"
-          showGridlines
-          scrollable
-          scrollHeight={above670px ? '450px' : '300px'}
-          // frozenWidth={above670px ? '250px' : '200px'}
-        >
-          <Column
-            selectionMode="multiple"
-            headerStyle={{
-              width: '50px',
-              color: 'white',
-              backgroundColor: theme.palette.primary.main,
-            }}
-            // frozen
-          ></Column>
-          {confirmedTableCols.map((col: any, index: any) => {
-            return (
-              <Column
-                key={index}
-                field={col.field}
-                header={col.header}
-                body={
-                  (col.field === 'eventName' &&
-                    confirmTable &&
-                    eventNameTemplate) ||
-                  (col.field === 'status' && confirmTable && statusTemplate) ||
-                  (col.field === 'appDueDate' &&
-                    confirmTable &&
-                    convertedAppDueDateTemplate) ||
-                  (col.field === 'planogramClass' &&
-                    confirmTable &&
-                    classTemplate) ||
-                  (col.field === 'targetDate' &&
-                    confirmTable &&
-                    convertedTargetDateTemplate)
-                }
-                style={ConfirmedBodyStyle(col.width)}
-                // filter filterPlaceholder="Search by name"
-                // bodyStyle={{ overflowX: 'auto' }}
-                headerStyle={ConfirmedHeaderStyle(
-                  col.width,
-                  theme.palette.primary.main
-                )}
-                sortable
-                // frozen={col.field === 'eventName' ? true : false}
-              />
-            )
-          })}
-        </DataTable>
-      )
+      if (fetchRangeResets.length > 0) {
+        return (
+          <DataTable
+            rowHover
+            value={
+              fetchRangeResets && filteredImportedData
+                ? filteredImportedData
+                : fetchRangeResets
+            }
+            selectionMode="checkbox"
+            selection={selectedImportedData}
+            onSelectionChange={(e) => setSelectedImportedData(e.value)}
+            globalFilter={globalFilter}
+            emptyMessage="No Events found."
+            className="p-datatable-sm"
+            rows={10}
+            paginator
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+            currentPageReportTemplate="{first} - {last} of {totalRecords}"
+            alwaysShowPaginator={false}
+            showGridlines
+            scrollable
+            // scrollHeight={above670px ? '450px' : '300px'}
+            // frozenWidth={above670px ? '250px' : '200px'}
+          >
+            <Column
+              selectionMode="multiple"
+              headerStyle={{
+                width: '50px',
+                color: 'white',
+                backgroundColor: theme.palette.primary.main,
+              }}
+              // frozen
+            ></Column>
+            {confirmedTableCols.map((col: any, index: any) => {
+              return (
+                <Column
+                  key={index}
+                  field={col.field}
+                  header={col.header}
+                  body={
+                    (col.field === 'eventName' &&
+                      confirmTable &&
+                      eventNameTemplate) ||
+                    (col.field === 'status' &&
+                      confirmTable &&
+                      statusTemplate) ||
+                    (col.field === 'appDueDate' &&
+                      confirmTable &&
+                      convertedAppDueDateTemplate) ||
+                    (col.field === 'planogramClass' &&
+                      confirmTable &&
+                      classTemplate) ||
+                    (col.field === 'targetDate' &&
+                      confirmTable &&
+                      convertedTargetDateTemplate)
+                  }
+                  style={ConfirmedBodyStyle(col.width)}
+                  // filter filterPlaceholder="Search by name"
+                  // bodyStyle={{ overflowX: 'auto' }}
+                  headerStyle={ConfirmedHeaderStyle(
+                    col.width,
+                    theme.palette.primary.main
+                  )}
+                  sortable
+                  // frozen={col.field === 'eventName' ? true : false}
+                />
+              )
+            })}
+          </DataTable>
+        )
+      } else {
+        return (
+          <DataTable
+            rowHover
+            value={
+              confirmedRows && filteredImportedData
+                ? filteredImportedData
+                : confirmedRows
+            }
+            selectionMode="checkbox"
+            selection={selectedImportedData}
+            onSelectionChange={(e) => setSelectedImportedData(e.value)}
+            globalFilter={globalFilter}
+            emptyMessage="No Events found."
+            className="p-datatable-sm"
+            rows={10}
+            paginator
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+            currentPageReportTemplate="{first} - {last} of {totalRecords}"
+            alwaysShowPaginator={false}
+            showGridlines
+            scrollable
+            // scrollHeight={above670px ? '450px' : '300px'}
+            // frozenWidth={above670px ? '250px' : '200px'}
+          >
+            <Column
+              selectionMode="multiple"
+              headerStyle={{
+                width: '50px',
+                color: 'white',
+                backgroundColor: theme.palette.primary.main,
+              }}
+              // frozen
+            ></Column>
+            {confirmedTableCols.map((col: any, index: any) => {
+              return (
+                <Column
+                  key={index}
+                  field={col.field}
+                  header={col.header}
+                  body={
+                    (col.field === 'eventName' &&
+                      confirmTable &&
+                      eventNameTemplate) ||
+                    (col.field === 'status' &&
+                      confirmTable &&
+                      statusTemplate) ||
+                    (col.field === 'appDueDate' &&
+                      confirmTable &&
+                      convertedAppDueDateTemplate) ||
+                    (col.field === 'planogramClass' &&
+                      confirmTable &&
+                      classTemplate) ||
+                    (col.field === 'targetDate' &&
+                      confirmTable &&
+                      convertedTargetDateTemplate)
+                  }
+                  style={ConfirmedBodyStyle(col.width)}
+                  // filter filterPlaceholder="Search by name"
+                  // bodyStyle={{ overflowX: 'auto' }}
+                  headerStyle={ConfirmedHeaderStyle(
+                    col.width,
+                    theme.palette.primary.main
+                  )}
+                  sortable
+                  // frozen={col.field === 'eventName' ? true : false}
+                />
+              )
+            })}
+          </DataTable>
+        )
+      }
     } else {
       return (
         <DataTable
           value={importedData}
-          // paginator
-          // rows={10}
-          // alwaysShowPaginator={false}
+          rows={10}
+          paginator
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+          currentPageReportTemplate="{first} - {last} of {totalRecords}"
+          alwaysShowPaginator={false}
           selectionMode="multiple"
           selection={selectedImportedData}
           onSelectionChange={(e) => setSelectedImportedData(e.value)}
@@ -2558,7 +2787,7 @@ function ManageTaskEvent(props: any) {
           showGridlines
           scrollable
           // scrollHeight="flex"
-          scrollHeight={above670px ? '300px' : '250px'}
+          // scrollHeight={above670px ? '300px' : '250px'}
           // frozenWidth="300px"
         >
           <Column
@@ -3040,8 +3269,9 @@ function ManageTaskEvent(props: any) {
 
   const handleAdvancedSearch = () => {
     if (searchParams) {
+      let allRows = fetchRangeResets ? fetchRangeResets : confirmedRows
       // console.log(Object.keys(searchParams).length)
-      let newData = fileData.filter((file: any) => {
+      let newData = allRows.filter((file: any) => {
         let resetTypeFilter =
           searchParams.resetType !== ''
             ? file.resetType === searchParams.resetType
@@ -3124,16 +3354,16 @@ function ManageTaskEvent(props: any) {
         }}
       >
         <Grid container spacing={1}>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid item container xs={12} md={6} spacing={1}>
-              <Grid item container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Reset Type</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  {/* <Typography color="primary" variant="body2">
+          {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
+          <Grid item container xs={12} md={6} spacing={1}>
+            <Grid item container spacing={2}>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Reset Type</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {/* <Typography color="primary" variant="body2">
                     <select
                       name="requesttype"
                       id="requesttype"
@@ -3161,135 +3391,109 @@ function ManageTaskEvent(props: any) {
                     
                   </Typography> */}
 
-                  <AutocompleteSelect
-                    value={resetType}
-                    options={resetTypes}
-                    onChange={(e: any) => handleSearchParams(e, 'resetType')}
-                    placeholder="Select Reset Type"
-                  />
+                <AutocompleteSelect
+                  value={resetType}
+                  options={resetTypes}
+                  onChange={(e: any) => handleSearchParams(e, 'resetType')}
+                  placeholder="Select Reset Type"
+                />
+              </Grid>
+              <Grid item container>
+                <Grid item xs={12}>
+                  <Typography color="primary" variant="body2">
+                    <label>Launch Date</label>
+                  </Typography>
                 </Grid>
-                <Grid item container>
-                  <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      <label>Launch Date</label>
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    container
-                    xs={12}
-                    style={{
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Grid container spacing={1}>
-                      <Grid item container xs={7}>
-                        <Grid item>
-                          <Typography color="primary" variant="body2">
-                            <sup>From</sup>
-                          </Typography>
-                        </Grid>
-                        <Grid item container xs={12}>
-                          <Grid item xs={2}>
-                            <input
-                              type="radio"
-                              checked={launchType === 'date'}
-                              onChange={handleLaunchType}
-                              value="date"
-                              name="radio-button-launch"
-                              // inputProps={{ 'aria-label': 'Date' }}
-                            />
-                          </Grid>
-                          <Grid item xs={10}>
-                            <Typography color="primary" variant="body2">
-                              <input
-                                type="date"
-                                value={launchDateFrom}
-                                // onChange={(e: any) => setLaunchDateFrom(e.target.value)}
-                                onChange={(e: any) =>
-                                  handleSearchParams(e, 'launchDateFrom')
-                                }
-                                max={launchDateTo && launchDateTo}
-                                className={classes.searchTextField}
-                                disabled={launchType !== 'date'}
-                              />
-                            </Typography>
-                          </Grid>
-                        </Grid>
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  style={{
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Grid container spacing={1}>
+                    <Grid item container xs={7}>
+                      <Grid item>
+                        <Typography color="primary" variant="body2">
+                          <sup>From</sup>
+                        </Typography>
                       </Grid>
-                      <Grid item container xs={5}>
-                        <Grid item>
-                          <Typography color="primary" variant="body2">
-                            <sup>To</sup>
-                          </Typography>
+                      <Grid item container xs={12}>
+                        <Grid item xs={2}>
+                          <input
+                            type="radio"
+                            checked={launchType === 'date'}
+                            onChange={handleLaunchType}
+                            value="date"
+                            name="radio-button-launch"
+                            // inputProps={{ 'aria-label': 'Date' }}
+                          />
                         </Grid>
-                        <Grid item container>
+                        <Grid item xs={10}>
                           <Typography color="primary" variant="body2">
                             <input
                               type="date"
-                              value={launchDateTo}
-                              // onChange={(e: any) => setLaunchDateTo(e.target.value)}
+                              value={launchDateFrom}
+                              // onChange={(e: any) => setLaunchDateFrom(e.target.value)}
                               onChange={(e: any) =>
-                                handleSearchParams(e, 'launchDateTo')
+                                handleSearchParams(e, 'launchDateFrom')
                               }
-                              min={launchDateFrom && launchDateFrom}
+                              max={launchDateTo && launchDateTo}
                               className={classes.searchTextField}
                               disabled={launchType !== 'date'}
                             />
                           </Typography>
                         </Grid>
                       </Grid>
-                      <Grid item container xs={7}>
-                        <Grid item>
-                          <Typography color="primary" variant="body2">
-                            <sup>From</sup>
-                          </Typography>
-                        </Grid>
-                        <Grid item container xs={12}>
-                          <Grid item xs={2}>
-                            <input
-                              type="radio"
-                              checked={launchType === 'week'}
-                              onChange={handleLaunchType}
-                              value="week"
-                              name="radio-button-launch"
-                              // inputProps={{ 'aria-label': 'Week' }}
-                            />
-                          </Grid>
-                          <Grid item xs={10}>
-                            <Typography color="primary" variant="body2">
-                              <select
-                                value={launchWeekFrom}
-                                // defaultValue="Week 1"
-                                // onChange={(e: any) => setLaunchWeekFrom(e.target.value)}
-                                onChange={(e: any) =>
-                                  handleSearchParams(e, 'launchWeekFrom')
-                                }
-                                disabled={launchType !== 'week'}
-                                className={classes.searchTextField}
-                              >
-                                <option value="Week 1">Week 1</option>
-                                <option value="Week 2">Week 2</option>
-                                <option value="Week 3">Week 3</option>
-                              </select>
-                            </Typography>
-                          </Grid>
-                        </Grid>
+                    </Grid>
+                    <Grid item container xs={5}>
+                      <Grid item>
+                        <Typography color="primary" variant="body2">
+                          <sup>To</sup>
+                        </Typography>
                       </Grid>
-                      <Grid item container xs={5}>
-                        <Grid item>
-                          <Typography color="primary" variant="body2">
-                            <sup>To</sup>
-                          </Typography>
+                      <Grid item container>
+                        <Typography color="primary" variant="body2">
+                          <input
+                            type="date"
+                            value={launchDateTo}
+                            // onChange={(e: any) => setLaunchDateTo(e.target.value)}
+                            onChange={(e: any) =>
+                              handleSearchParams(e, 'launchDateTo')
+                            }
+                            min={launchDateFrom && launchDateFrom}
+                            className={classes.searchTextField}
+                            disabled={launchType !== 'date'}
+                          />
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Grid item container xs={7}>
+                      <Grid item>
+                        <Typography color="primary" variant="body2">
+                          <sup>From</sup>
+                        </Typography>
+                      </Grid>
+                      <Grid item container xs={12}>
+                        <Grid item xs={2}>
+                          <input
+                            type="radio"
+                            checked={launchType === 'week'}
+                            onChange={handleLaunchType}
+                            value="week"
+                            name="radio-button-launch"
+                            // inputProps={{ 'aria-label': 'Week' }}
+                          />
                         </Grid>
-                        <Grid item container>
+                        <Grid item xs={10}>
                           <Typography color="primary" variant="body2">
                             <select
-                              value={launchWeekTo}
-                              // defaultValue="Week 2"
-                              // onChange={(e: any) => setLaunchWeekTo(e.target.value)}
+                              value={launchWeekFrom}
+                              // defaultValue="Week 1"
+                              // onChange={(e: any) => setLaunchWeekFrom(e.target.value)}
                               onChange={(e: any) =>
-                                handleSearchParams(e, 'launchWeekTo')
+                                handleSearchParams(e, 'launchWeekFrom')
                               }
                               disabled={launchType !== 'week'}
                               className={classes.searchTextField}
@@ -3302,17 +3506,43 @@ function ManageTaskEvent(props: any) {
                         </Grid>
                       </Grid>
                     </Grid>
+                    <Grid item container xs={5}>
+                      <Grid item>
+                        <Typography color="primary" variant="body2">
+                          <sup>To</sup>
+                        </Typography>
+                      </Grid>
+                      <Grid item container>
+                        <Typography color="primary" variant="body2">
+                          <select
+                            value={launchWeekTo}
+                            // defaultValue="Week 2"
+                            // onChange={(e: any) => setLaunchWeekTo(e.target.value)}
+                            onChange={(e: any) =>
+                              handleSearchParams(e, 'launchWeekTo')
+                            }
+                            disabled={launchType !== 'week'}
+                            className={classes.searchTextField}
+                          >
+                            <option value="Week 1">Week 1</option>
+                            <option value="Week 2">Week 2</option>
+                            <option value="Week 3">Week 3</option>
+                          </select>
+                        </Typography>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid item container>
-                  <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      <label>Group</label>
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    {/* <Typography color="primary" variant="body2"> */}
-                    {/* <select
+              </Grid>
+              <Grid item container>
+                <Grid item xs={12}>
+                  <Typography color="primary" variant="body2">
+                    <label>Group</label>
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  {/* <Typography color="primary" variant="body2"> */}
+                  {/* <select
                         name="group"
                         id="group"
                         className={classes.searchTextField}
@@ -3325,7 +3555,7 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen">Frozen</option>
                       </select> */}
 
-                    {/* <Select
+                  {/* <Select
                       value={group}
                       onChange={(e: any) => handleSearchParams(e, 'group')}
                       displayEmpty
@@ -3354,25 +3584,25 @@ function ManageTaskEvent(props: any) {
                       })}
                     </Select> */}
 
-                    <AutocompleteSelect
-                      value={group}
-                      options={groupOptions}
-                      onChange={(e: any) => handleSearchParams(e, 'group')}
-                      placeholder="Select Trading Group"
-                    />
+                  <AutocompleteSelect
+                    value={group}
+                    options={groupOptions}
+                    onChange={(e: any) => handleSearchParams(e, 'group')}
+                    placeholder="Select Trading Group"
+                  />
 
-                    {/* </Typography> */}
-                  </Grid>
+                  {/* </Typography> */}
                 </Grid>
-                <Grid item container>
-                  <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      <label>Category</label>
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    {/* <Typography color="primary" variant="body2"> */}
-                    {/* <select
+              </Grid>
+              <Grid item container>
+                <Grid item xs={12}>
+                  <Typography color="primary" variant="body2">
+                    <label>Category</label>
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  {/* <Typography color="primary" variant="body2"> */}
+                  {/* <select
                         className={classes.searchTextField}
                         // defaultValue=""
                         value={category}
@@ -3384,7 +3614,7 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen Food">Frozen Food</option>
                       </select> */}
 
-                    {/* <Select
+                  {/* <Select
                       value={category}
                       onChange={(e: any) => handleSearchParams(e, 'category')}
                       displayEmpty
@@ -3412,26 +3642,26 @@ function ManageTaskEvent(props: any) {
                       })}
                     </Select> */}
 
-                    <AutocompleteSelect
-                      value={category}
-                      options={categoryOptions}
-                      onChange={(e: any) => handleSearchParams(e, 'category')}
-                      placeholder="Select Category"
-                      isDisabled={group.length <= 0}
-                    />
+                  <AutocompleteSelect
+                    value={category}
+                    options={categoryOptions}
+                    onChange={(e: any) => handleSearchParams(e, 'category')}
+                    placeholder="Select Category"
+                    isDisabled={group.length <= 0}
+                  />
 
-                    {/* </Typography> */}
-                  </Grid>
+                  {/* </Typography> */}
                 </Grid>
-                <Grid item container>
-                  <Grid item xs={12}>
-                    <Typography color="primary" variant="body2">
-                      <label>Department</label>
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    {/* <Typography color="primary" variant="body2"> */}
-                    {/* <select
+              </Grid>
+              <Grid item container>
+                <Grid item xs={12}>
+                  <Typography color="primary" variant="body2">
+                    <label>Department</label>
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  {/* <Typography color="primary" variant="body2"> */}
+                  {/* <select
                         className={classes.searchTextField}
                         // defaultValue=""
                         value={department}
@@ -3449,7 +3679,7 @@ function ManageTaskEvent(props: any) {
                         <option value="Frozen Fish">Frozen Fish</option>
                       </select> */}
 
-                    {/* <Select
+                  {/* <Select
                       value={department}
                       onChange={(e: any) => handleSearchParams(e, 'department')}
                       displayEmpty
@@ -3477,24 +3707,24 @@ function ManageTaskEvent(props: any) {
                       })}
                     </Select> */}
 
-                    <AutocompleteSelect
-                      value={department}
-                      options={departmentOptions}
-                      onChange={(e: any) => handleSearchParams(e, 'department')}
-                      placeholder="Select Department"
-                    />
+                  <AutocompleteSelect
+                    value={department}
+                    options={departmentOptions}
+                    onChange={(e: any) => handleSearchParams(e, 'department')}
+                    placeholder="Select Department"
+                  />
 
-                    {/* </Typography> */}
-                  </Grid>
+                  {/* </Typography> */}
                 </Grid>
-                <Grid item container>
-                  <Grid>
-                    <Typography color="primary" variant="body2">
-                      <label>Category Director</label>
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    {/* <Typography color="primary" variant="body2">
+              </Grid>
+              <Grid item container>
+                <Grid>
+                  <Typography color="primary" variant="body2">
+                    <label>Category Director</label>
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  {/* <Typography color="primary" variant="body2">
                       <select
                         className={classes.searchTextField}
                         // defaultValue=""
@@ -3517,39 +3747,39 @@ function ManageTaskEvent(props: any) {
                         })}
                       </select> */}
 
-                    <AutocompleteSelect
-                      value={categoryDirector}
-                      options={categoryDirectorOptions}
-                      onChange={(e: any) =>
-                        handleSearchParams(e, 'categoryDirector')
-                      }
-                      placeholder="Select Category Director"
-                    />
+                  <AutocompleteSelect
+                    value={categoryDirector}
+                    options={categoryDirectorOptions}
+                    onChange={(e: any) =>
+                      handleSearchParams(e, 'categoryDirector')
+                    }
+                    placeholder="Select Category Director"
+                  />
 
-                    {/* </Typography> */}
-                  </Grid>
+                  {/* </Typography> */}
                 </Grid>
               </Grid>
             </Grid>
+          </Grid>
 
-            {aboveMd && (
-              <>
-                <Grid item md={1} style={{ height: '100%' }}>
-                  <Divider orientation="vertical" variant="middle" />
-                </Grid>
-              </>
-            )}
+          {aboveMd && (
+            <>
+              <Grid item md={1} style={{ height: '100%' }}>
+                <Divider orientation="vertical" variant="middle" />
+              </Grid>
+            </>
+          )}
 
-            <Grid item container xs={12} md={5} spacing={2}>
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Buyer</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  {/* <Typography color="primary" variant="body2"> */}
-                  {/* <select
+          <Grid item container xs={12} md={5} spacing={2}>
+            <Grid item container>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Buyer</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {/* <Typography color="primary" variant="body2"> */}
+                {/* <select
                       className={classes.searchTextField}
                       // defaultValue=""
                       value={buyer}
@@ -3567,25 +3797,25 @@ function ManageTaskEvent(props: any) {
                       })}
                     </select> */}
 
-                  <AutocompleteSelect
-                    value={buyer}
-                    options={buyerOptions}
-                    onChange={(e: any) => handleSearchParams(e, 'buyer')}
-                    placeholder="Select Buyer"
-                  />
-                  {/* </Typography> */}
-                </Grid>
+                <AutocompleteSelect
+                  value={buyer}
+                  options={buyerOptions}
+                  onChange={(e: any) => handleSearchParams(e, 'buyer')}
+                  placeholder="Select Buyer"
+                />
+                {/* </Typography> */}
               </Grid>
+            </Grid>
 
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Merchandiser</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  {/* <Typography color="primary" variant="body2"> */}
-                  {/* <select
+            <Grid item container>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Merchandiser</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {/* <Typography color="primary" variant="body2"> */}
+                {/* <select
                       className={classes.searchTextField}
                       // defaultValue=""
                       value={merchandiser}
@@ -3605,24 +3835,24 @@ function ManageTaskEvent(props: any) {
                       })}
                     </select> */}
 
-                  <AutocompleteSelect
-                    value={merchandiser}
-                    options={merchandiserOptions}
-                    onChange={(e: any) => handleSearchParams(e, 'merchandiser')}
-                    placeholder="Select Merchandiser"
-                  />
-                  {/* </Typography> */}
-                </Grid>
+                <AutocompleteSelect
+                  value={merchandiser}
+                  options={merchandiserOptions}
+                  onChange={(e: any) => handleSearchParams(e, 'merchandiser')}
+                  placeholder="Select Merchandiser"
+                />
+                {/* </Typography> */}
               </Grid>
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Supply Chain Specialist</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  {/* <Typography color="primary" variant="body2"> */}
-                  {/* <select
+            </Grid>
+            <Grid item container>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Supply Chain Specialist</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {/* <Typography color="primary" variant="body2"> */}
+                {/* <select
                       className={classes.searchTextField}
                       // defaultValue=""
                       value={supplyChainSpecialist}
@@ -3644,75 +3874,75 @@ function ManageTaskEvent(props: any) {
                       })}
                     </select> */}
 
-                  <AutocompleteSelect
-                    value={supplyChainSpecialist}
-                    options={supplyChainOptions}
-                    onChange={(e: any) =>
-                      handleSearchParams(e, 'supplyChainAnalyst')
-                    }
-                    placeholder="Select Supply Chain Specialist"
-                  />
-                  {/* </Typography> */}
-                </Grid>
-              </Grid>
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Clearance Price Applied</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Checkbox
-                    checked={clearancePriceApplied}
-                    color="primary"
-                    onChange={(e: any) =>
-                      handleSearchParams(e, 'clearancePriceCheck')
-                    }
-                  />
-                </Grid>
-              </Grid>
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Order Stop Date Check Required</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Checkbox
-                    checked={orderStopDateCheck}
-                    color="primary"
-                    onChange={(e: any) =>
-                      handleSearchParams(e, 'orderStopDateCheck')
-                    }
-                  />
-                </Grid>
-              </Grid>
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Typography color="primary" variant="body2">
-                    <label>Stop Order</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Checkbox
-                    checked={stopOrder}
-                    color="primary"
-                    onChange={(e: any) => handleSearchParams(e, 'stopOrder')}
-                  />
-                </Grid>
-              </Grid>
-              <Grid item container>
-                <Grid item xs={12}>
-                  <Button
-                    className={classes.submitButtons}
-                    onClick={handleAdvancedSearch}
-                  >
-                    Search
-                  </Button>
-                </Grid>
+                <AutocompleteSelect
+                  value={supplyChainSpecialist}
+                  options={supplyChainOptions}
+                  onChange={(e: any) =>
+                    handleSearchParams(e, 'supplyChainAnalyst')
+                  }
+                  placeholder="Select Supply Chain Specialist"
+                />
+                {/* </Typography> */}
               </Grid>
             </Grid>
-          </MuiPickersUtilsProvider>
+            <Grid item container>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Clearance Price Applied</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Checkbox
+                  checked={clearancePriceApplied}
+                  color="primary"
+                  onChange={(e: any) =>
+                    handleSearchParams(e, 'clearancePriceCheck')
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid item container>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Order Stop Date Check Required</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Checkbox
+                  checked={orderStopDateCheck}
+                  color="primary"
+                  onChange={(e: any) =>
+                    handleSearchParams(e, 'orderStopDateCheck')
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid item container>
+              <Grid item xs={12}>
+                <Typography color="primary" variant="body2">
+                  <label>Stop Order</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Checkbox
+                  checked={stopOrder}
+                  color="primary"
+                  onChange={(e: any) => handleSearchParams(e, 'stopOrder')}
+                />
+              </Grid>
+            </Grid>
+            <Grid item container>
+              <Grid item xs={12}>
+                <Button
+                  className={classes.submitButtons}
+                  onClick={handleAdvancedSearch}
+                >
+                  Search
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          {/* </MuiPickersUtilsProvider> */}
         </Grid>
       </Box>
     </Dialog>
@@ -3723,6 +3953,7 @@ function ManageTaskEvent(props: any) {
       <div className="manageUser">
         <div className={classes.value}>
           <Grid container spacing={2} className={classes.mainContainer}>
+            <LoadingComponent showLoader={isProgressLoader} />
             {!confirmTable ? (
               above670px ? (
                 <>
@@ -4027,15 +4258,8 @@ function ManageTaskEvent(props: any) {
 
 const mapStateToProps = (state: any) => {
   return {
-    fileData: state.fileReducer.fileData,
+    userDetail: state.loginReducer.userDetail,
   }
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    uploadFile: (fileData: any) => dispatch(uploadFile(fileData)),
-    deleteFile: () => dispatch(deleteFile),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ManageTaskEvent)
+export default connect(mapStateToProps, null)(ManageTaskEvent)

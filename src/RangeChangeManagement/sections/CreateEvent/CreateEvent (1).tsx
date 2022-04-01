@@ -55,6 +55,7 @@ import {
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
 import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
+import el from 'date-fns/esm/locale/el/index.js'
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 // import styled from 'styled-components'
 
@@ -81,7 +82,6 @@ function CreateEvent(props: any) {
   const [classValues, setClassValues] = useState<any>()
   const [confirmClassValues, setConfirmClassValues] = useState<any>()
   const [classFormData, setClassFormData] = useState<any>()
-  const [productHierValues, setProductHierValues] = useState<any>([])
   const [group, setGroup] = useState<any>('')
   const [groupError, setGroupError] = useState<any>('')
   const [category, setCategory] = useState<any>('')
@@ -128,9 +128,9 @@ function CreateEvent(props: any) {
     useState<any>('')
   const [supplyChainSpecialistConfirmed, setSupplyChainSpecialistConfirmed] =
     useState<any>(false)
-  const [clearancePriceApplied, setClearancePriceApplied] = useState('Yes')
-  const [orderStopDateCheck, setStopDateCheck] = useState('Yes')
-  const [stopOrder, setStopOrder] = useState('Yes')
+  const [clearancePriceApplied, setClearancePriceApplied] = useState('y')
+  const [orderStopDateCheck, setStopDateCheck] = useState('y')
+  const [stopOrder, setStopOrder] = useState('y')
 
   const [classOpen, setClassOpen] = useState(false)
 
@@ -168,6 +168,7 @@ function CreateEvent(props: any) {
   const [categoryDirectorError1, setCategoryDirectorError1] = useState<any>('')
   const [supChainSpecialistError1, setSupChainSpecialistError1] =
     useState<any>('')
+  const [productHierValues, setProductHierValues] = useState<any>([])
   const [disabled, setDisabled] = React.useState(false)
 
   const toast = useRef<any>(null)
@@ -324,7 +325,7 @@ function CreateEvent(props: any) {
 
   //         group &&
   //           setCategoryOptions(
-  //             categoryList.filter((cat: any) => cat.groupId === group.id)
+  //             categoryList.filter((cat: any) => cat.groupId === group.groupId)
   //           )
   //         group &&
   //           console.log(
@@ -977,29 +978,29 @@ function CreateEvent(props: any) {
   //   }
   // });
 
-  // useEffect(() => {
-  //   if (resetTypeError !== '') {
-  //     focusResetType.current.focus()
-  //   }
-  // }, [resetTypeError])
+  useEffect(() => {
+    if (resetTypeError !== '') {
+      focusResetType.current.focus()
+    }
+  }, [resetTypeError])
 
-  // useEffect(() => {
-  //   if (groupError !== '') {
-  //     focusGroup.current.focus()
-  //   }
-  // }, [groupError])
+  useEffect(() => {
+    if (groupError !== '') {
+      focusGroup.current.focus()
+    }
+  }, [groupError])
 
-  // useEffect(() => {
-  //   if (categoryError !== '') {
-  //     focusCategory.current.focus()
-  //   }
-  // }, [categoryError])
+  useEffect(() => {
+    if (categoryError !== '') {
+      focusCategory.current.focus()
+    }
+  }, [categoryError])
 
-  // useEffect(() => {
-  //   if (departmentError !== '') {
-  //     focusDepartment.current.focus()
-  //   }
-  // }, [departmentError])
+  useEffect(() => {
+    if (departmentError !== '') {
+      focusDepartment.current.focus()
+    }
+  }, [departmentError])
 
   const checkForm = async (btnName: string) => {
     let flag = 1
@@ -1208,7 +1209,7 @@ function CreateEvent(props: any) {
           appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
           eventName: eventName,
           planogramClass: {
-            className: classFormData ? classFormData : [],
+            className: classFormData ? classFormData : [''],
           },
           storeWasteProcessTiming: storeWasteProcess.value
             ? storeWasteProcess.value
@@ -1254,8 +1255,8 @@ function CreateEvent(props: any) {
           supplyChainAnalyst: supplyChainSpecialistValue.middleName
             ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
             : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
-          clearancePriceCheck: clearancePriceApplied,
-          orderStopDateheck: orderStopDateCheck,
+          clearancePriceApplied: clearancePriceApplied,
+          orderStopDateCheck: orderStopDateCheck,
           stopOrder: stopOrder,
           fileName: 'string',
           createdById: userDetail && userDetail.userdetails[0].user.userId,
@@ -1860,7 +1861,6 @@ function CreateEvent(props: any) {
                             onClick={props.onClick}
                             value={props.value}
                             onChange={props.onChange}
-                            ref={focusLaunchDate}
                             className={classes.dateFields}
                           />
                         )}

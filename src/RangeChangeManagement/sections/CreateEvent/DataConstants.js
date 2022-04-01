@@ -253,11 +253,11 @@ export const wastageRanges = [
 
 export const yesOrNo = [
   {
-    name: 'y',
+    name: 'Yes',
     text: 'Yes',
   },
   {
-    name: 'n',
+    name: 'No',
     text: 'No',
   },
 ]

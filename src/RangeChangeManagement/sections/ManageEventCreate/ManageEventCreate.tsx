@@ -209,17 +209,20 @@ function ManageEventCreate() {
     const data = location.state.data
     setEventDetails([data])
     setEventName(data['eventName'])
-    setClassValues(() => {
-      let classes = data['planogramClass']['className']
-      let classValues = []
-      for (var i in classes) {
-        classValues.push({
-          label: classes[i],
-          value: classes[i],
-        })
-      }
-      return classValues
-    })
+    setClassValues(
+      //   () => {
+      //   let classes = data['planogramClass']['className']
+      //   let classValues = []
+      //   for (var i in classes) {
+      //     classValues.push({
+      //       label: classes[i],
+      //       value: classes[i],
+      //     })
+      //   }
+      //   return classValues
+      // }
+      ''
+    )
   }, [location])
 
   useEffect(() => {
@@ -355,7 +358,7 @@ function ManageEventCreate() {
     return (
       <DatePicker
         format="dd/MM/yy"
-        value={rowData['appDueDate']}
+        value={rowData['appDueDate'] ? rowData['appDueDate'] : null}
         onChange={(date: any) => {
           setEventDetails((prevState: any) => {
             return [
@@ -894,7 +897,7 @@ function ManageEventCreate() {
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           <Typography variant="body2" color="primary">
             <SearchSelect
-              value={rowData.buyer}
+              value={rowData.buyerEmailId}
               // onChange={handleBuyer}
               onChange={(event: any) => {
                 console.log(event.target.value)

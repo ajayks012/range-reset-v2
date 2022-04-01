@@ -33,6 +33,7 @@ const {
   PUT_REJECT_TASK_CAMUNDA,
   PRODUCT_HIERARCHY_LIST_GET,
   PATCH_RANGERESET_EVENTS,
+  GET_RANGERESET_EVENTS,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -331,6 +332,12 @@ export const getTasklogsAPI = (requestId) => {
   let url = `${BASE_URL}${GET_TASKLOG_ID}`
   url = url.replace('{requestId}', requestId)
   return serviceRequestBasic(url, 'GET', undefined)
+}
+
+export const getRangeResetEvents = (createdBy) => {
+  let url = `${BASE_URL}${GET_RANGERESET_EVENTS}`
+  const params = `createdByIdIn=${createdBy}`
+  return serviceRequest(url, 'GET', undefined, params)
 }
 
 export const patchRangeResetEvents = (req) => {
