@@ -33,8 +33,10 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     GET_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
+    DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -73,7 +75,9 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
+    DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -112,8 +116,10 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     GET_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
+    DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -152,8 +158,10 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     GET_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
+    DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -192,8 +200,10 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     GET_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
+    DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',

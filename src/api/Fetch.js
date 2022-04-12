@@ -34,6 +34,8 @@ const {
   PRODUCT_HIERARCHY_LIST_GET,
   PATCH_RANGERESET_EVENTS,
   GET_RANGERESET_EVENTS,
+  DELETE_RANGERESETS,
+  GET_RESET_TYPES,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -334,6 +336,12 @@ export const getTasklogsAPI = (requestId) => {
   return serviceRequestBasic(url, 'GET', undefined)
 }
 
+export const getResetTypes = () => {
+  let url = `${BASE_URL}${GET_RESET_TYPES}`
+  // const params = `createdByIdIn=${createdBy}`
+  return serviceRequest(url, 'GET', undefined)
+}
+
 export const getRangeResetEvents = (createdBy) => {
   let url = `${BASE_URL}${GET_RANGERESET_EVENTS}`
   const params = `createdByIdIn=${createdBy}`
@@ -345,6 +353,12 @@ export const patchRangeResetEvents = (req) => {
   // url = url.replace('{userId}', req.user.employeeId)
   let reqBody = `${JSON.stringify(req)}`
   return serviceRequest(url, 'PATCH', reqBody)
+}
+
+export const deleteRangeResets = (resetId) => {
+  let url = `${BASE_URL}${DELETE_RANGERESETS}`
+  url = url.replace('{rangeResetId}', resetId)
+  return serviceRequest(url, 'DELETE', undefined)
 }
 
 // export const getItemWeekStoreViewForecastAPI = (

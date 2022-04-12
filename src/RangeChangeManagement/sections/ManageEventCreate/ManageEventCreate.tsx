@@ -52,17 +52,27 @@ import { allMessages } from '../../../util/Messages'
 import { getProductHierarchyListAPI } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
+import { connect } from 'react-redux'
+import { resetFile, setFile } from '../../../redux/Actions/FileUpload'
 
-function ManageEventCreate() {
+function ManageEventCreate(props: any) {
+  const { fileData, setFile, resetFile } = props
+
   const location = useLocation<any>()
   const history = useHistory()
   const theme1 = useTheme()
   const aboveSm = useMediaQuery(theme1.breakpoints.up('sm'))
   const classes = useStyles()
 
-  const { DEFAULT, RANGEAMEND_EVENTDASH } = routes
+  const { DEFAULT, RANGEAMEND_EVENTDASH, RANGEAMEND_MANAGE } = routes
 
   const [eventDetails, setEventDetails] = useState<any>()
+  const [resetType, setResetType] = useState<any>('')
+  const [resetTypeError, setResetTypeError] = useState<any>('')
+  const [rafDueDate, setRafDueDate] = useState<any>(null)
+  const [rafDueDateError, setRafDueDateError] = useState<any>('')
+  const [launchDate, setLaunchDate] = useState<any>(null)
+  const [launchDateError, setLaunchDateError] = useState<any>('')
   const [eventName, setEventName] = useState<any>('')
   const [group, setGroup] = useState<any>('')
   const [category, setCategory] = useState<any>('')
@@ -110,9 +120,210 @@ function ManageEventCreate() {
   const [classOpen, setClassOpen] = useState(false)
   const [groupsOpen, setGroupsOpen] = useState(false)
 
+  const [productHierValues, setProductHierValues] = useState<any>([])
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
+
+  // useEffect(() => {
+  //   return () => resetFile()
+  // }, [])
+
+  useEffect(() => {
+    if (!fileData[0]) {
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+    } else {
+      console.log(fileData)
+      setEventDetails(fileData)
+      // setEventName(fileData[0]['eventName'])
+    }
+    return () => setEventDetails([])
+  }, [])
+
+  useEffect(() => {
+    if (eventDetails && eventDetails.length > 0) {
+      setResetType(eventDetails[0].resetType)
+      setRafDueDate(eventDetails[0].appDueDate)
+      setLaunchDate(eventDetails[0].targetDate)
+      setGroup(eventDetails[0].tradeGroup)
+      setCategory({
+        category: eventDetails[0].category,
+        categoryId: eventDetails[0].categoryId,
+      })
+      setDepartment({
+        department: eventDetails[0].department,
+        departmentId: eventDetails[0].departmentId,
+      })
+      setBuyer({
+        buyer: eventDetails[0].buyer,
+        buyerEmailId: eventDetails[0].buyerEmailId,
+        buyerId: eventDetails[0].buyerId,
+      })
+    }
+  }, [])
+
+  // useEffect(() => {
+  //   setEventDetails([
+  //     {
+  // uniqueId: uniqueId,
+  // resetType: resetType,
+  // tradeGroup: group,
+  // categoryId: category.categoryId,
+  // category: category.category,
+  // department: department.department,
+  // departmentId: department.departmentId,
+  // targetDate: launchDate ? `${launchDate} ${'01:00:00.00'}` : null,
+  // appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
+  // eventName: eventName,
+  // planogramClass: {
+  //   className: classFormData ? classFormData : [''],
+  // },
+  // storeWasteProcessTiming: storeWasteProcess.value
+  //   ? storeWasteProcess.value
+  //   : '',
+  // buyer: buyer,
+  // buyerId: buyer.userId,
+  // buyerEmailId: buyer.emailId,
+  // buyer: buyer.buyer,
+  // buyerAssistantId: buyingAssistantValue.userId,
+  // buyerAssistantEmailId: buyingAssistantValue.emailId,
+  // buyerAssistant: buyingAssistantValue.middleName
+  //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+  //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+  // ownBrandManagerId: ownBrandManagerValue.userId,
+  // ownBrandManagerEmailId: ownBrandManagyterValue.emailId,
+  // ownBrandManager: ownBrandManagerValue.middleName
+  //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+  //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+  // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+  // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+  // seniorBuyingManager: seniorBuyingManagerValue.middleName
+  //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+  //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+  // merchandiserId: merchandiserValue.userId,
+  // merchandiserEmailId: merchandiserValue.emailId,
+  // merchandiser: merchandiserValue.middleName
+  //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+  //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+  // rangeResetManagerId: rangeResetManagerValue.userId,
+  // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+  // rangeResetManager: rangeResetManagerValue.middleName
+  //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+  //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+  // categoryDirectorId: categoryDirectorValue.userId,
+  // categoryDirectorEmailId: categoryDirectorValue.emailId,
+  // categoryDirector: categoryDirectorValue.middleName
+  //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+  //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+  // supplyChainAnalystId: supplyChainSpecialistValue.userId,
+  // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+  // supplyChainAnalyst: supplyChainSpecialistValue.supplyChainAnalyst,
+  // clearancePriceApplied: clearancePriceApplied,
+  // orderStopDateCheck: orderStopDateCheck,
+  // stopOrder: stopOrder,
+  //     },
+  //   ])
+  // }, [
+  //   resetType,
+  //   launchDate,
+  //   rafDueDate,
+  //   group,
+  //   category,
+  //   department,
+  //   buyer,
+  //   eventName,
+  // ])
+
+  // useEffect(() => {
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('department')
+  //       .then((res: any) => {
+  //         const hierarchyList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             groupId: item.group,
+  //             groupName: item.groupName,
+  //             categoryId: item.category,
+  //             categoryName: item.categoryName,
+  //             departmentId: item.department,
+  //             departmentName: item.departmentName,
+  //           }
+  //         })
+  //         setProductHierValues(hierarchyList)
+  //         console.log(hierarchyList)
+  //       })
+  //       .catch((err: any) => setProductHierValues([]))
+  // }, [])
+  // useEffect(() => {
+  //   if (productHierValues) {
+  //     let data: any = []
+  //     productHierValues.map((item: any) => {
+  //       if (!data) {
+  //         data.push({
+  //           value: item.groupId,
+  //           label: item.groupName,
+  //           groupId: item.groupId,
+  //           groupName: item.groupName,
+  //         })
+  //       } else if (
+  //         data.findIndex((d: any) => d.groupId === item.groupId) === -1
+  //       ) {
+  //         data.push({
+  //           value: item.groupId,
+  //           label: item.groupName,
+  //           groupId: item.groupId,
+  //           groupName: item.groupName,
+  //         })
+  //       }
+  //     })
+  //     console.log(data)
+  //     setGroupOptions(data)
+  //   }
+  // }, [productHierValues])
+
+  // useEffect(() => {
+  //   if (group) {
+  //     let data: any = []
+  //     productHierValues.map((item: any) => {
+  //       if (
+  //         data.findIndex((d: any) => d.categoryId === item.categoryId) === -1
+  //       ) {
+  //         if (group.groupId === item.groupId) {
+  //           data.push({
+  //             value: item.categoryId,
+  //             label: item.categoryName,
+  //             categoryId: item.categoryId,
+  //             categoryName: item.categoryName,
+  //           })
+  //         }
+  //       }
+  //     })
+  //     console.log(data)
+  //     setCategoryOptions(data)
+  //   }
+  // }, [group])
+
+  // useEffect(() => {
+  //   if (category) {
+  //     let data: any = []
+  //     productHierValues.map((item: any) => {
+  //       if (
+  //         data.findIndex((d: any) => d.departmentId === item.departmentId) ===
+  //         -1
+  //       ) {
+  //         if (item.categoryId === category.categoryId) {
+  //           data.push({
+  //             value: item.departmentId,
+  //             label: item.departmentName,
+  //             departmentId: item.departmentId,
+  //             departmentName: item.departmentName,
+  //           })
+  //         }
+  //       }
+  //     })
+  //     console.log(data)
+  //     setDepartmentOptions(data)
+  //   }
+  // }, [category])
 
   useEffect(() => {
     getProductHierarchyListAPI &&
@@ -150,7 +361,7 @@ function ManageEventCreate() {
 
           group &&
             setCategoryOptions(
-              categoryList.filter((cat: any) => cat.groupId === group.id)
+              categoryList.filter((cat: any) => cat.groupId === group.groupId)
             )
           group &&
             console.log(
@@ -202,28 +413,31 @@ function ManageEventCreate() {
 
   const goBack = () => {
     history.goBack()
+    // resetFile()
   }
 
-  useEffect(() => {
-    console.log(location.state.data)
-    const data = location.state.data
-    setEventDetails([data])
-    setEventName(data['eventName'])
-    setClassValues(
-      //   () => {
-      //   let classes = data['planogramClass']['className']
-      //   let classValues = []
-      //   for (var i in classes) {
-      //     classValues.push({
-      //       label: classes[i],
-      //       value: classes[i],
-      //     })
-      //   }
-      //   return classValues
-      // }
-      ''
-    )
-  }, [location])
+  // useEffect(() => {
+  // console.log(location.state.data)
+  // const data = location.state.data
+  // if (fileData) {
+  //   console.log(fileData)
+  //   setEventDetails(fileData)
+  //   setEventName(fileData[0]['eventName'])
+  // }
+  // setClassValues(
+  //   () => {
+  //   let classes = data['planogramClass']['className']
+  //   let classValues = []
+  //   for (var i in classes) {
+  //     classValues.push({
+  //       label: classes[i],
+  //       value: classes[i],
+  //     })
+  //   }
+  //   return classValues
+  // }
+  // )
+  // }, [fileData])
 
   useEffect(() => {
     console.log(eventDetails)
@@ -321,12 +535,14 @@ function ManageEventCreate() {
   )
 
   const resetTypeTemplate = (rowData: any) => {
-    const val = resetTypes.findIndex(
-      (group) => rowData.resetType === group.text
-    )
+    // const val = resetTypes.findIndex(
+    //   (item) => rowData.resetType.toLowerCase() === item.text.toLowerCase()
+    // )
+    // console.log('reset type:', val)
     return (
       <Select
-        value={val > -1 ? resetTypes[val].name : rowData.resetType}
+        value={rowData.resetType}
+        // value={resetType}
         onChange={(e) => {
           setEventDetails((prevState: any) => {
             return [
@@ -336,13 +552,14 @@ function ManageEventCreate() {
               },
             ]
           })
+          // setResetType(e.target.value)
         }}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
       >
         {resetTypes.map((type) => {
           return (
             <MenuItem
-              value={type.name}
+              value={type.text}
               key={type.name}
               className={classes.muiSelect}
             >
@@ -396,112 +613,119 @@ function ManageEventCreate() {
   }
 
   const groupTemplate = (rowData: any) => {
-    const val = groups.findIndex((group) => rowData.tradeGroup === group.text)
+    const val =
+      groupOptions &&
+      groupOptions.findIndex((group: any) => rowData.tradeGroup === group.group)
     return (
-      // <Select
-      //   value={val > -1 ? groups[val].name : rowData.tradeGroup}
-      //   onChange={(e) => {
-      //     setEventDetails((prevState: any) => {
-      //       return [
-      //         {
-      //           ...prevState[0],
-      //           tradeGroup: e.target.value,
-      //         },
-      //       ]
-      //     })
-      //   }}
-      //   input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
-      // >
-      //   {groups.map((type) => {
-      //     return (
-      //       <MenuItem
-      //         value={type.value}
-      //         key={type.value}
-      //         className={classes.muiSelect}
-      //       >
-      //         {type.label}
-      //       </MenuItem>
-      //     )
-      //   })}
-      // </Select>
-
-      <AutocompleteSelect
-        value={group}
-        options={groupOptions}
-        // onChange={handleGroup}
-        onChange={(e: any) => {
-          if (e) {
-            setGroup(e)
-            setCategory('')
-            setDepartment('')
-            setDepartmentOptions([])
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  tradeGroup: e.value,
-                },
-              ]
-            })
-          } else {
-            setGroup('')
-            setCategory('')
-            setDepartment('')
-            setCategoryOptions([])
-            setDepartmentOptions([])
-          }
-        }}
-        placeholder="Select Trading Group"
-      />
-    )
-  }
-
-  const categoryTemplate = (rowData: any) => {
-    const val = categories.findIndex((group) => rowData.category === group.text)
-    return (
-      //   <select
-      //     name="category"
-      //     id="category"
-      //     value={rowData.category}
-      //     onChange={(e) => {
-      //       setEventDetails((prevState: any) => {
-      //         return [
-      //           {
-      //             ...prevState[0],
-      //             category: e.target.value,
-      //           },
-      //         ]
-      //       })
-      //     }}
-      //     required
-      //   >
-      //     <option value="Frozen Food">Frozen Food</option>
-      //   </select>
       <Select
-        value={val > -1 ? categories[val].name : rowData.category}
+        // value={val > -1 ? rowData.tradeGroup : rowData.tradeGroup}
+        value={rowData.tradeGroup}
         onChange={(e) => {
+          setGroup(groupOptions[val])
+          // setCategory('')
+          // setDepartment('')
+          // setDepartmentOptions([])
           setEventDetails((prevState: any) => {
             return [
               {
                 ...prevState[0],
-                category: e.target.value,
+                tradeGroup: e.target.value,
+                categoryId: null,
+                category: '',
+                departmentId: null,
+                department: '',
               },
             ]
           })
         }}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
       >
-        {categories.map((type) => {
-          return (
-            <MenuItem
-              value={type.name}
-              key={type.name}
-              className={classes.muiSelect}
-            >
-              {type.text}
-            </MenuItem>
-          )
-        })}
+        {groupOptions &&
+          groupOptions.map((type: any) => {
+            return (
+              <MenuItem
+                value={type.groupName}
+                key={type.groupId}
+                className={classes.muiSelect}
+              >
+                {type.label}
+              </MenuItem>
+            )
+          })}
+      </Select>
+
+      // <AutocompleteSelect
+      //   value={group}
+      //   options={groupOptions}
+      //   // onChange={handleGroup}
+      //   onChange={(e: any) => {
+      //     if (e) {
+      //       setGroup(e)
+      //       setCategory('')
+      //       setDepartment('')
+      //       setDepartmentOptions([])
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             tradeGroup: e.value,
+      //           },
+      //         ]
+      //       })
+      //     } else {
+      //       setGroup('')
+      //       setCategory('')
+      //       setDepartment('')
+      //       setCategoryOptions([])
+      //       setDepartmentOptions([])
+      //     }
+      //   }}
+      //   placeholder="Select Trading Group"
+      // />
+    )
+  }
+
+  const categoryTemplate = (rowData: any) => {
+    const val =
+      categoryOptions &&
+      categoryOptions.findIndex(
+        (item: any) =>
+          rowData.categoryId === item.categoryId &&
+          rowData.tradeGroup === item.groupName
+      )
+    console.log(val)
+    return (
+      <Select
+        value={val > -1 ? rowData.category : rowData.category}
+        onChange={(e) => {
+          // const index = categoryOptions.findIndex(
+          //   (item: any) => e.target.value === item.categoryId
+          // )
+          setEventDetails((prevState: any) => {
+            return [
+              {
+                ...prevState[0],
+                category: e.target.value,
+                // category: categoryOptions[index].categoryName,
+                // categoryId: categoryOptions[index].categoryId,
+              },
+            ]
+          })
+        }}
+        input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+      >
+        {categoryOptions &&
+          categoryOptions.map((type: any) => {
+            return (
+              <MenuItem
+                value={type.categoryId}
+                key={type.categoryName}
+                className={classes.muiSelect}
+              >
+                {type.label}
+              </MenuItem>
+            )
+          })}
       </Select>
     )
   }
@@ -605,23 +829,37 @@ function ManageEventCreate() {
 
   const classTemplate = (rowData: any) => {
     if (rowData['planogramClass']) {
-      let len = rowData['planogramClass']['className']
-        ? rowData['planogramClass']['className'].length
-        : '0'
-      return (
-        <Typography>
-          <button
-            className={classes.backButton}
-            type="button"
-            onClick={() => setClassOpen(true)}
-            style={{
-              fontSize: '16px',
-            }}
-          >
-            Class({len})
-          </button>
-        </Typography>
-      )
+      if (rowData['planogramClass']['className'][0] != '') {
+        let len = rowData['planogramClass']['className']
+          ? rowData['planogramClass']['className'].length
+          : '0'
+        return (
+          <Typography>
+            <button
+              className={classes.backButton}
+              type="button"
+              onClick={() => setClassOpen(true)}
+              style={{
+                fontSize: '16px',
+              }}
+            >
+              Class({len})
+            </button>
+          </Typography>
+        )
+      } else {
+        return (
+          <Typography variant="body2">
+            <button
+              className={classes.backButton}
+              type="button"
+              onClick={() => setClassOpen(true)}
+            >
+              Class(0)
+            </button>
+          </Typography>
+        )
+      }
     } else {
       return (
         <Typography variant="body2">
@@ -714,18 +952,18 @@ function ManageEventCreate() {
 
       <Select
         value={
-          rowData.clearancePriceApplied === 'Yes'
-            ? 'y'
-            : rowData.clearancePriceApplied === 'No'
-            ? 'n'
-            : rowData.clearancePriceApplied
+          rowData.clearancePriceCheck === 'Yes'
+            ? 'Y'
+            : rowData.clearancePriceCheck === 'No'
+            ? 'N'
+            : rowData.clearancePriceCheck
         }
         onChange={(e) => {
           setEventDetails((prevState: any) => {
             return [
               {
                 ...prevState[0],
-                clearancePriceApplied: e.target.value,
+                clearancePriceCheck: e.target.value,
               },
             ]
           })
@@ -770,9 +1008,9 @@ function ManageEventCreate() {
       <Select
         value={
           rowData.orderStopDateCheck === 'Yes'
-            ? 'y'
+            ? 'Y'
             : rowData.orderStopDateCheck === 'No'
-            ? 'n'
+            ? 'N'
             : rowData.orderStopDateCheck
         }
         onChange={(e) => {
@@ -826,9 +1064,9 @@ function ManageEventCreate() {
       <Select
         value={
           rowData.stopOrder === 'Yes'
-            ? 'y'
+            ? 'Y'
             : rowData.stopOrder === 'No'
-            ? 'n'
+            ? 'N'
             : rowData.stopOrder
         }
         onChange={(e) => {
@@ -895,31 +1133,31 @@ function ManageEventCreate() {
         spacing={1}
       >
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
-          <Typography variant="body2" color="primary">
-            <SearchSelect
-              value={rowData.buyerEmailId}
-              // onChange={handleBuyer}
-              onChange={(event: any) => {
-                console.log(event.target.value)
-                if (event.target.value !== null) {
-                  setEventDetails((prevState: any) => {
-                    return [
-                      {
-                        ...prevState[0],
-                        buyer: event.target.value,
-                      },
-                    ]
-                  })
-                }
-              }}
-              placeholder="Search Buyer"
-              // onClick={handleBuyerClick}
-              onClick={() => console.log('clicked')}
-              styles={{
-                fontSize: '12px',
-              }}
-            />
-          </Typography>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.buyerEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      buyerEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Buyer"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
         </Grid>
         <Grid
           item
@@ -938,190 +1176,474 @@ function ManageEventCreate() {
 
   const buyingAssistantTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.buyerAssistant}
-        options={BuyingAssistants.map((buyer) => {
-          return buyer.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  buyerAssistant: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.buyerAssistant}
+      //   options={BuyingAssistants.map((buyer) => {
+      //     return buyer.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             buyerAssistant: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.buyerAssistantEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      buyerAssistantEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Buying Assistant"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={buyingAssistantConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
   const ownBrandManagerTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.ownBrandManager}
-        options={OwnBrandManagers.map((manager) => {
-          return manager.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  ownBrandManager: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.ownBrandManager}
+      //   options={OwnBrandManagers.map((manager) => {
+      //     return manager.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             ownBrandManager: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.ownBrandManagerEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      ownBrandManagerEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Own Brand Manager"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={ownBrandManagerConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
   const seniorBuyingManagerTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.seniorBuyingManager}
-        options={SeniorBuyingManagers.map((manager) => {
-          return manager.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  seniorBuyingManager: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.seniorBuyingManager}
+      //   options={SeniorBuyingManagers.map((manager) => {
+      //     return manager.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             seniorBuyingManager: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.seniorBuyingManagerEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      seniorBuyingManagerEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Senior Buying Manager"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={seniorBuyingManagerConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
   const merchandiserTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.merchandiser}
-        options={Merchandisers.map((merch) => {
-          return merch.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  merchandiser: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.merchandiser}
+      //   options={Merchandisers.map((merch) => {
+      //     return merch.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             merchandiser: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.merchandiserEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      merchandiserEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Merchandiser"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={merchandiserConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
   const rangeResetManagerTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.rangeResetManager}
-        options={RangeResetManagers.map((manager) => {
-          return manager.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  rangeResetManager: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.rangeResetManager}
+      //   options={RangeResetManagers.map((manager) => {
+      //     return manager.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             rangeResetManager: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.rangeResetManagerEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      rangeResetManagerEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Range Reset Manager"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={rangeResetManagerConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
   const categoryDirectorTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.categoryDirector}
-        options={CategoryDirectors.map((manager) => {
-          return manager.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  categoryDirector: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.categoryDirector}
+      //   options={CategoryDirectors.map((manager) => {
+      //     return manager.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             categoryDirector: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.categoryDirectorEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      categoryDirectorEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Category Director"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={categoryDirectorConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
   const supplyChainSplstTemplate = (rowData: any) => {
     return (
-      <Autocomplete
-        value={rowData.supplyChainAnalyst}
-        options={SupplyChainSpecialists.map((manager) => {
-          return manager.value
-        })}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEventDetails((prevState: any) => {
-              return [
-                {
-                  ...prevState[0],
-                  supplyChainAnalyst: newValue,
-                },
-              ]
-            })
-          }
-        }}
-        classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-        renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" />
-        )}
-      />
+      // <Autocomplete
+      //   value={rowData.supplyChainAnalyst}
+      //   options={SupplyChainSpecialists.map((manager) => {
+      //     return manager.value
+      //   })}
+      //   onChange={(event, newValue) => {
+      //     if (newValue !== null) {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             supplyChainAnalyst: newValue,
+      //           },
+      //         ]
+      //       })
+      //     }
+      //   }}
+      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //   renderInput={(params) => (
+      //     <TextField {...params} variant="outlined" size="small" />
+      //   )}
+      // />
+      <Grid container item xs={12} spacing={1}>
+        <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
+          {/* <Typography variant="body2" color="primary"> */}
+          <SearchSelect
+            value={rowData.supplyChainAnalystEmailId}
+            // onChange={handleBuyer}
+            onChange={(event: any) => {
+              console.log(event.target.value)
+              if (event.target.value !== null) {
+                setEventDetails((prevState: any) => {
+                  return [
+                    {
+                      ...prevState[0],
+                      supplyChainAnalystEmailId: event.target.value,
+                    },
+                  ]
+                })
+              }
+            }}
+            placeholder="Search Supply Chain Analyst"
+            // onClick={handleBuyerClick}
+            onClick={() => console.log('clicked')}
+            styles={{
+              fontSize: '12px',
+            }}
+          />
+          {/* </Typography> */}
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          style={{ textAlign: 'center' }}
+        >
+          <ConfirmCheckSign confirmValue={supplyChainSpecialistConfirmed} />
+        </Grid>
+      </Grid>
     )
   }
 
@@ -1485,14 +2007,14 @@ function ManageEventCreate() {
                           (col.field === 'category' && categoryTemplate) ||
                           (col.field === 'department' && departmentTemplate) ||
                           (col.field === 'eventName' && eventNameTemplate) ||
-                          (col.field === 'clearancePriceApplied' &&
+                          (col.field === 'clearancePriceCheck' &&
                             clearancePriceTemplate) ||
-                          (col.field === 'GSCOPDateCheckRequired' &&
+                          (col.field === 'orderStopDateCheck' &&
                             GSCOPDateTemplate) ||
                           (col.field === 'stopOrder' && stopOrderTemplate) ||
                           (col.field === 'buyer' && buyerTemplate) ||
                           (col.field === 'planogramClass' && classTemplate) ||
-                          (col.field === 'storeWasteProcessTiming' &&
+                          (col.field === 'wastageRange' &&
                             storeWasteProcessTemplate) ||
                           (col.field === 'buyerAssistant' &&
                             buyingAssistantTemplate) ||
@@ -1517,7 +2039,9 @@ function ManageEventCreate() {
                 </DataTable>
               </Grid>
               <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-                <Typography variant="subtitle1">Manage Tasks</Typography>
+                <Typography variant="subtitle1" color="primary">
+                  Manage Tasks
+                </Typography>
               </Grid>
 
               <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
@@ -1619,4 +2143,17 @@ function ManageEventCreate() {
   )
 }
 
-export default ManageEventCreate
+const mapStateToProps = (state: any) => {
+  return {
+    fileData: state.fileReducer.fileData,
+  }
+}
+
+const matchDispatchToProps = (dispatch: any) => {
+  return {
+    setFile: (fileData: any) => dispatch(setFile(fileData)),
+    resetFile: () => dispatch(resetFile),
+  }
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(ManageEventCreate)

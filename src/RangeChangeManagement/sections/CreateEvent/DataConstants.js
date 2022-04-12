@@ -183,23 +183,23 @@ export const classOptions = [
 
 export const resetTypes = [
   {
-    value: 'rapid',
+    value: 'Rapid Response',
     label: 'Rapid Response',
   },
   {
-    value: 'seasonal',
+    value: 'Seasonal Range Reset',
     label: 'Seasonal Range Reset',
   },
   {
-    value: 'planned',
-    label: 'Planned Range Reset',
+    value: 'Planned Range Change',
+    label: 'Planned Range Change',
   },
   {
-    value: 'seasonalchange',
+    value: 'Seasonal Range Change',
     label: 'Seasonal Range Change',
   },
   {
-    value: 'range',
+    value: 'Range Reset',
     label: 'Range Reset',
   },
 ]
@@ -253,11 +253,11 @@ export const wastageRanges = [
 
 export const yesOrNo = [
   {
-    name: 'Yes',
+    name: 'Y',
     text: 'Yes',
   },
   {
-    name: 'No',
+    name: 'N',
     text: 'No',
   },
 ]

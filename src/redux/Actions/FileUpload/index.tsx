@@ -1,1 +1,1 @@
-export {uploadFile,deleteFile} from "./Actions"
+export { setFile, resetFile, setErrorFile, resetErrorFile } from './Actions'

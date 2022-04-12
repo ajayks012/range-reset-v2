@@ -74,7 +74,12 @@ export const useStyles = makeStyles((theme) => {
       'max-width': '80%',
     },
     searchDialog: {
-      'max-width': '65%',
+      [theme.breakpoints.up('md')]: {
+        'max-width': '65%',
+      },
+      [theme.breakpoints.down('md')]: {
+        'max-width': '75%',
+      },
       padding: '8px',
     },
     globalSearch: {
@@ -89,7 +94,8 @@ export const useStyles = makeStyles((theme) => {
       color: theme.palette.primary.error,
     },
     errorTooltip: {
-      border: '1px solid red',
+      // border: '1px solid red',
+      padding: '5px',
       backgroundColor: 'white',
       color: theme.palette.primary.error,
     },

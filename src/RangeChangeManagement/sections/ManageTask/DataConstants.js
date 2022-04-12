@@ -5,7 +5,7 @@ export const eventUploadTableCols = [
   //   width: "100px",
   // },
   {
-    field: 'eventName',
+    field: 'name',
     header: 'Event Name',
     width: '200px',
   },
@@ -50,42 +50,42 @@ export const eventUploadTableCols = [
     width: '250px',
   },
   {
-    field: 'buyer',
+    field: 'buyerEmailId',
     header: 'Buyer',
     width: '250px',
   },
   {
-    field: 'categoryDirector',
+    field: 'categoryDirectorEmailId',
     header: 'Category Director',
     width: '250px',
   },
   {
-    field: 'seniorBuyingManager',
+    field: 'seniorBuyingManagerEmailId',
     header: 'Senior Buying Manager',
     width: '250px',
   },
   {
-    field: 'buyerAssistant',
+    field: 'buyerAssistantEmailId',
     header: 'Buying Assistant',
     width: '250px',
   },
   {
-    field: 'merchandiser',
+    field: 'merchandiserEmailId',
     header: 'Merchandiser',
     width: '250px',
   },
   {
-    field: 'supplyChainAnalyst',
+    field: 'supplyChainAnalystEmailId',
     header: 'Supply Chain Specialist.',
     width: '250px',
   },
   {
-    field: 'ownBrandManager',
+    field: 'ownBrandManagerEmailId',
     header: 'Own Brand Manager',
     width: '250px',
   },
   {
-    field: 'rangeResetManager',
+    field: 'rangeResetManagerEmailId',
     header: 'Range Reset Manager',
     width: '250px',
   },
@@ -108,7 +108,7 @@ export const eventUploadTableCols = [
 ]
 export const confirmedTableCols = [
   {
-    field: 'eventName',
+    field: 'name',
     header: 'Event Name',
     width: '200px',
   },
@@ -163,42 +163,42 @@ export const confirmedTableCols = [
     width: '200px',
   },
   {
-    field: 'buyer',
+    field: 'buyerEmailId',
     header: 'Buyer',
     width: '250px',
   },
   {
-    field: 'categoryDirector',
+    field: 'categoryDirectorEmailId',
     header: 'Category Director',
     width: '250px',
   },
   {
-    field: 'seniorBuyingManager',
+    field: 'seniorBuyingManagerEmailId',
     header: 'Senior Buying Manager',
     width: '250px',
   },
   {
-    field: 'buyerAssistant',
+    field: 'buyerAssistantEmailId',
     header: 'Buying Assistant',
     width: '250px',
   },
   {
-    field: 'merchandiser',
+    field: 'merchandiserEmailId',
     header: 'Merchandiser',
     width: '250px',
   },
   {
-    field: 'supplyChainAnalyst',
+    field: 'supplyChainAnalystEmailId',
     header: 'Supply Chain Specialist.',
     width: '250px',
   },
   {
-    field: 'ownBrandManager',
+    field: 'ownBrandManagerEmailId',
     header: 'Own Brand Manager',
     width: '250px',
   },
   {
-    field: 'rangeResetManager',
+    field: 'rangeResetManagerEmailId',
     header: 'Range Reset Manager',
     width: '250px',
   },
@@ -308,7 +308,7 @@ export const resetTypes = [
   },
   {
     value: 'planned',
-    label: 'Planned Range Reset',
+    label: 'Planned Range Change',
   },
   {
     value: 'seasonalchange',

@@ -49,6 +49,7 @@ import {
   // getProductHierarchyAPI,
   // putUserGroupAPI,
   getProductHierarchyListAPI,
+  getResetTypes,
   getUsersAPIByEmailAndRole,
   patchRangeResetEvents,
 } from '../../../api/Fetch'
@@ -56,6 +57,12 @@ import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
 import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
+import {
+  setFile,
+  resetFile,
+  setErrorFile,
+  resetErrorFile,
+} from '../../../redux/Actions/FileUpload'
 // import styled from 'styled-components'
 
 function CreateEvent(props: any) {
@@ -63,7 +70,14 @@ function CreateEvent(props: any) {
   const classes = useStyles()
   const theme = useTheme()
   const small = useMediaQuery(theme.breakpoints.up(768))
-  const { userDetail } = props
+  const {
+    userDetail,
+    setFile,
+    resetFile,
+    fileData,
+    fileErrorData,
+    resetErrorFile,
+  } = props
 
   const {
     DEFAULT,
@@ -81,7 +95,6 @@ function CreateEvent(props: any) {
   const [classValues, setClassValues] = useState<any>()
   const [confirmClassValues, setConfirmClassValues] = useState<any>()
   const [classFormData, setClassFormData] = useState<any>()
-  const [productHierValues, setProductHierValues] = useState<any>([])
   const [group, setGroup] = useState<any>('')
   const [groupError, setGroupError] = useState<any>('')
   const [category, setCategory] = useState<any>('')
@@ -128,9 +141,9 @@ function CreateEvent(props: any) {
     useState<any>('')
   const [supplyChainSpecialistConfirmed, setSupplyChainSpecialistConfirmed] =
     useState<any>(false)
-  const [clearancePriceApplied, setClearancePriceApplied] = useState('Yes')
-  const [orderStopDateCheck, setStopDateCheck] = useState('Yes')
-  const [stopOrder, setStopOrder] = useState('Yes')
+  const [clearancePriceApplied, setClearancePriceApplied] = useState('Y')
+  const [orderStopDateCheck, setStopDateCheck] = useState('Y')
+  const [stopOrder, setStopOrder] = useState('Y')
 
   const [classOpen, setClassOpen] = useState(false)
 
@@ -168,7 +181,10 @@ function CreateEvent(props: any) {
   const [categoryDirectorError1, setCategoryDirectorError1] = useState<any>('')
   const [supChainSpecialistError1, setSupChainSpecialistError1] =
     useState<any>('')
+  const [productHierValues, setProductHierValues] = useState<any>([])
   const [disabled, setDisabled] = React.useState(false)
+
+  const [errorCheck, setErrorCheck] = useState(-1)
 
   const toast = useRef<any>(null)
   const focusResetType = useRef<any>(null)
@@ -186,6 +202,7 @@ function CreateEvent(props: any) {
   const focusOwnBrandManager = useRef<any>(null)
   const focusRangeRestManager = useRef<any>(null)
 
+  const [resetOptions, setResetOptions] = useState<any>([])
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
@@ -195,6 +212,108 @@ function CreateEvent(props: any) {
   const [isPageModified, setIsPageModified] = React.useState(false)
   const [isSuccessCall, setIsSuccessCall] = React.useState(true)
   const [isProgressLoader, setIsProgressLoader] = React.useState(false)
+  const [toastRemove, setToastRemove] = React.useState('')
+
+  // useEffect(() => {
+  //   return () => resetErrorFile()
+  // }, [])
+
+  useEffect(() => {
+    return () => resetErrorFile()
+  }, [])
+
+  useEffect(() => {
+    if (fileErrorData) {
+      // if (fileErrorData[0].errorId) {
+      console.log(fileErrorData.errorId)
+      setErrorCheck(fileErrorData.errorId)
+      // }
+
+      let errorValues = fileErrorData.errorArray
+      if (errorValues && errorValues.length > 0) {
+        for (var i = 0; i < errorValues.length; i++) {
+          var error = errorValues[i].split(' - ')
+          console.log(error)
+
+          if (error[0] == 'Buyer') {
+            setBuyerConfirmed(false)
+            setBuyer(fileErrorData.buyerEmailId)
+            setErrBuyer(true)
+            setBuyerValue('')
+            setBuyerError1(error[1])
+          } else if (error[0] == 'Category Director') {
+            setCategoryDirectorConfirmed(false)
+            setCategoryDirector(fileErrorData.categoryDirectorEmailId)
+            setErrCategoryDirector(true)
+            setCategoryDirectorValue('')
+            setCategoryDirectorError1(error[1])
+          } else if (error[0] == 'Sr. Buying Manager') {
+            setSeniorBuyingManagerConfirmed(false)
+            setSeniorBuyingManager(fileErrorData.seniorBuyingManagerEmailId)
+            setErrSeniorBuyingManager(true)
+            setSeniorBuyingManagerValue('')
+            setSeniorBuyingManagerError1(error[1])
+          } else if (error[0] == 'Buying Assistant') {
+            setBuyingAssistantConfirmed(false)
+            setBuyingAssistant(fileErrorData.buyerAssistantEmailId)
+            setErrBuyerAssisant(true)
+            setBuyingAssistantValue('')
+            setBuyingAssistentError1(error[1])
+          } else if (error[0] == 'Merchandiser') {
+            setMerchandiserConfirmed(false)
+            setMerchandiser(fileErrorData.merchandiserEmailId)
+            setErrMerchandiser(true)
+            setMerchandiserValue('')
+            setMerchandiserError1(error[1])
+          } else if (error[0] == 'Supply Chain Specialist') {
+            setSupplyChainSpecialistConfirmed(false)
+            setSupplyChainSpecialist(fileErrorData.supplyChainAnalystEmailId)
+            setErrSupplyChainSpecialist(true)
+            setSupplyChainSpecialistValue('')
+            setSupChainSpecialistError1(error[1])
+          } else if (error[0] == 'Own Brand Manager') {
+            setOwnBrandManagerConfirmed(false)
+            setOwnBrandManager(fileErrorData.ownBrandManagerEmailId)
+            setErrOwnBrandManager(true)
+            setOwnBrandManagerValue('')
+            setOwnBrandManagerError1(error[1])
+          } else if (error[0] == 'Range Reset Manager') {
+            setRangeResetManagerConfirmed(false)
+            setRangeResetManager(fileErrorData.rangeResetManagerEmailId)
+            setErrRangeResetManager(true)
+            setRangeResetManagerValue('')
+            setRangeResetManagerError1(error[1])
+          }
+        }
+      }
+
+      // setRafDueDate(fileErrorData.appDueDate)
+      // setGroup({
+      //   value: fileErrorData.tradeGroup,
+      //   label: fileErrorData.tradeGroup,
+      // })
+      // setCategory({
+      //   value: fileErrorData.categoryId,
+      //   label: fileErrorData.category,
+      // })
+      // setDepartment({
+      //   value: fileErrorData.departmentId,
+      //   label: fileErrorData.department,
+      // })
+    }
+  }, [])
+
+  useEffect(() => {
+    getResetTypes().then((res: any) => {
+      const options = res.data.map((item: any) => {
+        return {
+          value: item.configValue,
+          label: item.configValue,
+        }
+      })
+      setResetOptions(options)
+    })
+  }, [])
 
   useEffect(() => {
     getProductHierarchyListAPI &&
@@ -215,7 +334,6 @@ function CreateEvent(props: any) {
         })
         .catch((err: any) => setProductHierValues([]))
   }, [])
-
   useEffect(() => {
     if (productHierValues) {
       let data: any = []
@@ -288,93 +406,8 @@ function CreateEvent(props: any) {
     }
   }, [category])
 
-  // useEffect(() => {
-  //   getProductHierarchyListAPI &&
-  //     getProductHierarchyListAPI('group')
-  //       .then((res: any) => {
-  //         const grpList = res.data.hierarchyNode.map((item: any) => {
-  //           return {
-  //             value: item.groupName,
-  //             label: item.groupName,
-  //             id: item.group,
-  //             hierGroup: 'group',
-  //           }
-  //         })
-  //         setGroupOptions(grpList)
-  //         console.log('group length: ', grpList.length)
-  //       })
-  //       .catch((err: any) => setGroupOptions([]))
-  // }, [])
-
-  // useEffect(() => {
-  //   console.log(group)
-  //   getProductHierarchyListAPI &&
-  //     getProductHierarchyListAPI('category')
-  //       .then((res: any) => {
-  //         const categoryList = res.data.hierarchyNode.map((item: any) => {
-  //           return {
-  //             value: item.categoryName,
-  //             label: item.categoryName,
-  //             id: item.category,
-  //             hierGroup: 'category',
-  //             groupName: item.groupName,
-  //             groupId: item.group,
-  //           }
-  //         })
-
-  //         group &&
-  //           setCategoryOptions(
-  //             categoryList.filter((cat: any) => cat.groupId === group.id)
-  //           )
-  //         group &&
-  //           console.log(
-  //             'category length: ',
-  //             categoryList.filter((cat: any) => cat.groupId === group.id)
-  //           )
-  //       })
-  //       .catch((err: any) => setCategoryOptions([]))
-  // }, [group])
-
-  // useEffect(() => {
-  //   if (group && category) {
-  //     getProductHierarchyListAPI &&
-  //       getProductHierarchyListAPI('department')
-  //         .then((res: any) => {
-  //           const depList = res.data.hierarchyNode.map((item: any) => {
-  //             return {
-  //               value: item.departmentName,
-  //               label: item.departmentName,
-  //               id: item.department,
-  //               hierGroup: 'department',
-  //               groupName: item.groupName,
-  //               categoryName: item.categoryName,
-  //               groupId: item.group,
-  //               categoryId: item.category,
-  //             }
-  //           })
-  //           setDepartmentOptions(
-  //             depList.filter(
-  //               (dep: any) =>
-  //                 dep.groupId === group.id && dep.categoryId === category.id
-  //             )
-  //           )
-  //           console.log(
-  //             'department length: ',
-  //             depList.filter(
-  //               (dep: any) =>
-  //                 dep.groupId === group.id && dep.categoryId === category.id
-  //             )
-  //           )
-  //           // setLoaded(true)
-  //         })
-  //         .catch((err: any) => {
-  //           setDepartmentOptions([])
-  //           // setLoaded(true)
-  //         })
-  //   }
-  // }, [category])
-
   useEffect(() => {
+    // if (!fileErrorData) {
     if (department && launchDate) {
       var lDate = new Date(launchDate)
       console.log(lDate)
@@ -389,18 +422,23 @@ function CreateEvent(props: any) {
     } else {
       setEventName('')
     }
+    // }
   }, [group, category, department, launchDate, eventName])
 
   useEffect(() => {
-    if (confirmClassValues) {
+    if (confirmClassValues && confirmClassValues.length > 0) {
+      // console.log(confirmClassValues)
       setClassFormData(() => {
         return confirmClassValues.map((class1: any) => class1.value)
       })
+    } else {
+      setClassFormData(null)
     }
   }, [confirmClassValues])
 
   const goBack = () => {
     history.goBack()
+    resetErrorFile()
   }
 
   const requiredStar = (
@@ -977,29 +1015,29 @@ function CreateEvent(props: any) {
   //   }
   // });
 
-  // useEffect(() => {
-  //   if (resetTypeError !== '') {
-  //     focusResetType.current.focus()
-  //   }
-  // }, [resetTypeError])
+  useEffect(() => {
+    if (resetTypeError !== '') {
+      focusResetType.current.focus()
+    }
+  }, [resetTypeError])
 
-  // useEffect(() => {
-  //   if (groupError !== '') {
-  //     focusGroup.current.focus()
-  //   }
-  // }, [groupError])
+  useEffect(() => {
+    if (groupError !== '') {
+      focusGroup.current.focus()
+    }
+  }, [groupError])
 
-  // useEffect(() => {
-  //   if (categoryError !== '') {
-  //     focusCategory.current.focus()
-  //   }
-  // }, [categoryError])
+  useEffect(() => {
+    if (categoryError !== '') {
+      focusCategory.current.focus()
+    }
+  }, [categoryError])
 
-  // useEffect(() => {
-  //   if (departmentError !== '') {
-  //     focusDepartment.current.focus()
-  //   }
-  // }, [departmentError])
+  useEffect(() => {
+    if (departmentError !== '') {
+      focusDepartment.current.focus()
+    }
+  }, [departmentError])
 
   const checkForm = async (btnName: string) => {
     let flag = 1
@@ -1168,7 +1206,22 @@ function CreateEvent(props: any) {
     //   setSupChainSpecialistError1('Please search supply chain specialist')
     // }
     if (flag === 1 && btnName === 'save') {
+      setToastRemove('save')
       setCancelOpenApprove(true)
+    }
+    if (flag === 1 && btnName === 'create') {
+      setToastRemove('create')
+      setCancelOpenApprove(true)
+    }
+  }
+
+  const handleToaster = () => {
+    if (toastRemove === 'save') {
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+    } else if (toastRemove === 'create') {
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+    } else {
+      history.push(`${DEFAULT}`)
     }
   }
 
@@ -1193,7 +1246,6 @@ function CreateEvent(props: any) {
   }
   const handleCreateSave = (e: any) => {
     setIsProgressLoader(true)
-    setDisabled(true)
     const formData = {
       rangeResets: [
         {
@@ -1206,7 +1258,7 @@ function CreateEvent(props: any) {
           departmentId: department.departmentId,
           targetDate: `${launchDate} ${'01:00:00.00'}`,
           appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
-          eventName: eventName,
+          name: eventName,
           planogramClass: {
             className: classFormData ? classFormData : [],
           },
@@ -1254,8 +1306,8 @@ function CreateEvent(props: any) {
           supplyChainAnalyst: supplyChainSpecialistValue.middleName
             ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
             : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
-          clearancePriceCheck: clearancePriceApplied,
-          orderStopDateheck: orderStopDateCheck,
+          clearancePriceApplied: clearancePriceApplied,
+          orderStopDateCheck: orderStopDateCheck,
           stopOrder: stopOrder,
           fileName: 'string',
           createdById: userDetail && userDetail.userdetails[0].user.userId,
@@ -1270,16 +1322,56 @@ function CreateEvent(props: any) {
 
     patchRangeResetEvents(formData)
       .then((res: any) => {
+        setDisabled(true)
         setIsSuccessCall(false)
         setIsProgressLoader(false)
+        // let newVal = [formData.rangeResets[0], ...fileData]
+        // setFile(newVal)
         console.log(res.data)
-        toast.current.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-          life: life,
-          className: 'login-toast',
-        })
+        // if (errorCheck && errorCheck > -1) {
+        if (fileErrorData) {
+          if (
+            res.data[0].status.toLowerCase() === 'draft' ||
+            res.data[0].status.toLowerCase() === 'confirmed'
+          ) {
+            let newVal = [res.data[0], ...fileData]
+            let _tasks = newVal.filter(
+              (value: any) => fileErrorData.errorId !== value.errorId
+            )
+            setFile(_tasks)
+            toast.current.show({
+              severity: 'success',
+              summary: 'Success',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              life: life,
+              className: 'login-toast',
+            })
+          }
+          // else{
+
+          //#######################
+          //after service is done
+
+          // }
+        } else {
+          if (
+            res.data[0].status.toLowerCase() === 'draft' ||
+            res.data[0].status.toLowerCase() === 'confirmed'
+          ) {
+            toast.current.show({
+              severity: 'success',
+              summary: 'Success',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              life: life,
+              className: 'login-toast',
+            })
+          } else if (res.data[0].status.toLowerCase() === 'error : duplicate') {
+            alert('duplicate event')
+          }
+          // else{
+          //   errror handling
+          // }
+        }
       })
       .catch((err: any) => {
         setIsSuccessCall(false)
@@ -1289,7 +1381,7 @@ function CreateEvent(props: any) {
         toast.current.show({
           severity: 'error',
           summary: 'Error!',
-          detail: err.response.data.errorMessage,
+          // detail: err.response.data.errorMessage,
           life: life,
           className: 'login-toast',
         })
@@ -1313,6 +1405,9 @@ function CreateEvent(props: any) {
     // }
   }
 
+  useEffect(() => {
+    console.log(isSuccessCall)
+  }, [isSuccessCall])
   const handleBack = (e: any) => {
     e.preventDefault()
     setBack((p) => !p)
@@ -1333,6 +1428,106 @@ function CreateEvent(props: any) {
       handleProceed={goBack}
       label1="Sure to go Back?"
       label2="All your data will be lost"
+    />
+  )
+
+  const handleCreateAfterDialog = (e: any) => {
+    e.preventDefault()
+    checkForm('create')
+  }
+  const handleCancelCreate = (e: any) => {
+    e.preventDefault()
+    setCancelOpenApprove((p) => !p)
+  }
+
+  const handleCreate = () => {
+    setIsProgressLoader(true)
+    // setDisabled(true)
+    const formData = {
+      rangeResets: [
+        {
+          // uniqueId: uniqueId,
+          resetType: resetType.value,
+          tradeGroup: group.groupName,
+          categoryId: category.categoryId,
+          category: category.categoryName,
+          department: department.departmentName,
+          departmentId: department.departmentId,
+          targetDate: `${launchDate} ${'01:00:00.00'}`,
+          appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
+          name: eventName,
+          planogramClass: {
+            className: classFormData ? classFormData : [''],
+          },
+          storeWasteProcessTiming: storeWasteProcess.value
+            ? storeWasteProcess.value
+            : '',
+          // buyer: buyer,
+          buyerId: buyerValue.userId,
+          buyerEmailId: buyerValue.emailId,
+          buyer: buyerValue.middleName
+            ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+            : `${buyerValue.firstName} ${buyerValue.lastName}`,
+          buyerAssistantId: buyingAssistantValue.userId,
+          buyerAssistantEmailId: buyingAssistantValue.emailId,
+          buyerAssistant: buyingAssistantValue.middleName
+            ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+            : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+          ownBrandManagerId: ownBrandManagerValue.userId,
+          ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+          ownBrandManager: ownBrandManagerValue.middleName
+            ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+            : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+          seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+          seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+          seniorBuyingManager: seniorBuyingManagerValue.middleName
+            ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+            : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+          merchandiserId: merchandiserValue.userId,
+          merchandiserEmailId: merchandiserValue.emailId,
+          merchandiser: merchandiserValue.middleName
+            ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+            : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+          rangeResetManagerId: rangeResetManagerValue.userId,
+          rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+          rangeResetManager: rangeResetManagerValue.middleName
+            ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+            : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+          categoryDirectorId: categoryDirectorValue.userId,
+          categoryDirectorEmailId: categoryDirectorValue.emailId,
+          categoryDirector: categoryDirectorValue.middleName
+            ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+            : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+          supplyChainAnalystId: supplyChainSpecialistValue.userId,
+          supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+          supplyChainAnalyst: supplyChainSpecialistValue.middleName
+            ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+            : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          clearancePriceApplied: clearancePriceApplied,
+          orderStopDateCheck: orderStopDateCheck,
+          stopOrder: stopOrder,
+          fileName: 'string',
+          createdById: userDetail && userDetail.userdetails[0].user.userId,
+          createdByName:
+            userDetail && userDetail.userdetails[0].user.middleName
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+        },
+      ],
+    }
+    console.log(formData.rangeResets)
+    // setFile(formData.rangeResets)
+    setIsSuccessCall(false)
+    history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+  }
+
+  const viewConfirmCreate = (
+    <ConfirmBox
+      cancelOpen={cancelOpenApprove}
+      handleCancel={handleCancelCreate}
+      handleProceed={handleCreateSave}
+      label1="Are you sure to Create?"
+      label2="Please click Ok to proceed"
     />
   )
 
@@ -1494,7 +1689,7 @@ function CreateEvent(props: any) {
 
                       <AutocompleteSelect
                         value={resetType}
-                        options={resetTypes}
+                        options={resetOptions}
                         onChange={handleResetType}
                         placeholder="Select Reset Type"
                         ref={focusResetType}
@@ -1585,7 +1780,6 @@ function CreateEvent(props: any) {
                         ref={focusRafDueDate}
                       >
                         {rafDueDateError}
-                        
                       </div> */}
 
                       <br />
@@ -1860,7 +2054,6 @@ function CreateEvent(props: any) {
                             onClick={props.onClick}
                             value={props.value}
                             onChange={props.onChange}
-                            ref={focusLaunchDate}
                             className={classes.dateFields}
                           />
                         )}
@@ -2695,7 +2888,7 @@ function CreateEvent(props: any) {
                         variant="contained"
                         color="primary"
                         className={classes.buttons}
-                        // onClick={handleCreate}
+                        onClick={handleCreateAfterDialog}
                         size="small"
                       >
                         Create Event
@@ -2722,9 +2915,10 @@ function CreateEvent(props: any) {
       <Toast
         ref={toast}
         position="bottom-left"
-        onRemove={() => {
-          history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
-        }}
+        // onRemove={() => {
+        //   history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+        // }}
+        onRemove={handleToaster}
       />
       <Paper className={classes.root} elevation={0}>
         <Grid
@@ -2740,6 +2934,7 @@ function CreateEvent(props: any) {
           {classDialog}
           {viewConfirmSave}
           {viewConfirmBack}
+          {viewConfirmCreate}
           {/* </Grid> */}
         </Grid>
       </Paper>
@@ -2750,7 +2945,17 @@ function CreateEvent(props: any) {
 const mapStateToProps = (state: any) => {
   return {
     userDetail: state.loginReducer.userDetail,
+    fileData: state.fileReducer.fileData,
+    fileErrorData: state.fileReducer.fileErrorData,
   }
 }
 
-export default connect(mapStateToProps, null)(CreateEvent)
+const matchDispatchToProps = (dispatch: any) => {
+  return {
+    setFile: (fileData: any) => dispatch(setFile(fileData)),
+    resetFile: () => dispatch(resetFile()),
+    resetErrorFile: () => dispatch(resetErrorFile()),
+  }
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(CreateEvent)

@@ -9,7 +9,7 @@ export const resetTypes = [
   },
   {
     name: 'planned',
-    text: 'Planned Range Reset',
+    text: 'Planned Range Change',
   },
   {
     name: 'seasonalchange',
@@ -230,11 +230,11 @@ export const SupplyChainSpecialists = [
 
 export const yesOrNo = [
   {
-    name: 'y',
+    name: 'Y',
     text: 'Yes',
   },
   {
-    name: 'n',
+    name: 'N',
     text: 'No',
   },
 ]
@@ -253,7 +253,7 @@ export const manageEventPublishCols = [
   {
     field: 'tradeGroup',
     header: 'Group',
-    width: '150px',
+    width: '220px',
   },
   {
     field: 'category',
@@ -271,7 +271,7 @@ export const manageEventPublishCols = [
     width: '150px',
   },
   {
-    field: 'uniqueId',
+    field: 'eventId',
     header: 'Event ID',
     width: '100px',
   },
@@ -286,17 +286,17 @@ export const manageEventPublishCols = [
     width: '150px',
   },
   {
-    field: 'storeWasteProcessTiming',
+    field: 'wastageRange',
     header: 'Store Waste Process Timing',
     width: '200px',
   },
   {
-    field: 'clearancePriceApplied',
+    field: 'clearancePriceCheck',
     header: 'Clearance Pricing Action required',
     width: '220px',
   },
   {
-    field: 'GSCOPDateCheckRequired',
+    field: 'orderStopDateCheck',
     header: 'GSCOP Date check Required',
     width: '200px',
   },
@@ -311,13 +311,8 @@ export const manageEventPublishCols = [
     width: '250px',
   },
   {
-    field: 'buyerAssistant',
-    header: 'Buying Assistant',
-    width: '250px',
-  },
-  {
-    field: 'ownBrandManager',
-    header: 'Own Brand Manager',
+    field: 'categoryDirector',
+    header: 'Category Director',
     width: '250px',
   },
   {
@@ -326,24 +321,29 @@ export const manageEventPublishCols = [
     width: '250px',
   },
   {
+    field: 'buyerAssistant',
+    header: 'Buying Assistant',
+    width: '250px',
+  },
+  {
     field: 'merchandiser',
     header: 'Merchandiser',
-    width: '250px',
-  },
-  {
-    field: 'rangeResetManager',
-    header: 'Range Reset Manager',
-    width: '250px',
-  },
-  {
-    field: 'categoryDirector',
-    header: 'Category Director',
     width: '250px',
   },
   {
     field: 'supplyChainSplst',
     header: 'Supply Chain Splst',
     width: '200px',
+  },
+  {
+    field: 'ownBrandManager',
+    header: 'Own Brand Manager',
+    width: '250px',
+  },
+  {
+    field: 'rangeResetManager',
+    header: 'Range Reset Manager',
+    width: '250px',
   },
 ]
 
