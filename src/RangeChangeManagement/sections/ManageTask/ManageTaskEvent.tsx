@@ -846,7 +846,7 @@ function ManageTaskEvent(props: any) {
       rowData.appDueDateError && errorArray.push(rowData.appDueDateError)
       // rowData.buyerError&&errorArray.push(rowData.)
       // rowData.buyerError&&errorArray.push(rowData.)
-      // rowData.buyerError&&errorArray.push(rowData.)
+      rowData.categoryError && errorArray.push(rowData.categoryError)
       rowData.departmentError && errorArray.push(rowData.departmentError)
       rowData.buyerError && errorArray.push(rowData.buyerError)
       rowData.buyerAssistantError &&
@@ -938,21 +938,30 @@ function ManageTaskEvent(props: any) {
     }
   }
   const convertedTargetDateTemplate = (rowData: any) => {
-    const date = new Date(rowData.targetDate)
-    const formattedDate = date
-      .toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      })
-      .replace(/ /g, '-')
-    return formattedDate
+    if (rowData.targetDate) {
+      const date = new Date(rowData.targetDate)
+      const formattedDate = date
+        .toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })
+        .replace(/ /g, '-')
+      return formattedDate
+    } else {
+      return 'NA'
+    }
   }
 
   const classTemplate = (rowData: any) => {
-    if (rowData.planogramClass) {
+    if (
+      rowData.planogramClass &&
+      rowData['planogramClass']['className'].length > 0
+    ) {
       var planogramClass = rowData['planogramClass']['className'].toString()
       return planogramClass
+    } else {
+      return 'NA'
     }
   }
 
@@ -966,7 +975,7 @@ function ManageTaskEvent(props: any) {
       // }
       return classValues
     } else {
-      return []
+      return null
     }
   }
 
@@ -1063,9 +1072,11 @@ function ManageTaskEvent(props: any) {
               department: d[cols[5]] ? d[cols[5]] : null,
               // departmentId: 1,
               targetDate: converted_date1,
-              planogramClass: {
-                className: classArray(d[cols[7]]),
-              },
+              planogramClass: classArray(d[cols[7]])
+                ? {
+                    className: classArray(d[cols[7]]),
+                  }
+                : classArray(d[cols[7]]),
               wastageRange: d[cols[8]] ? d[cols[8]] : null,
               buyerEmailId: d[cols[9]] ? d[cols[9]] : null,
               categoryDirectorEmailId: d[cols[10]] ? d[cols[10]] : null,

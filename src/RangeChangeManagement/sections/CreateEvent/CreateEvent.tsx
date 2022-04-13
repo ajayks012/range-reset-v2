@@ -252,6 +252,28 @@ function CreateEvent(props: any) {
           setResetType({ value: value.resetType, label: value.resetType })
       }
 
+      if (value.categoryError) {
+        // setBuyer(value.buyerEmailId)
+        // setRafDueDate(value.department)
+        setErrDepartment(true)
+        setDepartmentError1('Invalid Product Hierarchy')
+        // setCategoryGError1('Invalid Category')
+      } else {
+        value.tradeGroup &&
+          setGroup({
+            value: value.tradeGroup,
+            label: value.tradeGroup,
+            groupName: value.tradeGroup,
+          })
+        value.category &&
+          setCategory({
+            value: value.category,
+            label: value.category,
+            categoryId: value.categoryId,
+            categoryName: value.category,
+          })
+      }
+
       if (value.departmentError) {
         // setBuyer(value.buyerEmailId)
         // setRafDueDate(value.department)
@@ -375,7 +397,7 @@ function CreateEvent(props: any) {
       if (classValues && classValues.length > 0) {
         setConfirmClassValues(classValues.className)
       }
-      setEventName(value.name)
+      // setEventName(value.name)
     }
   }
 
@@ -385,16 +407,16 @@ function CreateEvent(props: any) {
     }
   }, [])
 
-  useEffect(() => {
-    if (storeWasteProcess) {
-      let data = storeWasteProcess.value
-      let waste = data.replace('_', ' ')
-      let newWaste = waste.split('_')
-      console.log(newWaste)
-      let newData = `Week +${newWaste[0]}\\ +${newWaste[1]}`
-      console.log(newData)
-    }
-  }, [storeWasteProcess])
+  // useEffect(() => {
+  //   if (storeWasteProcess) {
+  //     let data = storeWasteProcess.value
+  //     let waste = data.replace('_', ' ')
+  //     let newWaste = waste.split('_')
+  //     console.log(newWaste)
+  //     let newData = `Week +${newWaste[0]}\\ +${newWaste[1]}`
+  //     console.log(newData)
+  //   }
+  // }, [storeWasteProcess])
 
   useEffect(() => {
     getResetTypes().then((res: any) => {
@@ -501,19 +523,25 @@ function CreateEvent(props: any) {
 
   useEffect(() => {
     // if (!fileErrorData) {
-    if (department && launchDate) {
-      var lDate = new Date(launchDate)
-      console.log(lDate)
-      var name =
-        department.departmentName.replace(/ /g, '_') +
-        '_' +
-        lDate.getDate() +
-        lDate.toLocaleString('default', { month: 'short' }) +
-        lDate.getFullYear()
-      console.log(name)
-      setEventName(name)
+    if (!fileErrorData.name) {
+      if (!eventName) {
+        if (department && launchDate) {
+          var lDate = new Date(launchDate)
+          console.log(lDate)
+          var name =
+            department.departmentName.replace(/ /g, '_') +
+            '_' +
+            lDate.getDate() +
+            lDate.toLocaleString('default', { month: 'short' }) +
+            lDate.getFullYear()
+          console.log(name)
+          setEventName(name)
+        } else {
+          setEventName('')
+        }
+      }
     } else {
-      setEventName('')
+      setEventName(fileErrorData.name)
     }
     // }
   }, [group, category, department, launchDate, eventName])
@@ -756,8 +784,12 @@ function CreateEvent(props: any) {
     //     setRafDueDateError('')
     //   }
     // }
+    if (e <= launchDate) {
+      setRafDueDate(e)
+      setErrRafdueDate(false)
+      setRafDueDateError1('')
+    }
 
-    setRafDueDate(e)
     setIsPageModified(true)
   }
 
@@ -1361,9 +1393,11 @@ function CreateEvent(props: any) {
           targetDate: `${launchDate} ${'01:00:00.00'}`,
           appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
           name: eventName,
-          planogramClass: {
-            className: classFormData ? classFormData : [],
-          },
+          planogramClass: classFormData
+            ? {
+                className: classFormData,
+              }
+            : null,
           storeWasteProcessTiming: storeWasteProcess.value
             ? storeWasteProcess.value
             : '',
@@ -2232,8 +2266,8 @@ function CreateEvent(props: any) {
                           shrink: true,
                         }}
                         emptyLabel="Enter RAF/APP Due Date"
-                        // maxDate={launchDate && launchDate}
-                        // maxDateMessage={allMessages.error.rafDateError}
+                        maxDate={launchDate && launchDate}
+                        maxDateMessage={allMessages.error.rafDateError}
                         TextFieldComponent={(props: any) => (
                           <OutlinedInput
                             margin="dense"
