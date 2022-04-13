@@ -582,6 +582,7 @@ function ManageTaskEvent(props: any) {
 
   const handlePreviewDialogSave1 = () => {
     setConfirmtable(true)
+    setIsProgressLoader(true)
     setOpenPreviewDialog(false)
     // setConfirmedRows(importedData && importedData)
     if (importedFormData && importedFormData.length > 0) {
@@ -612,58 +613,60 @@ function ManageTaskEvent(props: any) {
           let data = res.data
           let successData: any = []
           let errorData: any = []
+          console.log(data)
 
           for (var i = 0; i < data.length; i++) {
             if (
               data[i].status.toLowerCase() === 'draft' ||
               data[i].status.toLowerCase() === 'confirmed'
             ) {
-              successData.push({
-                name: data[i].name,
-                eventId: data[i].id,
-                resetType: data[i].resetType,
-                appDueDate: data[i].appDueDate,
-                tradeGroup: data[i].tradeGroup,
-                category: data[i].category,
-                categoryId: data[i].categoryId,
-                department: data[i].department,
-                departmentId: data[i].departmentId,
-                targetDate: data[i].targetDate,
-                planogramClass: data[i].planogramClass,
-                wastageRange: data[i].wastageRange,
-                buyer: data[i].buyer,
-                buyerId: data[i].buyerId,
-                buyerEmailId: data[i].buyerEmailId,
-                categoryDirector: data[i].categoryDirector,
-                categoryDirectorId: data[i].categoryDirectorId,
-                categoryDirectorEmailId: data[i].categoryDirectorEmailId,
-                seniorBuyingManager: data[i].seniorBuyingManager,
-                seniorBuyingManagerId: data[i].seniorBuyingManagerId,
-                seniorBuyingManagerEmailId: data[i].seniorBuyingManagerEmailId,
-                buyerAssistant: data[i].buyerAssistant,
-                buyerAssistantId: data[i].buyerAssistantId,
-                buyerAssistantEmailId: data[i].buyerAssistantEmailId,
-                merchandiser: data[i].merchandiser,
-                merchandiserId: data[i].merchandiserId,
-                merchandiserEmailId: data[i].merchandiserEmailId,
-                supplyChainAnalyst: data[i].supplyChainAnalyst,
-                supplyChainAnalystId: data[i].supplyChainAnalystId,
-                supplyChainAnalystEmailId: data[i].supplyChainAnalystEmailId,
-                ownBrandManager: data[i].ownBrandManager,
-                ownBrandManagerId: data[i].ownBrandManagerId,
-                ownBrandManagerEmailId: data[i].ownBrandManagerEmailId,
-                rangeResetManager: data[i].rangeResetManager,
-                rangeResetManagerId: data[i].rangeResetManagerId,
-                rangeResetManagerEmailId: data[i].rangeResetManagerEmailId,
+              // successData.push({
+              //   name: data[i].name,
+              //   eventId: data[i].id,
+              //   resetType: data[i].resetType,
+              //   appDueDate: data[i].appDueDate,
+              //   tradeGroup: data[i].tradeGroup,
+              //   category: data[i].category,
+              //   categoryId: data[i].categoryId,
+              //   department: data[i].department,
+              //   departmentId: data[i].departmentId,
+              //   targetDate: data[i].targetDate,
+              //   planogramClass: data[i].planogramClass,
+              //   wastageRange: data[i].wastageRange,
+              //   buyer: data[i].buyer,
+              //   buyerId: data[i].buyerId,
+              //   buyerEmailId: data[i].buyerEmailId,
+              //   categoryDirector: data[i].categoryDirector,
+              //   categoryDirectorId: data[i].categoryDirectorId,
+              //   categoryDirectorEmailId: data[i].categoryDirectorEmailId,
+              //   seniorBuyingManager: data[i].seniorBuyingManager,
+              //   seniorBuyingManagerId: data[i].seniorBuyingManagerId,
+              //   seniorBuyingManagerEmailId: data[i].seniorBuyingManagerEmailId,
+              //   buyerAssistant: data[i].buyerAssistant,
+              //   buyerAssistantId: data[i].buyerAssistantId,
+              //   buyerAssistantEmailId: data[i].buyerAssistantEmailId,
+              //   merchandiser: data[i].merchandiser,
+              //   merchandiserId: data[i].merchandiserId,
+              //   merchandiserEmailId: data[i].merchandiserEmailId,
+              //   supplyChainAnalyst: data[i].supplyChainAnalyst,
+              //   supplyChainAnalystId: data[i].supplyChainAnalystId,
+              //   supplyChainAnalystEmailId: data[i].supplyChainAnalystEmailId,
+              //   ownBrandManager: data[i].ownBrandManager,
+              //   ownBrandManagerId: data[i].ownBrandManagerId,
+              //   ownBrandManagerEmailId: data[i].ownBrandManagerEmailId,
+              //   rangeResetManager: data[i].rangeResetManager,
+              //   rangeResetManagerId: data[i].rangeResetManagerId,
+              //   rangeResetManagerEmailId: data[i].rangeResetManagerEmailId,
 
-                // eventId: d['Event ID'],
-                // name: 'string',
+              //   // eventId: d['Event ID'],
+              //   // name: 'string',
 
-                status: data[i].status,
-                clearancePriceCheck: data[i].clearancePriceCheck,
-                orderStopDateCheck: data[i].orderStopDateheck,
-                stopOrder: data[i].stopOrder,
-              })
+              //   status: data[i].status,
+              //   clearancePriceCheck: data[i].clearancePriceCheck,
+              //   orderStopDateCheck: data[i].orderStopDateheck,
+              //   stopOrder: data[i].stopOrder,
+              // })
+              successData.push(data[i])
             } else {
               const errorType: String = data[i].status.replace('Error : ', '')
               const errorArray = errorType.split(' , ')
@@ -672,54 +675,55 @@ function ManageTaskEvent(props: any) {
               )
               let count = errorCount.count
               console.log(errorArray)
-              errorData.push({
-                name: data[i].name,
-                eventId: data[i].id,
-                resetType: data[i].resetType,
-                appDueDate: data[i].appDueDate,
-                tradeGroup: data[i].tradeGroup,
-                category: data[i].category,
-                categoryId: data[i].categoryId,
-                department: data[i].department,
-                departmentId: data[i].departmentId,
-                targetDate: data[i].targetDate,
-                planogramClass: data[i].planogramClass,
-                wastageRange: data[i].wastageRange,
-                buyer: data[i].buyer,
-                buyerId: data[i].buyerId,
-                buyerEmailId: data[i].buyerEmailId,
-                categoryDirector: data[i].categoryDirector,
-                categoryDirectorId: data[i].categoryDirectorId,
-                categoryDirectorEmailId: data[i].categoryDirectorEmailId,
-                seniorBuyingManager: data[i].seniorBuyingManager,
-                seniorBuyingManagerId: data[i].seniorBuyingManagerId,
-                seniorBuyingManagerEmailId: data[i].seniorBuyingManagerEmailId,
-                buyerAssistant: data[i].buyerAssistant,
-                buyerAssistantId: data[i].buyerAssistantId,
-                buyerAssistantEmailId: data[i].buyerAssistantEmailId,
-                merchandiser: data[i].merchandiser,
-                merchandiserId: data[i].merchandiserId,
-                merchandiserEmailId: data[i].merchandiserEmailId,
-                supplyChainAnalyst: data[i].supplyChainAnalyst,
-                supplyChainAnalystId: data[i].supplyChainAnalystId,
-                supplyChainAnalystEmailId: data[i].supplyChainAnalystEmailId,
-                ownBrandManager: data[i].ownBrandManager,
-                ownBrandManagerId: data[i].ownBrandManagerId,
-                ownBrandManagerEmailId: data[i].ownBrandManagerEmailId,
-                rangeResetManager: data[i].rangeResetManager,
-                rangeResetManagerId: data[i].rangeResetManagerId,
-                rangeResetManagerEmailId: data[i].rangeResetManagerEmailId,
+              // errorData.push({
+              //   name: data[i].name,
+              //   eventId: data[i].id,
+              //   resetType: data[i].resetType,
+              //   appDueDate: data[i].appDueDate,
+              //   tradeGroup: data[i].tradeGroup,
+              //   category: data[i].category,
+              //   categoryId: data[i].categoryId,
+              //   department: data[i].department,
+              //   departmentId: data[i].departmentId,
+              //   targetDate: data[i].targetDate,
+              //   planogramClass: data[i].planogramClass,
+              //   wastageRange: data[i].wastageRange,
+              //   buyer: data[i].buyer,
+              //   buyerId: data[i].buyerId,
+              //   buyerEmailId: data[i].buyerEmailId,
+              //   categoryDirector: data[i].categoryDirector,
+              //   categoryDirectorId: data[i].categoryDirectorId,
+              //   categoryDirectorEmailId: data[i].categoryDirectorEmailId,
+              //   seniorBuyingManager: data[i].seniorBuyingManager,
+              //   seniorBuyingManagerId: data[i].seniorBuyingManagerId,
+              //   seniorBuyingManagerEmailId: data[i].seniorBuyingManagerEmailId,
+              //   buyerAssistant: data[i].buyerAssistant,
+              //   buyerAssistantId: data[i].buyerAssistantId,
+              //   buyerAssistantEmailId: data[i].buyerAssistantEmailId,
+              //   merchandiser: data[i].merchandiser,
+              //   merchandiserId: data[i].merchandiserId,
+              //   merchandiserEmailId: data[i].merchandiserEmailId,
+              //   supplyChainAnalyst: data[i].supplyChainAnalyst,
+              //   supplyChainAnalystId: data[i].supplyChainAnalystId,
+              //   supplyChainAnalystEmailId: data[i].supplyChainAnalystEmailId,
+              //   ownBrandManager: data[i].ownBrandManager,
+              //   ownBrandManagerId: data[i].ownBrandManagerId,
+              //   ownBrandManagerEmailId: data[i].ownBrandManagerEmailId,
+              //   rangeResetManager: data[i].rangeResetManager,
+              //   rangeResetManagerId: data[i].rangeResetManagerId,
+              //   rangeResetManagerEmailId: data[i].rangeResetManagerEmailId,
 
-                // eventId: d['Event ID'],
-                // name: 'string',
+              //   // eventId: d['Event ID'],
+              //   // name: 'string',
 
-                status: errorType,
-                errorArray: errorArray,
-                errorId: count,
-                // clearancePriceCheck: data[i].clearancePriceCheck,
-                // orderStopDateCheck: data[i].orderStopDateheck,
-                // stopOrder: data[i].stopOrder,
-              })
+              //   status: errorType,
+              //   errorArray: errorArray,
+              //   errorId: count,
+              //   // clearancePriceCheck: data[i].clearancePriceCheck,
+              //   // orderStopDateCheck: data[i].orderStopDateheck,
+              //   // stopOrder: data[i].stopOrder,
+              // })
+              errorData.push({ ...data[i], errorId: count })
               count = count + 1
               localStorage.setItem(
                 'errorCounter',
@@ -794,17 +798,14 @@ function ManageTaskEvent(props: any) {
       data.status.toLowerCase() === 'confirmed'
     ) {
       console.log([data])
-      let singleRow = [data]
+      // let singleRow = [data]
       // setFile(singleRow)
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+    } else if (data.status && data.status.toLowerCase() === 'duplicate') {
+      alert('Duplicate Event')
     } else {
-      console.log([data])
-      if (data.errorArray && data.errorArray[0] === 'Duplicate') {
-        alert('Duplicate Event')
-      } else {
-        // setErrorFile(data)
-        history.push(`${DEFAULT}${RANGEAMEND_CREATE}`)
-      }
+      // setErrorFile(data)
+      history.push(`${DEFAULT}${RANGEAMEND_CREATE}`)
     }
   }
 
@@ -840,7 +841,29 @@ function ManageTaskEvent(props: any) {
     ) {
       return rowData.status
     } else {
-      if (rowData.errorArray) {
+      let errorArray = []
+      rowData.resetTypeError && errorArray.push(rowData.resetTypeError)
+      rowData.appDueDateError && errorArray.push(rowData.appDueDateError)
+      // rowData.buyerError&&errorArray.push(rowData.)
+      // rowData.buyerError&&errorArray.push(rowData.)
+      // rowData.buyerError&&errorArray.push(rowData.)
+      rowData.departmentError && errorArray.push(rowData.departmentError)
+      rowData.buyerError && errorArray.push(rowData.buyerError)
+      rowData.buyerAssistantError &&
+        errorArray.push(rowData.buyerAssistantError)
+      rowData.categoryDirectorError &&
+        errorArray.push(rowData.categoryDirectorError)
+      rowData.merchandiserError && errorArray.push(rowData.merchandiserError)
+      rowData.ownBrandManagerError &&
+        errorArray.push(rowData.ownBrandManagerError)
+      rowData.rangeResetManagerError &&
+        errorArray.push(rowData.rangeResetManagerError)
+      rowData.seniorBuyingManagerError &&
+        errorArray.push(rowData.seniorBuyingManagerError)
+      rowData.supplyChainAnalystError &&
+        errorArray.push(rowData.supplyChainAnalystError)
+
+      if (errorArray.length > 0) {
         return (
           <div className={classes.errorDialog}>
             Error
@@ -851,7 +874,7 @@ function ManageTaskEvent(props: any) {
                     <Typography color="error" variant="body2">
                       {/* {allMessages.error.rafDateError} */}
 
-                      {rowData.errorArray.map((item: any, index: any) => {
+                      {errorArray.map((item: any, index: any) => {
                         return (
                           <i key={index}>
                             {item}
@@ -905,11 +928,11 @@ function ManageTaskEvent(props: any) {
           year: 'numeric',
         })
         .replace(/ /g, '-')
-      if (rowData.status === 'Error') {
-        return <div style={{ color: 'red' }}>{formattedDate}</div>
-      } else {
-        return formattedDate
-      }
+      // if (rowData.status === 'Error') {
+      //   return <div style={{ color: 'red' }}>{formattedDate}</div>
+      // } else {
+      return formattedDate
+      // }
     } else {
       return 'NA'
     }
@@ -1372,6 +1395,8 @@ function ManageTaskEvent(props: any) {
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             currentPageReportTemplate="{first} - {last} of {totalRecords}"
             alwaysShowPaginator={false}
+            stateStorage="session"
+            stateKey="dt-state-demo-session-eventmanage"
             showGridlines
             scrollable
             // scrollHeight={above670px ? '450px' : '300px'}

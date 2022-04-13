@@ -16,7 +16,11 @@ import {
   OutlinedInput,
   MenuItem,
 } from '@material-ui/core'
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import {
+  DatePicker,
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers'
 import React, { useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import DateFnsUtils from '@date-io/date-fns'
@@ -46,6 +50,7 @@ import { routes, life } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
 import '../../../index.css'
 import {
+  createEventsCamunda,
   // getProductHierarchyAPI,
   // putUserGroupAPI,
   getProductHierarchyListAPI,
@@ -76,6 +81,7 @@ function CreateEvent(props: any) {
     resetFile,
     fileData,
     fileErrorData,
+    setErrorFile,
     resetErrorFile,
   } = props
 
@@ -89,6 +95,7 @@ function CreateEvent(props: any) {
 
   // const [uniqueId, setUniqueId] = useState<any>("");
   // const [uniqueIdError, setUniqueIdError] = useState<any>("");
+  const [errorData, setErrorData] = useState<any>('')
 
   const [resetType, setResetType] = useState<any>('')
   const [resetTypeError, setResetTypeError] = useState<any>('')
@@ -149,7 +156,7 @@ function CreateEvent(props: any) {
 
   const [errRafDueDate, setErrRafdueDate] = useState<any>(false)
   const [errReset, setErrReset] = useState<any>(false)
-  const [errHandle, setErrHandle] = useState<any>(false)
+  const [errGroup, setErrGroup] = useState<any>(false)
   const [errCategory, setErrCategory] = useState<any>(false)
   const [errDepartment, setErrDepartment] = useState<any>(false)
   const [errLaunchDate, setErrLaunchDate] = useState<any>(false)
@@ -208,100 +215,186 @@ function CreateEvent(props: any) {
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
 
   const [cancelOpenApprove, setCancelOpenApprove] = React.useState(false)
+  const [cancelOpenSave, setCancelOpenSave] = React.useState(false)
   const [back, setBack] = React.useState(false)
   const [isPageModified, setIsPageModified] = React.useState(false)
   const [isSuccessCall, setIsSuccessCall] = React.useState(true)
   const [isProgressLoader, setIsProgressLoader] = React.useState(false)
   const [toastRemove, setToastRemove] = React.useState('')
 
-  // useEffect(() => {
-  //   return () => resetErrorFile()
-  // }, [])
+  useEffect(() => {
+    console.log(rafDueDateError1)
+  }, [rafDueDateError1])
 
   useEffect(() => {
     return () => resetErrorFile()
   }, [])
 
-  useEffect(() => {
-    if (fileErrorData) {
-      // if (fileErrorData[0].errorId) {
-      console.log(fileErrorData.errorId)
-      setErrorCheck(fileErrorData.errorId)
-      // }
-
-      let errorValues = fileErrorData.errorArray
-      if (errorValues && errorValues.length > 0) {
-        for (var i = 0; i < errorValues.length; i++) {
-          var error = errorValues[i].split(' - ')
-          console.log(error)
-
-          if (error[0] == 'Buyer') {
-            setBuyerConfirmed(false)
-            setBuyer(fileErrorData.buyerEmailId)
-            setErrBuyer(true)
-            setBuyerValue('')
-            setBuyerError1(error[1])
-          } else if (error[0] == 'Category Director') {
-            setCategoryDirectorConfirmed(false)
-            setCategoryDirector(fileErrorData.categoryDirectorEmailId)
-            setErrCategoryDirector(true)
-            setCategoryDirectorValue('')
-            setCategoryDirectorError1(error[1])
-          } else if (error[0] == 'Sr. Buying Manager') {
-            setSeniorBuyingManagerConfirmed(false)
-            setSeniorBuyingManager(fileErrorData.seniorBuyingManagerEmailId)
-            setErrSeniorBuyingManager(true)
-            setSeniorBuyingManagerValue('')
-            setSeniorBuyingManagerError1(error[1])
-          } else if (error[0] == 'Buying Assistant') {
-            setBuyingAssistantConfirmed(false)
-            setBuyingAssistant(fileErrorData.buyerAssistantEmailId)
-            setErrBuyerAssisant(true)
-            setBuyingAssistantValue('')
-            setBuyingAssistentError1(error[1])
-          } else if (error[0] == 'Merchandiser') {
-            setMerchandiserConfirmed(false)
-            setMerchandiser(fileErrorData.merchandiserEmailId)
-            setErrMerchandiser(true)
-            setMerchandiserValue('')
-            setMerchandiserError1(error[1])
-          } else if (error[0] == 'Supply Chain Specialist') {
-            setSupplyChainSpecialistConfirmed(false)
-            setSupplyChainSpecialist(fileErrorData.supplyChainAnalystEmailId)
-            setErrSupplyChainSpecialist(true)
-            setSupplyChainSpecialistValue('')
-            setSupChainSpecialistError1(error[1])
-          } else if (error[0] == 'Own Brand Manager') {
-            setOwnBrandManagerConfirmed(false)
-            setOwnBrandManager(fileErrorData.ownBrandManagerEmailId)
-            setErrOwnBrandManager(true)
-            setOwnBrandManagerValue('')
-            setOwnBrandManagerError1(error[1])
-          } else if (error[0] == 'Range Reset Manager') {
-            setRangeResetManagerConfirmed(false)
-            setRangeResetManager(fileErrorData.rangeResetManagerEmailId)
-            setErrRangeResetManager(true)
-            setRangeResetManagerValue('')
-            setRangeResetManagerError1(error[1])
-          }
-        }
+  const checkForErrors = (value: any) => {
+    if (value) {
+      if (value.appDueDateError) {
+        setRafDueDate(value.appDueDate)
+        setErrRafdueDate(true)
+        setRafDueDateError1(value.appDueDateError)
+      } else {
+        console.log(value.appDueDate)
+        value.appDueDate && setRafDueDate(value.appDueDate)
       }
 
-      // setRafDueDate(fileErrorData.appDueDate)
-      // setGroup({
-      //   value: fileErrorData.tradeGroup,
-      //   label: fileErrorData.tradeGroup,
-      // })
-      // setCategory({
-      //   value: fileErrorData.categoryId,
-      //   label: fileErrorData.category,
-      // })
-      // setDepartment({
-      //   value: fileErrorData.departmentId,
-      //   label: fileErrorData.department,
-      // })
+      if (value.resetTypeError) {
+        // setBuyer(value.buyerEmailId)
+        setResetType({ value: value.resetType, label: value.resetType })
+        setErrReset(true)
+        // setErrBuyer(true)
+        setResetError1(value.resetTypeError)
+      } else {
+        value.resetType &&
+          setResetType({ value: value.resetType, label: value.resetType })
+      }
+
+      if (value.departmentError) {
+        // setBuyer(value.buyerEmailId)
+        // setRafDueDate(value.department)
+        setErrDepartment(true)
+        // setDepartmentError1(value.departmentError)
+        setDepartmentError1('Invalid Product Hierarchy')
+      } else {
+        value.tradeGroup &&
+          setGroup({
+            value: value.tradeGroup,
+            label: value.tradeGroup,
+            groupName: value.tradeGroup,
+          })
+        value.category &&
+          setCategory({
+            value: value.category,
+            label: value.category,
+            categoryId: value.categoryId,
+            categoryName: value.category,
+          })
+        value.department &&
+          setDepartment({
+            value: value.department,
+            label: value.department,
+            departmentId: value.departmentId,
+            departmentName: value.department,
+          })
+      }
+
+      if (value.buyerError) {
+        setBuyerConfirmed(false)
+        setBuyer(value.buyerEmailId)
+        setErrBuyer(true)
+        setBuyerValue('')
+        setBuyerError1(value.buyerError)
+      } else {
+        setBuyerConfirmed(false)
+        setBuyer(value.buyerEmailId)
+      }
+
+      if (value.categoryDirectorError) {
+        setCategoryDirectorConfirmed(false)
+        setCategoryDirector(value.categoryDirectorEmailId)
+        setErrCategoryDirector(true)
+        setCategoryDirectorValue('')
+        setCategoryDirectorError1(value.categoryDirectorError)
+      } else {
+        setCategoryDirectorConfirmed(false)
+        setCategoryDirector(value.categoryDirectorEmailId)
+      }
+
+      if (value.seniorBuyingManagerError) {
+        setSeniorBuyingManagerConfirmed(false)
+        setSeniorBuyingManager(value.seniorBuyingManagerEmailId)
+        setErrSeniorBuyingManager(true)
+        setSeniorBuyingManagerValue('')
+        setSeniorBuyingManagerError1(value.seniorBuyingManagerError)
+      } else {
+        setSeniorBuyingManagerConfirmed(false)
+        setSeniorBuyingManager(value.seniorBuyingManagerEmailId)
+      }
+
+      if (value.buyerAssistantError) {
+        setBuyingAssistantConfirmed(false)
+        setBuyingAssistant(value.buyerAssistantEmailId)
+        setErrBuyerAssisant(true)
+        setBuyingAssistantValue('')
+        setBuyingAssistentError1(value.buyerAssistantError)
+      } else {
+        setBuyingAssistantConfirmed(false)
+        setBuyingAssistant(value.buyerAssistantEmailId)
+      }
+
+      if (value.merchandiserError) {
+        setMerchandiserConfirmed(false)
+        setMerchandiser(value.merchandiserEmailId)
+        setErrMerchandiser(true)
+        setMerchandiserValue('')
+        setMerchandiserError1(value.merchandiserError)
+      } else {
+        setMerchandiserConfirmed(false)
+        setMerchandiser(value.merchandiserEmailId)
+      }
+
+      if (value.supplyChainAnalystError) {
+        setSupplyChainSpecialistConfirmed(false)
+        setSupplyChainSpecialist(value.supplyChainAnalystEmailId)
+        setErrSupplyChainSpecialist(true)
+        setSupplyChainSpecialistValue('')
+        setSupChainSpecialistError1(value.supplyChainAnalystError)
+      } else {
+        setSupplyChainSpecialistConfirmed(false)
+        setSupplyChainSpecialist(value.supplyChainAnalystEmailId)
+      }
+
+      if (value.ownBrandManagerError) {
+        setOwnBrandManagerConfirmed(false)
+        setOwnBrandManager(value.ownBrandManagerEmailId)
+        setErrOwnBrandManager(true)
+        setOwnBrandManagerValue('')
+        setOwnBrandManagerError1(value.ownBrandManagerError)
+      } else {
+        setOwnBrandManagerConfirmed(false)
+        setOwnBrandManager(value.ownBrandManagerEmailId)
+      }
+
+      if (value.rangeResetManagerError) {
+        setRangeResetManagerConfirmed(false)
+        setRangeResetManager(value.rangeResetManagerEmailId)
+        setErrRangeResetManager(true)
+        setRangeResetManagerValue('')
+        setRangeResetManagerError1(value.rangeResetManagerError)
+      } else {
+        setRangeResetManagerConfirmed(false)
+        setRangeResetManager(value.rangeResetManagerEmailId)
+      }
+
+      setLaunchDate(value.targetDate)
+      let classValues = value.planogramClass
+      console.log(classValues)
+      if (classValues && classValues.length > 0) {
+        setConfirmClassValues(classValues.className)
+      }
+      setEventName(value.name)
+    }
+  }
+
+  useEffect(() => {
+    if (fileErrorData) {
+      checkForErrors(fileErrorData)
     }
   }, [])
+
+  useEffect(() => {
+    if (storeWasteProcess) {
+      let data = storeWasteProcess.value
+      let waste = data.replace('_', ' ')
+      let newWaste = waste.split('_')
+      console.log(newWaste)
+      let newData = `Week +${newWaste[0]}\\ +${newWaste[1]}`
+      console.log(newData)
+    }
+  }, [storeWasteProcess])
 
   useEffect(() => {
     getResetTypes().then((res: any) => {
@@ -478,7 +571,9 @@ function CreateEvent(props: any) {
 
   const handleGroup = (e: any) => {
     if (e) {
-      setErrHandle(false)
+      setErrGroup(false)
+      setErrCategory(false)
+      setErrDepartment(false)
       setIsPageModified(true)
       setGroup(e)
       setCategory('')
@@ -499,6 +594,7 @@ function CreateEvent(props: any) {
   const handleCategory = (e: any) => {
     if (e) {
       setErrCategory(false)
+      setErrDepartment(false)
       setCategory(e)
       setDepartment('')
     } else {
@@ -685,6 +781,10 @@ function CreateEvent(props: any) {
     //   }
     // }
     setLaunchDate(e)
+    if (e > rafDueDate) {
+      setErrRafdueDate(false)
+      setRafDueDateError1('')
+    }
     setErrLaunchDate(false)
     setLaunchError1('')
     setIsPageModified(true)
@@ -1054,7 +1154,7 @@ function CreateEvent(props: any) {
     }
     if (!group || group === null || group === undefined) {
       flag = 0
-      setErrHandle(true)
+      setErrGroup(true)
       settradingGError1(allMessages.error.noTradingGroup)
       focusGroup.current.focus()
     }
@@ -1207,7 +1307,8 @@ function CreateEvent(props: any) {
     // }
     if (flag === 1 && btnName === 'save') {
       setToastRemove('save')
-      setCancelOpenApprove(true)
+      // setCancelOpenApprove(true)
+      setCancelOpenSave(true)
     }
     if (flag === 1 && btnName === 'create') {
       setToastRemove('create')
@@ -1219,22 +1320,23 @@ function CreateEvent(props: any) {
     if (toastRemove === 'save') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else if (toastRemove === 'create') {
-      history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+      // history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else {
       history.push(`${DEFAULT}`)
     }
   }
 
-  useEffect(() => {
-    if (resetType.value !== 'rapid') {
-      setErrRafdueDate(false)
-      setRafDueDateError1('')
-    }
-    if (resetType.value === 'rapid' && rafDueDate !== '') {
-      setErrRafdueDate(false)
-      setRafDueDateError1('')
-    }
-  }, [resetType, rafDueDate])
+  // useEffect(() => {
+  //   if (resetType.value !== 'rapid') {
+  //     setErrRafdueDate(false)
+  //     setRafDueDateError1('')
+  //   }
+  //   if (resetType.value === 'rapid' && rafDueDate !== '') {
+  //     setErrRafdueDate(false)
+  //     setRafDueDateError1('')
+  //   }
+  // }, [resetType, rafDueDate])
 
   const handleSaveAfterDialog = (e: any) => {
     e.preventDefault()
@@ -1242,9 +1344,221 @@ function CreateEvent(props: any) {
   }
   const handleCancelSave = (e: any) => {
     e.preventDefault()
-    setCancelOpenApprove((p) => !p)
+    setCancelOpenSave((p) => !p)
   }
   const handleCreateSave = (e: any) => {
+    setIsProgressLoader(true)
+    const formData = {
+      rangeResets: [
+        {
+          // uniqueId: uniqueId,
+          resetType: resetType.value,
+          tradeGroup: group.groupName,
+          categoryId: category.categoryId,
+          category: category.categoryName,
+          department: department.departmentName,
+          departmentId: department.departmentId,
+          targetDate: `${launchDate} ${'01:00:00.00'}`,
+          appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
+          name: eventName,
+          planogramClass: {
+            className: classFormData ? classFormData : [],
+          },
+          storeWasteProcessTiming: storeWasteProcess.value
+            ? storeWasteProcess.value
+            : '',
+          // buyer: buyer,
+          buyerId: buyerValue.userId,
+          buyerEmailId: buyerValue.emailId,
+          buyer: buyerValue.middleName
+            ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+            : `${buyerValue.firstName} ${buyerValue.lastName}`,
+          buyerAssistantId: buyingAssistantValue.userId,
+          buyerAssistantEmailId: buyingAssistantValue.emailId,
+          buyerAssistant: buyingAssistantValue.middleName
+            ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+            : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+          ownBrandManagerId: ownBrandManagerValue.userId,
+          ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+          ownBrandManager: ownBrandManagerValue.middleName
+            ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+            : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+          seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+          seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+          seniorBuyingManager: seniorBuyingManagerValue.middleName
+            ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+            : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+          merchandiserId: merchandiserValue.userId,
+          merchandiserEmailId: merchandiserValue.emailId,
+          merchandiser: merchandiserValue.middleName
+            ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+            : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+          rangeResetManagerId: rangeResetManagerValue.userId,
+          rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+          rangeResetManager: rangeResetManagerValue.middleName
+            ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+            : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+          categoryDirectorId: categoryDirectorValue.userId,
+          categoryDirectorEmailId: categoryDirectorValue.emailId,
+          categoryDirector: categoryDirectorValue.middleName
+            ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+            : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+          supplyChainAnalystId: supplyChainSpecialistValue.userId,
+          supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+          supplyChainAnalyst: supplyChainSpecialistValue.middleName
+            ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+            : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          clearancePriceApplied: clearancePriceApplied,
+          orderStopDateCheck: orderStopDateCheck,
+          stopOrder: stopOrder,
+          fileName: 'string',
+          createdById: userDetail && userDetail.userdetails[0].user.userId,
+          createdByName:
+            userDetail && userDetail.userdetails[0].user.middleName
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+        },
+      ],
+    }
+    console.log(formData)
+
+    patchRangeResetEvents(formData)
+      .then((res: any) => {
+        setIsSuccessCall(false)
+        // let newVal = [formData.rangeResets[0], ...fileData]
+        // setFile(newVal)
+        console.log(res.data)
+        // if (errorCheck && errorCheck > -1) {
+        if (fileErrorData) {
+          if (
+            res.data[0].status.toLowerCase() === 'draft' ||
+            res.data[0].status.toLowerCase() === 'confirmed'
+          ) {
+            setDisabled(true)
+            let newVal = [res.data[0], ...fileData]
+            let _tasks = newVal.filter(
+              (value: any) => fileErrorData.errorId !== value.errorId
+            )
+            setFile(_tasks)
+            toast.current.show({
+              severity: 'success',
+              summary: 'Success',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              life: life,
+              className: 'login-toast',
+            })
+          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
+            toast.current.show({
+              severity: 'error',
+              summary: 'Duplicate Event',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              life: life,
+              className: 'login-toast',
+            })
+            setDisabled(false)
+          } else {
+            console.log()
+            // setErrorData(res.data[0])
+            setDisabled(false)
+            checkForErrors(res.data[0])
+          }
+        } else {
+          if (
+            res.data[0].status.toLowerCase() === 'draft' ||
+            res.data[0].status.toLowerCase() === 'confirmed'
+          ) {
+            setDisabled(true)
+            toast.current.show({
+              severity: 'success',
+              summary: 'Success',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              life: life,
+              className: 'login-toast',
+            })
+          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
+            toast.current.show({
+              severity: 'error',
+              summary: 'Duplicate Event',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              life: life,
+              className: 'login-toast',
+            })
+            setDisabled(false)
+          } else {
+            setDisabled(false)
+            checkForErrors(res.data[0])
+          }
+        }
+        setIsProgressLoader(false)
+      })
+      .catch((err: any) => {
+        setIsSuccessCall(false)
+        setIsProgressLoader(false)
+        setDisabled(false)
+        console.log(err)
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error!',
+          // detail: err.response.data.errorMessage,
+          life: life,
+          className: 'login-toast',
+        })
+      })
+    // history.push({
+    //   pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
+    //   search: `?event=${formData['eventName']}`, // query string
+    //   state: {
+    //     // location state
+    //     data: formData,
+    //   },
+    // })
+    // } else {
+    //   console.log('fail')
+    //   toast.current.show({
+    //     severity: 'error',
+    //     summary: '',
+    //     detail: 'Please fill all the essential fields',
+    //     life: 2000,
+    //   })
+    // }
+  }
+
+  useEffect(() => {
+    console.log(isSuccessCall)
+  }, [isSuccessCall])
+  const handleBack = (e: any) => {
+    e.preventDefault()
+    setBack((p) => !p)
+  }
+  const viewConfirmSave = (
+    <ConfirmBox
+      cancelOpen={cancelOpenSave}
+      handleCancel={handleCancelSave}
+      handleProceed={handleCreateSave}
+      label1="Are you sure to Save?"
+      label2="Please click Ok to proceed"
+    />
+  )
+  const viewConfirmBack = (
+    <ConfirmBox
+      cancelOpen={back}
+      handleCancel={handleBack}
+      handleProceed={goBack}
+      label1="Sure to go Back?"
+      label2="All your data will be lost"
+    />
+  )
+
+  const handleCreateAfterDialog = (e: any) => {
+    e.preventDefault()
+    checkForm('create')
+  }
+  const handleCancelCreate = (e: any) => {
+    e.preventDefault()
+    setCancelOpenApprove((p) => !p)
+  }
+
+  const handleCreateEvent = () => {
     setIsProgressLoader(true)
     const formData = {
       rangeResets: [
@@ -1339,38 +1653,340 @@ function CreateEvent(props: any) {
               (value: any) => fileErrorData.errorId !== value.errorId
             )
             setFile(_tasks)
+
+            const formdata1 = {
+              requests: [
+                {
+                  submitType: 'new',
+                  eventId: res.data[0].id,
+                  eventStatus: res.data[0].status,
+                  requester: {
+                    persona:
+                      userDetail && userDetail.userdetails[0].user.middleName
+                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    details: {
+                      emailId:
+                        userDetail && userDetail.userdetails[0].user.emailId,
+                      userId:
+                        userDetail && userDetail.userdetails[0].user.userId,
+                      name:
+                        userDetail && userDetail.userdetails[0].user.middleName
+                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    },
+                    roles:
+                      userDetail &&
+                      userDetail.userdetails[0].roles.map((role: any) => {
+                        return {
+                          roleId: role.roleId,
+                        }
+                      }),
+                    usergroups:
+                      userDetail &&
+                      userDetail.userdetails[0].usergroups.map((group: any) => {
+                        return {
+                          groupId: group.groupId,
+                          status: group.status,
+                        }
+                      }),
+                  },
+                  eventHeader: {
+                    resetType: res.data[0].resetType,
+                    rafAppDueDate: res.data[0].appDueDate,
+                    eventLaunchDate: res.data[0].targetDate,
+                    eventName: res.data[0].name,
+                    eventHierarchy: {
+                      tradingGroup: res.data[0].tradeGroup,
+                      category: res.data[0].category,
+                      department: res.data[0].department,
+                    },
+                    inventoryControl: {
+                      planogramClass: res.data[0].planogramClass.className,
+                      storeWastetiming: res.data[0].wastageRange,
+                      orderStopDateCheckRequired: res.data[0].orderStopDateheck,
+                      stopOrderStockRundown: res.data[0].stopOrder,
+                      clearancePriceApplied: res.data[0].clearancePriceCheck,
+                    },
+                    eventTeam: {
+                      team: [
+                        {
+                          persona: 'Buyer',
+                          details: {
+                            emailId: res.data[0].buyerEmailId,
+                            userId: res.data[0].buyerId,
+                            name: res.data[0].buyer,
+                          },
+                        },
+                        {
+                          persona: 'Category Director',
+                          details: {
+                            emailId: res.data[0].categoryDirectorEmailId,
+                            userId: res.data[0].categoryDirectorId,
+                            name: res.data[0].categoryDirector,
+                          },
+                        },
+                        {
+                          persona: 'Senior Buying Manager',
+                          details: {
+                            emailId: res.data[0].seniorBuyingManagerEmailId,
+                            userId: res.data[0].seniorBuyingManagerId,
+                            name: res.data[0].seniorBuyingManager,
+                          },
+                        },
+                        {
+                          persona: 'Buying Assistant',
+                          details: {
+                            emailId: res.data[0].buyerAssistantEmailId,
+                            userId: res.data[0].buyerAssistantId,
+                            name: res.data[0].buyerAssistant,
+                          },
+                        },
+                        {
+                          persona: 'Merchandiser',
+                          details: {
+                            emailId: res.data[0].merchandiserEmailId,
+                            userId: res.data[0].merchandiserId,
+                            name: res.data[0].merchandiser,
+                          },
+                        },
+                        {
+                          persona: 'Supply Chain Specialist',
+                          details: {
+                            emailId: res.data[0].supplyChainAnalystEmailId,
+                            userId: res.data[0].supplyChainAnalystId,
+                            name: res.data[0].supplyChainAnalyst,
+                          },
+                        },
+                        {
+                          persona: 'Own Brand Manager',
+                          details: {
+                            emailId: res.data[0].ownBrandManagerEmailId,
+                            userId: res.data[0].ownBrandManagerId,
+                            name: res.data[0].ownBrandManager,
+                          },
+                        },
+                        {
+                          persona: 'Range Reset Manager',
+                          details: {
+                            emailId: res.data[0].rangeResetManagerEmailId,
+                            userId: res.data[0].rangeResetManagerId,
+                            name: res.data[0].rangeResetManager,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            }
+            console.log(formdata1)
+
+            createEventsCamunda(res.data[0].id, formdata1)
+              .then((res: any) => {
+                console.log(res.data)
+                toast.current.show({
+                  severity: 'success',
+                  summary: 'Success',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+              .catch((err: any) => {
+                console.log(err)
+                toast.current.show({
+                  severity: 'error',
+                  summary: 'Error',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
             toast.current.show({
-              severity: 'success',
-              summary: 'Success',
+              severity: 'error',
+              summary: 'Duplicate Event',
               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
               life: life,
               className: 'login-toast',
             })
+            setDisabled(false)
+          } else {
+            console.log()
+            // setErrorData(res.data[0])
+            setDisabled(false)
+            checkForErrors(res.data[0])
           }
-          // else{
-
-          //#######################
-          //after service is done
-
-          // }
         } else {
           if (
             res.data[0].status.toLowerCase() === 'draft' ||
             res.data[0].status.toLowerCase() === 'confirmed'
           ) {
+            const formdata1 = {
+              requests: [
+                {
+                  submitType: 'new',
+                  eventId: res.data[0].id,
+                  eventStatus: res.data[0].status,
+                  requester: {
+                    persona:
+                      userDetail && userDetail.userdetails[0].user.middleName
+                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    details: {
+                      emailId:
+                        userDetail && userDetail.userdetails[0].user.emailId,
+                      userId:
+                        userDetail && userDetail.userdetails[0].user.userId,
+                      name:
+                        userDetail && userDetail.userdetails[0].user.middleName
+                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    },
+                    roles:
+                      userDetail &&
+                      userDetail.userdetails[0].roles.map((role: any) => {
+                        return {
+                          roleId: role.roleId,
+                        }
+                      }),
+                    usergroups:
+                      userDetail &&
+                      userDetail.userdetails[0].usergroups.map((group: any) => {
+                        return {
+                          groupId: group.groupId,
+                          status: group.status,
+                        }
+                      }),
+                  },
+                  eventHeader: {
+                    resetType: res.data[0].resetType,
+                    rafAppDueDate: res.data[0].appDueDate,
+                    eventLaunchDate: res.data[0].targetDate,
+                    eventName: res.data[0].name,
+                    eventHierarchy: {
+                      tradingGroup: res.data[0].tradeGroup,
+                      category: res.data[0].category,
+                      department: res.data[0].department,
+                    },
+                    inventoryControl: {
+                      planogramClass: res.data[0].planogramClass.className,
+                      storeWastetiming: res.data[0].wastageRange,
+                      orderStopDateCheckRequired: res.data[0].orderStopDateheck,
+                      stopOrderStockRundown: res.data[0].stopOrder,
+                      clearancePriceApplied: res.data[0].clearancePriceCheck,
+                    },
+                    eventTeam: {
+                      team: [
+                        {
+                          persona: 'Buyer',
+                          details: {
+                            emailId: res.data[0].buyerEmailId,
+                            userId: res.data[0].buyerId,
+                            name: res.data[0].buyer,
+                          },
+                        },
+                        {
+                          persona: 'Category Director',
+                          details: {
+                            emailId: res.data[0].categoryDirectorEmailId,
+                            userId: res.data[0].categoryDirectorId,
+                            name: res.data[0].categoryDirector,
+                          },
+                        },
+                        {
+                          persona: 'Senior Buying Manager',
+                          details: {
+                            emailId: res.data[0].seniorBuyingManagerEmailId,
+                            userId: res.data[0].seniorBuyingManagerId,
+                            name: res.data[0].seniorBuyingManager,
+                          },
+                        },
+                        {
+                          persona: 'Buying Assistant',
+                          details: {
+                            emailId: res.data[0].buyerAssistantEmailId,
+                            userId: res.data[0].buyerAssistantId,
+                            name: res.data[0].buyerAssistant,
+                          },
+                        },
+                        {
+                          persona: 'Merchandiser',
+                          details: {
+                            emailId: res.data[0].merchandiserEmailId,
+                            userId: res.data[0].merchandiserId,
+                            name: res.data[0].merchandiser,
+                          },
+                        },
+                        {
+                          persona: 'Supply Chain Specialist',
+                          details: {
+                            emailId: res.data[0].supplyChainAnalystEmailId,
+                            userId: res.data[0].supplyChainAnalystId,
+                            name: res.data[0].supplyChainAnalyst,
+                          },
+                        },
+                        {
+                          persona: 'Own Brand Manager',
+                          details: {
+                            emailId: res.data[0].ownBrandManagerEmailId,
+                            userId: res.data[0].ownBrandManagerId,
+                            name: res.data[0].ownBrandManager,
+                          },
+                        },
+                        {
+                          persona: 'Range Reset Manager',
+                          details: {
+                            emailId: res.data[0].rangeResetManagerEmailId,
+                            userId: res.data[0].rangeResetManagerId,
+                            name: res.data[0].rangeResetManager,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            }
+            console.log(formdata1)
+
+            createEventsCamunda(res.data[0].id, formdata1)
+              .then((res: any) => {
+                console.log(res.data)
+                toast.current.show({
+                  severity: 'success',
+                  summary: 'Success',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+              .catch((err: any) => {
+                console.log(err)
+                toast.current.show({
+                  severity: 'error',
+                  summary: 'Error',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
             toast.current.show({
-              severity: 'success',
-              summary: 'Success',
+              severity: 'error',
+              summary: 'Duplicate Event',
               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
               life: life,
               className: 'login-toast',
             })
-          } else if (res.data[0].status.toLowerCase() === 'error : duplicate') {
-            alert('duplicate event')
+            setDisabled(false)
+          } else {
+            console.log()
+            // setErrorData(res.data[0])
+            setDisabled(false)
+            checkForErrors(res.data[0])
           }
-          // else{
-          //   errror handling
-          // }
         }
       })
       .catch((err: any) => {
@@ -1386,146 +2002,13 @@ function CreateEvent(props: any) {
           className: 'login-toast',
         })
       })
-    // history.push({
-    //   pathname: `${DEFAULT}${RANGEAMEND_MANAGE_TASK}`,
-    //   search: `?event=${formData['eventName']}`, // query string
-    //   state: {
-    //     // location state
-    //     data: formData,
-    //   },
-    // })
-    // } else {
-    //   console.log('fail')
-    //   toast.current.show({
-    //     severity: 'error',
-    //     summary: '',
-    //     detail: 'Please fill all the essential fields',
-    //     life: 2000,
-    //   })
-    // }
-  }
-
-  useEffect(() => {
-    console.log(isSuccessCall)
-  }, [isSuccessCall])
-  const handleBack = (e: any) => {
-    e.preventDefault()
-    setBack((p) => !p)
-  }
-  const viewConfirmSave = (
-    <ConfirmBox
-      cancelOpen={cancelOpenApprove}
-      handleCancel={handleCancelSave}
-      handleProceed={handleCreateSave}
-      label1="Are you sure to Save?"
-      label2="Please click Ok to proceed"
-    />
-  )
-  const viewConfirmBack = (
-    <ConfirmBox
-      cancelOpen={back}
-      handleCancel={handleBack}
-      handleProceed={goBack}
-      label1="Sure to go Back?"
-      label2="All your data will be lost"
-    />
-  )
-
-  const handleCreateAfterDialog = (e: any) => {
-    e.preventDefault()
-    checkForm('create')
-  }
-  const handleCancelCreate = (e: any) => {
-    e.preventDefault()
-    setCancelOpenApprove((p) => !p)
-  }
-
-  const handleCreate = () => {
-    setIsProgressLoader(true)
-    // setDisabled(true)
-    const formData = {
-      rangeResets: [
-        {
-          // uniqueId: uniqueId,
-          resetType: resetType.value,
-          tradeGroup: group.groupName,
-          categoryId: category.categoryId,
-          category: category.categoryName,
-          department: department.departmentName,
-          departmentId: department.departmentId,
-          targetDate: `${launchDate} ${'01:00:00.00'}`,
-          appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
-          name: eventName,
-          planogramClass: {
-            className: classFormData ? classFormData : [''],
-          },
-          storeWasteProcessTiming: storeWasteProcess.value
-            ? storeWasteProcess.value
-            : '',
-          // buyer: buyer,
-          buyerId: buyerValue.userId,
-          buyerEmailId: buyerValue.emailId,
-          buyer: buyerValue.middleName
-            ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
-            : `${buyerValue.firstName} ${buyerValue.lastName}`,
-          buyerAssistantId: buyingAssistantValue.userId,
-          buyerAssistantEmailId: buyingAssistantValue.emailId,
-          buyerAssistant: buyingAssistantValue.middleName
-            ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
-            : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
-          ownBrandManagerId: ownBrandManagerValue.userId,
-          ownBrandManagerEmailId: ownBrandManagerValue.emailId,
-          ownBrandManager: ownBrandManagerValue.middleName
-            ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
-            : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
-          seniorBuyingManagerId: seniorBuyingManagerValue.userId,
-          seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
-          seniorBuyingManager: seniorBuyingManagerValue.middleName
-            ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
-            : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
-          merchandiserId: merchandiserValue.userId,
-          merchandiserEmailId: merchandiserValue.emailId,
-          merchandiser: merchandiserValue.middleName
-            ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
-            : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
-          rangeResetManagerId: rangeResetManagerValue.userId,
-          rangeResetManagerEmailId: rangeResetManagerValue.emailId,
-          rangeResetManager: rangeResetManagerValue.middleName
-            ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
-            : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
-          categoryDirectorId: categoryDirectorValue.userId,
-          categoryDirectorEmailId: categoryDirectorValue.emailId,
-          categoryDirector: categoryDirectorValue.middleName
-            ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
-            : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
-          supplyChainAnalystId: supplyChainSpecialistValue.userId,
-          supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
-          supplyChainAnalyst: supplyChainSpecialistValue.middleName
-            ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
-            : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
-          clearancePriceApplied: clearancePriceApplied,
-          orderStopDateCheck: orderStopDateCheck,
-          stopOrder: stopOrder,
-          fileName: 'string',
-          createdById: userDetail && userDetail.userdetails[0].user.userId,
-          createdByName:
-            userDetail && userDetail.userdetails[0].user.middleName
-              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-        },
-      ],
-    }
-    console.log(formData.rangeResets)
-    // setFile(formData.rangeResets)
-    setIsSuccessCall(false)
-    history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
   }
 
   const viewConfirmCreate = (
     <ConfirmBox
       cancelOpen={cancelOpenApprove}
       handleCancel={handleCancelCreate}
-      handleProceed={handleCreateSave}
+      handleProceed={handleCreateEvent}
       label1="Are you sure to Create?"
       label2="Please click Ok to proceed"
     />
@@ -1733,6 +2216,7 @@ function CreateEvent(props: any) {
                                         ref={focusRafDueDate}
                                         readOnly
                                     /> */}
+
                       <DatePicker
                         format="dd/MM/yyyy"
                         inputVariant="outlined"
@@ -1748,8 +2232,8 @@ function CreateEvent(props: any) {
                           shrink: true,
                         }}
                         emptyLabel="Enter RAF/APP Due Date"
-                        maxDate={launchDate && launchDate}
-                        maxDateMessage={allMessages.error.rafDateError}
+                        // maxDate={launchDate && launchDate}
+                        // maxDateMessage={allMessages.error.rafDateError}
                         TextFieldComponent={(props: any) => (
                           <OutlinedInput
                             margin="dense"
@@ -1860,7 +2344,7 @@ function CreateEvent(props: any) {
                         ref={focusGroup}
                       />
 
-                      {errHandle && (
+                      {errGroup && (
                         <span className={classes.errorMessageColor}>
                           {tradingGError1}
                         </span>
@@ -2323,6 +2807,7 @@ function CreateEvent(props: any) {
                         value={storeWasteProcess}
                         options={wastageRanges}
                         onChange={(e: any) => {
+                          console.log(e)
                           setStoreWasteProcess(e)
                           setIsPageModified(true)
                         }}
@@ -2954,6 +3439,7 @@ const matchDispatchToProps = (dispatch: any) => {
   return {
     setFile: (fileData: any) => dispatch(setFile(fileData)),
     resetFile: () => dispatch(resetFile()),
+    setErrorFile: (fileData: any) => dispatch(setErrorFile(fileData)),
     resetErrorFile: () => dispatch(resetErrorFile()),
   }
 }

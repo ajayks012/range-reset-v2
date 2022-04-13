@@ -53,10 +53,14 @@ import { getProductHierarchyListAPI } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
-import { resetFile, setFile } from '../../../redux/Actions/FileUpload'
+import {
+  resetErrorFile,
+  resetFile,
+  setFile,
+} from '../../../redux/Actions/FileUpload'
 
 function ManageEventCreate(props: any) {
-  const { fileData, setFile, resetFile } = props
+  const { fileErrorData, resetErrorFile } = props
 
   const location = useLocation<any>()
   const history = useHistory()
@@ -125,16 +129,16 @@ function ManageEventCreate(props: any) {
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
 
-  // useEffect(() => {
-  //   return () => resetFile()
-  // }, [])
+  useEffect(() => {
+    return () => resetErrorFile()
+  }, [])
 
   useEffect(() => {
-    if (!fileData[0]) {
+    if (!fileErrorData) {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else {
-      console.log(fileData)
-      setEventDetails(fileData)
+      console.log(fileErrorData)
+      setEventDetails([fileErrorData])
       // setEventName(fileData[0]['eventName'])
     }
     return () => setEventDetails([])
@@ -413,7 +417,7 @@ function ManageEventCreate(props: any) {
 
   const goBack = () => {
     history.goBack()
-    // resetFile()
+    resetErrorFile()
   }
 
   // useEffect(() => {
@@ -2146,6 +2150,7 @@ function ManageEventCreate(props: any) {
 const mapStateToProps = (state: any) => {
   return {
     fileData: state.fileReducer.fileData,
+    fileErrorData: state.fileReducer.fileErrorData,
   }
 }
 
@@ -2153,6 +2158,7 @@ const matchDispatchToProps = (dispatch: any) => {
   return {
     setFile: (fileData: any) => dispatch(setFile(fileData)),
     resetFile: () => dispatch(resetFile),
+    resetErrorFile: () => dispatch(resetErrorFile),
   }
 }
 

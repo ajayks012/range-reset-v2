@@ -36,6 +36,7 @@ const {
   GET_RANGERESET_EVENTS,
   DELETE_RANGERESETS,
   GET_RESET_TYPES,
+  CREATE_EVENTS_CAMUNDA,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -359,6 +360,13 @@ export const deleteRangeResets = (resetId) => {
   let url = `${BASE_URL}${DELETE_RANGERESETS}`
   url = url.replace('{rangeResetId}', resetId)
   return serviceRequest(url, 'DELETE', undefined)
+}
+
+export const createEventsCamunda = (eventId, req) => {
+  let url = `${BASE_URL}${CREATE_EVENTS_CAMUNDA}`
+  url = url.replace('{eventId}', eventId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'PUT', reqBody)
 }
 
 // export const getItemWeekStoreViewForecastAPI = (
