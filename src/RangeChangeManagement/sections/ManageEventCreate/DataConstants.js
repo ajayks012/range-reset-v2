@@ -1,22 +1,22 @@
 export const resetTypes = [
   {
-    name: 'rapid',
+    name: 'Rapid Response',
     text: 'Rapid Response',
   },
   {
-    name: 'seasonal',
+    name: 'Seasonal Range Reset',
     text: 'Seasonal Range Reset',
   },
   {
-    name: 'planned',
+    name: 'Planned Range Change',
     text: 'Planned Range Change',
   },
   {
-    name: 'seasonalchange',
+    name: 'Seasonal Range Change',
     text: 'Seasonal Range Change',
   },
   {
-    name: 'range',
+    name: 'Range Reset',
     text: 'Range Reset',
   },
 ]
@@ -276,7 +276,7 @@ export const manageEventPublishCols = [
     width: '100px',
   },
   {
-    field: 'eventName',
+    field: 'name',
     header: 'Event Name',
     width: '200px',
   },
@@ -348,6 +348,11 @@ export const manageEventPublishCols = [
 ]
 
 export const manageTaskPublishCols = [
+  {
+    field: 'rowButton',
+    header: `Remove / Skip / Reactivate Task`,
+    width: '100px',
+  },
   {
     field: 'taskId',
     header: 'Task Id',

@@ -139,7 +139,7 @@ function ManageEventCreate(props: any) {
     } else {
       console.log(fileErrorData)
       setEventDetails([fileErrorData])
-      // setEventName(fileData[0]['eventName'])
+      setEventName(fileErrorData.name)
     }
     return () => setEventDetails([])
   }, [])
@@ -814,14 +814,14 @@ function ManageEventCreate(props: any) {
       <OutlinedInput
         margin="dense"
         className={classes.muiSelect}
-        value={rowData.eventName}
+        value={rowData.name}
         onChange={(e) => {
           if (e.target.value !== null) {
             setEventDetails((prevState: any) => {
               return [
                 {
                   ...prevState[0],
-                  eventName: e.target.value,
+                  name: e.target.value,
                 },
               ]
             })
@@ -1651,6 +1651,10 @@ function ManageEventCreate(props: any) {
     )
   }
 
+  const buttonTemplate = (rowData: any) => {
+    return <Button>Remove</Button>
+  }
+
   const dueDateTemplate = (rowData: any) => {
     const dueDate = rowData['dueDate']
     return (
@@ -2010,7 +2014,7 @@ function ManageEventCreate(props: any) {
                           (col.field === 'tradeGroup' && groupTemplate) ||
                           (col.field === 'category' && categoryTemplate) ||
                           (col.field === 'department' && departmentTemplate) ||
-                          (col.field === 'eventName' && eventNameTemplate) ||
+                          (col.field === 'name' && eventNameTemplate) ||
                           (col.field === 'clearancePriceCheck' &&
                             clearancePriceTemplate) ||
                           (col.field === 'orderStopDateCheck' &&
@@ -2058,14 +2062,14 @@ function ManageEventCreate(props: any) {
                   showGridlines
                   sortField="taskId"
                 >
-                  <Column
+                  {/* <Column
                     selectionMode="multiple"
                     headerStyle={{
                       width: '50px',
                       color: 'white',
                       backgroundColor: theme1.palette.primary.main,
                     }}
-                  ></Column>
+                  ></Column> */}
                   {manageTaskPublishCols.map((col: any, index: any) => {
                     return (
                       <Column
@@ -2073,6 +2077,7 @@ function ManageEventCreate(props: any) {
                         field={col.field}
                         header={col.header}
                         body={
+                          (col.field === 'rowButton' && buttonTemplate) ||
                           (col.field === 'dueDate' && dueDateTemplate) ||
                           (col.field === 'notifiedDate' &&
                             notifiedDateTemplate) ||

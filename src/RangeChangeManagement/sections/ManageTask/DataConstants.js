@@ -143,7 +143,7 @@ export const confirmedTableCols = [
     width: '150px',
   },
   {
-    field: 'eventId',
+    field: 'id',
     header: 'Event ID',
     width: '100px',
   },

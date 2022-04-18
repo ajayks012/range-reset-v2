@@ -233,9 +233,13 @@ function CreateEvent(props: any) {
   const checkForErrors = (value: any) => {
     if (value) {
       if (value.appDueDateError) {
-        setRafDueDate(value.appDueDate)
         setErrRafdueDate(true)
         setRafDueDateError1(value.appDueDateError)
+        if (value.hasOwnProperty('appDueDate')) {
+          setRafDueDate(value.appDueDate)
+        } else {
+          setRafDueDate(null)
+        }
       } else {
         console.log(value.appDueDate)
         value.appDueDate && setRafDueDate(value.appDueDate)
@@ -243,7 +247,9 @@ function CreateEvent(props: any) {
 
       if (value.resetTypeError) {
         // setBuyer(value.buyerEmailId)
-        setResetType({ value: value.resetType, label: value.resetType })
+        if (value.hasOwnProperty('resetType')) {
+          setResetType({ value: value.resetType, label: value.resetType })
+        }
         setErrReset(true)
         // setErrBuyer(true)
         setResetError1(value.resetTypeError)
@@ -291,14 +297,14 @@ function CreateEvent(props: any) {
           setCategory({
             value: value.category,
             label: value.category,
-            categoryId: value.categoryId,
+            categoryId: value.categoryId.toString(),
             categoryName: value.category,
           })
         value.department &&
           setDepartment({
             value: value.department,
             label: value.department,
-            departmentId: value.departmentId,
+            departmentId: value.departmentId.toString(),
             departmentName: value.department,
           })
       }
@@ -397,7 +403,10 @@ function CreateEvent(props: any) {
       if (classValues && classValues.length > 0) {
         setConfirmClassValues(classValues.className)
       }
-      // setEventName(value.name)
+
+      if (value.name) {
+        setEventName(value.name)
+      }
     }
   }
 
@@ -432,119 +441,210 @@ function CreateEvent(props: any) {
 
   useEffect(() => {
     getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('department')
+      getProductHierarchyListAPI('group')
         .then((res: any) => {
-          const hierarchyList = res.data.hierarchyNode.map((item: any) => {
+          const groupList = res.data.hierarchyNode.map((item: any) => {
             return {
-              groupId: item.group,
+              label: item.groupName,
+              value: item.groupName,
               groupName: item.groupName,
-              categoryId: item.category,
-              categoryName: item.categoryName,
-              departmentId: item.department,
-              departmentName: item.departmentName,
             }
           })
-          setProductHierValues(hierarchyList)
-          console.log(hierarchyList)
+          setGroupOptions(groupList)
+          console.log(groupList)
         })
-        .catch((err: any) => setProductHierValues([]))
+        .catch((err: any) => setGroupOptions([]))
   }, [])
-  useEffect(() => {
-    if (productHierValues) {
-      let data: any = []
-      productHierValues.map((item: any) => {
-        if (!data) {
-          data.push({
-            value: item.groupId,
-            label: item.groupName,
-            groupId: item.groupId,
-            groupName: item.groupName,
-          })
-        } else if (
-          data.findIndex((d: any) => d.groupId === item.groupId) === -1
-        ) {
-          data.push({
-            value: item.groupId,
-            label: item.groupName,
-            groupId: item.groupId,
-            groupName: item.groupName,
-          })
-        }
-      })
-      console.log(data)
-      setGroupOptions(data)
-    }
-  }, [productHierValues])
 
   useEffect(() => {
-    if (group) {
-      let data: any = []
-      productHierValues.map((item: any) => {
-        if (
-          data.findIndex((d: any) => d.categoryId === item.categoryId) === -1
-        ) {
-          if (group.groupId === item.groupId) {
-            data.push({
-              value: item.categoryId,
+    console.log(group)
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('category')
+        .then((res: any) => {
+          const categoryList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.categoryName,
               label: item.categoryName,
-              categoryId: item.categoryId,
+              categoryId: item.category,
               categoryName: item.categoryName,
-            })
-          }
-        }
-      })
-      console.log(data)
-      setCategoryOptions(data)
-    }
+              groupName: item.groupName,
+            }
+          })
+
+          group &&
+            setCategoryOptions(
+              categoryList.filter(
+                (cat: any) => cat.groupName === group.groupName
+              )
+            )
+          // group &&
+          //   console.log(
+          //     'category length: ',
+          //     categoryList.filter((cat: any) => cat.groupId === group.id)
+          //   )
+        })
+        .catch((err: any) => setCategoryOptions([]))
   }, [group])
 
   useEffect(() => {
-    if (category) {
-      let data: any = []
-      productHierValues.map((item: any) => {
-        if (
-          data.findIndex((d: any) => d.departmentId === item.departmentId) ===
-          -1
-        ) {
-          if (item.categoryId === category.categoryId) {
-            data.push({
-              value: item.departmentId,
-              label: item.departmentName,
-              departmentId: item.departmentId,
-              departmentName: item.departmentName,
+    if (group && category) {
+      getProductHierarchyListAPI &&
+        getProductHierarchyListAPI('department')
+          .then((res: any) => {
+            const depList = res.data.hierarchyNode.map((item: any) => {
+              return {
+                value: item.departmentName,
+                label: item.departmentName,
+                departmentId: item.department,
+                departmentName: item.departmentName,
+                groupName: item.groupName,
+                categoryName: item.categoryName,
+                categoryId: item.category,
+              }
             })
-          }
-        }
-      })
-      console.log(data)
-      setDepartmentOptions(data)
+            setDepartmentOptions(
+              depList.filter(
+                (dep: any) =>
+                  dep.groupName === group.groupName &&
+                  dep.categoryName === category.categoryName
+              )
+            )
+            // console.log(
+            //   'department length: ',
+            //   depList.filter(
+            //     (dep: any) =>
+            //       dep.groupId === group.id && dep.categoryId === category.id
+            //   )
+            // )
+            // setLoaded(true)
+          })
+          .catch((err: any) => {
+            setDepartmentOptions([])
+            // setLoaded(true)
+          })
     }
   }, [category])
 
-  useEffect(() => {
-    // if (!fileErrorData) {
-    if (!fileErrorData.name) {
-      if (!eventName) {
-        if (department && launchDate) {
-          var lDate = new Date(launchDate)
-          console.log(lDate)
-          var name =
-            department.departmentName.replace(/ /g, '_') +
-            '_' +
-            lDate.getDate() +
-            lDate.toLocaleString('default', { month: 'short' }) +
-            lDate.getFullYear()
-          console.log(name)
-          setEventName(name)
-        } else {
-          setEventName('')
-        }
-      }
-    } else {
-      setEventName(fileErrorData.name)
-    }
-    // }
-  }, [group, category, department, launchDate, eventName])
+  // useEffect(() => {
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('department')
+  //       .then((res: any) => {
+  //         const hierarchyList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             groupId: item.group,
+  //             groupName: item.groupName,
+  //             categoryId: item.category,
+  //             categoryName: item.categoryName,
+  //             departmentId: item.department,
+  //             departmentName: item.departmentName,
+  //           }
+  //         })
+  //         setProductHierValues(hierarchyList)
+  //         console.log(hierarchyList)
+  //       })
+  //       .catch((err: any) => setProductHierValues([]))
+  // }, [])
+
+  // useEffect(() => {
+  //   if (productHierValues) {
+  //     let data: any = []
+  //     productHierValues.map((item: any) => {
+  //       if (!data) {
+  //         data.push({
+  //           value: item.groupId,
+  //           label: item.groupName,
+  //           groupId: item.groupId,
+  //           groupName: item.groupName,
+  //         })
+  //       } else if (
+  //         data.findIndex((d: any) => d.groupId === item.groupId) === -1
+  //       ) {
+  //         data.push({
+  //           value: item.groupName,
+  //           label: item.groupName,
+  //           groupId: item.groupId,
+  //           groupName: item.groupName,
+  //         })
+  //       }
+  //     })
+  //     console.log(data)
+  //     setGroupOptions(data)
+  //   }
+  // }, [productHierValues])
+
+  // useEffect(() => {
+  //   if (group) {
+  //     let data: any = []
+  //     productHierValues.map((item: any) => {
+  //       if (
+  //         data.findIndex((d: any) => d.categoryId === item.categoryId) === -1
+  //       ) {
+  //         if (group.value === item.groupName) {
+  //           data.push({
+  //             value: item.categoryId,
+  //             label: item.categoryName,
+  //             categoryId: item.categoryId,
+  //             categoryName: item.categoryName,
+  //           })
+  //         }
+  //       }
+  //     })
+  //     console.log(data)
+  //     setCategoryOptions(data)
+  //   }
+  // }, [group])
+
+  // useEffect(() => {
+  //   if (category) {
+  //     let data: any = []
+  //     productHierValues.map((item: any) => {
+  //       if (
+  //         data.findIndex((d: any) => d.departmentId === item.departmentId) ===
+  //         -1
+  //       ) {
+  //         if (item.categoryName === category.label) {
+  //           data.push({
+  //             value: item.departmentId,
+  //             label: item.departmentName,
+  //             departmentId: item.departmentId,
+  //             departmentName: item.departmentName,
+  //           })
+  //         }
+  //       }
+  //     })
+  //     console.log(data)
+  //     setDepartmentOptions(data)
+  //   }
+  // }, [category])
+
+  // useEffect(() => {
+  //   // if (!fileErrorData) {
+  //   // if (!fileErrorData.name) {
+  //   if (eventName === '') {
+  //     if (department && launchDate) {
+  //       var lDate = new Date(launchDate)
+  //       console.log(lDate)
+  //       var name =
+  //         department.departmentName.replace(/ /g, '_') +
+  //         '_' +
+  //         lDate.getDate() +
+  //         lDate.toLocaleString('default', { month: 'short' }) +
+  //         lDate.getFullYear()
+  //       console.log(name)
+  //       setEventName(name)
+  //     }
+  //   }
+  //   // } else {
+  //   //   setEventName(fileErrorData.name)
+  //   // }
+  //   // }
+  // }, [department, launchDate, eventName])
+
+  // useEffect(() => {
+  //   if (name !== '' && eventName === '') {
+  //     setEventName(name)
+  //   }
+  // }, [name, eventName])
 
   useEffect(() => {
     if (confirmClassValues && confirmClassValues.length > 0) {
@@ -897,6 +997,8 @@ function CreateEvent(props: any) {
             console.log('matched')
             setBuyingAssistantConfirmed(true)
             setBuyingAssistantValue(res.data.userdetails[0].user)
+            setErrBuyerAssisant(false)
+            setBuyingAssistentError1('')
           })
           .catch((err: any) => {
             console.log('not')
@@ -1208,6 +1310,20 @@ function CreateEvent(props: any) {
       setLaunchError1(allMessages.error.noLaunchDate)
       focusLaunchDate.current.focus()
     }
+    if (eventName === '') {
+      if (department && launchDate) {
+        var lDate = new Date(launchDate)
+        console.log(lDate)
+        var name =
+          department.departmentName.replace(/ /g, '_') +
+          '_' +
+          lDate.getDate() +
+          lDate.toLocaleString('default', { month: 'short' }) +
+          lDate.getFullYear()
+        console.log(name)
+        setEventName(name)
+      }
+    }
     if (
       !buyer ||
       buyer === null ||
@@ -1353,7 +1469,7 @@ function CreateEvent(props: any) {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else if (toastRemove === 'create') {
       // history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
-      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+      // history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else {
       history.push(`${DEFAULT}`)
     }
@@ -1985,27 +2101,27 @@ function CreateEvent(props: any) {
             }
             console.log(formdata1)
 
-            createEventsCamunda(res.data[0].id, formdata1)
-              .then((res: any) => {
-                console.log(res.data)
-                toast.current.show({
-                  severity: 'success',
-                  summary: 'Success',
-                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                  life: life,
-                  className: 'login-toast',
-                })
-              })
-              .catch((err: any) => {
-                console.log(err)
-                toast.current.show({
-                  severity: 'error',
-                  summary: 'Error',
-                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                  life: life,
-                  className: 'login-toast',
-                })
-              })
+            // createEventsCamunda(res.data[0].id, formdata1)
+            //   .then((res: any) => {
+            //     console.log(res.data)
+            //     toast.current.show({
+            //       severity: 'success',
+            //       summary: 'Success',
+            //       // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //       life: life,
+            //       className: 'login-toast',
+            //     })
+            //   })
+            //   .catch((err: any) => {
+            //     console.log(err)
+            //     toast.current.show({
+            //       severity: 'error',
+            //       summary: 'Error',
+            //       // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //       life: life,
+            //       className: 'login-toast',
+            //     })
+            //   })
           } else if (res.data[0].status.toLowerCase() === 'duplicate') {
             toast.current.show({
               severity: 'error',
@@ -2448,7 +2564,13 @@ function CreateEvent(props: any) {
                         options={categoryOptions}
                         onChange={handleCategory}
                         placeholder="Select Category"
-                        isDisabled={categoryOptions.length > 0 ? false : true}
+                        isDisabled={
+                          categoryOptions.length > 0
+                            ? false
+                            : category.value
+                            ? false
+                            : true
+                        }
                         ref={focusCategory}
                       />
 
@@ -2527,7 +2649,13 @@ function CreateEvent(props: any) {
                         options={departmentOptions}
                         onChange={handleDepartment}
                         placeholder="Select Department"
-                        isDisabled={departmentOptions.length > 0 ? false : true}
+                        isDisabled={
+                          departmentOptions.length > 0
+                            ? false
+                            : department.value
+                            ? false
+                            : true
+                        }
                         ref={focusDepartment}
                       />
 
