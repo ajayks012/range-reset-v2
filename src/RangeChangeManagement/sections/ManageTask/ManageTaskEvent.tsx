@@ -202,7 +202,7 @@ function ManageTaskEvent(props: any) {
         const data = res.data.map((d: any) => {
           return {
             name: d.name,
-            eventId: d.id,
+            id: d.id,
             resetType: d.resetType,
             appDueDate: d.appDueDate,
             tradeGroup: d.tradeGroup,
@@ -1078,14 +1078,14 @@ function ManageTaskEvent(props: any) {
                   }
                 : classArray(d[cols[7]]),
               wastageRange: d[cols[8]] ? d[cols[8]] : null,
-              buyerEmailId: d[cols[9]] ? d[cols[9]] : null,
-              categoryDirectorEmailId: d[cols[10]] ? d[cols[10]] : null,
-              seniorBuyingManagerEmailId: d[cols[11]] ? d[cols[11]] : null,
-              buyerAssistantEmailId: d[cols[12]] ? d[cols[12]] : null,
-              merchandiserEmailId: d[cols[13]] ? d[cols[13]] : null,
-              supplyChainAnalystEmailId: d[cols[14]] ? d[cols[14]] : null,
-              ownBrandManagerEmailId: d[cols[15]] ? d[cols[15]] : null,
-              rangeResetManagerEmailId: d[cols[16]] ? d[cols[16]] : null,
+              buyerEmailId: d[cols[9]] ? d[cols[9]] : '',
+              categoryDirectorEmailId: d[cols[10]] ? d[cols[10]] : '',
+              seniorBuyingManagerEmailId: d[cols[11]] ? d[cols[11]] : '',
+              buyerAssistantEmailId: d[cols[12]] ? d[cols[12]] : '',
+              merchandiserEmailId: d[cols[13]] ? d[cols[13]] : '',
+              supplyChainAnalystEmailId: d[cols[14]] ? d[cols[14]] : '',
+              ownBrandManagerEmailId: d[cols[15]] ? d[cols[15]] : '',
+              rangeResetManagerEmailId: d[cols[16]] ? d[cols[16]] : '',
 
               // eventId: d['Event ID'],
               // name: 'string',
@@ -1390,10 +1390,13 @@ function ManageTaskEvent(props: any) {
           <DataTable
             rowHover
             value={
-              fileData ? fileData : fetchRangeResets
-              // fetchRangeResets && filteredImportedData
-              //   ? filteredImportedData
-              //   : fetchRangeResets
+              fileData
+                ? fileData && filteredImportedData
+                  ? filteredImportedData
+                  : fileData
+                : fetchRangeResets && filteredImportedData
+                ? filteredImportedData
+                : fetchRangeResets
             }
             selectionMode="checkbox"
             selection={selectedEvents}
