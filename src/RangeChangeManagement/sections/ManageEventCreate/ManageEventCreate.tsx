@@ -49,7 +49,12 @@ import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
 import { routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
-import { getProductHierarchyListAPI } from '../../../api/Fetch'
+import {
+  getProductHierarchyListAPI,
+  getUsersAPIByEmailAndRole,
+  getUsersAPIByRole,
+  getEventDetailsById,
+} from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
@@ -70,6 +75,7 @@ function ManageEventCreate(props: any) {
 
   const { DEFAULT, RANGEAMEND_EVENTDASH, RANGEAMEND_MANAGE } = routes
 
+  const [eventId, setEventId] = useState<any>(null)
   const [eventDetails, setEventDetails] = useState<any>()
   const [resetType, setResetType] = useState<any>('')
   const [resetTypeError, setResetTypeError] = useState<any>('')
@@ -138,33 +144,135 @@ function ManageEventCreate(props: any) {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else {
       console.log(fileErrorData)
-      setEventDetails([fileErrorData])
       setEventName(fileErrorData.name)
+      setEventId(fileErrorData.id)
     }
-    return () => setEventDetails([])
   }, [])
 
   useEffect(() => {
-    if (eventDetails && eventDetails.length > 0) {
-      setResetType(eventDetails[0].resetType)
-      setRafDueDate(eventDetails[0].appDueDate)
-      setLaunchDate(eventDetails[0].targetDate)
-      setGroup(eventDetails[0].tradeGroup)
-      setCategory({
-        category: eventDetails[0].category,
-        categoryId: eventDetails[0].categoryId,
-      })
-      setDepartment({
-        department: eventDetails[0].department,
-        departmentId: eventDetails[0].departmentId,
-      })
-      setBuyer({
-        buyer: eventDetails[0].buyer,
-        buyerEmailId: eventDetails[0].buyerEmailId,
-        buyerId: eventDetails[0].buyerId,
-      })
+    if (eventId) {
+      getEventDetailsById &&
+        getEventDetailsById(eventId)
+          .then((res: any) => {
+            const eventData = res.data.eventDetailsList[0].rangeEventRequest
+            console.log('EVENTID', eventData)
+            const milestoneData = res.data.eventDetailsList[0].milestones
+
+            // Below original API CALL
+
+            // const eventData = res.eventDetailsList[0].rangeEventRequest
+            // console.log('EVENTID', eventData)
+
+            const manageList = [
+              {
+                resetType: eventData.eventHeader.resetType,
+                category: eventData.eventHeader.eventHierarchy.category,
+                department: eventData.eventHeader.eventHierarchy.department,
+                tradeGroup: eventData.eventHeader.eventHierarchy.tradingGroup,
+                eventId: eventData.eventId,
+                targetDate: eventData.eventHeader.eventLaunchDate,
+                appDueDate: eventData.eventHeader.rafAppDueDate,
+                eventName: eventData.eventHeader.eventName,
+                planogramClass: {
+                  className: [
+                    eventData.eventHeader.inventoryControl.planogramClass,
+                  ],
+                },
+                clearancePriceCheck:
+                  eventData.eventHeader.inventoryControl.clearancePriceApplied,
+                orderStopDateCheck:
+                  eventData.eventHeader.inventoryControl
+                    .orderStopDateCheckRequired,
+                stopOrder:
+                  eventData.eventHeader.inventoryControl.stopOrderStockRundown,
+                wastageRange:
+                  eventData.eventHeader.inventoryControl.storeWastetiming,
+                buyerEmailId: '',
+                buyerAssistantEmailId: '',
+                ownBrandManagerEmailId: '',
+                seniorBuyingManagerEmailId: '',
+                merchandiserEmailId: '',
+                rangeResetManagerEmailId: '',
+                categoryDirectorEmailId: '',
+                supplyChainAnalystEmailId: '',
+              },
+            ]
+            eventData.eventHeader.eventTeam.team.map((val: any) => {
+              // if (val.roles[0].roleId === 'Buyer') {
+              //   manageList[0].buyerEmailId = val.details.emailId
+              // }
+              // if (val.roles[0].roleId === 'Buying Assistant') {
+              //   manageList[0].buyerAssistantEmailId = val.details.emailId
+              // }
+              if (val.persona === 'Buyer') {
+                manageList[0].buyerEmailId = val.details.emailId
+              }
+              if (val.persona === 'Buying Assistant') {
+                manageList[0].buyerAssistantEmailId = val.details.emailId
+              }
+              if (val.persona === 'Range Reset Manager') {
+                manageList[0].rangeResetManagerEmailId = val.details.emailId
+              }
+
+              if (val.persona === 'Own Brand Manager') {
+                manageList[0].ownBrandManagerEmailId = val.details.emailId
+              }
+              if (val.persona === 'Senior Buying Manager') {
+                manageList[0].seniorBuyingManagerEmailId = val.details.emailId
+              }
+              if (val.persona === 'Merchandiser') {
+                manageList[0].merchandiserEmailId = val.details.emailId
+              }
+              if (val.persona === 'Category Director') {
+                manageList[0].categoryDirectorEmailId = val.details.emailId
+              }
+              if (val.persona === 'Supply Chain Specialist') {
+                manageList[0].supplyChainAnalystEmailId = val.details.emailId
+              }
+            })
+
+            const manageTask = milestoneData.map((milestone: any) => {
+              return {
+                taskId: milestone.taskName,
+                task: milestone.taskDescription,
+                dueDate: milestone.dueDate,
+                notifiedDate: milestone.notifyDate,
+                assignedUserGroup: milestone.assigneeRole,
+                name: milestone.assigneeDetails.name,
+                userId: milestone.assigneeDetails.userId,
+                visibility: milestone.visibility,
+              }
+            })
+            console.log(manageList)
+            console.log(manageTask)
+            setTaskDetails(manageTask)
+            setEventDetails(manageList)
+          })
+          .catch((err: any) => console.log('EVENTID', err))
     }
-  }, [])
+  }, [eventId])
+
+  // useEffect(() => {
+  //   if (eventDetails && eventDetails.length > 0) {
+  //     setResetType(eventDetails[0].resetType)
+  //     setRafDueDate(eventDetails[0].appDueDate)
+  //     setLaunchDate(eventDetails[0].targetDate)
+  //     setGroup(eventDetails[0].tradeGroup)
+  //     setCategory({
+  //       category: eventDetails[0].category,
+  //       categoryId: eventDetails[0].categoryId,
+  //     })
+  //     setDepartment({
+  //       department: eventDetails[0].department,
+  //       departmentId: eventDetails[0].departmentId,
+  //     })
+  //     setBuyer({
+  //       buyer: eventDetails[0].buyer,
+  //       buyerEmailId: eventDetails[0].buyerEmailId,
+  //       buyerId: eventDetails[0].buyerId,
+  //     })
+  //   }
+  // }, [])
 
   // useEffect(() => {
   //   setEventDetails([
@@ -337,8 +445,7 @@ function ManageEventCreate(props: any) {
             return {
               value: item.groupName,
               label: item.groupName,
-              id: item.group,
-              hierGroup: 'group',
+              groupName: item.groupName,
             }
           })
           setGroupOptions(grpList)
@@ -356,22 +463,22 @@ function ManageEventCreate(props: any) {
             return {
               value: item.categoryName,
               label: item.categoryName,
-              id: item.category,
-              hierGroup: 'category',
+              categoryName: item.categoryName,
               groupName: item.groupName,
-              groupId: item.group,
             }
           })
 
           group &&
             setCategoryOptions(
-              categoryList.filter((cat: any) => cat.groupId === group.groupId)
+              categoryList.filter(
+                (cat: any) => cat.groupName === group.groupName
+              )
             )
-          group &&
-            console.log(
-              'category length: ',
-              categoryList.filter((cat: any) => cat.groupId === group.id)
-            )
+          // group &&
+          //   console.log(
+          //     'category length: ',
+          //     categoryList.filter((cat: any) => cat.groupId === group.id)
+          //   )
         })
         .catch((err: any) => setCategoryOptions([]))
   }, [group])
@@ -385,27 +492,24 @@ function ManageEventCreate(props: any) {
               return {
                 value: item.departmentName,
                 label: item.departmentName,
-                id: item.department,
-                hierGroup: 'department',
                 groupName: item.groupName,
                 categoryName: item.categoryName,
-                groupId: item.group,
-                categoryId: item.category,
               }
             })
             setDepartmentOptions(
               depList.filter(
                 (dep: any) =>
-                  dep.groupId === group.id && dep.categoryId === category.id
+                  dep.groupName === group.groupName &&
+                  dep.categoryName === category.Name
               )
             )
-            console.log(
-              'department length: ',
-              depList.filter(
-                (dep: any) =>
-                  dep.groupId === group.id && dep.categoryId === category.id
-              )
-            )
+            // console.log(
+            //   'department length: ',
+            //   depList.filter(
+            //     (dep: any) =>
+            //       dep.groupId === group.id && dep.categoryId === category.id
+            //   )
+            // )
             // setLoaded(true)
           })
           .catch((err: any) => {

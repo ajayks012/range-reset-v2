@@ -110,9 +110,9 @@ function CreateEvent(props: any) {
   const [departmentError, setDepartmentError] = useState<any>('')
   const [rafDueDate, setRafDueDate] = useState<any>(null)
   const [rafDueDateError, setRafDueDateError] = useState<any>('')
-  const [launchDate, setLaunchDate] = useState<any>(
-    `${new Date().toISOString().split('T')[0]}`
-  )
+  const [launchDate, setLaunchDate] = useState<any>(null)
+  // `${new Date().toISOString().split('T')[0]}`
+  // )
   const [launchDateError, setLaunchDateError] = useState<any>('')
   const [eventName, setEventName] = useState<any>('')
   const [storeWasteProcess, setStoreWasteProcess] = useState<any>('')
@@ -232,7 +232,7 @@ function CreateEvent(props: any) {
 
   const checkForErrors = (value: any) => {
     if (value) {
-      if (value.appDueDateError) {
+      if (value.hasOwnProperty('appDueDateError')) {
         setErrRafdueDate(true)
         setRafDueDateError1(value.appDueDateError)
         if (value.hasOwnProperty('appDueDate')) {
@@ -245,7 +245,7 @@ function CreateEvent(props: any) {
         value.appDueDate && setRafDueDate(value.appDueDate)
       }
 
-      if (value.resetTypeError) {
+      if (value.hasOwnProperty('resetTypeError')) {
         // setBuyer(value.buyerEmailId)
         if (value.hasOwnProperty('resetType')) {
           setResetType({ value: value.resetType, label: value.resetType })
@@ -258,7 +258,7 @@ function CreateEvent(props: any) {
           setResetType({ value: value.resetType, label: value.resetType })
       }
 
-      if (value.categoryError) {
+      if (value.hasOwnProperty('categoryError')) {
         // setBuyer(value.buyerEmailId)
         // setRafDueDate(value.department)
         setErrDepartment(true)
@@ -280,7 +280,7 @@ function CreateEvent(props: any) {
           })
       }
 
-      if (value.departmentError) {
+      if (value.hasOwnProperty('departmentError')) {
         // setBuyer(value.buyerEmailId)
         // setRafDueDate(value.department)
         setErrDepartment(true)
@@ -309,95 +309,96 @@ function CreateEvent(props: any) {
           })
       }
 
-      if (value.buyerError) {
+      if (value.hasOwnProperty('buyerError')) {
         setBuyerConfirmed(false)
         setBuyer(value.buyerEmailId)
         setErrBuyer(true)
         setBuyerValue('')
         setBuyerError1(value.buyerError)
       } else {
-        setBuyerConfirmed(false)
+        setBuyerConfirmed(true)
         setBuyer(value.buyerEmailId)
       }
 
-      if (value.categoryDirectorError) {
+      if (value.hasOwnProperty('categoryDirectorError')) {
         setCategoryDirectorConfirmed(false)
         setCategoryDirector(value.categoryDirectorEmailId)
         setErrCategoryDirector(true)
         setCategoryDirectorValue('')
         setCategoryDirectorError1(value.categoryDirectorError)
       } else {
-        setCategoryDirectorConfirmed(false)
+        setCategoryDirectorConfirmed(true)
         setCategoryDirector(value.categoryDirectorEmailId)
       }
 
-      if (value.seniorBuyingManagerError) {
+      if (value.hasOwnProperty('seniorBuyingManagerError')) {
         setSeniorBuyingManagerConfirmed(false)
         setSeniorBuyingManager(value.seniorBuyingManagerEmailId)
         setErrSeniorBuyingManager(true)
         setSeniorBuyingManagerValue('')
         setSeniorBuyingManagerError1(value.seniorBuyingManagerError)
       } else {
-        setSeniorBuyingManagerConfirmed(false)
+        setSeniorBuyingManagerConfirmed(true)
         setSeniorBuyingManager(value.seniorBuyingManagerEmailId)
       }
 
-      if (value.buyerAssistantError) {
+      if (value.hasOwnProperty('buyerAssistantError')) {
         setBuyingAssistantConfirmed(false)
         setBuyingAssistant(value.buyerAssistantEmailId)
         setErrBuyerAssisant(true)
         setBuyingAssistantValue('')
         setBuyingAssistentError1(value.buyerAssistantError)
       } else {
-        setBuyingAssistantConfirmed(false)
+        setBuyingAssistantConfirmed(true)
         setBuyingAssistant(value.buyerAssistantEmailId)
       }
 
-      if (value.merchandiserError) {
+      if (value.hasOwnProperty('merchandiserError')) {
         setMerchandiserConfirmed(false)
         setMerchandiser(value.merchandiserEmailId)
         setErrMerchandiser(true)
         setMerchandiserValue('')
         setMerchandiserError1(value.merchandiserError)
       } else {
-        setMerchandiserConfirmed(false)
+        setMerchandiserConfirmed(true)
         setMerchandiser(value.merchandiserEmailId)
       }
 
-      if (value.supplyChainAnalystError) {
+      if (value.hasOwnProperty('supplyChainAnalystError')) {
         setSupplyChainSpecialistConfirmed(false)
         setSupplyChainSpecialist(value.supplyChainAnalystEmailId)
         setErrSupplyChainSpecialist(true)
         setSupplyChainSpecialistValue('')
         setSupChainSpecialistError1(value.supplyChainAnalystError)
       } else {
-        setSupplyChainSpecialistConfirmed(false)
+        setSupplyChainSpecialistConfirmed(true)
         setSupplyChainSpecialist(value.supplyChainAnalystEmailId)
       }
 
-      if (value.ownBrandManagerError) {
+      if (value.hasOwnProperty('ownBrandManagerError')) {
         setOwnBrandManagerConfirmed(false)
         setOwnBrandManager(value.ownBrandManagerEmailId)
         setErrOwnBrandManager(true)
         setOwnBrandManagerValue('')
         setOwnBrandManagerError1(value.ownBrandManagerError)
       } else {
-        setOwnBrandManagerConfirmed(false)
+        setOwnBrandManagerConfirmed(true)
         setOwnBrandManager(value.ownBrandManagerEmailId)
       }
 
-      if (value.rangeResetManagerError) {
+      if (value.hasOwnProperty('rangeResetManagerError')) {
         setRangeResetManagerConfirmed(false)
         setRangeResetManager(value.rangeResetManagerEmailId)
         setErrRangeResetManager(true)
         setRangeResetManagerValue('')
         setRangeResetManagerError1(value.rangeResetManagerError)
       } else {
-        setRangeResetManagerConfirmed(false)
+        setRangeResetManagerConfirmed(true)
         setRangeResetManager(value.rangeResetManagerEmailId)
       }
-
-      setLaunchDate(value.targetDate)
+      if (value.hasOwnProperty('targetDate')) {
+        setLaunchDate(value.targetDate)
+      }
       let classValues = value.planogramClass
       console.log(classValues)
       if (classValues && classValues.length > 0) {
@@ -411,7 +412,7 @@ function CreateEvent(props: any) {
   }
 
   useEffect(() => {
-    if (fileErrorData) {
+    if (fileErrorData.hasOwnProperty('buyerEmailId')) {
       checkForErrors(fileErrorData)
     }
   }, [])
@@ -884,12 +885,19 @@ function CreateEvent(props: any) {
     //     setRafDueDateError('')
     //   }
     // }
-    if (e <= launchDate) {
+    if (launchDate !== null) {
+      console.log(launchDate)
+      if (e <= launchDate) {
+        setRafDueDate(e)
+        setErrRafdueDate(false)
+        setRafDueDateError1('')
+      } else {
+        setErrRafdueDate(true)
+        setRafDueDateError1(allMessages.error.rafDateError)
+      }
+    } else {
       setRafDueDate(e)
-      setErrRafdueDate(false)
-      setRafDueDateError1('')
     }
-
     setIsPageModified(true)
   }
 
@@ -913,12 +921,22 @@ function CreateEvent(props: any) {
     //   }
     // }
     setLaunchDate(e)
-    if (e > rafDueDate) {
-      setErrRafdueDate(false)
-      setRafDueDateError1('')
+    if (rafDueDate !== null) {
+      if (e > rafDueDate) {
+        setErrRafdueDate(false)
+        setErrLaunchDate(false)
+        setLaunchError1('')
+        setRafDueDateError1('')
+      } else {
+        setErrRafdueDate(true)
+        setErrLaunchDate(false)
+        setLaunchError1('')
+        setRafDueDateError1(allMessages.error.rafDateError)
+      }
+    } else {
+      setErrLaunchDate(false)
+      setLaunchError1('')
     }
-    setErrLaunchDate(false)
-    setLaunchError1('')
     setIsPageModified(true)
   }
 
@@ -1021,6 +1039,8 @@ function CreateEvent(props: any) {
             console.log('matched')
             setOwnBrandManagerConfirmed(true)
             setOwnBrandManagerValue(res.data.userdetails[0].user)
+            setErrOwnBrandManager(false)
+            setOwnBrandManagerError1('')
           })
           .catch((err) => {
             console.log('not')
@@ -1043,6 +1063,8 @@ function CreateEvent(props: any) {
             console.log('matched')
             setSeniorBuyingManagerConfirmed(true)
             setSeniorBuyingManagerValue(res.data.userdetails[0].user)
+            setErrSeniorBuyingManager(false)
+            setSeniorBuyingManagerError1('')
           })
           .catch((err) => {
             console.log('not')
@@ -1065,6 +1087,8 @@ function CreateEvent(props: any) {
             console.log('matched')
             setMerchandiserConfirmed(true)
             setMerchandiserValue(res.data.userdetails[0].user)
+            setErrMerchandiser(false)
+            setMerchandiserError1('')
           })
           .catch((err) => {
             console.log('not')
@@ -1087,6 +1111,8 @@ function CreateEvent(props: any) {
             console.log('matched')
             setRangeResetManagerConfirmed(true)
             setRangeResetManagerValue(res.data.userdetails[0].user)
+            setErrRangeResetManager(false)
+            setRangeResetManagerError1('')
           })
           .catch((err) => {
             console.log('not')
@@ -1109,13 +1135,15 @@ function CreateEvent(props: any) {
             console.log('matched')
             setCategoryDirectorConfirmed(true)
             setCategoryDirectorValue(res.data.userdetails[0].user)
+            setErrCategoryDirector(false)
+            setCategoryDirectorError1('')
           })
           .catch((err) => {
             console.log('not')
-            setErrCategoryDirector(true)
             setCategoryDirector('')
             setCategoryDirectorConfirmed(false)
             setCategoryDirectorValue('')
+            setErrCategoryDirector(true)
             setCategoryDirectorError1(allMessages.error.emailError)
           })
       : setErrCategoryDirector(true)
@@ -1131,13 +1159,15 @@ function CreateEvent(props: any) {
             console.log('matched')
             setSupplyChainSpecialistConfirmed(true)
             setSupplyChainSpecialistValue(res.data.userdetails[0].user)
+            setErrSupplyChainSpecialist(false)
+            setSupChainSpecialistError1('')
           })
           .catch((err) => {
             console.log('not')
             setSupplyChainSpecialist('')
-            setErrSupplyChainSpecialist(true)
             setSupplyChainSpecialistConfirmed(false)
             setSupplyChainSpecialistValue('')
+            setErrSupplyChainSpecialist(true)
             setSupChainSpecialistError1(allMessages.error.emailError)
           })
       : setErrSupplyChainSpecialist(true)
@@ -1281,7 +1311,7 @@ function CreateEvent(props: any) {
       setResetError1(allMessages.error.noRequestType)
       focusResetType.current.focus()
     }
-    if (resetType.value === 'rapid' && !rafDueDate) {
+    if (resetType.value === 'Rapid Response' && !rafDueDate) {
       flag = 0
       setErrRafdueDate(true)
       setRafDueDateError1(allMessages.error.noRafDueDate)
@@ -1308,7 +1338,7 @@ function CreateEvent(props: any) {
       flag = 0
       setErrLaunchDate(true)
       setLaunchError1(allMessages.error.noLaunchDate)
-      focusLaunchDate.current.focus()
+      // focusLaunchDate.current.focus()
     }
     if (eventName === '') {
       if (department && launchDate) {
@@ -1468,7 +1498,7 @@ function CreateEvent(props: any) {
     if (toastRemove === 'save') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else if (toastRemove === 'create') {
-      // history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
       // history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else {
       history.push(`${DEFAULT}`)
@@ -1518,46 +1548,54 @@ function CreateEvent(props: any) {
             ? storeWasteProcess.value
             : '',
           // buyer: buyer,
-          buyerId: buyerValue.userId,
-          buyerEmailId: buyerValue.emailId,
-          buyer: buyerValue.middleName
-            ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
-            : `${buyerValue.firstName} ${buyerValue.lastName}`,
-          buyerAssistantId: buyingAssistantValue.userId,
-          buyerAssistantEmailId: buyingAssistantValue.emailId,
-          buyerAssistant: buyingAssistantValue.middleName
-            ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
-            : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
-          ownBrandManagerId: ownBrandManagerValue.userId,
-          ownBrandManagerEmailId: ownBrandManagerValue.emailId,
-          ownBrandManager: ownBrandManagerValue.middleName
-            ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
-            : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
-          seniorBuyingManagerId: seniorBuyingManagerValue.userId,
-          seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
-          seniorBuyingManager: seniorBuyingManagerValue.middleName
-            ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
-            : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
-          merchandiserId: merchandiserValue.userId,
-          merchandiserEmailId: merchandiserValue.emailId,
-          merchandiser: merchandiserValue.middleName
-            ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
-            : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
-          rangeResetManagerId: rangeResetManagerValue.userId,
-          rangeResetManagerEmailId: rangeResetManagerValue.emailId,
-          rangeResetManager: rangeResetManagerValue.middleName
-            ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
-            : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
-          categoryDirectorId: categoryDirectorValue.userId,
-          categoryDirectorEmailId: categoryDirectorValue.emailId,
-          categoryDirector: categoryDirectorValue.middleName
-            ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
-            : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
-          supplyChainAnalystId: supplyChainSpecialistValue.userId,
-          supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
-          supplyChainAnalyst: supplyChainSpecialistValue.middleName
-            ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
-            : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          // buyerId: buyerValue.userId,
+          // buyerEmailId: buyerValue.emailId,
+          // buyer: buyerValue.middleName
+          //   ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+          //   : `${buyerValue.firstName} ${buyerValue.lastName}`,
+          buyerEmailId: buyer,
+          // buyerAssistantId: buyingAssistantValue.userId,
+          // buyerAssistantEmailId: buyingAssistantValue.emailId,
+          // buyerAssistant: buyingAssistantValue.middleName
+          //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+          //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+          buyerAssistantEmailId: buyingAssistant,
+          // ownBrandManagerId: ownBrandManagerValue.userId,
+          // ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+          // ownBrandManager: ownBrandManagerValue.middleName
+          //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+          //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+          ownBrandManagerEmailId: ownBrandManager,
+          // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+          // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+          // seniorBuyingManager: seniorBuyingManagerValue.middleName
+          //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+          //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+          seniorBuyingManagerEmailId: seniorBuyingManager,
+          // merchandiserId: merchandiserValue.userId,
+          // merchandiserEmailId: merchandiserValue.emailId,
+          // merchandiser: merchandiserValue.middleName
+          //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+          //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+          merchandiserEmailId: merchandiser,
+          // rangeResetManagerId: rangeResetManagerValue.userId,
+          // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+          // rangeResetManager: rangeResetManagerValue.middleName
+          //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+          //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+          rangeResetManagerEmailId: rangeResetManager,
+          // categoryDirectorId: categoryDirectorValue.userId,
+          // categoryDirectorEmailId: categoryDirectorValue.emailId,
+          // categoryDirector: categoryDirectorValue.middleName
+          //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+          //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+          categoryDirectorEmailId: categoryDirector,
+          // supplyChainAnalystId: supplyChainSpecialistValue.userId,
+          // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+          // supplyChainAnalyst: supplyChainSpecialistValue.middleName
+          //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+          //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          supplyChainAnalystEmailId: supplyChainSpecialist,
           clearancePriceApplied: clearancePriceApplied,
           orderStopDateCheck: orderStopDateCheck,
           stopOrder: stopOrder,
@@ -1730,46 +1768,55 @@ function CreateEvent(props: any) {
             ? storeWasteProcess.value
             : '',
           // buyer: buyer,
-          buyerId: buyerValue.userId,
-          buyerEmailId: buyerValue.emailId,
-          buyer: buyerValue.middleName
-            ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
-            : `${buyerValue.firstName} ${buyerValue.lastName}`,
-          buyerAssistantId: buyingAssistantValue.userId,
-          buyerAssistantEmailId: buyingAssistantValue.emailId,
-          buyerAssistant: buyingAssistantValue.middleName
-            ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
-            : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
-          ownBrandManagerId: ownBrandManagerValue.userId,
-          ownBrandManagerEmailId: ownBrandManagerValue.emailId,
-          ownBrandManager: ownBrandManagerValue.middleName
-            ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
-            : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
-          seniorBuyingManagerId: seniorBuyingManagerValue.userId,
-          seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
-          seniorBuyingManager: seniorBuyingManagerValue.middleName
-            ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
-            : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
-          merchandiserId: merchandiserValue.userId,
-          merchandiserEmailId: merchandiserValue.emailId,
-          merchandiser: merchandiserValue.middleName
-            ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
-            : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
-          rangeResetManagerId: rangeResetManagerValue.userId,
-          rangeResetManagerEmailId: rangeResetManagerValue.emailId,
-          rangeResetManager: rangeResetManagerValue.middleName
-            ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
-            : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
-          categoryDirectorId: categoryDirectorValue.userId,
-          categoryDirectorEmailId: categoryDirectorValue.emailId,
-          categoryDirector: categoryDirectorValue.middleName
-            ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
-            : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
-          supplyChainAnalystId: supplyChainSpecialistValue.userId,
-          supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
-          supplyChainAnalyst: supplyChainSpecialistValue.middleName
-            ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
-            : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          // buyer: buyer,
+          // buyerId: buyerValue.userId,
+          // buyerEmailId: buyerValue.emailId,
+          // buyer: buyerValue.middleName
+          //   ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+          //   : `${buyerValue.firstName} ${buyerValue.lastName}`,
+          buyerEmailId: buyer,
+          // buyerAssistantId: buyingAssistantValue.userId,
+          // buyerAssistantEmailId: buyingAssistantValue.emailId,
+          // buyerAssistant: buyingAssistantValue.middleName
+          //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+          //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+          buyerAssistantEmailId: buyingAssistant,
+          // ownBrandManagerId: ownBrandManagerValue.userId,
+          // ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+          // ownBrandManager: ownBrandManagerValue.middleName
+          //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+          //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+          ownBrandManagerEmailId: ownBrandManager,
+          // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+          // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+          // seniorBuyingManager: seniorBuyingManagerValue.middleName
+          //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+          //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+          seniorBuyingManagerEmailId: seniorBuyingManager,
+          // merchandiserId: merchandiserValue.userId,
+          // merchandiserEmailId: merchandiserValue.emailId,
+          // merchandiser: merchandiserValue.middleName
+          //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+          //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+          merchandiserEmailId: merchandiser,
+          // rangeResetManagerId: rangeResetManagerValue.userId,
+          // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+          // rangeResetManager: rangeResetManagerValue.middleName
+          //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+          //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+          rangeResetManagerEmailId: rangeResetManager,
+          // categoryDirectorId: categoryDirectorValue.userId,
+          // categoryDirectorEmailId: categoryDirectorValue.emailId,
+          // categoryDirector: categoryDirectorValue.middleName
+          //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+          //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+          categoryDirectorEmailId: categoryDirector,
+          // supplyChainAnalystId: supplyChainSpecialistValue.userId,
+          // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+          // supplyChainAnalyst: supplyChainSpecialistValue.middleName
+          //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+          //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+          supplyChainAnalystEmailId: supplyChainSpecialist,
           clearancePriceApplied: clearancePriceApplied,
           orderStopDateCheck: orderStopDateCheck,
           stopOrder: stopOrder,
@@ -2101,27 +2148,27 @@ function CreateEvent(props: any) {
             }
             console.log(formdata1)
 
-            // createEventsCamunda(res.data[0].id, formdata1)
-            //   .then((res: any) => {
-            //     console.log(res.data)
-            //     toast.current.show({
-            //       severity: 'success',
-            //       summary: 'Success',
-            //       // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-            //       life: life,
-            //       className: 'login-toast',
-            //     })
-            //   })
-            //   .catch((err: any) => {
-            //     console.log(err)
-            //     toast.current.show({
-            //       severity: 'error',
-            //       summary: 'Error',
-            //       // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-            //       life: life,
-            //       className: 'login-toast',
-            //     })
-            //   })
+            createEventsCamunda(res.data[0].id, formdata1)
+              .then((res: any) => {
+                console.log(res.data)
+                toast.current.show({
+                  severity: 'success',
+                  summary: 'Success',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+              .catch((err: any) => {
+                console.log(err)
+                toast.current.show({
+                  severity: 'error',
+                  summary: 'Error',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
           } else if (res.data[0].status.toLowerCase() === 'duplicate') {
             toast.current.show({
               severity: 'error',
@@ -2701,6 +2748,7 @@ function CreateEvent(props: any) {
                             value={props.value}
                             onChange={props.onChange}
                             className={classes.dateFields}
+                            // ref={props.ref}
                           />
                         )}
                       />

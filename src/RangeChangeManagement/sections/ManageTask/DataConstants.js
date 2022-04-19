@@ -319,3 +319,26 @@ export const resetTypes = [
     label: 'Range Reset',
   },
 ]
+
+export const statusOptions = [
+  {
+    value: 'Draft',
+    label: 'Draft',
+  },
+  {
+    value: 'Error',
+    label: 'Error',
+  },
+  {
+    value: 'Published',
+    label: 'Published',
+  },
+  {
+    value: 'Confirmed',
+    label: 'Confirmed',
+  },
+  {
+    value: 'Cancelled',
+    label: 'Cancelled',
+  },
+]

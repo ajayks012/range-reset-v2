@@ -39,6 +39,8 @@ const envDetails = {
     DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     CREATE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    GET_EVENTDETAILS_BY_ID:
+      'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -81,6 +83,8 @@ const envDetails = {
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     CREATE_EVENTS_CAMUNDA:
+      'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
@@ -126,6 +130,8 @@ const envDetails = {
     DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     CREATE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    GET_EVENTDETAILS_BY_ID:
+      'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -170,6 +176,8 @@ const envDetails = {
     DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     CREATE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    GET_EVENTDETAILS_BY_ID:
+      'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -213,6 +221,8 @@ const envDetails = {
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     CREATE_EVENTS_CAMUNDA:
+      'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',

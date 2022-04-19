@@ -32,6 +32,7 @@ import {
   Merchandisers,
   SupplyChainSpecialists,
   resetTypes,
+  statusOptions,
 } from './DataConstants'
 
 import ErrorIcon from '@material-ui/icons/Error'
@@ -136,6 +137,7 @@ function ManageTaskEvent(props: any) {
 
   const [resetType, setResetType] = useState<any>('')
   const [productHierValues, setProductHierValues] = useState<any>([])
+  const [status, setStatus] = useState<any>('')
   const [group, setGroup] = useState<any>('')
   const [category, setCategory] = useState<any>('')
   const [department, setDepartment] = useState<any>('')
@@ -153,6 +155,7 @@ function ManageTaskEvent(props: any) {
   const [stopOrder, setStopOrder] = useState(true)
   const [searchParams, setSearchParams] = useState<any>({
     resetType: '',
+    status: '',
     launchDateFrom: '',
     launchDateTo: '',
     tradeGroup: '',
@@ -549,9 +552,22 @@ function ManageTaskEvent(props: any) {
   }
 
   const excelDatetoDate = (eDate: any) => {
-    return new Date(Math.round((eDate - (25568 + 1)) * 86400 * 1000))
-      .toISOString()
-      .split('T')[0]
+    if (!isNaN(eDate)) {
+      let date1 = Math.round((eDate - (25568 + 1)) * 86400 * 1000)
+      console.log(date1)
+      if (!isNaN(date1)) {
+        console.log(date1)
+        let date = new Date(Math.round((eDate - (25568 + 1)) * 86400 * 1000))
+          .toISOString()
+          .split('T')[0]
+        return date
+      } else {
+        console.log(null)
+        return ''
+      }
+    } else {
+      return ''
+    }
   }
 
   const handleUploadDialogOpen = () => {
@@ -565,10 +581,12 @@ function ManageTaskEvent(props: any) {
       setFileName(uploadedFile.name)
       setUploadedFile(null)
     }
+    // setConfirmtable(true)
   }
 
   const handleFileUpload = (event: any) => {
     setUploadedFile(event.target.files[0])
+    // setConfirmtable(false)
   }
 
   const handlePreviewDialogOpen = () => {
@@ -1026,10 +1044,15 @@ function ManageTaskEvent(props: any) {
           // });
           const newData = data.map((d: any) => {
             var converted_date1 = d[cols[6]]
-              ? excelDatetoDate(d[cols[6]]).toString()
+              ? excelDatetoDate(d[cols[6]]) !== ''
+                ? excelDatetoDate(d[cols[6]])?.toString()
+                : null
               : null
+
             var converted_date3 = d[cols[2]]
-              ? excelDatetoDate(d[cols[2]]).toString()
+              ? excelDatetoDate(d[cols[2]]) !== ''
+                ? excelDatetoDate(d[cols[2]]).toString()
+                : null
               : null
 
             var eventName = () => {
@@ -1794,6 +1817,27 @@ function ManageTaskEvent(props: any) {
         }
         break
       }
+      case 'status': {
+        if (e) {
+          setStatus(e)
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              status: e.value,
+            }
+          })
+        } else {
+          setStatus('')
+
+          setSearchParams((prevState: any) => {
+            return {
+              ...prevState,
+              status: '',
+            }
+          })
+        }
+        break
+      }
       case 'group': {
         if (e) {
           setGroup(e)
@@ -2053,6 +2097,10 @@ function ManageTaskEvent(props: any) {
           searchParams.launchDateTo !== ''
             ? file.targetDate <= searchParams.launchDateTo
             : true
+        let statusFilter =
+          searchParams.status !== ''
+            ? file.status === searchParams.status
+            : true
         let groupFilter =
           searchParams.tradeGroup !== ''
             ? file.tradeGroup === searchParams.tradeGroup
@@ -2085,6 +2133,7 @@ function ManageTaskEvent(props: any) {
           resetTypeFilter &&
           launchDateFromFilter &&
           launchDateToFilter &&
+          statusFilter &&
           groupFilter &&
           categoryFilter &&
           departmentFilter &&
@@ -2306,6 +2355,21 @@ function ManageTaskEvent(props: any) {
               <Grid item container>
                 <Grid item xs={12}>
                   <Typography color="primary" variant="body2">
+                    <label>Status</label>
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <AutocompleteSelect
+                    value={status}
+                    options={statusOptions}
+                    onChange={(e: any) => handleSearchParams(e, 'status')}
+                    placeholder="Select Status"
+                  />
+                </Grid>
+              </Grid>
+              <Grid item container>
+                <Grid item xs={12}>
+                  <Typography color="primary" variant="body2">
                     <label>Group</label>
                   </Typography>
                 </Grid>
@@ -2486,14 +2550,26 @@ function ManageTaskEvent(props: any) {
                   {/* </Typography> */}
                 </Grid>
               </Grid>
-              <Grid item container>
-                <Grid>
-                  <Typography color="primary" variant="body2">
-                    <label>Category Director</label>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  {/* <Typography color="primary" variant="body2">
+            </Grid>
+          </Grid>
+
+          {aboveMd && (
+            <>
+              <Grid item md={1} style={{ height: '100%' }}>
+                <Divider orientation="vertical" variant="middle" />
+              </Grid>
+            </>
+          )}
+
+          <Grid item container xs={12} md={5} spacing={2}>
+            <Grid item container>
+              <Grid>
+                <Typography color="primary" variant="body2">
+                  <label>Category Director</label>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                {/* <Typography color="primary" variant="body2">
                       <select
                         className={classes.searchTextField}
                         // defaultValue=""
@@ -2516,30 +2592,18 @@ function ManageTaskEvent(props: any) {
                         })}
                       </select> */}
 
-                  <AutocompleteSelect
-                    value={categoryDirector}
-                    options={categoryDirectorOptions}
-                    onChange={(e: any) =>
-                      handleSearchParams(e, 'categoryDirector')
-                    }
-                    placeholder="Select Category Director"
-                  />
+                <AutocompleteSelect
+                  value={categoryDirector}
+                  options={categoryDirectorOptions}
+                  onChange={(e: any) =>
+                    handleSearchParams(e, 'categoryDirector')
+                  }
+                  placeholder="Select Category Director"
+                />
 
-                  {/* </Typography> */}
-                </Grid>
+                {/* </Typography> */}
               </Grid>
             </Grid>
-          </Grid>
-
-          {aboveMd && (
-            <>
-              <Grid item md={1} style={{ height: '100%' }}>
-                <Divider orientation="vertical" variant="middle" />
-              </Grid>
-            </>
-          )}
-
-          <Grid item container xs={12} md={5} spacing={2}>
             <Grid item container>
               <Grid item xs={12}>
                 <Typography color="primary" variant="body2">
