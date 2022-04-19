@@ -521,6 +521,7 @@ function ManageEventCreate(props: any) {
 
   const goBack = () => {
     history.goBack()
+    console.log('going back')
     resetErrorFile()
   }
 
@@ -2267,7 +2268,7 @@ const matchDispatchToProps = (dispatch: any) => {
   return {
     setFile: (fileData: any) => dispatch(setFile(fileData)),
     resetFile: () => dispatch(resetFile),
-    resetErrorFile: () => dispatch(resetErrorFile),
+    resetErrorFile: () => dispatch(resetErrorFile()),
   }
 }
 
