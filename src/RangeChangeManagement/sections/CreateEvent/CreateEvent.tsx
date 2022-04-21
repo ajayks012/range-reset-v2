@@ -2181,8 +2181,8 @@ function CreateEvent(props: any) {
           //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
           //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
           supplyChainAnalystEmailId: supplyChainSpecialist,
-          clearancePriceApplied: clearancePriceApplied,
-          orderStopDateCheck: orderStopDateCheck,
+          clearancePriceCheck: clearancePriceApplied,
+          orderStopDateheck: orderStopDateCheck,
           stopOrder: stopOrder,
           fileName: 'string',
           createdById: userDetail && userDetail.userdetails[0].user.userId,
@@ -2357,7 +2357,11 @@ function CreateEvent(props: any) {
           planogramClass: {
             className: classFormData ? classFormData : [],
           },
-          wastageRange: storeWasteProcess.value ? storeWasteProcess.value : '',
+          wastageRange: storeWasteProcess
+            ? storeWasteProcess.value
+              ? storeWasteProcess.value
+              : null
+            : null,
           // buyer: buyer,
           // buyer: buyer,
           // buyerId: buyerValue.userId,
@@ -2408,8 +2412,8 @@ function CreateEvent(props: any) {
           //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
           //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
           supplyChainAnalystEmailId: supplyChainSpecialist,
-          clearancePriceApplied: clearancePriceApplied,
-          orderStopDateCheck: orderStopDateCheck,
+          clearancePriceCheck: clearancePriceApplied,
+          orderStopDateheck: orderStopDateCheck,
           stopOrder: stopOrder,
           fileName: 'string',
           createdById: userDetail && userDetail.userdetails[0].user.userId,
@@ -2494,7 +2498,7 @@ function CreateEvent(props: any) {
                       storeWastetiming: res.data[0].wastageRange,
                       orderStopDateCheckRequired: res.data[0].orderStopDateheck,
                       stopOrderStockRundown: res.data[0].stopOrder,
-                      clearancePriceApplied: res.data[0].clearancePriceCheck,
+                      clearancePriceCheck: res.data[0].clearancePriceCheck,
                     },
                     eventTeam: {
                       team: [
@@ -2667,7 +2671,7 @@ function CreateEvent(props: any) {
                       storeWastetiming: res.data[0].wastageRange,
                       orderStopDateCheckRequired: res.data[0].orderStopDateheck,
                       stopOrderStockRundown: res.data[0].stopOrder,
-                      clearancePriceApplied: res.data[0].clearancePriceCheck,
+                      clearancePriceCheck: res.data[0].clearancePriceCheck,
                     },
                     eventTeam: {
                       team: [

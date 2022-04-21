@@ -1203,10 +1203,10 @@ function ManageTaskEvent(props: any) {
     let severity
     if (checkCount === 0) {
       if (failureCount === 0) {
-        detail = allMessages.success.successAssign
+        detail = allMessages.success.successDelete
         severity = 'success'
       } else if (failureCount > 0) {
-        detail = allMessages.error.errorAssign
+        detail = allMessages.error.errorDelete
         severity = 'error'
       }
       setIsProgressLoader(false)
@@ -1231,10 +1231,12 @@ function ManageTaskEvent(props: any) {
 
       selectedEvents.map((event: any) => {
         if (
-          event.status.toLowerCase() === 'draft' ||
-          event.status.toLowerCase() === 'confirmed'
+          (event.status.toLowerCase() === 'draft' ||
+            event.status.toLowerCase() === 'confirmed') &&
+          (event.status.toLowerCase() !== 'error' ||
+            event.status.toLowerCase() !== 'duplicate')
         ) {
-          deleteRangeResets(event.eventId)
+          deleteRangeResets(event.id)
             .then((res: any) => {
               console.log(res)
               let _tasks = fetchRangeResets.filter(

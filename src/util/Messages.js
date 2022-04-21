@@ -22,6 +22,7 @@ export const allMessages = {
     invalidExtension:
       'Empty Files or FileSize > 5MB or Files with invalid extensions omitted.',
     errorAssign: 'tasks failed to assign due to service error',
+    errorDelete: 'tasks failed to delete due to service error',
     errorGroupDelInac:
       'Cannot Inactive/Delete groups which are already assigned to existing users',
     errorReassign:
@@ -41,6 +42,7 @@ export const allMessages = {
     successPostAttach: 'All attached files uploaded and logged successfully',
     successAttach: 'All attached files uploaded successfully',
     successAssign: 'All tasks assigned successfully',
+    successDelete: 'Selected tasks deleted successfully',
     successCopy: 'RequestId has been autocopied to clipboard',
     successGroupCopy: 'GroupId has been autocopied to clipboard',
     promptMessage: 'Unsaved changes will be lost. Do you want to continue ?',
