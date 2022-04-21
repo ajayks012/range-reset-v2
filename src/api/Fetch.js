@@ -36,6 +36,8 @@ const {
   GET_RANGERESET_EVENTS,
   DELETE_RANGERESETS,
   GET_RESET_TYPES,
+  GET_PLANOGRAM_CLASSES,
+  GET_WASTAGE_RANGES,
   CREATE_EVENTS_CAMUNDA,
   GET_EVENTDETAILS_BY_ID,
 } = config
@@ -340,6 +342,18 @@ export const getTasklogsAPI = (requestId) => {
 
 export const getResetTypes = () => {
   let url = `${BASE_URL}${GET_RESET_TYPES}`
+  // const params = `createdByIdIn=${createdBy}`
+  return serviceRequest(url, 'GET', undefined)
+}
+
+export const getPlanogramClasses = () => {
+  let url = `${BASE_URL}${GET_PLANOGRAM_CLASSES}`
+  // const params = `createdByIdIn=${createdBy}`
+  return serviceRequest(url, 'GET', undefined)
+}
+
+export const getWastageRanges = () => {
+  let url = `${BASE_URL}${GET_WASTAGE_RANGES}`
   // const params = `createdByIdIn=${createdBy}`
   return serviceRequest(url, 'GET', undefined)
 }

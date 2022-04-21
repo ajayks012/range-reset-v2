@@ -25,23 +25,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import DateFnsUtils from '@date-io/date-fns'
 import { useHistory, Prompt } from 'react-router-dom'
-import {
-  Buyers,
-  BuyingAssistants,
-  categories,
-  CategoryDirectors,
-  classOptions,
-  departments,
-  groups,
-  Merchandisers,
-  OwnBrandManagers,
-  RangeResetManagers,
-  resetTypes,
-  SeniorBuyingManagers,
-  SupplyChainSpecialists,
-  wastageRanges,
-  yesOrNo,
-} from './DataConstants'
+import { yesOrNo } from './DataConstants'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { useStyles } from './styles'
@@ -51,6 +35,8 @@ import { allMessages } from '../../../util/Messages'
 import '../../../index.css'
 import {
   createEventsCamunda,
+  getPlanogramClasses,
+  getWastageRanges,
   // getProductHierarchyAPI,
   // putUserGroupAPI,
   getProductHierarchyListAPI,
@@ -115,7 +101,7 @@ function CreateEvent(props: any) {
   // )
   const [launchDateError, setLaunchDateError] = useState<any>('')
   const [eventName, setEventName] = useState<any>('')
-  const [storeWasteProcess, setStoreWasteProcess] = useState<any>('')
+  const [storeWasteProcess, setStoreWasteProcess] = useState<any>(null)
   const [buyer, setBuyer] = useState<any>('')
   const [buyerValue, setBuyerValue] = useState<any>('')
   const [buyerConfirmed, setBuyerConfirmed] = useState<any>(false)
@@ -154,12 +140,15 @@ function CreateEvent(props: any) {
 
   const [classOpen, setClassOpen] = useState(false)
 
+  const [errMessage, setErrMessage] = useState<any>(false)
   const [errRafDueDate, setErrRafdueDate] = useState<any>(false)
   const [errReset, setErrReset] = useState<any>(false)
   const [errGroup, setErrGroup] = useState<any>(false)
   const [errCategory, setErrCategory] = useState<any>(false)
   const [errDepartment, setErrDepartment] = useState<any>(false)
   const [errLaunchDate, setErrLaunchDate] = useState<any>(false)
+  const [errWastageRange, setErrWastageRange] = useState<any>(false)
+  const [errPlanogramClass, setErrPlanogramClass] = useState<any>(false)
   const [errBuyer, setErrBuyer] = useState<any>(false)
   const [errBuyerAssisant, setErrBuyerAssisant] = useState<any>(false)
   const [errOwnBrandManager, setErrOwnBrandManager] = useState<any>(false)
@@ -171,12 +160,15 @@ function CreateEvent(props: any) {
   const [errSupplyChainSpecialist, setErrSupplyChainSpecialist] =
     useState<any>(false)
 
+  const [errorMessageValues, setErrorMessageValues] = useState<any>('')
   const [rafDueDateError1, setRafDueDateError1] = useState<any>('')
   const [resetError1, setResetError1] = useState<any>('')
-  const [tradingGError1, settradingGError1] = useState<any>('')
+  const [tradingGError1, setTradingGError1] = useState<any>('')
   const [categoryError1, setCategoryGError1] = useState<any>('')
   const [departmentError1, setDepartmentError1] = useState<any>('')
   const [launchError1, setLaunchError1] = useState<any>('')
+  const [planogramClassError1, setPlanogramClassError1] = useState<any>('')
+  const [wastageRangeError1, setWastageRangeError1] = useState<any>('')
   const [buyerError1, setBuyerError1] = useState<any>('')
   const [buyingAssistentError1, setBuyingAssistentError1] = useState<any>('')
   const [ownBrandManagerError1, setOwnBrandManagerError1] = useState<any>('')
@@ -210,6 +202,8 @@ function CreateEvent(props: any) {
   const focusRangeRestManager = useRef<any>(null)
 
   const [resetOptions, setResetOptions] = useState<any>([])
+  const [classOptions, setClassOptions] = useState<any>([])
+  const [wastageRanges, setWastageRanges] = useState<any>([])
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
@@ -229,6 +223,493 @@ function CreateEvent(props: any) {
   useEffect(() => {
     return () => resetErrorFile()
   }, [])
+
+  const checkErrorMessages2 = (item: any) => {
+    console.log(item && item)
+    let newData = item
+    // item.name && setEventName(item.name)
+    let errorArray = item.errorMessage.split(',')
+    console.log(errorArray)
+    let count = 0
+
+    errorArray.map((err: any) => {
+      let oneError = err.split(' : ')
+      let key = oneError[0]
+      let value = oneError[1]
+      console.log(key, ' : ', value)
+
+      if (key === 'AppDue Date') {
+        // setRafDueDateError1(value)
+        newData.appDueDatError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Reset Type') {
+        console.log(key)
+        console.log(value)
+
+        newData.resetTypeError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Trading Group') {
+        newData.tradingGroupError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Category') {
+        newData.categoryError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Department') {
+        newData.departmentError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Launch Date') {
+        newData.targetDateError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Planogram Class') {
+        newData.planogramClassError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+      if (key === 'Wastage Range') {
+        newData.wastageRangeError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Buyer') {
+        console.log('executing buyer if')
+
+        newData.buyerError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Buying Assistant') {
+        newData.buyerAssistantError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Category Director') {
+        newData.categoryDirectorError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Sr. Buying Manager') {
+        newData.seniorBuyingManagerError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Merchandiser') {
+        newData.merchandiserError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+      if (key === 'Range Reset Manager') {
+        newData.rangeResetManagerError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Own Brand Manager') {
+        newData.ownBrandManagerError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === 'Supply Chain Specialist') {
+        newData.supplyChainAnalystError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+    })
+    console.log(count)
+    console.log(errorArray.length)
+    if (count === errorArray.length - 1) {
+      return newData
+    }
+  }
+
+  // const checkErrorMessages = (item: any) => {
+  //   console.log(item && item)
+
+  //   item.name && setEventName(item.name)
+  //   let errorArray = item.errorMessage.split(',')
+  //   console.log(errorArray)
+  //   let count = 0
+
+  //   errorArray.map((err: any) => {
+  //     let oneError = err.split(' : ')
+  //     let key = oneError[0]
+  //     let value = oneError[1]
+  //     console.log(key, ' : ', value)
+
+  //     if (key === 'AppDue Date') {
+  //       // setRafDueDateError1(value)
+  //       let newData = item
+  //       newData.appDueDatError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Reset Type') {
+  //       console.log(key)
+  //       console.log(value)
+  //       let newData = item
+  //       newData.resetTypeError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Trading Group') {
+  //       let newData = item
+  //       newData.tradingGroupError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Category') {
+  //       let newData = item
+  //       newData.categoryError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Department') {
+  //       let newData = item
+  //       newData.departmentError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Launch Date') {
+  //       let newData = item
+  //       newData.targetDateError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Planogram Class') {
+  //       let newData = item
+  //       newData.planogramClassError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+  //     if (key === 'Wastage Range') {
+  //       let newData = item
+  //       newData.wastageRangeError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Buyer') {
+  //       console.log('executing buyer if')
+  //       let newData = item
+  //       newData.buyerError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Buying Assistant') {
+  //       let newData = item
+  //       newData.buyerAssistantError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Category Director') {
+  //       let newData = item
+  //       newData.categoryDirectorError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Sr. Buying Manager') {
+  //       let newData = item
+  //       newData.seniorBuyingManagerError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Merchandiser') {
+  //       let newData = item
+  //       newData.merchandiserError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+  //     if (key === 'Range Reset Manager') {
+  //       let newData = item
+  //       newData.rangeResetManagerError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Own Brand Manager') {
+  //       let newData = item
+  //       newData.ownBrandManagerError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+
+  //     if (key === 'Supply Chain Specialist') {
+  //       let newData = item
+  //       newData.supplyChainAnalystError = value
+  //       console.log(newData)
+  //       count = count + 1
+  //       setErrorFile(newData)
+  //     }
+  //   })
+  //   console.log(count)
+  //   console.log(errorArray.length)
+  //   if (count === errorArray.length - 1) {
+  //     console.log('count', count)
+  //     checkForErrors(fileErrorData)
+  //   }
+
+  //   // errorArray.map((err: any) => {
+  //   //   let oneError = err.split(' : ')
+  //   //   let key = oneError[0]
+  //   //   let value = oneError[1]
+  //   //   console.log(key, ' : ', value)
+
+  //   //   if (key === 'AppDue Date') {
+  //   //     setErrRafdueDate(true)
+  //   //     setRafDueDateError1(value)
+  //   //     if (item.hasOwnProperty('appDueDate')) {
+  //   //       setRafDueDate(item.appDueDate)
+  //   //     } else {
+  //   //       setRafDueDate(null)
+  //   //     }
+  //   //   } else {
+  //   //     console.log(item.appDueDate)
+  //   //     item.appDueDate && setRafDueDate(item.appDueDate)
+  //   //   }
+
+  //   //   if (key === 'Reset Type') {
+  //   //     if (item.hasOwnProperty('resetType')) {
+  //   //       setResetType({ value: item.resetType, label: item.resetType })
+  //   //     }
+  //   //     setErrReset(true)
+  //   //     setResetError1(value)
+  //   //   } else {
+  //   //     item.resetType &&
+  //   //       setResetType({ value: item.resetType, label: item.resetType })
+  //   //   }
+
+  //   //   if (key === 'Trading Group') {
+  //   //     if (!item.hasOwnProperty('tradeGroup')) {
+  //   //       setErrGroup(true)
+  //   //       setTradingGError1(value)
+  //   //       setGroup([])
+  //   //     } else {
+  //   //       item.tradeGroup &&
+  //   //         setGroup({
+  //   //           value: item.tradeGroup,
+  //   //           label: item.tradeGroup,
+  //   //           groupName: item.tradeGroup,
+  //   //         })
+  //   //     }
+  //   //   }
+
+  //   //   if (key === 'Category') {
+  //   //     if (!item.hasOwnProperty('category') || errBuyer) {
+  //   //       setErrCategory(true)
+  //   //       setCategoryGError1(value)
+  //   //       setCategory([])
+  //   //     } else {
+  //   //       item.category &&
+  //   //         setCategory({
+  //   //           value: item.category,
+  //   //           label: item.category,
+  //   //           categoryId: item.categoryId,
+  //   //           categoryName: item.category,
+  //   //         })
+  //   //     }
+  //   //   }
+
+  //   //   if (key === 'Department') {
+  //   //     if (!item.hasOwnProperty('department')) {
+  //   //       setErrDepartment(true)
+  //   //       setDepartmentError1(value)
+  //   //       setDepartment([])
+  //   //     } else {
+  //   //       item.department &&
+  //   //         setDepartment({
+  //   //           value: item.department,
+  //   //           label: item.department,
+  //   //           departmentId: item.departmentId,
+  //   //           departmentName: item.department,
+  //   //         })
+  //   //     }
+  //   //   }
+
+  //   //   if (key === 'Launch Date') {
+  //   //     setErrLaunchDate(true)
+  //   //     setLaunchError1(value)
+  //   //     if (item.hasOwnProperty('targetDate')) {
+  //   //       setLaunchDate(item.targetDate)
+  //   //     } else {
+  //   //       setLaunchDate(null)
+  //   //     }
+  //   //   } else {
+  //   //     console.log(item.targetDate)
+  //   //     item.targetDate && setLaunchDate(item.targetDate)
+  //   //   }
+
+  //   //   // if(key==='Planogram Class'){
+
+  //   //   //   let classValues = value.planogramClass
+  //   //   //   console.log(classValues)
+  //   //   //   if (classValues && classValues.length > 0) {
+  //   //   //     setConfirmClassValues(classValues.className)
+  //   //   //   }
+  //   //   // }
+
+  //   //   if (key === 'Buyer') {
+  //   //     console.log('executing buyer if')
+  //   //     setBuyerConfirmed(false)
+  //   //     setBuyer(item.buyerEmailId)
+  //   //     setErrBuyer(true)
+  //   //     setBuyerValue('')
+  //   //     setBuyerError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   console.log('executing buyer else')
+  //   //   //   setBuyerConfirmed(true)
+  //   //   //   setBuyer(item.buyerEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Buying Assistant') {
+  //   //     setBuyingAssistantConfirmed(false)
+  //   //     setBuyingAssistant(item.buyerAssistantEmailId)
+  //   //     setErrBuyerAssisant(true)
+  //   //     setBuyingAssistantValue('')
+  //   //     setBuyingAssistentError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setBuyingAssistantConfirmed(true)
+  //   //   //   setBuyingAssistant(item.buyerAssistantEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Category Director') {
+  //   //     setCategoryDirectorConfirmed(false)
+  //   //     setCategoryDirector(item.categoryDirectorEmailId)
+  //   //     setErrCategoryDirector(true)
+  //   //     setCategoryDirectorValue('')
+  //   //     setCategoryDirectorError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setCategoryDirectorConfirmed(true)
+  //   //   //   setCategoryDirector(item.categoryDirectorEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Sr. Buying Manager') {
+  //   //     setSeniorBuyingManagerConfirmed(false)
+  //   //     setSeniorBuyingManager(item.seniorBuyingManagerEmailId)
+  //   //     setErrSeniorBuyingManager(true)
+  //   //     setSeniorBuyingManagerValue('')
+  //   //     setSeniorBuyingManagerError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setSeniorBuyingManagerConfirmed(true)
+  //   //   //   setSeniorBuyingManager(item.seniorBuyingManagerEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Merchandiser') {
+  //   //     setMerchandiserConfirmed(false)
+  //   //     setMerchandiser(item.merchandiserEmailId)
+  //   //     setErrMerchandiser(true)
+  //   //     setMerchandiserValue('')
+  //   //     setMerchandiserError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setMerchandiserConfirmed(true)
+  //   //   //   setMerchandiser(item.merchandiserEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Range Reset Manager ') {
+  //   //     setRangeResetManagerConfirmed(false)
+  //   //     setRangeResetManager(item.rangeResetManagerEmailId)
+  //   //     setErrRangeResetManager(true)
+  //   //     setRangeResetManagerValue('')
+  //   //     setRangeResetManagerError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setRangeResetManagerConfirmed(true)
+  //   //   //   setRangeResetManager(item.rangeResetManagerEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Own Brand Manager ') {
+  //   //     setOwnBrandManagerConfirmed(false)
+  //   //     setOwnBrandManager(item.ownBrandManagerEmailId)
+  //   //     setErrOwnBrandManager(true)
+  //   //     setOwnBrandManagerValue('')
+  //   //     setOwnBrandManagerError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setOwnBrandManagerConfirmed(true)
+  //   //   //   setOwnBrandManager(item.ownBrandManagerEmailId)
+  //   //   // }
+
+  //   //   if (key === 'Supply Chain Specialist') {
+  //   //     setSupplyChainSpecialistConfirmed(false)
+  //   //     setSupplyChainSpecialist(item.supplyChainAnalystEmailId)
+  //   //     setErrSupplyChainSpecialist(true)
+  //   //     setSupplyChainSpecialistValue('')
+  //   //     setSupChainSpecialistError1(value)
+  //   //   }
+  //   //   // else {
+  //   //   //   setSupplyChainSpecialistConfirmed(true)
+  //   //   //   setSupplyChainSpecialist(item.supplyChainAnalystEmailId)
+  //   //   // }
+  //   // })
+  // }
 
   const checkForErrors = (value: any) => {
     if (value) {
@@ -257,13 +738,9 @@ function CreateEvent(props: any) {
         value.resetType &&
           setResetType({ value: value.resetType, label: value.resetType })
       }
-
-      if (value.hasOwnProperty('categoryError')) {
-        // setBuyer(value.buyerEmailId)
-        // setRafDueDate(value.department)
-        setErrDepartment(true)
-        setDepartmentError1('Invalid Product Hierarchy')
-        // setCategoryGError1('Invalid Category')
+      if (!value.hasOwnProperty('tradeGroup')) {
+        setErrGroup(true)
+        setTradingGError1(value.tradingGroupError)
       } else {
         value.tradeGroup &&
           setGroup({
@@ -271,42 +748,98 @@ function CreateEvent(props: any) {
             label: value.tradeGroup,
             groupName: value.tradeGroup,
           })
-        value.category &&
-          setCategory({
-            value: value.category,
-            label: value.category,
-            categoryId: value.categoryId,
-            categoryName: value.category,
-          })
+        if (value.hasOwnProperty('categoryError')) {
+          setErrCategory(true)
+          setCategoryGError1(value.categoryError)
+        } else {
+          value.tradeGroup &&
+            setGroup({
+              value: value.tradeGroup,
+              label: value.tradeGroup,
+              groupName: value.tradeGroup,
+            })
+          value.category &&
+            setCategory({
+              value: value.category,
+              label: value.category,
+              categoryId: value.categoryId,
+              categoryName: value.category,
+            })
+          if (value.hasOwnProperty('departmentError')) {
+            setErrDepartment(true)
+            setDepartmentError1(value.departmentError)
+          } else {
+            value.tradeGroup &&
+              setGroup({
+                value: value.tradeGroup,
+                label: value.tradeGroup,
+                groupName: value.tradeGroup,
+              })
+            value.category &&
+              setCategory({
+                value: value.category,
+                label: value.category,
+                categoryId: value.categoryId.toString(),
+                categoryName: value.category,
+              })
+            value.department &&
+              setDepartment({
+                value: value.department,
+                label: value.department,
+                departmentId: value.departmentId.toString(),
+                departmentName: value.department,
+              })
+          }
+        }
       }
 
-      if (value.hasOwnProperty('departmentError')) {
-        // setBuyer(value.buyerEmailId)
-        // setRafDueDate(value.department)
-        setErrDepartment(true)
-        // setDepartmentError1(value.departmentError)
-        setDepartmentError1('Invalid Product Hierarchy')
+      if (value.hasOwnProperty('targetDateError')) {
+        setErrLaunchDate(true)
+        setLaunchError1(value.targetDateError)
+        if (value.hasOwnProperty('targetDate')) {
+          setLaunchDate(value.targetDate)
+        } else {
+          setLaunchDate(null)
+        }
       } else {
-        value.tradeGroup &&
-          setGroup({
-            value: value.tradeGroup,
-            label: value.tradeGroup,
-            groupName: value.tradeGroup,
-          })
-        value.category &&
-          setCategory({
-            value: value.category,
-            label: value.category,
-            categoryId: value.categoryId.toString(),
-            categoryName: value.category,
-          })
-        value.department &&
-          setDepartment({
-            value: value.department,
-            label: value.department,
-            departmentId: value.departmentId.toString(),
-            departmentName: value.department,
-          })
+        console.log(value.targetDate)
+        value.targetDate && setLaunchDate(value.targetDate)
+      }
+
+      if (value.hasOwnProperty('planogramClassError')) {
+        setErrPlanogramClass(true)
+        setPlanogramClassError1(value.planogramClassError)
+      } else {
+        if (value.hasOwnProperty('planogramClass')) {
+          let planogramClass = value.planogramClass
+          if (planogramClass && planogramClass.hasOwnProperty('className')) {
+            let classes = planogramClass.className
+            let classValue = []
+            for (var i = 0; i < classes.length; i++) {
+              classValue.push({
+                value: classes[i],
+                label: classes[i],
+              })
+            }
+            console.log(classValue)
+            setClassValues(classValue)
+            setConfirmClassValues(classValue)
+          }
+        }
+      }
+
+      if (value.hasOwnProperty('wastageRangeError')) {
+        setErrWastageRange(true)
+        setWastageRangeError1(value.wastageRangeError)
+      } else {
+        if (
+          value.hasOwnProperty('wastageRange') &&
+          value.hasOwnProperty('wastageRangeText')
+        ) {
+          let val = value.wastageRange
+          let label = value.wastageRangeText
+          setStoreWasteProcess({ value: val, label: label })
+        }
       }
 
       if (value.hasOwnProperty('buyerError')) {
@@ -396,14 +929,14 @@ function CreateEvent(props: any) {
         setRangeResetManagerConfirmed(true)
         setRangeResetManager(value.rangeResetManagerEmailId)
       }
-      if (value.hasOwnProperty('targetDate')) {
-        setLaunchDate(value.targetDate)
-      }
-      let classValues = value.planogramClass
-      console.log(classValues)
-      if (classValues && classValues.length > 0) {
-        setConfirmClassValues(classValues.className)
-      }
+      // if (value.hasOwnProperty('targetDate')) {
+      //   setLaunchDate(value.targetDate)
+      // }
+      // let classValues = value.planogramClass
+      // console.log(classValues)
+      // if (classValues && classValues.length > 0) {
+      //   setConfirmClassValues(classValues.className)
+      // }
 
       if (value.name) {
         setEventName(value.name)
@@ -413,7 +946,10 @@ function CreateEvent(props: any) {
 
   useEffect(() => {
     if (fileErrorData.hasOwnProperty('buyerEmailId')) {
-      checkForErrors(fileErrorData)
+      // checkForErrors(fileErrorData)
+      // checkErrorMessages(fileErrorData)
+      let data = checkErrorMessages2(fileErrorData)
+      data && checkForErrors(data)
     }
   }, [])
 
@@ -441,6 +977,30 @@ function CreateEvent(props: any) {
   }, [])
 
   useEffect(() => {
+    getPlanogramClasses().then((res: any) => {
+      const options = res.data.map((item: any) => {
+        return {
+          value: item.configValue,
+          label: item.configValue,
+        }
+      })
+      setClassOptions(options)
+    })
+  }, [])
+
+  useEffect(() => {
+    getWastageRanges().then((res: any) => {
+      const options = res.data.map((item: any) => {
+        return {
+          value: item.configValue,
+          label: item.configDescription,
+        }
+      })
+      setWastageRanges(options)
+    })
+  }, [])
+
+  useEffect(() => {
     getProductHierarchyListAPI &&
       getProductHierarchyListAPI('group')
         .then((res: any) => {
@@ -451,8 +1011,12 @@ function CreateEvent(props: any) {
               groupName: item.groupName,
             }
           })
-          setGroupOptions(groupList)
-          console.log(groupList)
+          let list = groupList.sort((x: any, y: any) =>
+            x.label.localeCompare(y.label)
+          )
+          // console.log(list)
+          setGroupOptions(list)
+          // console.log(groupList)
         })
         .catch((err: any) => setGroupOptions([]))
   }, [])
@@ -471,12 +1035,13 @@ function CreateEvent(props: any) {
               groupName: item.groupName,
             }
           })
+          let list = categoryList.sort((x: any, y: any) =>
+            x.label.localeCompare(y.label)
+          )
 
           group &&
             setCategoryOptions(
-              categoryList.filter(
-                (cat: any) => cat.groupName === group.groupName
-              )
+              list.filter((cat: any) => cat.groupName === group.groupName)
             )
           // group &&
           //   console.log(
@@ -503,8 +1068,12 @@ function CreateEvent(props: any) {
                 categoryId: item.category,
               }
             })
+            let list = depList.sort((x: any, y: any) =>
+              x.label.localeCompare(y.label)
+            )
+
             setDepartmentOptions(
-              depList.filter(
+              list.filter(
                 (dep: any) =>
                   dep.groupName === group.groupName &&
                   dep.categoryName === category.categoryName
@@ -724,6 +1293,7 @@ function CreateEvent(props: any) {
     if (e) {
       setErrCategory(false)
       setErrDepartment(false)
+      setIsPageModified(true)
       setCategory(e)
       setDepartment('')
     } else {
@@ -740,6 +1310,7 @@ function CreateEvent(props: any) {
   const handleDepartment = (e: any) => {
     if (e) {
       setErrDepartment(false)
+      setIsPageModified(true)
       setDepartment(e)
     } else {
       setDepartment('')
@@ -750,6 +1321,15 @@ function CreateEvent(props: any) {
     //   setDepartmentError('')
     // }
   }
+
+  const handleWastageRange = (e: any) => {
+    console.log(e)
+    setErrWastageRange(false)
+    setWastageRangeError1('')
+    setStoreWasteProcess(e)
+    setIsPageModified(true)
+  }
+
   const handleBuyer = (e: any) => {
     setBuyerConfirmed(false)
     const value = e.target.value
@@ -965,7 +1545,10 @@ function CreateEvent(props: any) {
 
   const handleClassChange = (selected: any) => {
     console.log(selected)
-    setClassValues(selected)
+    setErrPlanogramClass(false)
+    setPlanogramClassError1('')
+    // setClassValues(selected)
+    setConfirmClassValues(selected)
     setIsPageModified(true)
     // if (selected.length > 0) setErrorRoles('')
   }
@@ -1319,7 +1902,7 @@ function CreateEvent(props: any) {
     if (!group || group === null || group === undefined) {
       flag = 0
       setErrGroup(true)
-      settradingGError1(allMessages.error.noTradingGroup)
+      setTradingGError1(allMessages.error.noTradingGroup)
       focusGroup.current.focus()
     }
     if (!category || category === null || category === undefined) {
@@ -1544,9 +2127,11 @@ function CreateEvent(props: any) {
                 className: classFormData,
               }
             : null,
-          storeWasteProcessTiming: storeWasteProcess.value
+          wastageRange: storeWasteProcess
             ? storeWasteProcess.value
-            : '',
+              ? storeWasteProcess.value
+              : null
+            : null,
           // buyer: buyer,
           // buyerId: buyerValue.userId,
           // buyerEmailId: buyerValue.emailId,
@@ -1645,10 +2230,13 @@ function CreateEvent(props: any) {
             })
             setDisabled(false)
           } else {
-            console.log()
+            console.log(res.data[0])
             // setErrorData(res.data[0])
             setDisabled(false)
-            checkForErrors(res.data[0])
+            // setErrorFile(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(res.data[0])
+            checkForErrors(checkErrorMessages2(res.data[0]))
           }
         } else {
           if (
@@ -1674,7 +2262,12 @@ function CreateEvent(props: any) {
             setDisabled(false)
           } else {
             setDisabled(false)
-            checkForErrors(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(res.data[0])
+            checkForErrors(checkErrorMessages2(res.data[0]))
+            // setErrorFile(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(fileErrorData)
           }
         }
         setIsProgressLoader(false)
@@ -1764,9 +2357,7 @@ function CreateEvent(props: any) {
           planogramClass: {
             className: classFormData ? classFormData : [],
           },
-          storeWasteProcessTiming: storeWasteProcess.value
-            ? storeWasteProcess.value
-            : '',
+          wastageRange: storeWasteProcess.value ? storeWasteProcess.value : '',
           // buyer: buyer,
           // buyer: buyer,
           // buyerId: buyerValue.userId,
@@ -2013,7 +2604,11 @@ function CreateEvent(props: any) {
             console.log()
             // setErrorData(res.data[0])
             setDisabled(false)
-            checkForErrors(res.data[0])
+            // checkForErrors(res.data[0])
+            checkErrorMessages2(res.data[0])
+            // setErrorFile(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(fileErrorData)
           }
         } else {
           if (
@@ -2182,7 +2777,11 @@ function CreateEvent(props: any) {
             console.log()
             // setErrorData(res.data[0])
             setDisabled(false)
-            checkForErrors(res.data[0])
+            // checkForErrors(res.data[0])
+            checkErrorMessages2(res.data[0])
+            // setErrorFile(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(fileErrorData)
           }
         }
       })
@@ -2817,7 +3416,7 @@ function CreateEvent(props: any) {
 
                   <Grid item xl={7} lg={7} md={7} sm={7} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      <button
+                      {/* <button
                         className={classes.backButton}
                         type="button"
                         onClick={() => setClassOpen(true)}
@@ -2827,7 +3426,21 @@ function CreateEvent(props: any) {
                           ? confirmClassValues.length
                           : '0'}
                         )
-                      </button>
+                      </button> */}
+
+                      <AutocompleteSelect
+                        value={confirmClassValues}
+                        isMulti={true}
+                        options={classOptions}
+                        onChange={handleClassChange}
+                        placeholder="Select Planogram Class"
+                      />
+
+                      {errPlanogramClass && (
+                        <span className={classes.errorMessageColor}>
+                          {planogramClassError1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -3016,14 +3629,17 @@ function CreateEvent(props: any) {
                       <AutocompleteSelect
                         value={storeWasteProcess}
                         options={wastageRanges}
-                        onChange={(e: any) => {
-                          console.log(e)
-                          setStoreWasteProcess(e)
-                          setIsPageModified(true)
-                        }}
+                        onChange={handleWastageRange}
                         placeholder="Select Store Waste Process Timing"
                       />
+                      {/* <Typography variant="subtitle2" color="primary"> */}
+                      {errWastageRange && (
+                        <span className={classes.errorMessageColor}>
+                          {wastageRangeError1}
+                        </span>
+                      )}
                     </Typography>
+                    {/* </Typography> */}
                   </Grid>
                 </Grid>
 

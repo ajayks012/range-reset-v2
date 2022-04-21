@@ -16,6 +16,7 @@ import { reset_all } from '../../redux/Actions/PendingAction/Action'
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop'
 import { useStyles, drawerWidth } from './Styles'
 import NavigationDrawer from '../../sections/NavigationDrawer/NavigationDrawer'
+import { resetErrorFile, resetFile } from '../../redux/Actions/FileUpload'
 
 // const useStyles = makeStyles((theme) => ({
 //   contentSection: {
@@ -41,6 +42,8 @@ const Home = (props: any) => {
     increment,
     incrementD,
     logoutClicked,
+    resetFile,
+    resetErrorFile,
   } = props
   // let role = userDetail && userDetail.role;
   const [open, setOpen] = useState(false)
@@ -82,11 +85,14 @@ const Home = (props: any) => {
     localStorage.removeItem('_Gresponse')
     localStorage.removeItem('_GresponseV2')
     localStorage.removeItem('_Colresponse')
+    localStorage.removeItem('_errorCounter')
     sessionStorage.clear()
     refreshRoles()
     refreshApps()
     resetUserdetails()
     reset_all()
+    resetFile()
+    resetErrorFile()
     logoutUser()
     // history.push('/login')
   }, [
@@ -164,6 +170,8 @@ const mapDispatchToProps = (dispatch: any) => {
     getUser: (empId: String) => dispatch(getUser(empId)),
     reset_all: () => dispatch(reset_all()),
     incrementD: () => dispatch(increment()),
+    resetFile: () => dispatch(resetFile()),
+    resetErrorFile: () => dispatch(resetErrorFile()),
   }
 }
 

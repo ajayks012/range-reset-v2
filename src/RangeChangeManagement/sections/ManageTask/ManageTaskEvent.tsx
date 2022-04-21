@@ -199,9 +199,10 @@ function ManageTaskEvent(props: any) {
   useEffect(() => {
     setIsProgressLoader(true)
     // const createdBy = 'system'
-    localStorage.setItem('errorCounter', JSON.stringify({ count: 0 }))
+    localStorage.setItem('_errorCounter', JSON.stringify({ count: 0 }))
     getRangeResetEvents(userDetail && userDetail.userdetails[0].user.userId)
       .then((res: any) => {
+        console.log(res.data)
         const data = res.data.map((d: any) => {
           return {
             name: d.name,
@@ -216,6 +217,7 @@ function ManageTaskEvent(props: any) {
             targetDate: d.targetDate,
             planogramClass: d.planogramClass,
             wastageRange: d.wastageRange,
+            wastageRangeText: d.wastageRangeText,
             buyer: d.buyer,
             buyerId: d.buyerId,
             buyerEmailId: d.buyerEmailId,
@@ -686,13 +688,12 @@ function ManageTaskEvent(props: any) {
               // })
               successData.push(data[i])
             } else {
-              const errorType: String = data[i].status.replace('Error : ', '')
-              const errorArray = errorType.split(' , ')
+              // const errorArray: String = data[i].errorMessage.split(' , ')
               let errorCount = JSON.parse(
-                localStorage.getItem('errorCounter') || '{}'
+                localStorage.getItem('_errorCounter') || '{}'
               )
               let count = errorCount.count
-              console.log(errorArray)
+              // console.log(errorArray)
               // errorData.push({
               //   name: data[i].name,
               //   eventId: data[i].id,
@@ -744,7 +745,7 @@ function ManageTaskEvent(props: any) {
               errorData.push({ ...data[i], errorId: count })
               count = count + 1
               localStorage.setItem(
-                'errorCounter',
+                '_errorCounter',
                 JSON.stringify({ count: count })
               )
             }
@@ -858,28 +859,57 @@ function ManageTaskEvent(props: any) {
         rowData.status.toLowerCase() === 'confirmed')
     ) {
       return rowData.status
+    } else if (rowData.status && rowData.status.toLowerCase() === 'duplicate') {
+      let tooltripWord = 'Duplicate'
+      console.log('duplicating...')
+      return (
+        <div className={classes.errorDialog}>
+          Error
+          <LightTooltip
+            title={
+              <React.Fragment>
+                <div className={classes.errorTooltip}>
+                  <Typography color="error" variant="body2">
+                    {/* {allMessages.error.rafDateError} */}
+
+                    {tooltripWord}
+                    {/* <i>{rowData.errorMessage}</i> */}
+                  </Typography>
+                </div>
+              </React.Fragment>
+            }
+            arrow
+            placement="right"
+          >
+            <ErrorIcon color="error" fontSize="small" />
+          </LightTooltip>
+        </div>
+      )
     } else {
-      let errorArray = []
-      rowData.resetTypeError && errorArray.push(rowData.resetTypeError)
-      rowData.appDueDateError && errorArray.push(rowData.appDueDateError)
-      // rowData.buyerError&&errorArray.push(rowData.)
-      // rowData.buyerError&&errorArray.push(rowData.)
-      rowData.categoryError && errorArray.push(rowData.categoryError)
-      rowData.departmentError && errorArray.push(rowData.departmentError)
-      rowData.buyerError && errorArray.push(rowData.buyerError)
-      rowData.buyerAssistantError &&
-        errorArray.push(rowData.buyerAssistantError)
-      rowData.categoryDirectorError &&
-        errorArray.push(rowData.categoryDirectorError)
-      rowData.merchandiserError && errorArray.push(rowData.merchandiserError)
-      rowData.ownBrandManagerError &&
-        errorArray.push(rowData.ownBrandManagerError)
-      rowData.rangeResetManagerError &&
-        errorArray.push(rowData.rangeResetManagerError)
-      rowData.seniorBuyingManagerError &&
-        errorArray.push(rowData.seniorBuyingManagerError)
-      rowData.supplyChainAnalystError &&
-        errorArray.push(rowData.supplyChainAnalystError)
+      // let errorArray = []
+      // rowData.resetTypeError && errorArray.push(rowData.resetTypeError)
+      // rowData.appDueDateError && errorArray.push(rowData.appDueDateError)
+      // // rowData.buyerError&&errorArray.push(rowData.)
+      // // rowData.buyerError&&errorArray.push(rowData.)
+      // rowData.categoryError && errorArray.push(rowData.categoryError)
+      // rowData.departmentError && errorArray.push(rowData.departmentError)
+      // rowData.buyerError && errorArray.push(rowData.buyerError)
+      // rowData.buyerAssistantError &&
+      //   errorArray.push(rowData.buyerAssistantError)
+      // rowData.categoryDirectorError &&
+      //   errorArray.push(rowData.categoryDirectorError)
+      // rowData.merchandiserError && errorArray.push(rowData.merchandiserError)
+      // rowData.ownBrandManagerError &&
+      //   errorArray.push(rowData.ownBrandManagerError)
+      // rowData.rangeResetManagerError &&
+      //   errorArray.push(rowData.rangeResetManagerError)
+      // rowData.seniorBuyingManagerError &&
+      //   errorArray.push(rowData.seniorBuyingManagerError)
+      // rowData.supplyChainAnalystError &&
+      //   errorArray.push(rowData.supplyChainAnalystError)
+      console.log('error values')
+      const errorArray = rowData.errorMessage.split(',')
+      console.log(errorArray)
 
       if (errorArray.length > 0) {
         return (
@@ -900,6 +930,7 @@ function ManageTaskEvent(props: any) {
                           </i>
                         )
                       })}
+                      {/* <i>{rowData.errorMessage}</i> */}
                     </Typography>
                   </div>
                 </React.Fragment>
@@ -1067,6 +1098,8 @@ function ManageTaskEvent(props: any) {
                   lDate.getFullYear()
                 console.log(name)
                 return name
+              } else {
+                return 'Event Name'
               }
             }
 

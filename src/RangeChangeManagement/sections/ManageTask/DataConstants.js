@@ -158,7 +158,7 @@ export const confirmedTableCols = [
     width: '150px',
   },
   {
-    field: 'wastageRange',
+    field: 'wastageRangeText',
     header: 'Store Waste Process Timing',
     width: '200px',
   },
