@@ -15,7 +15,10 @@ import {
   Select,
   OutlinedInput,
   MenuItem,
+  InputAdornment,
+  IconButton,
 } from '@material-ui/core'
+import ClearIcon from '@material-ui/icons/Clear'
 import {
   DatePicker,
   KeyboardDatePicker,
@@ -25,7 +28,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import DateFnsUtils from '@date-io/date-fns'
 import { useHistory, Prompt } from 'react-router-dom'
-import { yesOrNo } from './DataConstants'
+import { yesOrNo, errorArrayMessage } from './DataConstants'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { useStyles } from './styles'
@@ -238,15 +241,17 @@ function CreateEvent(props: any) {
       let value = oneError[1]
       console.log(key, ' : ', value)
 
-      if (key === 'AppDue Date') {
+      // if (key === 'AppDue Date') {
+      if (key === errorArrayMessage.appDueDate) {
         // setRafDueDateError1(value)
-        newData.appDueDatError = value
+        newData.appDueDateError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Reset Type') {
+      // if (key === 'Reset Type') {
+      if (key === errorArrayMessage.resetType) {
         console.log(key)
         console.log(value)
 
@@ -256,98 +261,111 @@ function CreateEvent(props: any) {
         // setErrorFile(newData)
       }
 
-      if (key === 'Trading Group') {
+      // if (key === 'Trading Group') {
+      if (key === errorArrayMessage.tradingGroup) {
         newData.tradingGroupError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Category') {
+      // if (key === 'Category') {
+      if (key === errorArrayMessage.category) {
         newData.categoryError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Department') {
+      // if (key === 'Department') {
+      if (key === errorArrayMessage.department) {
         newData.departmentError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Launch Date') {
+      // if (key === 'Launch Date') {
+      if (key === errorArrayMessage.launchDate) {
         newData.targetDateError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Planogram Class') {
+      // if (key === 'Planogram Class') {
+      if (key === errorArrayMessage.planogramClass) {
         newData.planogramClassError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
-      if (key === 'Wastage Range') {
+      // if (key === 'Wastage Range') {
+      if (key === errorArrayMessage.wastageRange) {
         newData.wastageRangeError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Buyer') {
-        console.log('executing buyer if')
-
+      // if (key === 'Buyer') {
+      //   console.log('executing buyer if')
+      if (key === errorArrayMessage.buyer) {
         newData.buyerError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Buying Assistant') {
+      // if (key === 'Buying Assistant') {
+      if (key === errorArrayMessage.buyingAssistant) {
         newData.buyerAssistantError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Category Director') {
+      // if (key === 'Category Director') {
+      if (key === errorArrayMessage.categoryDirector) {
         newData.categoryDirectorError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Sr. Buying Manager') {
+      // if (key === 'Sr. Buying Manager') {
+      if (key === errorArrayMessage.srBuyingManager) {
         newData.seniorBuyingManagerError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Merchandiser') {
+      // if (key === 'Merchandiser') {
+      if (key === errorArrayMessage.merchandiser) {
         newData.merchandiserError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
-      if (key === 'Range Reset Manager') {
+      // if (key === 'Range Reset Manager') {
+      if (key === errorArrayMessage.rangeResetManager) {
         newData.rangeResetManagerError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Own Brand Manager') {
+      // if (key === 'Own Brand Manager') {
+      if (key === errorArrayMessage.ownBrandManager) {
         newData.ownBrandManagerError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
       }
 
-      if (key === 'Supply Chain Specialist') {
+      // if (key === 'Supply Chain Specialist') {
+      if (key === errorArrayMessage.supplyChainSpecialist) {
         newData.supplyChainAnalystError = value
         console.log(newData)
         count = count + 1
@@ -715,6 +733,7 @@ function CreateEvent(props: any) {
     if (value) {
       if (value.hasOwnProperty('appDueDateError')) {
         setErrRafdueDate(true)
+        console.log('appDueDateError')
         setRafDueDateError1(value.appDueDateError)
         if (value.hasOwnProperty('appDueDate')) {
           setRafDueDate(value.appDueDate)
@@ -940,6 +959,15 @@ function CreateEvent(props: any) {
 
       if (value.name) {
         setEventName(value.name)
+      }
+      if (value.hasOwnProperty('clearancePriceCheck')) {
+        setClearancePriceApplied(value.clearancePriceCheck)
+      }
+      if (value.hasOwnProperty('orderStopDateCheck')) {
+        setClearancePriceApplied(value.orderStopDateCheck)
+      }
+      if (value.hasOwnProperty('stopOrder')) {
+        setClearancePriceApplied(value.stopOrder)
       }
     }
   }
@@ -2107,8 +2135,8 @@ function CreateEvent(props: any) {
     e.preventDefault()
     setCancelOpenSave((p) => !p)
   }
-  const handleCreateSave = (e: any) => {
-    setIsProgressLoader(true)
+
+  const createFormData = () => {
     const formData = {
       rangeResets: [
         {
@@ -2182,7 +2210,7 @@ function CreateEvent(props: any) {
           //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
           supplyChainAnalystEmailId: supplyChainSpecialist,
           clearancePriceCheck: clearancePriceApplied,
-          orderStopDateheck: orderStopDateCheck,
+          orderStopDateCheck: orderStopDateCheck,
           stopOrder: stopOrder,
           fileName: 'string',
           createdById: userDetail && userDetail.userdetails[0].user.userId,
@@ -2193,6 +2221,98 @@ function CreateEvent(props: any) {
         },
       ],
     }
+    console.log(formData)
+    return formData
+  }
+
+  const handleCreateSave = (e: any) => {
+    setIsProgressLoader(true)
+    // const formData = {
+    //   rangeResets: [
+    //     {
+    //       // uniqueId: uniqueId,
+    //       resetType: resetType.value,
+    //       tradeGroup: group.groupName,
+    //       categoryId: category.categoryId,
+    //       category: category.categoryName,
+    //       department: department.departmentName,
+    //       departmentId: department.departmentId,
+    //       targetDate: `${launchDate} ${'01:00:00.00'}`,
+    //       appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
+    //       name: eventName,
+    //       planogramClass: classFormData
+    //         ? {
+    //             className: classFormData,
+    //           }
+    //         : null,
+    //       wastageRange: storeWasteProcess
+    //         ? storeWasteProcess.value
+    //           ? storeWasteProcess.value
+    //           : null
+    //         : null,
+    //       // buyer: buyer,
+    //       // buyerId: buyerValue.userId,
+    //       // buyerEmailId: buyerValue.emailId,
+    //       // buyer: buyerValue.middleName
+    //       //   ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+    //       //   : `${buyerValue.firstName} ${buyerValue.lastName}`,
+    //       buyerEmailId: buyer,
+    //       // buyerAssistantId: buyingAssistantValue.userId,
+    //       // buyerAssistantEmailId: buyingAssistantValue.emailId,
+    //       // buyerAssistant: buyingAssistantValue.middleName
+    //       //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+    //       //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+    //       buyerAssistantEmailId: buyingAssistant,
+    //       // ownBrandManagerId: ownBrandManagerValue.userId,
+    //       // ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+    //       // ownBrandManager: ownBrandManagerValue.middleName
+    //       //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+    //       //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+    //       ownBrandManagerEmailId: ownBrandManager,
+    //       // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+    //       // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+    //       // seniorBuyingManager: seniorBuyingManagerValue.middleName
+    //       //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+    //       //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+    //       seniorBuyingManagerEmailId: seniorBuyingManager,
+    //       // merchandiserId: merchandiserValue.userId,
+    //       // merchandiserEmailId: merchandiserValue.emailId,
+    //       // merchandiser: merchandiserValue.middleName
+    //       //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+    //       //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+    //       merchandiserEmailId: merchandiser,
+    //       // rangeResetManagerId: rangeResetManagerValue.userId,
+    //       // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+    //       // rangeResetManager: rangeResetManagerValue.middleName
+    //       //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+    //       //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+    //       rangeResetManagerEmailId: rangeResetManager,
+    //       // categoryDirectorId: categoryDirectorValue.userId,
+    //       // categoryDirectorEmailId: categoryDirectorValue.emailId,
+    //       // categoryDirector: categoryDirectorValue.middleName
+    //       //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+    //       //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+    //       categoryDirectorEmailId: categoryDirector,
+    //       // supplyChainAnalystId: supplyChainSpecialistValue.userId,
+    //       // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+    //       // supplyChainAnalyst: supplyChainSpecialistValue.middleName
+    //       //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+    //       //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+    //       supplyChainAnalystEmailId: supplyChainSpecialist,
+    //       clearancePriceCheck: clearancePriceApplied,
+    //       orderStopDateCheck: orderStopDateCheck,
+    //       stopOrder: stopOrder,
+    //       fileName: 'string',
+    //       createdById: userDetail && userDetail.userdetails[0].user.userId,
+    //       createdByName:
+    //         userDetail && userDetail.userdetails[0].user.middleName
+    //           ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+    //           : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+    //     },
+    //   ],
+    // }
+
+    const formData = createFormData()
     console.log(formData)
 
     patchRangeResetEvents(formData)
@@ -2330,6 +2450,134 @@ function CreateEvent(props: any) {
     />
   )
 
+  const createCamundaFormData = (data: any) => {
+    const formdata1 = {
+      requests: [
+        {
+          submitType: 'new',
+          eventId: data.id,
+          eventStatus: data.status,
+          requester: {
+            persona:
+              userDetail && userDetail.userdetails[0].user.middleName
+                ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            details: {
+              emailId: userDetail && userDetail.userdetails[0].user.emailId,
+              userId: userDetail && userDetail.userdetails[0].user.userId,
+              name:
+                userDetail && userDetail.userdetails[0].user.middleName
+                  ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                  : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            },
+            roles:
+              userDetail &&
+              userDetail.userdetails[0].roles.map((role: any) => {
+                return {
+                  roleId: role.roleId,
+                }
+              }),
+            usergroups:
+              userDetail &&
+              userDetail.userdetails[0].usergroups.map((group: any) => {
+                return {
+                  groupId: group.groupId,
+                  status: group.status,
+                }
+              }),
+          },
+          eventHeader: {
+            resetType: data.resetType,
+            rafAppDueDate: data.appDueDate,
+            eventLaunchDate: data.targetDate,
+            eventName: data.name,
+            eventHierarchy: {
+              tradingGroup: data.tradeGroup,
+              category: data.category,
+              department: data.department,
+            },
+            inventoryControl: {
+              planogramClass: data.planogramClass.className,
+              storeWastetiming: data.wastageRange,
+              orderStopDateCheckRequired: data.orderStopDateCheck,
+              stopOrderStockRundown: data.stopOrder,
+              clearancePriceCheck: data.clearancePriceCheck,
+            },
+            eventTeam: {
+              team: [
+                {
+                  persona: 'Buyer',
+                  details: {
+                    emailId: data.buyerEmailId,
+                    userId: data.buyerId,
+                    name: data.buyer,
+                  },
+                },
+                {
+                  persona: 'Category Director',
+                  details: {
+                    emailId: data.categoryDirectorEmailId,
+                    userId: data.categoryDirectorId,
+                    name: data.categoryDirector,
+                  },
+                },
+                {
+                  persona: 'Senior Buying Manager',
+                  details: {
+                    emailId: data.seniorBuyingManagerEmailId,
+                    userId: data.seniorBuyingManagerId,
+                    name: data.seniorBuyingManager,
+                  },
+                },
+                {
+                  persona: 'Buying Assistant',
+                  details: {
+                    emailId: data.buyerAssistantEmailId,
+                    userId: data.buyerAssistantId,
+                    name: data.buyerAssistant,
+                  },
+                },
+                {
+                  persona: 'Merchandiser',
+                  details: {
+                    emailId: data.merchandiserEmailId,
+                    userId: data.merchandiserId,
+                    name: data.merchandiser,
+                  },
+                },
+                {
+                  persona: 'Supply Chain Specialist',
+                  details: {
+                    emailId: data.supplyChainAnalystEmailId,
+                    userId: data.supplyChainAnalystId,
+                    name: data.supplyChainAnalyst,
+                  },
+                },
+                {
+                  persona: 'Own Brand Manager',
+                  details: {
+                    emailId: data.ownBrandManagerEmailId,
+                    userId: data.ownBrandManagerId,
+                    name: data.ownBrandManager,
+                  },
+                },
+                {
+                  persona: 'Range Reset Manager',
+                  details: {
+                    emailId: data.rangeResetManagerEmailId,
+                    userId: data.rangeResetManagerId,
+                    name: data.rangeResetManager,
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    }
+    return formdata1
+  }
+
   const handleCreateAfterDialog = (e: any) => {
     e.preventDefault()
     checkForm('create')
@@ -2340,90 +2588,92 @@ function CreateEvent(props: any) {
   }
 
   const handleCreateEvent = () => {
+    // const formData = {
+    //   rangeResets: [
+    //     {
+    //       // uniqueId: uniqueId,
+    //       resetType: resetType.value,
+    //       tradeGroup: group.groupName,
+    //       categoryId: category.categoryId,
+    //       category: category.categoryName,
+    //       department: department.departmentName,
+    //       departmentId: department.departmentId,
+    //       targetDate: `${launchDate} ${'01:00:00.00'}`,
+    //       appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
+    //       name: eventName,
+    //       planogramClass: {
+    //         className: classFormData ? classFormData : [],
+    //       },
+    //       wastageRange: storeWasteProcess
+    //         ? storeWasteProcess.value
+    //           ? storeWasteProcess.value
+    //           : null
+    //         : null,
+    //       // buyer: buyer,
+    //       // buyer: buyer,
+    //       // buyerId: buyerValue.userId,
+    //       // buyerEmailId: buyerValue.emailId,
+    //       // buyer: buyerValue.middleName
+    //       //   ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
+    //       //   : `${buyerValue.firstName} ${buyerValue.lastName}`,
+    //       buyerEmailId: buyer,
+    //       // buyerAssistantId: buyingAssistantValue.userId,
+    //       // buyerAssistantEmailId: buyingAssistantValue.emailId,
+    //       // buyerAssistant: buyingAssistantValue.middleName
+    //       //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
+    //       //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
+    //       buyerAssistantEmailId: buyingAssistant,
+    //       // ownBrandManagerId: ownBrandManagerValue.userId,
+    //       // ownBrandManagerEmailId: ownBrandManagerValue.emailId,
+    //       // ownBrandManager: ownBrandManagerValue.middleName
+    //       //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
+    //       //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
+    //       ownBrandManagerEmailId: ownBrandManager,
+    //       // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
+    //       // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
+    //       // seniorBuyingManager: seniorBuyingManagerValue.middleName
+    //       //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
+    //       //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
+    //       seniorBuyingManagerEmailId: seniorBuyingManager,
+    //       // merchandiserId: merchandiserValue.userId,
+    //       // merchandiserEmailId: merchandiserValue.emailId,
+    //       // merchandiser: merchandiserValue.middleName
+    //       //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
+    //       //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
+    //       merchandiserEmailId: merchandiser,
+    //       // rangeResetManagerId: rangeResetManagerValue.userId,
+    //       // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
+    //       // rangeResetManager: rangeResetManagerValue.middleName
+    //       //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
+    //       //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
+    //       rangeResetManagerEmailId: rangeResetManager,
+    //       // categoryDirectorId: categoryDirectorValue.userId,
+    //       // categoryDirectorEmailId: categoryDirectorValue.emailId,
+    //       // categoryDirector: categoryDirectorValue.middleName
+    //       //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
+    //       //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
+    //       categoryDirectorEmailId: categoryDirector,
+    //       // supplyChainAnalystId: supplyChainSpecialistValue.userId,
+    //       // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
+    //       // supplyChainAnalyst: supplyChainSpecialistValue.middleName
+    //       //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
+    //       //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
+    //       supplyChainAnalystEmailId: supplyChainSpecialist,
+    //       clearancePriceCheck: clearancePriceApplied,
+    //       orderStopDateCheck: orderStopDateCheck,
+    //       stopOrder: stopOrder,
+    //       fileName: 'string',
+    //       createdById: userDetail && userDetail.userdetails[0].user.userId,
+    //       createdByName:
+    //         userDetail && userDetail.userdetails[0].user.middleName
+    //           ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+    //           : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+    //     },
+    //   ],
+    // }
+
     setIsProgressLoader(true)
-    const formData = {
-      rangeResets: [
-        {
-          // uniqueId: uniqueId,
-          resetType: resetType.value,
-          tradeGroup: group.groupName,
-          categoryId: category.categoryId,
-          category: category.categoryName,
-          department: department.departmentName,
-          departmentId: department.departmentId,
-          targetDate: `${launchDate} ${'01:00:00.00'}`,
-          appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
-          name: eventName,
-          planogramClass: {
-            className: classFormData ? classFormData : [],
-          },
-          wastageRange: storeWasteProcess
-            ? storeWasteProcess.value
-              ? storeWasteProcess.value
-              : null
-            : null,
-          // buyer: buyer,
-          // buyer: buyer,
-          // buyerId: buyerValue.userId,
-          // buyerEmailId: buyerValue.emailId,
-          // buyer: buyerValue.middleName
-          //   ? `${buyerValue.firstName} ${buyerValue.middleName} ${buyerValue.lastName}`
-          //   : `${buyerValue.firstName} ${buyerValue.lastName}`,
-          buyerEmailId: buyer,
-          // buyerAssistantId: buyingAssistantValue.userId,
-          // buyerAssistantEmailId: buyingAssistantValue.emailId,
-          // buyerAssistant: buyingAssistantValue.middleName
-          //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
-          //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
-          buyerAssistantEmailId: buyingAssistant,
-          // ownBrandManagerId: ownBrandManagerValue.userId,
-          // ownBrandManagerEmailId: ownBrandManagerValue.emailId,
-          // ownBrandManager: ownBrandManagerValue.middleName
-          //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
-          //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
-          ownBrandManagerEmailId: ownBrandManager,
-          // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
-          // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
-          // seniorBuyingManager: seniorBuyingManagerValue.middleName
-          //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
-          //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
-          seniorBuyingManagerEmailId: seniorBuyingManager,
-          // merchandiserId: merchandiserValue.userId,
-          // merchandiserEmailId: merchandiserValue.emailId,
-          // merchandiser: merchandiserValue.middleName
-          //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
-          //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
-          merchandiserEmailId: merchandiser,
-          // rangeResetManagerId: rangeResetManagerValue.userId,
-          // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
-          // rangeResetManager: rangeResetManagerValue.middleName
-          //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
-          //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
-          rangeResetManagerEmailId: rangeResetManager,
-          // categoryDirectorId: categoryDirectorValue.userId,
-          // categoryDirectorEmailId: categoryDirectorValue.emailId,
-          // categoryDirector: categoryDirectorValue.middleName
-          //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
-          //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
-          categoryDirectorEmailId: categoryDirector,
-          // supplyChainAnalystId: supplyChainSpecialistValue.userId,
-          // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
-          // supplyChainAnalyst: supplyChainSpecialistValue.middleName
-          //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
-          //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
-          supplyChainAnalystEmailId: supplyChainSpecialist,
-          clearancePriceCheck: clearancePriceApplied,
-          orderStopDateheck: orderStopDateCheck,
-          stopOrder: stopOrder,
-          fileName: 'string',
-          createdById: userDetail && userDetail.userdetails[0].user.userId,
-          createdByName:
-            userDetail && userDetail.userdetails[0].user.middleName
-              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-        },
-      ],
-    }
+    const formData = createFormData()
     console.log(formData)
 
     patchRangeResetEvents(formData)
@@ -2446,132 +2696,133 @@ function CreateEvent(props: any) {
             )
             setFile(_tasks)
 
-            const formdata1 = {
-              requests: [
-                {
-                  submitType: 'new',
-                  eventId: res.data[0].id,
-                  eventStatus: res.data[0].status,
-                  requester: {
-                    persona:
-                      userDetail && userDetail.userdetails[0].user.middleName
-                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    details: {
-                      emailId:
-                        userDetail && userDetail.userdetails[0].user.emailId,
-                      userId:
-                        userDetail && userDetail.userdetails[0].user.userId,
-                      name:
-                        userDetail && userDetail.userdetails[0].user.middleName
-                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    },
-                    roles:
-                      userDetail &&
-                      userDetail.userdetails[0].roles.map((role: any) => {
-                        return {
-                          roleId: role.roleId,
-                        }
-                      }),
-                    usergroups:
-                      userDetail &&
-                      userDetail.userdetails[0].usergroups.map((group: any) => {
-                        return {
-                          groupId: group.groupId,
-                          status: group.status,
-                        }
-                      }),
-                  },
-                  eventHeader: {
-                    resetType: res.data[0].resetType,
-                    rafAppDueDate: res.data[0].appDueDate,
-                    eventLaunchDate: res.data[0].targetDate,
-                    eventName: res.data[0].name,
-                    eventHierarchy: {
-                      tradingGroup: res.data[0].tradeGroup,
-                      category: res.data[0].category,
-                      department: res.data[0].department,
-                    },
-                    inventoryControl: {
-                      planogramClass: res.data[0].planogramClass.className,
-                      storeWastetiming: res.data[0].wastageRange,
-                      orderStopDateCheckRequired: res.data[0].orderStopDateheck,
-                      stopOrderStockRundown: res.data[0].stopOrder,
-                      clearancePriceCheck: res.data[0].clearancePriceCheck,
-                    },
-                    eventTeam: {
-                      team: [
-                        {
-                          persona: 'Buyer',
-                          details: {
-                            emailId: res.data[0].buyerEmailId,
-                            userId: res.data[0].buyerId,
-                            name: res.data[0].buyer,
-                          },
-                        },
-                        {
-                          persona: 'Category Director',
-                          details: {
-                            emailId: res.data[0].categoryDirectorEmailId,
-                            userId: res.data[0].categoryDirectorId,
-                            name: res.data[0].categoryDirector,
-                          },
-                        },
-                        {
-                          persona: 'Senior Buying Manager',
-                          details: {
-                            emailId: res.data[0].seniorBuyingManagerEmailId,
-                            userId: res.data[0].seniorBuyingManagerId,
-                            name: res.data[0].seniorBuyingManager,
-                          },
-                        },
-                        {
-                          persona: 'Buying Assistant',
-                          details: {
-                            emailId: res.data[0].buyerAssistantEmailId,
-                            userId: res.data[0].buyerAssistantId,
-                            name: res.data[0].buyerAssistant,
-                          },
-                        },
-                        {
-                          persona: 'Merchandiser',
-                          details: {
-                            emailId: res.data[0].merchandiserEmailId,
-                            userId: res.data[0].merchandiserId,
-                            name: res.data[0].merchandiser,
-                          },
-                        },
-                        {
-                          persona: 'Supply Chain Specialist',
-                          details: {
-                            emailId: res.data[0].supplyChainAnalystEmailId,
-                            userId: res.data[0].supplyChainAnalystId,
-                            name: res.data[0].supplyChainAnalyst,
-                          },
-                        },
-                        {
-                          persona: 'Own Brand Manager',
-                          details: {
-                            emailId: res.data[0].ownBrandManagerEmailId,
-                            userId: res.data[0].ownBrandManagerId,
-                            name: res.data[0].ownBrandManager,
-                          },
-                        },
-                        {
-                          persona: 'Range Reset Manager',
-                          details: {
-                            emailId: res.data[0].rangeResetManagerEmailId,
-                            userId: res.data[0].rangeResetManagerId,
-                            name: res.data[0].rangeResetManager,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              ],
-            }
+            // const formdata1 = {
+            //   requests: [
+            //     {
+            //       submitType: 'new',
+            //       eventId: res.data[0].id,
+            //       eventStatus: res.data[0].status,
+            //       requester: {
+            //         persona:
+            //           userDetail && userDetail.userdetails[0].user.middleName
+            //             ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+            //             : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            //         details: {
+            //           emailId:
+            //             userDetail && userDetail.userdetails[0].user.emailId,
+            //           userId:
+            //             userDetail && userDetail.userdetails[0].user.userId,
+            //           name:
+            //             userDetail && userDetail.userdetails[0].user.middleName
+            //               ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+            //               : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            //         },
+            //         roles:
+            //           userDetail &&
+            //           userDetail.userdetails[0].roles.map((role: any) => {
+            //             return {
+            //               roleId: role.roleId,
+            //             }
+            //           }),
+            //         usergroups:
+            //           userDetail &&
+            //           userDetail.userdetails[0].usergroups.map((group: any) => {
+            //             return {
+            //               groupId: group.groupId,
+            //               status: group.status,
+            //             }
+            //           }),
+            //       },
+            //       eventHeader: {
+            //         resetType: res.data[0].resetType,
+            //         rafAppDueDate: res.data[0].appDueDate,
+            //         eventLaunchDate: res.data[0].targetDate,
+            //         eventName: res.data[0].name,
+            //         eventHierarchy: {
+            //           tradingGroup: res.data[0].tradeGroup,
+            //           category: res.data[0].category,
+            //           department: res.data[0].department,
+            //         },
+            //         inventoryControl: {
+            //           planogramClass: res.data[0].planogramClass.className,
+            //           storeWastetiming: res.data[0].wastageRange,
+            //           orderStopDateCheckRequired: res.data[0].orderStopDateCheck,
+            //           stopOrderStockRundown: res.data[0].stopOrder,
+            //           clearancePriceCheck: res.data[0].clearancePriceCheck,
+            //         },
+            //         eventTeam: {
+            //           team: [
+            //             {
+            //               persona: 'Buyer',
+            //               details: {
+            //                 emailId: res.data[0].buyerEmailId,
+            //                 userId: res.data[0].buyerId,
+            //                 name: res.data[0].buyer,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Category Director',
+            //               details: {
+            //                 emailId: res.data[0].categoryDirectorEmailId,
+            //                 userId: res.data[0].categoryDirectorId,
+            //                 name: res.data[0].categoryDirector,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Senior Buying Manager',
+            //               details: {
+            //                 emailId: res.data[0].seniorBuyingManagerEmailId,
+            //                 userId: res.data[0].seniorBuyingManagerId,
+            //                 name: res.data[0].seniorBuyingManager,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Buying Assistant',
+            //               details: {
+            //                 emailId: res.data[0].buyerAssistantEmailId,
+            //                 userId: res.data[0].buyerAssistantId,
+            //                 name: res.data[0].buyerAssistant,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Merchandiser',
+            //               details: {
+            //                 emailId: res.data[0].merchandiserEmailId,
+            //                 userId: res.data[0].merchandiserId,
+            //                 name: res.data[0].merchandiser,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Supply Chain Specialist',
+            //               details: {
+            //                 emailId: res.data[0].supplyChainAnalystEmailId,
+            //                 userId: res.data[0].supplyChainAnalystId,
+            //                 name: res.data[0].supplyChainAnalyst,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Own Brand Manager',
+            //               details: {
+            //                 emailId: res.data[0].ownBrandManagerEmailId,
+            //                 userId: res.data[0].ownBrandManagerId,
+            //                 name: res.data[0].ownBrandManager,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Range Reset Manager',
+            //               details: {
+            //                 emailId: res.data[0].rangeResetManagerEmailId,
+            //                 userId: res.data[0].rangeResetManagerId,
+            //                 name: res.data[0].rangeResetManager,
+            //               },
+            //             },
+            //           ],
+            //         },
+            //       },
+            //     },
+            //   ],
+            // }
+            const formdata1 = createCamundaFormData(res.data[0])
             console.log(formdata1)
 
             createEventsCamunda(res.data[0].id, formdata1)
@@ -2609,7 +2860,7 @@ function CreateEvent(props: any) {
             // setErrorData(res.data[0])
             setDisabled(false)
             // checkForErrors(res.data[0])
-            checkErrorMessages2(res.data[0])
+            checkForErrors(checkErrorMessages2(res.data[0]))
             // setErrorFile(res.data[0])
             // checkForErrors(res.data[0])
             // checkErrorMessages(fileErrorData)
@@ -2619,132 +2870,134 @@ function CreateEvent(props: any) {
             res.data[0].status.toLowerCase() === 'draft' ||
             res.data[0].status.toLowerCase() === 'confirmed'
           ) {
-            const formdata1 = {
-              requests: [
-                {
-                  submitType: 'new',
-                  eventId: res.data[0].id,
-                  eventStatus: res.data[0].status,
-                  requester: {
-                    persona:
-                      userDetail && userDetail.userdetails[0].user.middleName
-                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    details: {
-                      emailId:
-                        userDetail && userDetail.userdetails[0].user.emailId,
-                      userId:
-                        userDetail && userDetail.userdetails[0].user.userId,
-                      name:
-                        userDetail && userDetail.userdetails[0].user.middleName
-                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    },
-                    roles:
-                      userDetail &&
-                      userDetail.userdetails[0].roles.map((role: any) => {
-                        return {
-                          roleId: role.roleId,
-                        }
-                      }),
-                    usergroups:
-                      userDetail &&
-                      userDetail.userdetails[0].usergroups.map((group: any) => {
-                        return {
-                          groupId: group.groupId,
-                          status: group.status,
-                        }
-                      }),
-                  },
-                  eventHeader: {
-                    resetType: res.data[0].resetType,
-                    rafAppDueDate: res.data[0].appDueDate,
-                    eventLaunchDate: res.data[0].targetDate,
-                    eventName: res.data[0].name,
-                    eventHierarchy: {
-                      tradingGroup: res.data[0].tradeGroup,
-                      category: res.data[0].category,
-                      department: res.data[0].department,
-                    },
-                    inventoryControl: {
-                      planogramClass: res.data[0].planogramClass.className,
-                      storeWastetiming: res.data[0].wastageRange,
-                      orderStopDateCheckRequired: res.data[0].orderStopDateheck,
-                      stopOrderStockRundown: res.data[0].stopOrder,
-                      clearancePriceCheck: res.data[0].clearancePriceCheck,
-                    },
-                    eventTeam: {
-                      team: [
-                        {
-                          persona: 'Buyer',
-                          details: {
-                            emailId: res.data[0].buyerEmailId,
-                            userId: res.data[0].buyerId,
-                            name: res.data[0].buyer,
-                          },
-                        },
-                        {
-                          persona: 'Category Director',
-                          details: {
-                            emailId: res.data[0].categoryDirectorEmailId,
-                            userId: res.data[0].categoryDirectorId,
-                            name: res.data[0].categoryDirector,
-                          },
-                        },
-                        {
-                          persona: 'Senior Buying Manager',
-                          details: {
-                            emailId: res.data[0].seniorBuyingManagerEmailId,
-                            userId: res.data[0].seniorBuyingManagerId,
-                            name: res.data[0].seniorBuyingManager,
-                          },
-                        },
-                        {
-                          persona: 'Buying Assistant',
-                          details: {
-                            emailId: res.data[0].buyerAssistantEmailId,
-                            userId: res.data[0].buyerAssistantId,
-                            name: res.data[0].buyerAssistant,
-                          },
-                        },
-                        {
-                          persona: 'Merchandiser',
-                          details: {
-                            emailId: res.data[0].merchandiserEmailId,
-                            userId: res.data[0].merchandiserId,
-                            name: res.data[0].merchandiser,
-                          },
-                        },
-                        {
-                          persona: 'Supply Chain Specialist',
-                          details: {
-                            emailId: res.data[0].supplyChainAnalystEmailId,
-                            userId: res.data[0].supplyChainAnalystId,
-                            name: res.data[0].supplyChainAnalyst,
-                          },
-                        },
-                        {
-                          persona: 'Own Brand Manager',
-                          details: {
-                            emailId: res.data[0].ownBrandManagerEmailId,
-                            userId: res.data[0].ownBrandManagerId,
-                            name: res.data[0].ownBrandManager,
-                          },
-                        },
-                        {
-                          persona: 'Range Reset Manager',
-                          details: {
-                            emailId: res.data[0].rangeResetManagerEmailId,
-                            userId: res.data[0].rangeResetManagerId,
-                            name: res.data[0].rangeResetManager,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              ],
-            }
+            // const formdata1 = {
+            //   requests: [
+            //     {
+            //       submitType: 'new',
+            //       eventId: res.data[0].id,
+            //       eventStatus: res.data[0].status,
+            //       requester: {
+            //         persona:
+            //           userDetail && userDetail.userdetails[0].user.middleName
+            //             ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+            //             : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            //         details: {
+            //           emailId:
+            //             userDetail && userDetail.userdetails[0].user.emailId,
+            //           userId:
+            //             userDetail && userDetail.userdetails[0].user.userId,
+            //           name:
+            //             userDetail && userDetail.userdetails[0].user.middleName
+            //               ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+            //               : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            //         },
+            //         roles:
+            //           userDetail &&
+            //           userDetail.userdetails[0].roles.map((role: any) => {
+            //             return {
+            //               roleId: role.roleId,
+            //             }
+            //           }),
+            //         usergroups:
+            //           userDetail &&
+            //           userDetail.userdetails[0].usergroups.map((group: any) => {
+            //             return {
+            //               groupId: group.groupId,
+            //               status: group.status,
+            //             }
+            //           }),
+            //       },
+            //       eventHeader: {
+            //         resetType: res.data[0].resetType,
+            //         rafAppDueDate: res.data[0].appDueDate,
+            //         eventLaunchDate: res.data[0].targetDate,
+            //         eventName: res.data[0].name,
+            //         eventHierarchy: {
+            //           tradingGroup: res.data[0].tradeGroup,
+            //           category: res.data[0].category,
+            //           department: res.data[0].department,
+            //         },
+            //         inventoryControl: {
+            //           planogramClass: res.data[0].planogramClass.className,
+            //           storeWastetiming: res.data[0].wastageRange,
+            //           orderStopDateCheckRequired: res.data[0].orderStopDateCheck,
+            //           stopOrderStockRundown: res.data[0].stopOrder,
+            //           clearancePriceCheck: res.data[0].clearancePriceCheck,
+            //         },
+            //         eventTeam: {
+            //           team: [
+            //             {
+            //               persona: 'Buyer',
+            //               details: {
+            //                 emailId: res.data[0].buyerEmailId,
+            //                 userId: res.data[0].buyerId,
+            //                 name: res.data[0].buyer,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Category Director',
+            //               details: {
+            //                 emailId: res.data[0].categoryDirectorEmailId,
+            //                 userId: res.data[0].categoryDirectorId,
+            //                 name: res.data[0].categoryDirector,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Senior Buying Manager',
+            //               details: {
+            //                 emailId: res.data[0].seniorBuyingManagerEmailId,
+            //                 userId: res.data[0].seniorBuyingManagerId,
+            //                 name: res.data[0].seniorBuyingManager,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Buying Assistant',
+            //               details: {
+            //                 emailId: res.data[0].buyerAssistantEmailId,
+            //                 userId: res.data[0].buyerAssistantId,
+            //                 name: res.data[0].buyerAssistant,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Merchandiser',
+            //               details: {
+            //                 emailId: res.data[0].merchandiserEmailId,
+            //                 userId: res.data[0].merchandiserId,
+            //                 name: res.data[0].merchandiser,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Supply Chain Specialist',
+            //               details: {
+            //                 emailId: res.data[0].supplyChainAnalystEmailId,
+            //                 userId: res.data[0].supplyChainAnalystId,
+            //                 name: res.data[0].supplyChainAnalyst,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Own Brand Manager',
+            //               details: {
+            //                 emailId: res.data[0].ownBrandManagerEmailId,
+            //                 userId: res.data[0].ownBrandManagerId,
+            //                 name: res.data[0].ownBrandManager,
+            //               },
+            //             },
+            //             {
+            //               persona: 'Range Reset Manager',
+            //               details: {
+            //                 emailId: res.data[0].rangeResetManagerEmailId,
+            //                 userId: res.data[0].rangeResetManagerId,
+            //                 name: res.data[0].rangeResetManager,
+            //               },
+            //             },
+            //           ],
+            //         },
+            //       },
+            //     },
+            //   ],
+            // }
+
+            const formdata1 = createCamundaFormData(res.data[0])
             console.log(formdata1)
 
             createEventsCamunda(res.data[0].id, formdata1)
@@ -2782,7 +3035,7 @@ function CreateEvent(props: any) {
             // setErrorData(res.data[0])
             setDisabled(false)
             // checkForErrors(res.data[0])
-            checkErrorMessages2(res.data[0])
+            checkForErrors(checkErrorMessages2(res.data[0]))
             // setErrorFile(res.data[0])
             // checkForErrors(res.data[0])
             // checkErrorMessages(fileErrorData)
@@ -3041,6 +3294,20 @@ function CreateEvent(props: any) {
                             value={props.value}
                             onChange={props.onChange}
                             className={classes.dateFields}
+                            endAdornment={
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={(e: any) => {
+                                    e.stopPropagation()
+                                    setRafDueDate(null)
+                                  }}
+                                  edge="end"
+                                  style={{ margin: '5px' }}
+                                >
+                                  <ClearIcon />
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           />
                         )}
                       />
@@ -3351,7 +3618,20 @@ function CreateEvent(props: any) {
                             value={props.value}
                             onChange={props.onChange}
                             className={classes.dateFields}
-                            // ref={props.ref}
+                            endAdornment={
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={(e: any) => {
+                                    e.stopPropagation()
+                                    setLaunchDate(null)
+                                  }}
+                                  edge="end"
+                                  style={{ margin: '5px' }}
+                                >
+                                  <ClearIcon />
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           />
                         )}
                       />

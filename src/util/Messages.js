@@ -36,6 +36,8 @@ export const allMessages = {
     noDepartment: 'Please select a Department',
     noLaunchDate: 'Please select a Launch Date',
     noRafDueDate: 'Please select a Raf due date',
+    effectiveDateError:
+      'Date range will be between system date and 2 weeks in the future',
   },
   success: {
     successPost: 'Log posted successfully',

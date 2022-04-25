@@ -6,10 +6,13 @@ import {
   useTheme,
   useMediaQuery,
   Paper,
+  OutlinedInput,
   Grid,
 } from '@material-ui/core'
 import { styled } from '@material-ui/styles'
-import React, { useRef } from 'react'
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@date-io/date-fns'
+import React, { useRef, useState } from 'react'
 import { useHistory, Prompt } from 'react-router-dom'
 // import SideBar from '../Layout/SideBar'
 import Select from 'react-select'
@@ -124,6 +127,11 @@ function UpdateUser(props: any) {
   const focusStatus = useRef<any>(null)
   const focusRole = useRef<any>(null)
   const focusGroup = useRef<any>(null)
+  const focusEffectiveDate = useRef<any>(null)
+  const [effectiveDate, setEffectiveDate] = useState<any>(
+    `${new Date().toISOString().split('T')[0]}`
+  )
+  const [errorEffectiveDate, setErrorEffectiveDate] = useState<any>('')
   useEffect(() => {
     return () => reset_empID()
   }, [])
@@ -537,6 +545,25 @@ function UpdateUser(props: any) {
     setRoleNames(selected)
     if (selected.length > 0) setErrorRoles('')
   }
+
+  const handleEffectiveDate = (e: any) => {
+    setIsPageModified(true)
+    setEffectiveDate(e)
+  }
+  useEffect(() => {
+    const systemDate = new Date().toISOString().split('T')[0]
+    console.log(systemDate)
+    var date1 = new Date(effectiveDate)
+    console.log(effectiveDate)
+    var date2 = new Date(systemDate)
+    var date3 = (date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)
+    console.log(date3)
+    if (date3 < 0 || date3 > 14) {
+      setErrorEffectiveDate(allMessages.error.effectiveDateError)
+    } else {
+      setErrorEffectiveDate('')
+    }
+  }, [effectiveDate])
 
   const postTasklog = (logData: any) => {
     postTaskLogsAPI &&
@@ -1307,6 +1334,10 @@ function UpdateUser(props: any) {
       focusStatus.current.focus()
       flag = 0
     }
+    if (errorEffectiveDate !== '') {
+      focusEffectiveDate.current.focus()
+      flag = 0
+    }
     if (
       requestType !== 'new' &&
       requestType !== 'modify' &&
@@ -1377,6 +1408,12 @@ function UpdateUser(props: any) {
           emailId: userDetail && userDetail.userdetails[0].user.emailId,
           requestBy: userDetail && userDetail.userdetails[0].user.userId,
           requestDate: new Date().toISOString().split('T')[0],
+          requestorName:
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName !== ''
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
           // requestedDate: new Date().toISOString().split('T')[0],
           requestType: requestType,
         },
@@ -1388,6 +1425,7 @@ function UpdateUser(props: any) {
             }
           }),
       },
+      effectiveDate: effectiveDate,
       user: {
         employeeId: employeeID,
         // EmployeeId: employeeID,
@@ -1623,6 +1661,12 @@ function UpdateUser(props: any) {
           emailId: userDetail && userDetail.userdetails[0].user.emailId,
           requestBy: userDetail && userDetail.userdetails[0].user.userId,
           requestDate: new Date().toISOString().split('T')[0],
+          requestorName:
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName !== ''
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
           // requestedDate: new Date().toISOString().split('T')[0],
           requestType: requestType,
         },
@@ -1634,6 +1678,7 @@ function UpdateUser(props: any) {
             }
           }),
       },
+      effectiveDate: effectiveDate,
       user: {
         employeeId: employeeID,
         // EmployeeId: employeeID,
@@ -2505,6 +2550,60 @@ function UpdateUser(props: any) {
               <Box className={classes.inputFieldBox} justifyContent="center">
                 <Typography variant="subtitle2" color="error">
                   {errorGroups}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          <Box className={classes.eachRow}>
+            <Box className={classes.inputLabel}>
+              <Typography variant="subtitle2">
+                Effective Date &nbsp;
+                <span
+                  style={{
+                    color: '#ff0000',
+                  }}
+                >
+                  *
+                </span>
+              </Typography>
+            </Box>
+
+            <Box className={classes.inputFieldBox}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DatePicker
+                  format="dd/MM/yyyy"
+                  inputVariant="outlined"
+                  value={effectiveDate}
+                  // ref={focusLaunchDate}
+                  // onChange={handleLaunchDate}
+                  // maxDate={new Date('08/04/2022')}
+                  onChange={(e: any) =>
+                    handleEffectiveDate(e.toISOString().split('T')[0])
+                  }
+                  // KeyboardButtonProps={{
+                  //   'aria-label': 'change date',
+                  // }}
+                  emptyLabel="Enter Effective Date"
+                  TextFieldComponent={(props: any) => (
+                    <OutlinedInput
+                      margin="dense"
+                      inputRef={focusEffectiveDate}
+                      onClick={props.onClick}
+                      value={props.value}
+                      onChange={props.onChange}
+                      className={classes.dateFields}
+                    />
+                  )}
+                />
+              </MuiPickersUtilsProvider>
+            </Box>
+          </Box>
+          {errorEffectiveDate !== '' && (
+            <Box className={classes.eachRow}>
+              <Box className={classes.inputLabel}></Box>
+              <Box className={classes.inputFieldBox} justifyContent="center">
+                <Typography variant="subtitle2" color="error">
+                  {errorEffectiveDate}
                 </Typography>
               </Box>
             </Box>

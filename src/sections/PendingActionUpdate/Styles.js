@@ -280,5 +280,16 @@ export const useStyles = makeStyles((theme) => {
     customMaxWidth: {
       maxWidth: '75%',
     },
+    dateFields: {
+      [theme.breakpoints.up('sm')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+      color: theme.palette.primary.main,
+      padding: '8px',
+      height: 38,
+    },
   }
 })

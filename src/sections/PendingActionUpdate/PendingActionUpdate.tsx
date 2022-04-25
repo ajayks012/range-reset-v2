@@ -5,16 +5,19 @@ import {
   Dialog,
   useTheme,
   useMediaQuery,
+  OutlinedInput,
   Paper,
   Grid,
 } from '@material-ui/core'
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@date-io/date-fns'
 import { styled } from '@material-ui/styles'
 import { components } from 'react-select'
 import Select from 'react-select'
 import { connect } from 'react-redux'
 import { teal } from '@material-ui/core/colors'
 import { Toast } from 'primereact/toast'
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useHistory, Prompt } from 'react-router-dom'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -131,15 +134,23 @@ function PendingActionUpdate(props: any) {
   )
   const [logDataIn, setLogDataIn] = React.useState({})
   const [isPageModified, setIsPageModified] = React.useState(false)
+
+  const [effectiveDate, setEffectiveDate] = useState<any>(
+    `${new Date().toISOString().split('T')[0]}`
+  )
+
+  const [errorEffectiveDate, setErrorEffectiveDate] = useState<any>('')
   //
   const focusRequestType = useRef<any>(null)
   const focusEmpId = useRef<any>(null)
   const focusStatus = useRef<any>(null)
   const focusRole = useRef<any>(null)
   const focusGroup = useRef<any>(null)
+  const focusEffectiveDate = useRef<any>(null)
   //
   const [requestorEmailId, setRequestorEmailId] = React.useState('')
   const [requestorUserId, setRequestorUserId] = React.useState('')
+  const [requestorName, setRequestorName] = React.useState('')
   const [requestorRoles, setRequestorRoles] = React.useState<Array<any>>([])
   //
 
@@ -237,6 +248,18 @@ function PendingActionUpdate(props: any) {
     DEFAULT,
     userDetail,
   ])
+
+  useEffect(() => {
+    if (selectEmployeeID) {
+      console.log(
+        new Date(selectEmployeeID.requestTimestamp).toISOString().split('T')[0]
+      )
+      const date = new Date(selectEmployeeID.requestTimestamp)
+        .toISOString()
+        .split('T')[0]
+      console.log(date)
+    }
+  }, [selectEmployeeID])
 
   useEffect(() => {
     // console.log('Check count: ', checkCount)
@@ -534,6 +557,25 @@ function PendingActionUpdate(props: any) {
     if (selected.length > 0) setErrorRoles('')
   }
 
+  const handleEffectiveDate = (e: any) => {
+    setIsPageModified(true)
+    setEffectiveDate(e)
+  }
+  useEffect(() => {
+    const systemDate = new Date().toISOString().split('T')[0]
+    console.log(systemDate)
+    var date1 = new Date(effectiveDate)
+    console.log(effectiveDate)
+    var date2 = new Date(systemDate)
+    var date3 = (date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)
+    console.log(date3)
+    if (date3 < 0 || date3 > 14) {
+      setErrorEffectiveDate(allMessages.error.effectiveDateError)
+    } else {
+      setErrorEffectiveDate('')
+    }
+  }, [effectiveDate])
+
   const postTasklog = (logData: any) => {
     postTaskLogsAPI &&
       postTaskLogsAPI(logData)
@@ -602,6 +644,16 @@ function PendingActionUpdate(props: any) {
                     .requestType
                 : 'modify'
             )
+            setEffectiveDate(
+              res.data.tasklists[0].requestData.effectiveDate && effectiveDate
+                ? `${
+                    new Date(res.data.tasklists[0].requestData.effectiveDate)
+                      .toISOString()
+                      .split('T')[0]
+                  }`
+                : effectiveDate
+            )
+            //setEffectiveDate(new Date(res.data.tasklists[0].requestData.effectiveDate).toISOString().split('T')[0])
             setEmployeeID(res.data.tasklists[0].requestData.user.employeeId)
             setFirstName(res.data.tasklists[0].requestData.user.firstName)
             setMiddleName(res.data.tasklists[0].requestData.user.middleName)
@@ -613,6 +665,13 @@ function PendingActionUpdate(props: any) {
             )
             setRequestorEmailId(
               res.data.tasklists[0].requestData.camunda.requestorDetails.emailId
+            )
+            setRequestorName(
+              res.data.tasklists[0].requestData.camunda.requestorDetails
+                .requestorName
+                ? res.data.tasklists[0].requestData.camunda.requestorDetails
+                    .requestorName
+                : ''
             )
             setRequestorRoles(
               res.data.tasklists[0].requestData.camunda.requestorRoles
@@ -1365,6 +1424,18 @@ function PendingActionUpdate(props: any) {
       focusStatus.current.focus()
       flag = 0
     }
+    if (errorEffectiveDate !== '') {
+      // if (
+      //   btnName === 'reject'
+
+      // ) {
+      // } else {
+      //   focusEffectiveDate.current.focus()
+      //   flag = 0
+      // }
+      focusEffectiveDate.current.focus()
+      flag = 0
+    }
     if (
       requestType !== 'new' &&
       requestType !== 'modify' &&
@@ -1630,6 +1701,12 @@ function PendingActionUpdate(props: any) {
         requestorDetails: {
           emailId: userDetail && userDetail.userdetails[0].user.emailId,
           requestBy: userDetail && userDetail.userdetails[0].user.userId,
+          requestorName:
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName !== ''
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
           requestDate: new Date().toISOString().split('T')[0],
           requestType: requestType,
           comments: comments,
@@ -1642,6 +1719,7 @@ function PendingActionUpdate(props: any) {
             }
           }),
       },
+      effectiveDate: effectiveDate,
       user: {
         employeeId: employeeID,
         firstName: firstName,
@@ -1776,6 +1854,12 @@ function PendingActionUpdate(props: any) {
         requestorDetails: {
           emailId: userDetail && userDetail.userdetails[0].user.emailId,
           requestBy: userDetail && userDetail.userdetails[0].user.userId,
+          requestorName:
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName !== ''
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
           requestDate: new Date().toISOString().split('T')[0],
           requestType: requestType,
           comments: comments,
@@ -1788,6 +1872,7 @@ function PendingActionUpdate(props: any) {
             }
           }),
       },
+      effectiveDate: effectiveDate,
       user: {
         employeeId: employeeID,
         firstName: firstName,
@@ -1908,6 +1993,7 @@ function PendingActionUpdate(props: any) {
         emailId: requestorEmailId,
         //requestBy: userDetail && userDetail.userdetails[0].user.userId,
         requestBy: requestorUserId,
+        requestorName: requestorName,
         requestDate: new Date().toISOString().split('T')[0],
         // requestType: requestType,
         requestType: 'moreinfo',
@@ -1953,6 +2039,12 @@ function PendingActionUpdate(props: any) {
               requestorDetails: {
                 emailId: userDetail && userDetail.userdetails[0].user.emailId,
                 requestBy: userDetail && userDetail.userdetails[0].user.userId,
+                requestorName:
+                  userDetail &&
+                  userDetail.userdetails[0].user.middleName &&
+                  userDetail.userdetails[0].user.middleName !== ''
+                    ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                    : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
                 requestDate: new Date().toISOString().split('T')[0],
                 requestType: requestType,
                 comments: comments,
@@ -1965,6 +2057,7 @@ function PendingActionUpdate(props: any) {
                   }
                 }),
             },
+            effectiveDate: effectiveDate,
             user: {
               employeeId: employeeID,
               firstName: firstName,
@@ -2111,6 +2204,12 @@ function PendingActionUpdate(props: any) {
         requestorDetails: {
           emailId: userDetail && userDetail.userdetails[0].user.emailId,
           requestBy: userDetail && userDetail.userdetails[0].user.userId,
+          requestorName:
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName !== ''
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
           requestDate: new Date().toISOString().split('T')[0],
           requestType: requestType,
           comments: comments,
@@ -2123,6 +2222,7 @@ function PendingActionUpdate(props: any) {
             }
           }),
       },
+      effectiveDate: effectiveDate ? effectiveDate : '',
       user: {
         employeeId: employeeID,
         firstName: firstName,
@@ -3071,6 +3171,60 @@ function PendingActionUpdate(props: any) {
               <Box className={classes.inputFieldBox} justifyContent="center">
                 <Typography variant="subtitle2" color="error">
                   {errorGroups}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          <Box className={classes.eachRow}>
+            <Box className={classes.inputLabel}>
+              <Typography variant="subtitle2">
+                Effective Date &nbsp;
+                <span
+                  style={{
+                    color: '#ff0000',
+                  }}
+                >
+                  *
+                </span>
+              </Typography>
+            </Box>
+
+            <Box className={classes.inputFieldBox}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DatePicker
+                  format="dd/MM/yyyy"
+                  inputVariant="outlined"
+                  value={effectiveDate}
+                  // ref={focusLaunchDate}
+                  // onChange={handleLaunchDate}
+                  // maxDate={new Date('08/04/2022')}
+                  onChange={(e: any) =>
+                    handleEffectiveDate(e.toISOString().split('T')[0])
+                  }
+                  // KeyboardButtonProps={{
+                  //   'aria-label': 'change date',
+                  // }}
+                  emptyLabel="Enter Effective Date"
+                  TextFieldComponent={(props: any) => (
+                    <OutlinedInput
+                      margin="dense"
+                      inputRef={focusEffectiveDate}
+                      onClick={props.onClick}
+                      value={props.value}
+                      onChange={props.onChange}
+                      className={classes.dateFields}
+                    />
+                  )}
+                />
+              </MuiPickersUtilsProvider>
+            </Box>
+          </Box>
+          {errorEffectiveDate !== '' && (
+            <Box className={classes.eachRow}>
+              <Box className={classes.inputLabel}></Box>
+              <Box className={classes.inputFieldBox} justifyContent="center">
+                <Typography variant="subtitle2" color="error">
+                  {errorEffectiveDate}
                 </Typography>
               </Box>
             </Box>

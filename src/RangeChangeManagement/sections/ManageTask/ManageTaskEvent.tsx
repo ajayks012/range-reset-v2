@@ -203,80 +203,90 @@ function ManageTaskEvent(props: any) {
     getRangeResetEvents(userDetail && userDetail.userdetails[0].user.userId)
       .then((res: any) => {
         console.log(res.data)
-        const data = res.data.map((d: any) => {
-          return {
-            name: d.name,
-            id: d.id,
-            resetType: d.resetType,
-            appDueDate: d.appDueDate,
-            tradeGroup: d.tradeGroup,
-            category: d.category,
-            categoryId: d.categoryId,
-            department: d.department,
-            departmentId: d.departmentId,
-            targetDate: d.targetDate,
-            planogramClass: d.planogramClass,
-            wastageRange: d.wastageRange,
-            wastageRangeText: d.wastageRangeText,
-            buyer: d.buyer,
-            buyerId: d.buyerId,
-            buyerEmailId: d.buyerEmailId,
-            categoryDirector: d.categoryDirector,
-            categoryDirectorId: d.categoryDirectorId,
-            categoryDirectorEmailId: d.categoryDirectorEmailId,
-            seniorBuyingManager: d.seniorBuyingManager,
-            seniorBuyingManagerId: d.seniorBuyingManagerId,
-            seniorBuyingManagerEmailId: d.seniorBuyingManagerEmailId,
-            buyerAssistant: d.buyerAssistant,
-            buyerAssistantId: d.buyerAssistantId,
-            buyerAssistantEmailId: d.buyerAssistantEmailId,
-            merchandiser: d.merchandiser,
-            merchandiserId: d.merchandiserId,
-            merchandiserEmailId: d.merchandiserEmailId,
-            supplyChainAnalyst: d.supplyChainAnalyst,
-            supplyChainAnalystId: d.supplyChainAnalystId,
-            supplyChainAnalystEmailId: d.supplyChainAnalystEmailId,
-            ownBrandManager: d.ownBrandManager,
-            ownBrandManagerId: d.ownBrandManagerId,
-            ownBrandManagerEmailId: d.ownBrandManagerEmailId,
-            rangeResetManager: d.rangeResetManager,
-            rangeResetManagerId: d.rangeResetManagerId,
-            rangeResetManagerEmailId: d.rangeResetManagerEmailId,
+        if (res.data.length > 0) {
+          const data = res.data.map((d: any) => {
+            return {
+              name: d.name,
+              id: d.id,
+              resetType: d.resetType,
+              appDueDate: d.appDueDate,
+              tradeGroup: d.tradeGroup,
+              category: d.category,
+              categoryId: d.categoryId,
+              department: d.department,
+              departmentId: d.departmentId,
+              targetDate: d.targetDate,
+              planogramClass: d.planogramClass,
+              wastageRange: d.wastageRange,
+              wastageRangeText: d.wastageRangeText,
+              buyer: d.buyer,
+              buyerId: d.buyerId,
+              buyerEmailId: d.buyerEmailId,
+              categoryDirector: d.categoryDirector,
+              categoryDirectorId: d.categoryDirectorId,
+              categoryDirectorEmailId: d.categoryDirectorEmailId,
+              seniorBuyingManager: d.seniorBuyingManager,
+              seniorBuyingManagerId: d.seniorBuyingManagerId,
+              seniorBuyingManagerEmailId: d.seniorBuyingManagerEmailId,
+              buyerAssistant: d.buyerAssistant,
+              buyerAssistantId: d.buyerAssistantId,
+              buyerAssistantEmailId: d.buyerAssistantEmailId,
+              merchandiser: d.merchandiser,
+              merchandiserId: d.merchandiserId,
+              merchandiserEmailId: d.merchandiserEmailId,
+              supplyChainAnalyst: d.supplyChainAnalyst,
+              supplyChainAnalystId: d.supplyChainAnalystId,
+              supplyChainAnalystEmailId: d.supplyChainAnalystEmailId,
+              ownBrandManager: d.ownBrandManager,
+              ownBrandManagerId: d.ownBrandManagerId,
+              ownBrandManagerEmailId: d.ownBrandManagerEmailId,
+              rangeResetManager: d.rangeResetManager,
+              rangeResetManagerId: d.rangeResetManagerId,
+              rangeResetManagerEmailId: d.rangeResetManagerEmailId,
 
-            // eventId: d['Event ID'],
-            // name: 'string',
-            // eventName: eventName(),
+              // eventId: d['Event ID'],
+              // name: 'string',
+              // eventName: eventName(),
 
-            status: d.status,
-            clearancePriceCheck: d.clearancePriceCheck,
-            orderStopDateCheck: d.orderStopDateheck,
-            stopOrder: d.stopOrder,
-          }
-        })
-        console.log(data)
-        setFetchRangeResets(data)
-        if (fileData.length < 1) {
-          setFile(data)
-        } else {
-          let errorData: any = []
-          fileData.map((item: any) => {
-            if (
-              !(
-                item.status.toLowerCase() === 'draft' ||
-                item.status.toLowerCase() === 'confirmed'
-              )
-            ) {
-              errorData.push(item)
+              status: d.status,
+              clearancePriceCheck: d.clearancePriceCheck,
+              orderStopDateCheck: d.orderStopDateCheck,
+              stopOrder: d.stopOrder,
             }
           })
-          console.log(errorData)
-          setFile([...errorData, ...data])
+          console.log(data)
+          setFetchRangeResets(data)
+          if (fileData.length < 1) {
+            setFile(data)
+          } else {
+            let errorData: any = []
+            fileData.map((item: any) => {
+              if (
+                !(
+                  item.status.toLowerCase() === 'draft' ||
+                  item.status.toLowerCase() === 'confirmed'
+                )
+              ) {
+                errorData.push(item)
+              }
+            })
+            console.log(errorData)
+            setFile([...errorData, ...data])
+          }
+          setConfirmtable(true)
+          setIsProgressLoader(false)
         }
-        setConfirmtable(true)
-        setIsProgressLoader(false)
+        // else {
+        //   if (fileData > 0) {
+        //     setConfirmtable(true)
+        //   } else {
+        //     setConfirmtable(false)
+        //   }
+        // }
       })
       .catch((err: any) => {
         console.log(err)
+
         setIsProgressLoader(false)
       })
   }, [])
@@ -575,7 +585,7 @@ function ManageTaskEvent(props: any) {
   const handleUploadDialogOpen = () => {
     setOpenUploadDialog(true)
     setImportedData([])
-    setConfirmtable(false)
+    fetchRangeResets.length > 0 && setConfirmtable(true)
   }
   const handleUploadDialogClose = () => {
     setOpenUploadDialog(false)
@@ -583,7 +593,7 @@ function ManageTaskEvent(props: any) {
       setFileName(uploadedFile.name)
       setUploadedFile(null)
     }
-    // setConfirmtable(true)
+    // setConfirmtable(false)
   }
 
   const handleFileUpload = (event: any) => {
@@ -602,14 +612,15 @@ function ManageTaskEvent(props: any) {
 
   const handlePreviewDialogSave1 = () => {
     setConfirmtable(true)
-    setIsProgressLoader(true)
     setOpenPreviewDialog(false)
     // setConfirmedRows(importedData && importedData)
     if (importedFormData && importedFormData.length > 0) {
+      setIsProgressLoader(true)
       const formData = {
         rangeResets:
           importedFormData &&
           importedFormData.map((item: any) => {
+            console.log(item)
             return {
               ...item,
               appDueDate: item.appDueDate
@@ -844,6 +855,7 @@ function ManageTaskEvent(props: any) {
         //   border: 'none',
         //   backgroundColor: 'inherit',
         // }}
+        disabled={rowData.status.toLowerCase() === 'duplicate'}
         className={classes.greenButtons}
         onClick={() => handleSingleEvent(rowData)}
       >
@@ -861,7 +873,7 @@ function ManageTaskEvent(props: any) {
       return rowData.status
     } else if (rowData.status && rowData.status.toLowerCase() === 'duplicate') {
       let tooltripWord = 'Duplicate'
-      console.log('duplicating...')
+      // console.log('duplicating...')
       return (
         <div className={classes.errorDialog}>
           Error
@@ -907,7 +919,7 @@ function ManageTaskEvent(props: any) {
       //   errorArray.push(rowData.seniorBuyingManagerError)
       // rowData.supplyChainAnalystError &&
       //   errorArray.push(rowData.supplyChainAnalystError)
-      console.log('error values')
+      // console.log('error values')
       const errorArray = rowData.errorMessage.split(',')
       console.log(errorArray)
 
@@ -1030,6 +1042,7 @@ function ManageTaskEvent(props: any) {
 
   const handleUpload = (event: any) => {
     event.preventDefault()
+    setConfirmtable(false)
     // const fileSize = (uploadedFile.size / 1024 / 1024).toFixed(2)
     // console.log(fileSize)
     // const i = bulkUploadFileType.findIndex((type: any) => {
@@ -1074,24 +1087,25 @@ function ManageTaskEvent(props: any) {
           //     }, {});
           // });
           const newData = data.map((d: any) => {
+            console.log(d)
             var converted_date1 = d[cols[6]]
               ? excelDatetoDate(d[cols[6]]) !== ''
                 ? excelDatetoDate(d[cols[6]])?.toString()
                 : null
               : null
 
-            var converted_date3 = d[cols[2]]
-              ? excelDatetoDate(d[cols[2]]) !== ''
-                ? excelDatetoDate(d[cols[2]]).toString()
+            var converted_date3 = d[cols[1]]
+              ? excelDatetoDate(d[cols[1]]) !== ''
+                ? excelDatetoDate(d[cols[1]]).toString()
                 : null
               : null
 
             var eventName = () => {
-              if (d[cols[5]] && converted_date1) {
+              if (d[cols[4]] && converted_date1) {
                 var lDate = new Date(converted_date1)
                 console.log(lDate)
                 var name =
-                  d[cols[5]].replace(/ /g, '_') +
+                  d[cols[4]].replace(/ /g, '_') +
                   '_' +
                   lDate.getDate() +
                   lDate.toLocaleString('default', { month: 'short' }) +
@@ -1119,38 +1133,40 @@ function ManageTaskEvent(props: any) {
             // }
 
             return {
-              name: d[cols[0]] ? d[cols[0]] : eventName(),
-              resetType: d[cols[1]] ? d[cols[1]] : null,
+              resetType: d[cols[0]] ? d[cols[0]] : null,
               appDueDate: converted_date3,
-              tradeGroup: d[cols[3]] ? d[cols[3]] : null,
-              category: d[cols[4]] ? d[cols[4]] : null,
+              tradeGroup: d[cols[2]] ? d[cols[2]] : null,
+              category: d[cols[3]] ? d[cols[3]] : null,
               // categoryId: 1,
-              department: d[cols[5]] ? d[cols[5]] : null,
+              department: d[cols[4]] ? d[cols[4]] : null,
               // departmentId: 1,
+              name: d[cols[5]] ? d[cols[5]] : eventName(),
               targetDate: converted_date1,
               planogramClass: classArray(d[cols[7]])
                 ? {
                     className: classArray(d[cols[7]]),
                   }
                 : classArray(d[cols[7]]),
-              wastageRange: d[cols[8]] ? d[cols[8]] : null,
-              buyerEmailId: d[cols[9]] ? d[cols[9]] : '',
-              categoryDirectorEmailId: d[cols[10]] ? d[cols[10]] : '',
-              seniorBuyingManagerEmailId: d[cols[11]] ? d[cols[11]] : '',
-              buyerAssistantEmailId: d[cols[12]] ? d[cols[12]] : '',
-              merchandiserEmailId: d[cols[13]] ? d[cols[13]] : '',
-              supplyChainAnalystEmailId: d[cols[14]] ? d[cols[14]] : '',
-              ownBrandManagerEmailId: d[cols[15]] ? d[cols[15]] : '',
-              rangeResetManagerEmailId: d[cols[16]] ? d[cols[16]] : '',
+
+              clearancePriceCheck: d[cols[8]] ? d[cols[8]] : 'Y',
+              orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',
+              stopOrder: d[cols[10]] ? d[cols[10]] : 'Y',
+
+              wastageRange: d[cols[11]] ? d[cols[11]] : null,
+              buyerEmailId: d[cols[12]] ? d[cols[12]] : '',
+              categoryDirectorEmailId: d[cols[13]] ? d[cols[13]] : '',
+              seniorBuyingManagerEmailId: d[cols[14]] ? d[cols[14]] : '',
+              buyerAssistantEmailId: d[cols[15]] ? d[cols[15]] : '',
+              merchandiserEmailId: d[cols[16]] ? d[cols[16]] : '',
+              supplyChainAnalystEmailId: d[cols[17]] ? d[cols[17]] : '',
+              ownBrandManagerEmailId: d[cols[18]] ? d[cols[18]] : '',
+              rangeResetManagerEmailId: d[cols[19]] ? d[cols[19]] : '',
 
               // eventId: d['Event ID'],
               // name: 'string',
               // eventName: eventName(),
 
               // "status": d["Status"] ? d["Status"] : "Draft",
-              // clearancePriceCheck: 'y',
-              // orderStopDateCheck: 'y',
-              // stopOrder: 'y',
             }
           })
           console.log(newData)
@@ -1223,6 +1239,12 @@ function ManageTaskEvent(props: any) {
     }
   }, [checkCount, failureCount])
 
+  useEffect(() => {
+    if (fetchRangeResets && fileData && fileData.length == 0) {
+      setConfirmtable(false)
+    }
+  }, [fetchRangeResets])
+
   const removeEvents = () => {
     if (selectedEvents && selectedEvents.length > 0) {
       setIsProgressLoader(true)
@@ -1265,6 +1287,9 @@ function ManageTaskEvent(props: any) {
       })
     }
     setSelectedEvents(null)
+    // if (fileData && fileData.length == 0) {
+    //   setConfirmtable(false)
+    // }
   }
 
   // const sampleExcel = (
@@ -1697,7 +1722,10 @@ function ManageTaskEvent(props: any) {
 
         <DialogHeader
           title="Confirm Bulk Event"
-          onClose={() => setOpenPreviewDialog(false)}
+          onClose={() => {
+            fetchRangeResets.length > 0 && setConfirmtable(true)
+            setOpenPreviewDialog(false)
+          }}
         />
 
         <Box sx={{ p: 1 }}>
@@ -1726,7 +1754,11 @@ function ManageTaskEvent(props: any) {
               onClick={removeTasks}
               className={classes.whiteButton}
               disabled={
-                selectedImportedData && !(selectedImportedData.length > 0)
+                selectedImportedData
+                  ? selectedImportedData.length === 0
+                    ? true
+                    : false
+                  : true
               }
             >
               Delete Event(s)
@@ -3110,7 +3142,13 @@ function ManageTaskEvent(props: any) {
                   <Button
                     onClick={removeEvents}
                     className={classes.whiteButton}
-                    disabled={selectedEvents && !(selectedEvents.length > 0)}
+                    disabled={
+                      selectedEvents
+                        ? selectedEvents.length === 0
+                          ? true
+                          : false
+                        : true
+                    }
                   >
                     Delete Event
                   </Button>

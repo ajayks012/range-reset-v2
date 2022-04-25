@@ -5,7 +5,7 @@ export const pendingActionUpdateTableHeaders = [
     width: 150,
   },
   {
-    field: 'assignedToUserId',
+    field: 'assignedToUserName',
     headerName: 'Assigned To',
     width: 100,
   },

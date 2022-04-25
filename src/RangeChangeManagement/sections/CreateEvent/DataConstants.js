@@ -261,3 +261,22 @@ export const yesOrNo = [
     text: 'No',
   },
 ]
+
+export const errorArrayMessage = {
+  appDueDate: 'AppDue Date',
+  resetType: 'Reset Type',
+  tradingGroup: 'Trading Group',
+  category: 'Category',
+  department: 'Department',
+  launchDate: 'Launch Date',
+  planogramClass: 'Planogram Class',
+  wastageRange: 'Wastage Range',
+  buyer: 'Buyer',
+  buyingAssistant: 'Buying Assistant',
+  categoryDirector: 'Category Director',
+  srBuyingManager: 'Sr. Buying Manager',
+  merchandiser: 'Merchandiser',
+  rangeResetManager: 'Range Reset Manager',
+  ownBrandManager: 'Own Brand Manager',
+  supplyChainSpecialist: 'Supply Chain Specialist',
+}

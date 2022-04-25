@@ -102,6 +102,12 @@ function GroupPendingAction(props: any) {
         requestorDetails: {
           emailId: userDetail && userDetail.userdetails[0].user.emailId,
           requestBy: userDetail && userDetail.userdetails[0].user.userId,
+          requestorName:
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName !== ''
+              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
           requestType: 'complete',
           requestDate: new Date().toISOString().split('T')[0],
         },

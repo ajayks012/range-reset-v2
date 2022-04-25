@@ -90,21 +90,21 @@ export const eventUploadTableCols = [
     width: '250px',
   },
 
-  // {
-  //   field: "clearancePriceCheck",
-  //   header: "Clearance Pricing Action required",
-  //   width: "80px"
-  // },
-  // {
-  //   field: "orderStopDateCheck",
-  //   header: "Order Stop date Check Required",
-  //   width: "80px"
-  // },
-  // {
-  //   field: "stopOrder",
-  //   header: "Stop Order",
-  //   width: "80px"
-  // },
+  {
+    field: 'clearancePriceCheck',
+    header: 'Clearance Pricing Action Required',
+    width: '250px',
+  },
+  {
+    field: 'orderStopDateCheck',
+    header: 'Order Stop date Check Required',
+    width: '250px',
+  },
+  {
+    field: 'stopOrder',
+    header: 'Stop Order',
+    width: '120px',
+  },
 ]
 export const confirmedTableCols = [
   {
