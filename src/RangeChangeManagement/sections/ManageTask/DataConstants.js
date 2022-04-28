@@ -163,12 +163,12 @@ export const confirmedTableCols = [
     width: '200px',
   },
   {
-    field: 'buyer',
+    field: 'buyerEmailId',
     header: 'Buyer',
     width: '250px',
   },
   {
-    field: 'categoryDirector',
+    field: 'categoryDirectorEmailId',
     header: 'Category Director',
     width: '250px',
   },
