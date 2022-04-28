@@ -892,8 +892,6 @@ function ManageTaskEvent(props: any) {
       rowData.status &&
       rowData.status.toLowerCase().includes('duplicate')
     ) {
-      let tooltripWord = 'Duplicate'
-      // console.log('duplicating...')
       return (
         <div className={classes.errorDialog}>
           Error

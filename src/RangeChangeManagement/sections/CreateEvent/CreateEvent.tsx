@@ -142,9 +142,9 @@ function CreateEvent(props: any) {
     useState<any>('')
   const [supplyChainSpecialistConfirmed, setSupplyChainSpecialistConfirmed] =
     useState<any>(false)
-  const [clearancePriceApplied, setClearancePriceApplied] = useState('Y')
-  const [orderStopDateCheck, setStopDateCheck] = useState('Y')
-  const [stopOrder, setStopOrder] = useState('Y')
+  const [clearancePriceApplied, setClearancePriceApplied] = useState<any>('Y')
+  const [orderStopDateCheck, setStopDateCheck] = useState<any>('Y')
+  const [stopOrder, setStopOrder] = useState<any>('Y')
 
   const [classOpen, setClassOpen] = useState(false)
 
@@ -1002,18 +1002,21 @@ function CreateEvent(props: any) {
       if (value.hasOwnProperty('clearancePriceError')) {
         setErrClearancePrice(true)
         setClearancePriceError1(value.clearancePriceError)
+        setClearancePriceApplied(null)
       } else {
         setClearancePriceApplied(value.clearancePriceCheck)
       }
       if (value.hasOwnProperty('orderStopDateError')) {
         setErrOrderStopDate(true)
         setOrderStopDateError1(value.orderStopDateError)
+        setStopDateCheck(null)
       } else {
         setStopDateCheck(value.orderStopDateCheck)
       }
       if (value.hasOwnProperty('stopOrderError')) {
         setErrStopOrder(true)
         setStopOrderError1(value.stopOrderError)
+        setStopOrder(null)
       } else {
         setStopOrder(value.stopOrder)
       }
@@ -2447,9 +2450,11 @@ function CreateEvent(props: any) {
           //   ? `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.middleName} ${supplyChainSpecialistValue.lastName}`
           //   : `${supplyChainSpecialistValue.firstName} ${supplyChainSpecialistValue.lastName}`,
           supplyChainAnalystEmailId: supplyChainSpecialist,
-          clearancePriceCheck: clearancePriceApplied,
-          orderStopDateCheck: orderStopDateCheck,
-          stopOrder: stopOrder,
+          clearancePriceCheck: clearancePriceApplied
+            ? clearancePriceApplied
+            : 'Y',
+          orderStopDateCheck: orderStopDateCheck ? orderStopDateCheck : 'Y',
+          stopOrder: stopOrder ? stopOrder : 'Y',
           fileName: null,
           createdById: userDetail && userDetail.userdetails[0].user.userId,
           createdByName:
@@ -2578,11 +2583,11 @@ function CreateEvent(props: any) {
               life: life,
               className: 'login-toast',
             })
-          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
+          } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
             toast.current.show({
               severity: 'error',
-              summary: 'Duplicate Event',
-              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              summary: 'Error',
+              detail: `${res.data[0].status}`,
               life: life,
               className: 'login-toast',
             })
@@ -2610,11 +2615,13 @@ function CreateEvent(props: any) {
               life: life,
               className: 'login-toast',
             })
-          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
+          } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
             toast.current.show({
               severity: 'error',
-              summary: 'Duplicate Event',
+              // summary: 'Duplicate Event',
               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              summary: 'Error',
+              detail: `${res.data[0].status}`,
               life: life,
               className: 'login-toast',
             })
@@ -3085,11 +3092,13 @@ function CreateEvent(props: any) {
                   className: 'login-toast',
                 })
               })
-          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
+          } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
             toast.current.show({
               severity: 'error',
-              summary: 'Duplicate Event',
+              // summary: 'Duplicate Event',
               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              summary: 'Error',
+              detail: `${res.data[0].status}`,
               life: life,
               className: 'login-toast',
             })
@@ -3260,11 +3269,13 @@ function CreateEvent(props: any) {
                   className: 'login-toast',
                 })
               })
-          } else if (res.data[0].status.toLowerCase() === 'duplicate') {
+          } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
             toast.current.show({
               severity: 'error',
-              summary: 'Duplicate Event',
+              // summary: 'Duplicate Event',
               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              summary: 'Error',
+              detail: `${res.data[0].status}`,
               life: life,
               className: 'login-toast',
             })
