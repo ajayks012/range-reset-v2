@@ -28,8 +28,9 @@ export const allMessages = {
     errorReassign:
       'Cannot reassign in case the status of requestor is Inactive/Deleted',
     rafDateError: 'RAF/APP Due Date Should not be greater than Launch Date',
+    rafDateerror1: 'RAF/APP date should be equal or greater than current date',
     emailError: 'Please enter a valid Email ID',
-    emailSearcherror: 'Please enter a Email Id & Click on search icon',
+    emailSearcherror: 'Please enter an Email Id ',
     emailEmptyerror: 'Please enter a Email Id and Search',
     noTradingGroup: 'Please select a Trading Group',
     noCategory: 'Please select a Category',
@@ -38,6 +39,8 @@ export const allMessages = {
     noRafDueDate: 'Please select a Raf due date',
     effectiveDateError:
       'Date range will be between system date and 2 weeks in the future',
+    launchDateerror: 'Launch date should be equal or greater than current date',
+    bulkUploadfailure: 'Bulk upload failure due to service error',
   },
   success: {
     successPost: 'Log posted successfully',
@@ -48,5 +51,6 @@ export const allMessages = {
     successCopy: 'RequestId has been autocopied to clipboard',
     successGroupCopy: 'GroupId has been autocopied to clipboard',
     promptMessage: 'Unsaved changes will be lost. Do you want to continue ?',
+    bulkUploadSuccess: 'Events uploaded successfully',
   },
 }

@@ -69,19 +69,20 @@ import AutocompleteSelect from '../../components/AutoCompleteSelect/Autocomplete
 import { bulkUploadFileType } from '../../../util/Constants'
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import { Toast } from 'primereact/toast'
+import LightTooltip from '../../components/LightToolTip/LightTooltip'
 
 const Input = styled('input')({
   display: 'none',
 })
 
-const LightTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
-  },
-}))(Tooltip)
+// const LightTooltip = withStyles((theme) => ({
+//   tooltip: {
+//     backgroundColor: theme.palette.common.white,
+//     color: 'rgba(0, 0, 0, 0.87)',
+//     boxShadow: theme.shadows[1],
+//     fontSize: 11,
+//   },
+// }))(Tooltip)
 
 function ManageTaskEvent(props: any) {
   const { userDetail, setFile, resetFile, setErrorFile, fileData } = props
@@ -260,6 +261,7 @@ function ManageTaskEvent(props: any) {
             setFile(data)
           } else {
             let errorData: any = []
+
             fileData.map((item: any) => {
               if (
                 !(
@@ -286,7 +288,12 @@ function ManageTaskEvent(props: any) {
       })
       .catch((err: any) => {
         console.log(err)
+        if (fileData.length > 0) {
+          setFetchRangeResets(fileData)
+          setConfirmtable(true)
+        }
 
+        console.log(fileData)
         setIsProgressLoader(false)
       })
   }, [])
@@ -473,7 +480,9 @@ function ManageTaskEvent(props: any) {
           const buyerValues = res.data.userdetails.map((item: any) => {
             return {
               value: item.user.emailId,
-              label: item.user.emailId,
+              label: item.user.middleName
+                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
               // item.user.middleName
               //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
               //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -496,7 +505,9 @@ function ManageTaskEvent(props: any) {
             (item: any) => {
               return {
                 value: item.user.emailId,
-                label: item.user.emailId,
+                label: item.user.middleName
+                  ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                  : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
                 // item.user.middleName
                 //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
                 //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -519,7 +530,9 @@ function ManageTaskEvent(props: any) {
           const merchandiserValues = res.data.userdetails.map((item: any) => {
             return {
               value: item.user.emailId,
-              label: item.user.emailId,
+              label: item.user.middleName
+                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
               // item.user.middleName
               //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
               //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -541,7 +554,9 @@ function ManageTaskEvent(props: any) {
           const supplyChainValues = res.data.userdetails.map((item: any) => {
             return {
               value: item.user.emailId,
-              label: item.user.emailId,
+              label: item.user.middleName
+                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
               // item.user.middleName
               //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
               //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -781,6 +796,7 @@ function ManageTaskEvent(props: any) {
             severity: 'success',
             summary: 'Success',
             // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            detail: `${allMessages.success.bulkUploadSuccess}`,
             life: life,
             className: 'login-toast',
           })
@@ -794,6 +810,7 @@ function ManageTaskEvent(props: any) {
             severity: 'error',
             summary: 'Error!',
             // detail: err.response.data.errorMessage,
+            detail: `${allMessages.error.bulkUploadfailure}`,
             life: life,
             className: 'login-toast',
           })
@@ -855,7 +872,7 @@ function ManageTaskEvent(props: any) {
         //   border: 'none',
         //   backgroundColor: 'inherit',
         // }}
-        disabled={rowData.status.toLowerCase() === 'duplicate'}
+        disabled={rowData.status.toLowerCase().includes('duplicate')}
         className={classes.greenButtons}
         onClick={() => handleSingleEvent(rowData)}
       >
@@ -871,21 +888,22 @@ function ManageTaskEvent(props: any) {
         rowData.status.toLowerCase() === 'confirmed')
     ) {
       return rowData.status
-    } else if (rowData.status && rowData.status.toLowerCase() === 'duplicate') {
+    } else if (
+      rowData.status &&
+      rowData.status.toLowerCase().includes('duplicate')
+    ) {
       let tooltripWord = 'Duplicate'
       // console.log('duplicating...')
       return (
         <div className={classes.errorDialog}>
           Error
-          <LightTooltip
+          {/* <LightTooltip
             title={
               <React.Fragment>
                 <div className={classes.errorTooltip}>
                   <Typography color="error" variant="body2">
-                    {/* {allMessages.error.rafDateError} */}
 
                     {tooltripWord}
-                    {/* <i>{rowData.errorMessage}</i> */}
                   </Typography>
                 </div>
               </React.Fragment>
@@ -894,7 +912,12 @@ function ManageTaskEvent(props: any) {
             placement="right"
           >
             <ErrorIcon color="error" fontSize="small" />
-          </LightTooltip>
+          </LightTooltip> */}
+          <LightTooltip
+            title={rowData.status}
+            position={'right'}
+            icon={<ErrorIcon color="error" fontSize="small" />}
+          />
         </div>
       )
     } else {
@@ -927,12 +950,11 @@ function ManageTaskEvent(props: any) {
         return (
           <div className={classes.errorDialog}>
             Error
-            <LightTooltip
+            {/* <LightTooltip
               title={
                 <React.Fragment>
                   <div className={classes.errorTooltip}>
                     <Typography color="error" variant="body2">
-                      {/* {allMessages.error.rafDateError} */}
 
                       {errorArray.map((item: any, index: any) => {
                         return (
@@ -942,7 +964,6 @@ function ManageTaskEvent(props: any) {
                           </i>
                         )
                       })}
-                      {/* <i>{rowData.errorMessage}</i> */}
                     </Typography>
                   </div>
                 </React.Fragment>
@@ -951,14 +972,26 @@ function ManageTaskEvent(props: any) {
               placement="right"
             >
               <ErrorIcon color="error" fontSize="small" />
-            </LightTooltip>
+            </LightTooltip> */}
+            <LightTooltip
+              title={errorArray.map((item: any, index: any) => {
+                return (
+                  <i key={index}>
+                    {item}
+                    <br />
+                  </i>
+                )
+              })}
+              position={'right'}
+              icon={<ErrorIcon color="error" fontSize="small" />}
+            />
           </div>
         )
       } else {
         return (
           <div className={classes.errorDialog}>
             Error
-            <LightTooltip
+            {/* <LightTooltip
               title={
                 <React.Fragment>
                   <div className={classes.errorTooltip}>
@@ -972,12 +1005,132 @@ function ManageTaskEvent(props: any) {
               placement="right"
             >
               <ErrorIcon color="error" fontSize="small" />
-            </LightTooltip>
+            </LightTooltip> */}
+            <LightTooltip
+              title={rowData.status}
+              position={'right'}
+              icon={<ErrorIcon color="error" fontSize="small" />}
+            />
           </div>
         )
       }
     }
   }
+
+  // const statusTemplate = (rowData: any) => {
+  //   if (
+  //     rowData.status &&
+  //     (rowData.status.toLowerCase() === 'draft' ||
+  //       rowData.status.toLowerCase() === 'confirmed')
+  //   ) {
+  //     return rowData.status
+  //   } else if (rowData.status && rowData.status.toLowerCase() === 'error') {
+  //     // let errorArray = []
+  //     // rowData.resetTypeError && errorArray.push(rowData.resetTypeError)
+  //     // rowData.appDueDateError && errorArray.push(rowData.appDueDateError)
+  //     // // rowData.buyerError&&errorArray.push(rowData.)
+  //     // // rowData.buyerError&&errorArray.push(rowData.)
+  //     // rowData.categoryError && errorArray.push(rowData.categoryError)
+  //     // rowData.departmentError && errorArray.push(rowData.departmentError)
+  //     // rowData.buyerError && errorArray.push(rowData.buyerError)
+  //     // rowData.buyerAssistantError &&
+  //     //   errorArray.push(rowData.buyerAssistantError)
+  //     // rowData.categoryDirectorError &&
+  //     //   errorArray.push(rowData.categoryDirectorError)
+  //     // rowData.merchandiserError && errorArray.push(rowData.merchandiserError)
+  //     // rowData.ownBrandManagerError &&
+  //     //   errorArray.push(rowData.ownBrandManagerError)
+  //     // rowData.rangeResetManagerError &&
+  //     //   errorArray.push(rowData.rangeResetManagerError)
+  //     // rowData.seniorBuyingManagerError &&
+  //     //   errorArray.push(rowData.seniorBuyingManagerError)
+  //     // rowData.supplyChainAnalystError &&
+  //     //   errorArray.push(rowData.supplyChainAnalystError)
+  //     // console.log('error values')
+  //     const errorArray = rowData.errorMessage.split(',')
+  //     console.log(errorArray)
+
+  //     if (errorArray.length > 0) {
+  //       return (
+  //         <div className={classes.errorDialog}>
+  //           Error
+  //           <LightTooltip
+  //             title={
+  //               <React.Fragment>
+  //                 <div className={classes.errorTooltip}>
+  //                   <Typography color="error" variant="body2">
+  //                     {/* {allMessages.error.rafDateError} */}
+
+  //                     {errorArray.map((item: any, index: any) => {
+  //                       return (
+  //                         <i key={index}>
+  //                           {item}
+  //                           <br />
+  //                         </i>
+  //                       )
+  //                     })}
+  //                     {/* <i>{rowData.errorMessage}</i> */}
+  //                   </Typography>
+  //                 </div>
+  //               </React.Fragment>
+  //             }
+  //             arrow
+  //             placement="right"
+  //           >
+  //             <ErrorIcon color="error" fontSize="small" />
+  //           </LightTooltip>
+  //         </div>
+  //       )
+  //     } else {
+  //       return (
+  //         <div className={classes.errorDialog}>
+  //           Error
+  //           <LightTooltip
+  //             title={
+  //               <React.Fragment>
+  //                 <div className={classes.errorTooltip}>
+  //                   <Typography color="error" variant="body2">
+  //                     {rowData.status}
+  //                   </Typography>
+  //                 </div>
+  //               </React.Fragment>
+  //             }
+  //             arrow
+  //             placement="right"
+  //           >
+  //             <ErrorIcon color="error" fontSize="small" />
+  //           </LightTooltip>
+  //         </div>
+  //       )
+  //     }
+  //   } else {
+  //     let tooltripWord = 'Duplicate'
+  //     // console.log('duplicating...')
+  //     return (
+  //       <div className={classes.errorDialog}>
+  //         Error
+  //         <LightTooltip
+  //           title={
+  //             <React.Fragment>
+  //               <div className={classes.errorTooltip}>
+  //                 <Typography color="error" variant="body2">
+  //                   {/* {allMessages.error.rafDateError} */}
+
+  //                   {rowData.status}
+  //                   {/* <i>{rowData.errorMessage}</i> */}
+  //                 </Typography>
+  //               </div>
+  //             </React.Fragment>
+  //           }
+  //           arrow
+  //           placement="right"
+  //         >
+  //           <ErrorIcon color="error" fontSize="small" />
+  //         </LightTooltip>
+  //       </div>
+  //     )
+  //   }
+  // }
 
   const convertedAppDueDateTemplate = (rowData: any) => {
     if (rowData.appDueDate) {
@@ -1040,6 +1193,23 @@ function ManageTaskEvent(props: any) {
     }
   }
 
+  const checkYesOrNo = (value: any) => {
+    if (value) {
+      switch (value) {
+        case 'Y':
+        case 'y': {
+          return 'Y'
+        }
+        case 'N':
+        case 'n': {
+          return 'N'
+        }
+        default:
+          return 'Y'
+      }
+    }
+  }
+
   const handleUpload = (event: any) => {
     event.preventDefault()
     setConfirmtable(false)
@@ -1088,6 +1258,7 @@ function ManageTaskEvent(props: any) {
           // });
           const newData = data.map((d: any) => {
             console.log(d)
+            console.log(checkYesOrNo(d[cols[8]]))
             var converted_date1 = d[cols[6]]
               ? excelDatetoDate(d[cols[6]]) !== ''
                 ? excelDatetoDate(d[cols[6]])?.toString()
@@ -1152,7 +1323,7 @@ function ManageTaskEvent(props: any) {
               orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',
               stopOrder: d[cols[10]] ? d[cols[10]] : 'Y',
 
-              wastageRange: d[cols[11]] ? d[cols[11]] : null,
+              wastageRange: d[cols[11]] ? d[cols[11]] : 'Week +4 \\ +7',
               buyerEmailId: d[cols[12]] ? d[cols[12]] : '',
               categoryDirectorEmailId: d[cols[13]] ? d[cols[13]] : '',
               seniorBuyingManagerEmailId: d[cols[14]] ? d[cols[14]] : '',
@@ -1420,7 +1591,7 @@ function ManageTaskEvent(props: any) {
                 style={{ display: 'inline' }}
                 color="primary"
               >
-                Supported file type in MS Excel
+                Supported file type is MS Excel
                 <i
                   className="pi pi-file-excel"
                   style={{ fontSize: '18px' }}
@@ -1471,7 +1642,7 @@ function ManageTaskEvent(props: any) {
       if (fetchRangeResets.length > 0) {
         return (
           <DataTable
-            rowHover
+            // rowHover
             value={
               fileData
                 ? fileData && filteredImportedData
@@ -1548,7 +1719,7 @@ function ManageTaskEvent(props: any) {
       } else {
         return (
           <DataTable
-            rowHover
+            // rowHover
             value={
               fileData && filteredImportedData ? filteredImportedData : fileData
             }
@@ -2146,10 +2317,45 @@ function ManageTaskEvent(props: any) {
       delete searchParams['launchDateTo']
     }
   }
+  const handleSearchReset = () => {
+    setFilteredImportedData([])
+    setResetType('')
+    setLaunchType('')
+    setLaunchDateFrom('')
+    setLaunchDateTo('')
+    setLaunchWeekFrom('')
+    setLaunchWeekTo('')
+    setGroup('')
+    setCategory('')
+    setDepartment('')
+    setStatus('')
+    setCategoryDirector('')
+    setBuyer('')
+    setMerchandiser('')
+    setSupplyChainSpecialist('')
+    setSearchParams({
+      resetType: '',
+      status: '',
+      launchDateFrom: '',
+      launchDateTo: '',
+      tradeGroup: '',
+      category: '',
+      department: '',
+      categoryDirector: '',
+      buyer: '',
+      merchandiser: '',
+      supplyChainAnalyst: '',
+      clearancePriceCheck: 'Y',
+      orderStopDateCheck: 'Y',
+      stopOrder: 'Y',
+    })
+    handleAdvancedSearch()
+  }
 
   const handleAdvancedSearch = () => {
     if (searchParams) {
-      let allRows = fetchRangeResets ? fetchRangeResets : confirmedRows
+      let allRows = fileData
+      // fetchRangeResets ? fetchRangeResets : confirmedRows
       // console.log(Object.keys(searchParams).length)
       let newData = allRows.filter((file: any) => {
         let resetTypeFilter =
@@ -2180,16 +2386,16 @@ function ManageTaskEvent(props: any) {
           ? file.department === searchParams.department
           : true
         let categoryDirectorFilter = searchParams.categoryDirector
-          ? file.categoryDirector === searchParams.categoryDirector
+          ? file.categoryDirectorEmailId === searchParams.categoryDirector
           : true
         let buyerFilter = searchParams.buyer
-          ? file.buyer === searchParams.buyer
+          ? file.buyerEmailId === searchParams.buyer
           : true
         let merchandiserFilter = searchParams.merchandiser
-          ? file.merchandiser === searchParams.merchandiser
+          ? file.merchandiserEmailId === searchParams.merchandiser
           : true
         let supplyChainFilter = searchParams.supplyChainAnalyst
-          ? file.supplyChainAnalyst === searchParams.supplyChainAnalyst
+          ? file.supplyChainAnalystEmailId === searchParams.supplyChainAnalyst
           : true
         let clearancePriceFilter =
           file.clearancePriceCheck === searchParams.clearancePriceCheck
@@ -2612,6 +2818,13 @@ function ManageTaskEvent(props: any) {
                     options={departmentOptions}
                     onChange={(e: any) => handleSearchParams(e, 'department')}
                     placeholder="Select Department"
+                    isDisabled={
+                      group.length <= 0
+                        ? true
+                        : category.length <= 0
+                        ? true
+                        : false
+                    }
                   />
 
                   {/* </Typography> */}
@@ -2832,7 +3045,15 @@ function ManageTaskEvent(props: any) {
               </Grid>
             </Grid>
             <Grid item container>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
+                <Button
+                  className={classes.whiteButton}
+                  onClick={handleSearchReset}
+                >
+                  Reset
+                </Button>
+              </Grid>
+              <Grid item xs={6}>
                 <Button
                   className={classes.submitButtons}
                   onClick={handleAdvancedSearch}

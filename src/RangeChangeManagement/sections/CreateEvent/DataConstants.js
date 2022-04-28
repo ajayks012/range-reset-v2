@@ -279,4 +279,7 @@ export const errorArrayMessage = {
   rangeResetManager: 'Range Reset Manager',
   ownBrandManager: 'Own Brand Manager',
   supplyChainSpecialist: 'Supply Chain Specialist',
+  clearancePriceCheck: 'Clearance Price Check',
+  orderStopDateCheck: 'Order Stop Date Check',
+  stopOrder: 'Stop Order',
 }

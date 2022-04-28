@@ -192,5 +192,11 @@ export const useStyles = makeStyles((theme) => {
         backgroundColor: theme.palette.primary.main,
       },
     },
+    errorTooltip: {
+      // border: '1px solid red',
+      padding: '5px',
+      backgroundColor: 'white',
+      color: theme.palette.primary.error,
+    },
   }
 })

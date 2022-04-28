@@ -17,8 +17,11 @@ import {
   MenuItem,
   InputAdornment,
   IconButton,
+  Tooltip,
+  withStyles,
 } from '@material-ui/core'
 import ClearIcon from '@material-ui/icons/Clear'
+import InfoIcon from '@material-ui/icons/Info'
 import {
   DatePicker,
   KeyboardDatePicker,
@@ -57,6 +60,7 @@ import {
   setErrorFile,
   resetErrorFile,
 } from '../../../redux/Actions/FileUpload'
+import LightTooltip from '../../components/LightToolTip/LightTooltip'
 // import styled from 'styled-components'
 
 function CreateEvent(props: any) {
@@ -99,9 +103,10 @@ function CreateEvent(props: any) {
   const [departmentError, setDepartmentError] = useState<any>('')
   const [rafDueDate, setRafDueDate] = useState<any>(null)
   const [rafDueDateError, setRafDueDateError] = useState<any>('')
-  const [launchDate, setLaunchDate] = useState<any>(null)
-  // `${new Date().toISOString().split('T')[0]}`
-  // )
+  const [launchDate, setLaunchDate] = useState<any>(
+    null
+    // `${new Date().toISOString().split('T')[0]}`
+  )
   const [launchDateError, setLaunchDateError] = useState<any>('')
   const [eventName, setEventName] = useState<any>('')
   const [storeWasteProcess, setStoreWasteProcess] = useState<any>(null)
@@ -162,6 +167,9 @@ function CreateEvent(props: any) {
   const [errCategoryDirector, setErrCategoryDirector] = useState<any>(false)
   const [errSupplyChainSpecialist, setErrSupplyChainSpecialist] =
     useState<any>(false)
+  const [errClearancePrice, setErrClearancePrice] = useState<any>(false)
+  const [errOrderStopDate, setErrOrderStopDate] = useState<any>(false)
+  const [errStopOrder, setErrStopOrder] = useState<any>(false)
 
   const [errorMessageValues, setErrorMessageValues] = useState<any>('')
   const [rafDueDateError1, setRafDueDateError1] = useState<any>('')
@@ -183,6 +191,10 @@ function CreateEvent(props: any) {
   const [categoryDirectorError1, setCategoryDirectorError1] = useState<any>('')
   const [supChainSpecialistError1, setSupChainSpecialistError1] =
     useState<any>('')
+  const [clearancePriceError1, setClearancePriceError1] = useState<any>('')
+  const [orderStopDateError1, setOrderStopDateError1] = useState<any>('')
+  const [stopOrderError1, setStopOrderError1] = useState<any>('')
+
   const [productHierValues, setProductHierValues] = useState<any>([])
   const [disabled, setDisabled] = React.useState(false)
 
@@ -219,9 +231,18 @@ function CreateEvent(props: any) {
   const [isProgressLoader, setIsProgressLoader] = React.useState(false)
   const [toastRemove, setToastRemove] = React.useState('')
 
-  useEffect(() => {
-    console.log(rafDueDateError1)
-  }, [rafDueDateError1])
+  // useEffect(() => {
+  //   console.log(rafDueDateError1)
+  // }, [rafDueDateError1])
+
+  // const LightTooltip = withStyles((theme) => ({
+  //   tooltip: {
+  //     backgroundColor: theme.palette.common.white,
+  //     color: 'rgba(0, 0, 0, 0.87)',
+  //     boxShadow: theme.shadows[1],
+  //     fontSize: 11,
+  //   },
+  // }))(Tooltip)
 
   useEffect(() => {
     return () => resetErrorFile()
@@ -367,6 +388,24 @@ function CreateEvent(props: any) {
       // if (key === 'Supply Chain Specialist') {
       if (key === errorArrayMessage.supplyChainSpecialist) {
         newData.supplyChainAnalystError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+      if (key === errorArrayMessage.clearancePriceCheck) {
+        newData.clearancePriceError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+      if (key === errorArrayMessage.orderStopDateCheck) {
+        newData.orderStopDateError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+      if (key === errorArrayMessage.stopOrder) {
+        newData.stopOrderError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
@@ -960,14 +999,23 @@ function CreateEvent(props: any) {
       if (value.name) {
         setEventName(value.name)
       }
-      if (value.hasOwnProperty('clearancePriceCheck')) {
+      if (value.hasOwnProperty('clearancePriceError')) {
+        setErrClearancePrice(true)
+        setClearancePriceError1(value.clearancePriceError)
+      } else {
         setClearancePriceApplied(value.clearancePriceCheck)
       }
-      if (value.hasOwnProperty('orderStopDateCheck')) {
-        setClearancePriceApplied(value.orderStopDateCheck)
+      if (value.hasOwnProperty('orderStopDateError')) {
+        setErrOrderStopDate(true)
+        setOrderStopDateError1(value.orderStopDateError)
+      } else {
+        setStopDateCheck(value.orderStopDateCheck)
       }
-      if (value.hasOwnProperty('stopOrder')) {
-        setClearancePriceApplied(value.stopOrder)
+      if (value.hasOwnProperty('stopOrderError')) {
+        setErrStopOrder(true)
+        setStopOrderError1(value.stopOrderError)
+      } else {
+        setStopOrder(value.stopOrder)
       }
     }
   }
@@ -1024,7 +1072,9 @@ function CreateEvent(props: any) {
           label: item.configDescription,
         }
       })
+
       setWastageRanges(options)
+      // setStoreWasteProcess(options[0])
     })
   }, [])
 
@@ -1456,19 +1506,22 @@ function CreateEvent(props: any) {
   }
 
   const handleClearancePrice = (e: any) => {
-    console.log(e.target.value)
+    setErrClearancePrice(false)
+    setClearancePriceError1('')
     setClearancePriceApplied(e.target.value)
     setIsPageModified(true)
   }
 
   const handleStopDateCheck = (e: any) => {
-    console.log(e.target.value)
+    setErrOrderStopDate(false)
+    setOrderStopDateError1('')
     setStopDateCheck(e.target.value)
     setIsPageModified(true)
   }
 
   const handleStopOrder = (e: any) => {
-    console.log(e.target.value)
+    setErrStopOrder(false)
+    setStopOrderError1('')
     setStopOrder(e.target.value)
     setIsPageModified(true)
   }
@@ -1509,42 +1562,190 @@ function CreateEvent(props: any) {
     setIsPageModified(true)
   }
 
-  const handleLaunchDate = (e: any) => {
-    // const newDate = date.getDate() + "-" + parseInt(date.getMonth() + 1) + "-" + date.getFullYear()
-    // console.log(newDate)
-    // const date = e.target.value
-    // setLaunchDate(date)
-    // const appDate: any = new Date(rafDueDate)
-    // const date1: any = new Date(date)
-    // if (rafDueDate) {
-    //   const diffTime = appDate - date1
-    //   console.log(diffTime)
-    //   if (diffTime > 0) {
-    //     setRafDueDateError(
-    //       '‘RAF / App Due Date’ should not be greater than ‘Launch Date’'
-    //     )
-    //     focusRafDueDate.current.focus()
-    //   } else {
-    //     setRafDueDateError('')
-    //   }
-    // }
-    setLaunchDate(e)
-    if (rafDueDate !== null) {
-      if (e > rafDueDate) {
+  const handleRafDateClear = (e: any) => {
+    e.stopPropagation()
+    setRafDueDate(null)
+    setErrRafdueDate(false)
+    setRafDueDateError1('')
+    setIsPageModified(true)
+  }
+
+  // useEffect(() => {
+  //   let today = new Date().toISOString().split('T')[0]
+  //   if (launchDate < today) {
+  //     setErrLaunchDate(true)
+  //     setLaunchError1('Cannot be less than today')
+  //     // setLaunchDate(null)
+  //   } else {
+  //     setErrLaunchDate(false)
+  //     setLaunchError1('')
+  //   }
+  // }, [launchDate])
+
+  // useEffect(() => {
+  //   console.log('start')
+  //   if (launchDate && launchDate !== null) {
+  //     console.log('going')
+  //     const systemDate = new Date().toISOString().split('T')[0]
+  //     console.log(launchDate)
+  //     var date1 = new Date(launchDate)
+  //     console.log(launchDate)
+  //     var date2 = new Date(systemDate)
+  //     var date3 = (date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)
+  //     console.log(date3)
+  //     // if (date3 < 0 || date3 > 14) {
+  //     if (date3 < 0) {
+  //       // setLaunchDate(null)
+  //       setErrLaunchDate(true)
+  //       setLaunchError1(allMessages.error.launchDateerror)
+  //     } else {
+  //       setErrLaunchDate(false)
+  //       setLaunchError1('')
+  //     }
+  //   }
+  // }, [launchDate])
+
+  useEffect(() => {
+    console.log('start')
+    const systemDate = new Date().toISOString().split('T')[0]
+    console.log(rafDueDate)
+    var date0 = new Date(rafDueDate)
+    var date1 = new Date(launchDate)
+    console.log(rafDueDate)
+    var date2 = new Date(systemDate)
+    // var date3 = (date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)
+    // console.log(date3)
+    if (
+      // rafDueDate &&
+      rafDueDate !== null &&
+      // launchDate &&
+      launchDate === null
+    ) {
+      console.log('1')
+      if (date0 < date2) {
+        setErrRafdueDate(true)
+        setRafDueDateError1(allMessages.error.rafDateerror1)
+      } else {
         setErrRafdueDate(false)
+        setErrRafdueDate('')
+      }
+    } else if (
+      // rafDueDate &&
+      rafDueDate === null &&
+      // launchDate &&
+      launchDate !== null
+    ) {
+      console.log('2')
+      if (date1 < date2) {
+        setErrLaunchDate(true)
+        setLaunchError1(allMessages.error.launchDateerror)
+      } else {
         setErrLaunchDate(false)
         setLaunchError1('')
+      }
+    } else if (
+      // rafDueDate &&
+      rafDueDate !== null &&
+      // launchDate &&
+      launchDate !== null
+    ) {
+      console.log('3')
+      if (date0 > date1 && date1 < date2) {
+        console.log('a')
+        setErrRafdueDate(true)
+        //  setRafDueDateError1(allMessages.error.launchDateerror)
+        setRafDueDateError1(allMessages.error.rafDateError)
+        setErrLaunchDate(true)
+        setLaunchError1(allMessages.error.launchDateerror)
+      } else if (date0 > date1 && date1 >= date2) {
+        console.log('b')
+        setErrRafdueDate(true)
+        //  setRafDueDateError1(allMessages.error.launchDateerror)
+        setRafDueDateError1(allMessages.error.rafDateError)
+        setErrLaunchDate(false)
+        setLaunchError1('')
+      } else if (date0 < date2 && date1 > date2) {
+        console.log('c')
+        setErrRafdueDate(true)
+        setRafDueDateError1(allMessages.error.rafDateerror1)
+        setErrLaunchDate(false)
+        setLaunchError1('')
+      } else if (date1 < date2 && date0 > date2) {
+        console.log('d')
+        setErrRafdueDate(false)
+        setErrRafdueDate('')
+        setErrLaunchDate(true)
+        setLaunchError1(allMessages.error.launchDateerror)
+      } else if (date1 < date2 && date0 < date2) {
+        console.log('e')
+        setErrRafdueDate(true)
+        setRafDueDateError1(allMessages.error.rafDateerror1)
+        setErrLaunchDate(true)
+        setLaunchError1(allMessages.error.launchDateerror)
+      } else if (date0 < date1 && date0 < date2) {
+        console.log('f')
+        setErrRafdueDate(true)
+        setRafDueDateError1(allMessages.error.rafDateerror1)
+        setErrLaunchDate(false)
+        setLaunchError1('')
+      } else {
+        console.log('g')
+        setErrRafdueDate(false)
+        setErrRafdueDate('')
+        setErrLaunchDate(false)
+        setLaunchError1('')
+      }
+    }
+  }, [rafDueDate, launchDate])
+
+  const handleLaunchDate = (e: any) => {
+    // let today = new Date().toISOString().split('T')[0]
+    // setLaunchDate(e)
+    // if (e >= today) {
+    //   if (rafDueDate !== null) {
+    //     if (rafDueDate <= e) {
+    //       setErrRafdueDate(false)
+    //       // setErrLaunchDate(false)
+    //       // setLaunchError1('')
+    //       setRafDueDateError1('')
+    //     } else {
+    //       setErrRafdueDate(true)
+    //       // setErrLaunchDate(false)
+    //       // setLaunchError1('')
+    //       setRafDueDateError1(allMessages.error.rafDateError)
+    //     }
+    //   }
+    // }
+
+    // setIsPageModified(true)
+
+    console.log(e)
+    setLaunchDate(e)
+    if (rafDueDate !== null) {
+      if (e >= rafDueDate) {
+        setErrRafdueDate(false)
+        // setErrLaunchDate(false)
+        // setLaunchError1('')
         setRafDueDateError1('')
       } else {
         setErrRafdueDate(true)
-        setErrLaunchDate(false)
-        setLaunchError1('')
+        //setErrLaunchDate(false)
+        //setLaunchError1('')
         setRafDueDateError1(allMessages.error.rafDateError)
       }
-    } else {
-      setErrLaunchDate(false)
-      setLaunchError1('')
     }
+    // else {
+    //   setErrLaunchDate(false)
+    //   setLaunchError1('')
+    // }
+    setIsPageModified(true)
+  }
+
+  const handleLaunchDateClear = (e: any) => {
+    e.stopPropagation()
+    setLaunchDate(null)
+    setErrLaunchDate(false)
+    setLaunchError1('')
     setIsPageModified(true)
   }
 
@@ -1927,6 +2128,12 @@ function CreateEvent(props: any) {
       setErrRafdueDate(true)
       setRafDueDateError1(allMessages.error.noRafDueDate)
     }
+    if (errRafDueDate) {
+      flag = 0
+    }
+    if (errLaunchDate) {
+      flag = 0
+    }
     if (!group || group === null || group === undefined) {
       flag = 0
       setErrGroup(true)
@@ -1965,11 +2172,15 @@ function CreateEvent(props: any) {
         setEventName(name)
       }
     }
+    if (errBuyer) {
+      flag = 0
+    }
     if (
       !buyer ||
       buyer === null ||
-      buyer === undefined ||
-      buyerConfirmed === false
+      buyer === undefined
+      // ||
+      // buyerConfirmed === false
     ) {
       flag = 0
       setErrBuyer(true)
@@ -1981,11 +2192,15 @@ function CreateEvent(props: any) {
     //   setErrBuyer(true)
     //   setBuyerError1(allMessages.error.emailSearcherror)
     // }
+    if (errBuyerAssisant) {
+      flag = 0
+    }
     if (
       !buyingAssistant ||
       buyingAssistant === null ||
-      buyingAssistant === undefined ||
-      buyingAssistantConfirmed === false
+      buyingAssistant === undefined
+      // ||
+      // buyingAssistantConfirmed === false
     ) {
       flag = 0
       setErrBuyerAssisant(true)
@@ -1997,12 +2212,15 @@ function CreateEvent(props: any) {
     //   setErrBuyerAssisant(true)
     //   setBuyingAssistentError1('please search buying assitant')
     // }
-
+    if (errOwnBrandManager) {
+      flag = 0
+    }
     if (
       !ownBrandManager ||
       ownBrandManager === null ||
-      ownBrandManager === undefined ||
-      buyingAssistantConfirmed === false
+      ownBrandManager === undefined
+      //  ||
+      // buyingAssistantConfirmed === false
     ) {
       flag = 0
       setErrOwnBrandManager(true)
@@ -2014,11 +2232,15 @@ function CreateEvent(props: any) {
     //   setErrOwnBrandManager(true)
     //   setOwnBrandManagerError1('search own brande manager')
     // }
+    if (errSeniorBuyingManager) {
+      flag = 0
+    }
     if (
       !seniorBuyingManager ||
       seniorBuyingManager === null ||
-      seniorBuyingManager === undefined ||
-      seniorBuyingManagerConfirmed === false
+      seniorBuyingManager === undefined
+      //  ||
+      // seniorBuyingManagerConfirmed === false
     ) {
       flag = 0
       setErrSeniorBuyingManager(true)
@@ -2030,11 +2252,15 @@ function CreateEvent(props: any) {
     //   setErrSeniorBuyingManager(true)
     //   setSeniorBuyingManagerError1('Please search senior buying manager')
     // }
+    if (errMerchandiser) {
+      flag = 0
+    }
     if (
       !merchandiser ||
       merchandiser === null ||
-      merchandiser === undefined ||
-      merchandiserConfirmed === false
+      merchandiser === undefined
+      // ||
+      // merchandiserConfirmed === false
     ) {
       flag = 0
       setErrMerchandiser(true)
@@ -2046,11 +2272,15 @@ function CreateEvent(props: any) {
     //   setErrMerchandiser(true)
     //   setMerchandiserError1('Please search merchandiser')
     // }
+    if (errRangeResetManager) {
+      flag = 0
+    }
     if (
       !rangeResetManager ||
       rangeResetManager === null ||
-      rangeResetManager === undefined ||
-      rangeResetManagerConfirmed === false
+      rangeResetManager === undefined
+      //  ||
+      // rangeResetManagerConfirmed === false
     ) {
       flag = 0
       setErrRangeResetManager(true)
@@ -2062,11 +2292,15 @@ function CreateEvent(props: any) {
     //   setErrRangeResetManager(true)
     //   setRangeResetManagerError1('Please search range reset manager')
     // }
+    if (errCategoryDirector) {
+      flag = 0
+    }
     if (
       !categoryDirector ||
       categoryDirector === null ||
-      categoryDirector === undefined ||
-      categoryDirectorConfirmed === false
+      categoryDirector === undefined
+      // ||
+      // categoryDirectorConfirmed === false
     ) {
       flag = 0
       setErrCategoryDirector(true)
@@ -2078,11 +2312,15 @@ function CreateEvent(props: any) {
     //   setErrCategoryDirector(true)
     //   setCategoryDirectorError1('Please search category director')
     // }
+    if (errSupplyChainSpecialist) {
+      flag = 0
+    }
     if (
       !supplyChainSpecialist ||
       supplyChainSpecialist === null ||
-      supplyChainSpecialist === undefined ||
-      supplyChainSpecialistConfirmed === false
+      supplyChainSpecialist === undefined
+      //  ||
+      // supplyChainSpecialistConfirmed === false
     ) {
       flag = 0
       setErrSupplyChainSpecialist(true)
@@ -2158,8 +2396,8 @@ function CreateEvent(props: any) {
           wastageRange: storeWasteProcess
             ? storeWasteProcess.value
               ? storeWasteProcess.value
-              : null
-            : null,
+              : 'Week +4\\ +7'
+            : 'Week +4\\ +7',
           // buyer: buyer,
           // buyerId: buyerValue.userId,
           // buyerEmailId: buyerValue.emailId,
@@ -2212,7 +2450,7 @@ function CreateEvent(props: any) {
           clearancePriceCheck: clearancePriceApplied,
           orderStopDateCheck: orderStopDateCheck,
           stopOrder: stopOrder,
-          fileName: 'string',
+          fileName: null,
           createdById: userDetail && userDetail.userdetails[0].user.userId,
           createdByName:
             userDetail && userDetail.userdetails[0].user.middleName
@@ -2336,7 +2574,7 @@ function CreateEvent(props: any) {
             toast.current.show({
               severity: 'success',
               summary: 'Success',
-              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              detail: `Event created with Event ID ${res.data[0].id}`,
               life: life,
               className: 'login-toast',
             })
@@ -2368,6 +2606,7 @@ function CreateEvent(props: any) {
               severity: 'success',
               summary: 'Success',
               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              detail: `Event created with Event ID ${res.data[0].id}`,
               life: life,
               className: 'login-toast',
             })
@@ -3249,6 +3488,48 @@ function CreateEvent(props: any) {
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
                       RAF/App Due Date
+                      {/* <LightTooltip
+                        title={
+                          <React.Fragment>
+                            <div className={classes.errorTooltip}>
+                              <Typography color="error" variant="body2">
+                                This field is manadatory for Reset Type Rapid
+                                Response
+                                <br />
+                                RAF/ APP Due Date should be between System Date
+                                and Launch Date
+                              </Typography>
+                            </div>
+                          </React.Fragment>
+                        }
+                        arrow
+                        placement="top"
+                      >
+                        <InfoIcon
+                          color="secondary"
+                          fontSize="small"
+                          style={{ padding: '3px' }}
+                        />
+                      </LightTooltip> */}
+                      <LightTooltip
+                        title={
+                          <>
+                            This field is mandatory for Reset Type Rapid
+                            Response
+                            <br />
+                            RAF/ APP Due Date should be between System Date and
+                            Launch Date
+                          </>
+                        }
+                        position={'top'}
+                        icon={
+                          <InfoIcon
+                            color="secondary"
+                            fontSize="small"
+                            style={{ padding: '3px' }}
+                          />
+                        }
+                      />
                     </Typography>
                   </Grid>
 
@@ -3297,10 +3578,7 @@ function CreateEvent(props: any) {
                             endAdornment={
                               <InputAdornment position="end">
                                 <IconButton
-                                  onClick={(e: any) => {
-                                    e.stopPropagation()
-                                    setRafDueDate(null)
-                                  }}
+                                  onClick={handleRafDateClear}
                                   edge="end"
                                   style={{ margin: '5px' }}
                                 >
@@ -3594,6 +3872,39 @@ function CreateEvent(props: any) {
                     <Typography variant="subtitle2" color="primary">
                       Launch Date
                       {requiredStar}
+                      {/* <LightTooltip
+                        title={
+                          <React.Fragment>
+                            <div className={classes.errorTooltip}>
+                              <Typography color="error" variant="body2">
+                                Launch Date must be greater than or equal to
+                                System Date
+                              </Typography>
+                            </div>
+                          </React.Fragment>
+                        }
+                        arrow
+                        placement="top"
+                      >
+                        <InfoIcon
+                          color="secondary"
+                          fontSize="small"
+                          style={{ padding: '3px' }}
+                        />
+                      </LightTooltip> */}
+                      {/* <LightTooltip
+                        title={
+                          'Launch Date must be greater than or equal to System Date'
+                        }
+                        position={'top'}
+                        icon={
+                          <InfoIcon
+                            color="secondary"
+                            fontSize="small"
+                            style={{ padding: '3px' }}
+                          />
+                        }
+                      /> */}
                     </Typography>
                   </Grid>
 
@@ -3610,6 +3921,7 @@ function CreateEvent(props: any) {
                         // KeyboardButtonProps={{
                         //   'aria-label': 'change date',
                         // }}
+                        // minDate={new Date()}
                         emptyLabel="Enter Launch Date"
                         TextFieldComponent={(props: any) => (
                           <OutlinedInput
@@ -3617,14 +3929,12 @@ function CreateEvent(props: any) {
                             onClick={props.onClick}
                             value={props.value}
                             onChange={props.onChange}
+                            // ref={props.ref}
                             className={classes.dateFields}
                             endAdornment={
                               <InputAdornment position="end">
                                 <IconButton
-                                  onClick={(e: any) => {
-                                    e.stopPropagation()
-                                    setLaunchDate(null)
-                                  }}
+                                  onClick={handleLaunchDateClear}
                                   edge="end"
                                   style={{ margin: '5px' }}
                                 >
@@ -3767,13 +4077,18 @@ function CreateEvent(props: any) {
                         })}
                       </RadioGroup>
                     </FormControl>
+                    {errClearancePrice && (
+                      <span className={classes.errorMessageColor}>
+                        {clearancePriceError1}
+                      </span>
+                    )}
                   </Grid>
                 </Grid>
 
                 <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
-                      GSCOP Date Check Required
+                      Order Stop Date Check Required
                     </Typography>
                   </Grid>
 
@@ -3807,6 +4122,11 @@ function CreateEvent(props: any) {
                         })}
                       </RadioGroup>
                     </FormControl>
+                    {errOrderStopDate && (
+                      <span className={classes.errorMessageColor}>
+                        {orderStopDateError1}
+                      </span>
+                    )}
                   </Grid>
                 </Grid>
 
@@ -3847,6 +4167,11 @@ function CreateEvent(props: any) {
                         })}
                       </RadioGroup>
                     </FormControl>
+                    {errStopOrder && (
+                      <span className={classes.errorMessageColor}>
+                        {stopOrderError1}
+                      </span>
+                    )}
                   </Grid>
                 </Grid>
 
@@ -3963,17 +4288,26 @@ function CreateEvent(props: any) {
                                         }
                                     </select> */}
 
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
-                      <Typography variant="subtitle2" color="primary">
-                        <SearchSelect
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}> */}
+                    {/* <Typography variant="subtitle2" color="primary"> */}
+                    {/* <SearchSelect
                           value={buyer}
                           // onChange={(e: any) => setBuyer(e.target.value)}
                           onChange={handleBuyer}
                           placeholder="Search Buyer"
                           onClick={handleBuyerClick}
                           ref={focusBuyer}
-                        />
-                      </Typography>
+                        /> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Buyer Email"
+                      margin="dense"
+                      value={buyer}
+                      className={classes.inputFields}
+                      onChange={handleBuyer}
+                      ref={focusBuyer}
+                    />
+                    {/* </Typography>
                     </Grid>
                     <Grid
                       item
@@ -3985,7 +4319,7 @@ function CreateEvent(props: any) {
                       style={{ textAlign: 'center' }}
                     >
                       <ConfirmCheckSign confirmValue={buyerConfirmed} />
-                    </Grid>
+                    </Grid> */}
                     <Typography variant="subtitle2" color="primary">
                       {errBuyer && (
                         <span className={classes.errorMessageColor}>
@@ -4021,7 +4355,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={categoryDirector}
@@ -4046,7 +4380,16 @@ function CreateEvent(props: any) {
                       <ConfirmCheckSign
                         confirmValue={categoryDirectorConfirmed}
                       />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Category Director Email"
+                      margin="dense"
+                      value={categoryDirector}
+                      className={classes.inputFields}
+                      onChange={handleCategoryDirector}
+                      ref={focusCategoryDirector}
+                    />
 
                     <Typography variant="subtitle2" color="primary">
                       {errCategoryDirector && (
@@ -4082,7 +4425,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={seniorBuyingManager}
@@ -4107,7 +4450,16 @@ function CreateEvent(props: any) {
                       <ConfirmCheckSign
                         confirmValue={seniorBuyingManagerConfirmed}
                       />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Senior Buyer Manager Email"
+                      margin="dense"
+                      value={seniorBuyingManager}
+                      className={classes.inputFields}
+                      onChange={handleSeniorBuyingManager}
+                      ref={focusSeniorBuyingManager}
+                    />
 
                     <Typography variant="subtitle2" color="primary">
                       {errSeniorBuyingManager && (
@@ -4143,7 +4495,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={buyingAssistant}
@@ -4167,7 +4519,17 @@ function CreateEvent(props: any) {
                       <ConfirmCheckSign
                         confirmValue={buyingAssistantConfirmed}
                       />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Buying Assistant Email"
+                      margin="dense"
+                      value={buyingAssistant}
+                      className={classes.inputFields}
+                      onChange={handleBuyingAssistant}
+                      ref={focusBuyingAssistant}
+                    />
+
                     <Typography variant="subtitle2" color="primary">
                       {errBuyerAssisant && (
                         <span className={classes.errorMessageColor}>
@@ -4203,7 +4565,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={merchandiser}
@@ -4226,7 +4588,16 @@ function CreateEvent(props: any) {
                       style={{ textAlign: 'center' }}
                     >
                       <ConfirmCheckSign confirmValue={merchandiserConfirmed} />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Merchandiser Email"
+                      margin="dense"
+                      value={merchandiser}
+                      className={classes.inputFields}
+                      onChange={handleMerchandiser}
+                      ref={focusMerchandiser}
+                    />
 
                     <Typography variant="subtitle2" color="primary">
                       {errMerchandiser && (
@@ -4263,7 +4634,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={supplyChainSpecialist}
@@ -4288,7 +4659,16 @@ function CreateEvent(props: any) {
                       <ConfirmCheckSign
                         confirmValue={supplyChainSpecialistConfirmed}
                       />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Merchandiser Email"
+                      margin="dense"
+                      value={supplyChainSpecialist}
+                      className={classes.inputFields}
+                      onChange={handleSupplyChainSpecialist}
+                      ref={focusSupplyChainSpecialist}
+                    />
 
                     <Typography variant="subtitle2" color="primary">
                       {errSupplyChainSpecialist && (
@@ -4324,7 +4704,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={ownBrandManager}
@@ -4348,7 +4728,16 @@ function CreateEvent(props: any) {
                       <ConfirmCheckSign
                         confirmValue={ownBrandManagerConfirmed}
                       />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Merchandiser Email"
+                      margin="dense"
+                      value={ownBrandManager}
+                      className={classes.inputFields}
+                      onChange={handleOwnBrandManager}
+                      ref={focusOwnBrandManager}
+                    />
 
                     <Typography variant="subtitle2" color="primary">
                       {errOwnBrandManager && (
@@ -4385,7 +4774,7 @@ function CreateEvent(props: any) {
                                             })
                                         }
                                     </select> */}
-                    <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
+                    {/* <Grid item xl={11} lg={11} md={11} sm={10} xs={10}>
                       <Typography variant="subtitle2" color="primary">
                         <SearchSelect
                           value={rangeResetManager}
@@ -4410,7 +4799,16 @@ function CreateEvent(props: any) {
                       <ConfirmCheckSign
                         confirmValue={rangeResetManagerConfirmed}
                       />
-                    </Grid>
+                    </Grid> */}
+
+                    <OutlinedInput
+                      placeholder="Provide Merchandiser Email"
+                      margin="dense"
+                      value={rangeResetManager}
+                      className={classes.inputFields}
+                      onChange={handleRangeResetManager}
+                      ref={focusRangeRestManager}
+                    />
 
                     <Typography variant="subtitle2" color="primary">
                       {errRangeResetManager && (
