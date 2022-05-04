@@ -70,6 +70,7 @@ import { bulkUploadFileType } from '../../../util/Constants'
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import { Toast } from 'primereact/toast'
 import LightTooltip from '../../components/LightToolTip/LightTooltip'
+import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 
 const Input = styled('input')({
   display: 'none',
@@ -196,6 +197,8 @@ function ManageTaskEvent(props: any) {
 
   const [checkCount, setCheckCount] = React.useState(1)
   const [failureCount, setFailureCount] = React.useState(0)
+  const [cancelOpenDelete, setCancelOpenDelete] = useState(false)
+  const [cancelOpenCross, setCancelOpenCross] = useState(false)
 
   useEffect(() => {
     setIsProgressLoader(true)
@@ -480,9 +483,10 @@ function ManageTaskEvent(props: any) {
           const buyerValues = res.data.userdetails.map((item: any) => {
             return {
               value: item.user.emailId,
-              label: item.user.middleName
-                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
-                : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
+              label:
+                item.user.middleName && item.user.middleName != ''
+                  ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                  : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
               // item.user.middleName
               //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
               //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -505,9 +509,10 @@ function ManageTaskEvent(props: any) {
             (item: any) => {
               return {
                 value: item.user.emailId,
-                label: item.user.middleName
-                  ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
-                  : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
+                label:
+                  item.user.middleName && item.user.middleName != ''
+                    ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                    : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
                 // item.user.middleName
                 //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
                 //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -530,9 +535,10 @@ function ManageTaskEvent(props: any) {
           const merchandiserValues = res.data.userdetails.map((item: any) => {
             return {
               value: item.user.emailId,
-              label: item.user.middleName
-                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
-                : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
+              label:
+                item.user.middleName && item.user.middleName != ''
+                  ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                  : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
               // item.user.middleName
               //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
               //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -554,9 +560,10 @@ function ManageTaskEvent(props: any) {
           const supplyChainValues = res.data.userdetails.map((item: any) => {
             return {
               value: item.user.emailId,
-              label: item.user.middleName
-                ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
-                : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
+              label:
+                item.user.middleName && item.user.middleName != ''
+                  ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName} - ${item.user.emailId}`
+                  : `${item.user.firstName} ${item.user.lastName} - ${item.user.emailId}`,
               // item.user.middleName
               //   ? `${item.user.firstName} ${item.user.middleName} ${item.user.lastName}`
               //   : `${item.user.firstName} ${item.user.lastName}`,
@@ -647,7 +654,9 @@ function ManageTaskEvent(props: any) {
               fileName: fileName && fileName,
               createdById: userDetail && userDetail.userdetails[0].user.userId,
               createdByName:
-                userDetail && userDetail.userdetails[0].user.middleName
+                userDetail &&
+                userDetail.userdetails[0].user.middleName &&
+                userDetail.userdetails[0].user.middleName != ''
                   ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
                   : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
             }
@@ -857,7 +866,255 @@ function ManageTaskEvent(props: any) {
   }
 
   const handlePublish = () => {
-    history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
+    // history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
+    // selectedImportedData.map((data: any) => {
+    //   let formdata
+    //   if (data.status.toLowerCase() === 'draft') {
+    //     let payload = {
+    //       reviewDecision: 'Confirmed',
+    //       eventId: data.id,
+    //       eventHeader: {
+    //         resetType: data.resetType,
+    //         rafAppDueDate: data.appDueDate,
+    //         eventLaunchDate: data.targetDate,
+    //         eventName: data.name,
+    //         eventHierarchy: {
+    //           tradingGroup: data.tradeGroup,
+    //           category: data.category,
+    //           department: data.department,
+    //         },
+    //         inventoryControl: {
+    //           planogramClass: data.planogramClass.className,
+    //           isClearancePriceApplied: data.clearancePriceCheck,
+    //           isOrderStopDateCheckRequired: data.orderStopDateCheck,
+    //           isStopOrderStockRundown: data.stopOrder,
+    //         },
+    //         requester: {
+    //           persona:
+    //             userDetail && userDetail.userdetails[0].roles[0].roleName,
+    //           details: {
+    //             name:
+    //               userDetail && userDetail.userdetails[0].user.middleName
+    //                 ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+    //                 : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+    //             emailId: userDetail && userDetail.userdetails[0].user.emailId,
+    //             userId: userDetail && userDetail.userdetails[0].user.userId,
+    //           },
+    //         },
+    //         eventTeam: {
+    //           team: [
+    //             {
+    //               persona: 'Buyer',
+    //               details: {
+    //                 emailId: data.buyerEmailId,
+    //                 userId: data.buyerId,
+    //                 name: data.buyer,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Buying Assistant',
+    //               details: {
+    //                 emailId: data.buyerAssistantEmailId,
+    //                 userId: data.buyerAssistantId,
+    //                 name: data.buyerAssistant,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Range Reset Manager',
+    //               details: {
+    //                 emailId: data.rangeResetManagerEmailId,
+    //                 userId: data.rangeResetManagerId,
+    //                 name: data.rangeResetManager,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Own Brand Manager',
+    //               details: {
+    //                 emailId: data.ownBrandManagerEmailId,
+    //                 userId: data.ownBrandManagerId,
+    //                 name: data.ownBrandManager,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Senior Buying Manager',
+    //               details: {
+    //                 emailId: data.seniorBuyingManagerEmailId,
+    //                 userId: data.seniorBuyingManagerId,
+    //                 name: data.seniorBuyingManager,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Merchandiser',
+    //               details: {
+    //                 emailId: data.merchandiserEmailId,
+    //                 userId: data.merchandiserId,
+    //                 name: data.merchandiser,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Category Director',
+    //               details: {
+    //                 emailId: data.categoryDirectorEmailId,
+    //                 userId: data.categoryDirectorId,
+    //                 name: data.categoryDirector,
+    //               },
+    //             },
+    //             {
+    //               persona: 'Supply Chain Specialist',
+    //               details: {
+    //                 emailId: data.buyerEmailId,
+    //                 userId: data.buyerId,
+    //                 name: data.buyer,
+    //               },
+    //             },
+    //           ],
+    //         },
+    //       },
+    //       milestones: [
+    //         {
+    //           taskName: 'CT6',
+    //           taskDescription: 'De-list draft added by asst buyer',
+    //           visibility: 'Disabled',
+    //           dueDate: '2021-11-15 01:00:00',
+    //           notifyDate: '2021-11-08 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buying Assistant',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyingasst@morrisonsplc.co.uk',
+    //               userId: '70004',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT8',
+    //           taskDescription: 'Initiate stock count',
+    //           visibility: 'Disabled',
+    //           dueDate: '2021-11-15 01:00:00',
+    //           notifyDate: '2021-11-08 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'System',
+    //             details: {
+    //               emailId: null,
+    //               userId: 'system',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT19',
+    //           taskDescription: 'Finalise Range - Delists & New',
+    //           visibility: 'Disabled',
+    //           dueDate: '2022-01-10 01:00:00',
+    //           notifyDate: '2022-01-03 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buyer',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
+    //               userId: '70001',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT7',
+    //           taskDescription: 'De-list draft added by buyer',
+    //           visibility: 'Disabled',
+    //           dueDate: '2021-11-15 01:00:00',
+    //           notifyDate: '2021-11-08 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buyer',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
+    //               userId: '70001',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT18',
+    //           taskDescription: 'Finalise Range - Delists & New',
+    //           visibility: 'Enabled',
+    //           dueDate: '2022-01-10 01:00:00',
+    //           notifyDate: '2022-01-03 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buying Assistant',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyingasst@morrisonsplc.co.uk',
+    //               userId: '70004',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT9',
+    //           taskDescription: 'Build of core planograms',
+    //           visibility: 'Enabled',
+    //           dueDate: '2021-11-22 01:00:00',
+    //           notifyDate: '2021-11-15 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buying Assistant',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyingasst@morrisonsplc.co.uk',
+    //               userId: '70004',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT27',
+    //           taskDescription: 'Review/Add & Approve De-Ranged items',
+    //           visibility: 'Enabled',
+    //           dueDate: '2022-02-28 01:00:00',
+    //           notifyDate: '2022-02-21 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buyer',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
+    //               userId: '70001',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT26',
+    //           taskDescription: 'De-Range items added to the RCM app (Draft)',
+    //           visibility: 'Enabled',
+    //           dueDate: '2022-02-28 01:00:00',
+    //           notifyDate: '2022-02-21 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'System',
+    //             details: {
+    //               emailId: null,
+    //               userId: 'system',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT34',
+    //           taskDescription: 'Review Store waste',
+    //           visibility: 'Enabled',
+    //           dueDate: '2022-05-16 01:00:00',
+    //           notifyDate: '2022-05-09 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buyer',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
+    //               userId: '70001',
+    //             },
+    //           },
+    //         },
+    //         {
+    //           taskName: 'CT10',
+    //           taskDescription: 'core plan recommendation',
+    //           visibility: 'Enabled',
+    //           dueDate: '2021-11-29 01:00:00',
+    //           notifyDate: '2021-11-22 01:00:00',
+    //           assigneeDetails: {
+    //             persona: 'Buyer',
+    //             details: {
+    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
+    //               userId: '70001',
+    //             },
+    //           },
+    //         },
+    //       ],
+    //     }
+    //   }
+    // })
   }
 
   const eventNameTemplate = (rowData: any) => {
@@ -1381,6 +1638,16 @@ function ManageTaskEvent(props: any) {
     setSelectedImportedData(null)
   }
 
+  const viewConfirmDelete = (
+    <ConfirmBox
+      cancelOpen={cancelOpenDelete}
+      handleCancel={() => setCancelOpenDelete(false)}
+      handleProceed={removeTasks}
+      label1="Are you sure to Delete?"
+      label2="Please click Ok to Delete"
+    />
+  )
+
   useEffect(() => {
     // console.log('Check count: ', checkCount)
     // console.log('Failure count: ', failureCount)
@@ -1494,7 +1761,15 @@ function ManageTaskEvent(props: any) {
   // )
 
   const uploadDialog = (
-    <Dialog onClose={handleUploadDialogClose} open={openUploadDialog}>
+    <Dialog
+      // onClose={handleUploadDialogClose}
+      open={openUploadDialog}
+      onClose={(_, reason: any) => {
+        if (reason !== 'backdropClick') {
+          handleUploadDialogClose()
+        }
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -1844,7 +2119,17 @@ function ManageTaskEvent(props: any) {
   const previewDialog = (
     <Dialog
       open={openPreviewDialog}
-      onClose={handlePreviewialogClose}
+      // onClose={() => {
+      //   fetchRangeResets.length > 0 && setConfirmtable(true)
+      //   handlePreviewialogClose()
+      // }}
+
+      onClose={(_, reason: any) => {
+        if (reason !== 'backdropClick') {
+          fetchRangeResets.length > 0 && setConfirmtable(true)
+          handlePreviewialogClose()
+        }
+      }}
       fullWidth
       classes={{ paperFullWidth: classes.previewDialog }}
     >
@@ -1891,9 +2176,14 @@ function ManageTaskEvent(props: any) {
 
         <DialogHeader
           title="Confirm Bulk Event"
+          // onClose={() => {
+          //   fetchRangeResets.length > 0 && setConfirmtable(true)
+          //   setOpenPreviewDialog(false)
+          //   setOpenUploadDialog(true)
+          // }}
+
           onClose={() => {
-            fetchRangeResets.length > 0 && setConfirmtable(true)
-            setOpenPreviewDialog(false)
+            setCancelOpenCross(true)
           }}
         />
 
@@ -1903,6 +2193,10 @@ function ManageTaskEvent(props: any) {
           </Typography>
         </Box>
         <Box sx={{ p: 1 }}>{uploadedTable()}</Box>
+        <Typography color="secondary">
+          ! Checkbox is only for delete option, On clicking save the current
+          data will be saved
+        </Typography>
         <Grid
           container
           spacing={3}
@@ -1920,7 +2214,7 @@ function ManageTaskEvent(props: any) {
             style={{ textAlign: !above670px ? 'center' : 'right' }}
           >
             <Button
-              onClick={removeTasks}
+              onClick={() => setCancelOpenDelete(true)}
               className={classes.whiteButton}
               disabled={
                 selectedImportedData
@@ -1952,6 +2246,23 @@ function ManageTaskEvent(props: any) {
         </Grid>
       </Box>
     </Dialog>
+  )
+
+  const cancelCross = () => {
+    fetchRangeResets.length > 0 && setConfirmtable(true)
+    setOpenPreviewDialog(false)
+    setOpenUploadDialog(true)
+    setCancelOpenCross(false)
+  }
+
+  const viewConfirmCross = (
+    <ConfirmBox
+      cancelOpen={cancelOpenCross}
+      handleCancel={() => setCancelOpenCross(false)}
+      handleProceed={cancelCross}
+      label1="Cancel Bulk Event Upload"
+      label2="Are you sure want to cancel bulk upload?"
+    />
   )
 
   const handleSearchParams = (e: any, key: any) => {
@@ -2426,7 +2737,12 @@ function ManageTaskEvent(props: any) {
   const advancedSearch = (
     <Dialog
       open={openAdvancedSearchDialog}
-      onClose={handleSearchDialogClose}
+      // onClose={handleSearchDialogClose}
+      onClose={(_, reason: any) => {
+        if (reason !== 'backdropClick') {
+          handleSearchDialogClose()
+        }
+      }}
       fullWidth
       classes={{ paperFullWidth: classes.searchDialog }}
     >
@@ -3242,7 +3558,7 @@ function ManageTaskEvent(props: any) {
                     type="text"
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
-                    placeholder={' Search User details '}
+                    placeholder={' Search Event details '}
                     className={classes.globalSearch}
                   />
                   {/* </Typography> */}
@@ -3389,6 +3705,8 @@ function ManageTaskEvent(props: any) {
           {importedData && importedCols && previewDialog}
           {/* {sampleExcel} */}
           {advancedSearch}
+          {viewConfirmDelete}
+          {viewConfirmCross}
         </div>
       </div>
     </>

@@ -84,6 +84,7 @@ const envDetails = {
     GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     GET_PLANOGRAM_CLASSES: 'rangereset/v2/config/Planogram Class',
     GET_WASTAGE_RANGES: 'rangereset/v2/config/Wastage Range',
+    GET_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     PATCH_RANGERESET_EVENTS: 'rangereset/v2/rangeresetevents',
     DELETE_RANGERESETS: 'rangereset/v2/rangeresets/{rangeResetId}',
     CREATE_EVENTS_CAMUNDA:

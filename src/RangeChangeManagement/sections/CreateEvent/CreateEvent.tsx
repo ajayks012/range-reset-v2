@@ -2458,7 +2458,9 @@ function CreateEvent(props: any) {
           fileName: null,
           createdById: userDetail && userDetail.userdetails[0].user.userId,
           createdByName:
-            userDetail && userDetail.userdetails[0].user.middleName
+            userDetail &&
+            userDetail.userdetails[0].user.middleName &&
+            userDetail.userdetails[0].user.middleName != ''
               ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
               : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
         },
@@ -2705,14 +2707,18 @@ function CreateEvent(props: any) {
           eventStatus: data.status,
           requester: {
             persona:
-              userDetail && userDetail.userdetails[0].user.middleName
+              userDetail &&
+              userDetail.userdetails[0].user.middleName &&
+              userDetail.userdetails[0].user.middleName != ''
                 ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
                 : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
             details: {
               emailId: userDetail && userDetail.userdetails[0].user.emailId,
               userId: userDetail && userDetail.userdetails[0].user.userId,
               name:
-                userDetail && userDetail.userdetails[0].user.middleName
+                userDetail &&
+                userDetail.userdetails[0].user.middleName &&
+                userDetail.userdetails[0].user.middleName != ''
                   ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
                   : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
             },
