@@ -49,6 +49,8 @@ import {
   getResetTypes,
   getUsersAPIByEmailAndRole,
   patchRangeResetEvents,
+  patchUpdateRangeResets,
+  publishEventsCamunda,
 } from '../../../api/Fetch'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
@@ -196,7 +198,9 @@ function CreateEvent(props: any) {
   const [stopOrderError1, setStopOrderError1] = useState<any>('')
 
   const [productHierValues, setProductHierValues] = useState<any>([])
-  const [disabled, setDisabled] = React.useState(false)
+  const [disableSave, setDisableSave] = React.useState(false)
+  const [disableCreate, setDisableCreate] = React.useState(false)
+  const [disablePublish, setDisablePublish] = React.useState(false)
 
   const [errorCheck, setErrorCheck] = useState(-1)
 
@@ -224,6 +228,7 @@ function CreateEvent(props: any) {
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
 
   const [cancelOpenApprove, setCancelOpenApprove] = React.useState(false)
+  const [cancelOpenPublish, setCancelOpenPublish] = React.useState(false)
   const [cancelOpenSave, setCancelOpenSave] = React.useState(false)
   const [back, setBack] = React.useState(false)
   const [isPageModified, setIsPageModified] = React.useState(false)
@@ -1333,10 +1338,19 @@ function CreateEvent(props: any) {
   //   }
   // };
 
+  useEffect(() => {
+    if (resetType !== 'Rapid Response' && !rafDueDate) {
+      setRafDueDateError1('')
+      setErrRafdueDate(false)
+    }
+  }, [resetType])
+
   const handleResetType = (e: any) => {
     if (e) {
       setErrReset(false)
       setResetType(e)
+      setErrReset(false)
+      setResetError1('')
       setIsPageModified(true)
       console.log(e)
     } else {
@@ -1796,198 +1810,198 @@ function CreateEvent(props: any) {
     setClassOpen(false)
   }
 
-  const handleBuyerClick = () => {
-    console.log('clicked')
-    let roleId = 'BUYER'
-    buyer !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, buyer)
-          .then((res: any) => {
-            console.log('matched')
-            setBuyerConfirmed(true)
-            setBuyerValue(res.data.userdetails[0].user)
-            setErrBuyer(false)
-            setBuyerError1('')
-          })
-          .catch((err: any) => {
-            console.log('not')
-            setBuyer('')
-            setBuyerConfirmed(false)
-            setErrBuyer(true)
-            setBuyerValue('')
-            setBuyerError1(allMessages.error.emailError)
-          })
-      : setErrBuyer(true)
-    setBuyerError1(allMessages.error.emailSearcherror)
-  }
+  // const handleBuyerClick = () => {
+  //   console.log('clicked')
+  //   let roleId = 'BUYER'
+  //   buyer !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, buyer)
+  //         .then((res: any) => {
+  //           console.log('matched')
+  //           setBuyerConfirmed(true)
+  //           setBuyerValue(res.data.userdetails[0].user)
+  //           setErrBuyer(false)
+  //           setBuyerError1('')
+  //         })
+  //         .catch((err: any) => {
+  //           console.log('not')
+  //           setBuyer('')
+  //           setBuyerConfirmed(false)
+  //           setErrBuyer(true)
+  //           setBuyerValue('')
+  //           setBuyerError1(allMessages.error.emailError)
+  //         })
+  //     : setErrBuyer(true)
+  //   setBuyerError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleBuyingAssistantClick = () => {
-    let roleId = 'BYAST'
-    buyingAssistant !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, buyingAssistant)
-          .then((res: any) => {
-            console.log('matched')
-            setBuyingAssistantConfirmed(true)
-            setBuyingAssistantValue(res.data.userdetails[0].user)
-            setErrBuyerAssisant(false)
-            setBuyingAssistentError1('')
-          })
-          .catch((err: any) => {
-            console.log('not')
-            setBuyingAssistant('')
-            setBuyingAssistantConfirmed(false)
-            setBuyingAssistantValue('')
-            setErrBuyerAssisant(true)
-            setBuyingAssistentError1(allMessages.error.emailError)
-          })
-      : setErrBuyerAssisant(true)
-    setBuyingAssistentError1(allMessages.error.emailSearcherror)
-  }
+  // const handleBuyingAssistantClick = () => {
+  //   let roleId = 'BYAST'
+  //   buyingAssistant !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, buyingAssistant)
+  //         .then((res: any) => {
+  //           console.log('matched')
+  //           setBuyingAssistantConfirmed(true)
+  //           setBuyingAssistantValue(res.data.userdetails[0].user)
+  //           setErrBuyerAssisant(false)
+  //           setBuyingAssistentError1('')
+  //         })
+  //         .catch((err: any) => {
+  //           console.log('not')
+  //           setBuyingAssistant('')
+  //           setBuyingAssistantConfirmed(false)
+  //           setBuyingAssistantValue('')
+  //           setErrBuyerAssisant(true)
+  //           setBuyingAssistentError1(allMessages.error.emailError)
+  //         })
+  //     : setErrBuyerAssisant(true)
+  //   setBuyingAssistentError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleOwnBrandManagerClick = () => {
-    let roleId = 'OWNBRM'
-    ownBrandManager !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, ownBrandManager)
-          .then((res) => {
-            console.log('matched')
-            setOwnBrandManagerConfirmed(true)
-            setOwnBrandManagerValue(res.data.userdetails[0].user)
-            setErrOwnBrandManager(false)
-            setOwnBrandManagerError1('')
-          })
-          .catch((err) => {
-            console.log('not')
-            setOwnBrandManager('')
-            setOwnBrandManagerConfirmed(false)
-            setOwnBrandManagerValue('')
-            setErrOwnBrandManager(true)
-            setOwnBrandManagerError1(allMessages.error.emailError)
-          })
-      : setErrOwnBrandManager(true)
-    setOwnBrandManagerError1(allMessages.error.emailSearcherror)
-  }
+  // const handleOwnBrandManagerClick = () => {
+  //   let roleId = 'OWNBRM'
+  //   ownBrandManager !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, ownBrandManager)
+  //         .then((res) => {
+  //           console.log('matched')
+  //           setOwnBrandManagerConfirmed(true)
+  //           setOwnBrandManagerValue(res.data.userdetails[0].user)
+  //           setErrOwnBrandManager(false)
+  //           setOwnBrandManagerError1('')
+  //         })
+  //         .catch((err) => {
+  //           console.log('not')
+  //           setOwnBrandManager('')
+  //           setOwnBrandManagerConfirmed(false)
+  //           setOwnBrandManagerValue('')
+  //           setErrOwnBrandManager(true)
+  //           setOwnBrandManagerError1(allMessages.error.emailError)
+  //         })
+  //     : setErrOwnBrandManager(true)
+  //   setOwnBrandManagerError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleSeniorBuyingManagerClick = () => {
-    let roleId = 'SRBYM'
-    seniorBuyingManager !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, seniorBuyingManager)
-          .then((res) => {
-            console.log('matched')
-            setSeniorBuyingManagerConfirmed(true)
-            setSeniorBuyingManagerValue(res.data.userdetails[0].user)
-            setErrSeniorBuyingManager(false)
-            setSeniorBuyingManagerError1('')
-          })
-          .catch((err) => {
-            console.log('not')
-            setSeniorBuyingManager('')
-            setSeniorBuyingManagerConfirmed(false)
-            setSeniorBuyingManagerValue('')
-            setErrSeniorBuyingManager(true)
-            setSeniorBuyingManagerError1(allMessages.error.emailError)
-          })
-      : setErrSeniorBuyingManager(true)
-    setSeniorBuyingManagerError1(allMessages.error.emailSearcherror)
-  }
+  // const handleSeniorBuyingManagerClick = () => {
+  //   let roleId = 'SRBYM'
+  //   seniorBuyingManager !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, seniorBuyingManager)
+  //         .then((res) => {
+  //           console.log('matched')
+  //           setSeniorBuyingManagerConfirmed(true)
+  //           setSeniorBuyingManagerValue(res.data.userdetails[0].user)
+  //           setErrSeniorBuyingManager(false)
+  //           setSeniorBuyingManagerError1('')
+  //         })
+  //         .catch((err) => {
+  //           console.log('not')
+  //           setSeniorBuyingManager('')
+  //           setSeniorBuyingManagerConfirmed(false)
+  //           setSeniorBuyingManagerValue('')
+  //           setErrSeniorBuyingManager(true)
+  //           setSeniorBuyingManagerError1(allMessages.error.emailError)
+  //         })
+  //     : setErrSeniorBuyingManager(true)
+  //   setSeniorBuyingManagerError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleMerchandiserClick = () => {
-    let roleId = 'MERCH'
-    merchandiser !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, merchandiser)
-          .then((res) => {
-            console.log('matched')
-            setMerchandiserConfirmed(true)
-            setMerchandiserValue(res.data.userdetails[0].user)
-            setErrMerchandiser(false)
-            setMerchandiserError1('')
-          })
-          .catch((err) => {
-            console.log('not')
-            setMerchandiser('')
-            setMerchandiserConfirmed(false)
-            setMerchandiserValue('')
-            setErrMerchandiser(true)
-            setMerchandiserError1(allMessages.error.emailError)
-          })
-      : setErrMerchandiser(true)
-    setMerchandiserError1(allMessages.error.emailSearcherror)
-  }
+  // const handleMerchandiserClick = () => {
+  //   let roleId = 'MERCH'
+  //   merchandiser !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, merchandiser)
+  //         .then((res) => {
+  //           console.log('matched')
+  //           setMerchandiserConfirmed(true)
+  //           setMerchandiserValue(res.data.userdetails[0].user)
+  //           setErrMerchandiser(false)
+  //           setMerchandiserError1('')
+  //         })
+  //         .catch((err) => {
+  //           console.log('not')
+  //           setMerchandiser('')
+  //           setMerchandiserConfirmed(false)
+  //           setMerchandiserValue('')
+  //           setErrMerchandiser(true)
+  //           setMerchandiserError1(allMessages.error.emailError)
+  //         })
+  //     : setErrMerchandiser(true)
+  //   setMerchandiserError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleRangeResetManagerClick = () => {
-    let roleId = 'RRMNGR'
-    rangeResetManager !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, rangeResetManager)
-          .then((res) => {
-            console.log('matched')
-            setRangeResetManagerConfirmed(true)
-            setRangeResetManagerValue(res.data.userdetails[0].user)
-            setErrRangeResetManager(false)
-            setRangeResetManagerError1('')
-          })
-          .catch((err) => {
-            console.log('not')
-            setRangeResetManager('')
-            setRangeResetManagerConfirmed(false)
-            setRangeResetManagerValue('')
-            setErrRangeResetManager(true)
-            setRangeResetManagerError1(allMessages.error.emailError)
-          })
-      : setErrRangeResetManager(true)
-    setRangeResetManagerError1(allMessages.error.emailSearcherror)
-  }
+  // const handleRangeResetManagerClick = () => {
+  //   let roleId = 'RRMNGR'
+  //   rangeResetManager !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, rangeResetManager)
+  //         .then((res) => {
+  //           console.log('matched')
+  //           setRangeResetManagerConfirmed(true)
+  //           setRangeResetManagerValue(res.data.userdetails[0].user)
+  //           setErrRangeResetManager(false)
+  //           setRangeResetManagerError1('')
+  //         })
+  //         .catch((err) => {
+  //           console.log('not')
+  //           setRangeResetManager('')
+  //           setRangeResetManagerConfirmed(false)
+  //           setRangeResetManagerValue('')
+  //           setErrRangeResetManager(true)
+  //           setRangeResetManagerError1(allMessages.error.emailError)
+  //         })
+  //     : setErrRangeResetManager(true)
+  //   setRangeResetManagerError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleCategoryDirectorClick = () => {
-    let roleId = 'CTDIR'
-    categoryDirector !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, categoryDirector)
-          .then((res) => {
-            console.log('matched')
-            setCategoryDirectorConfirmed(true)
-            setCategoryDirectorValue(res.data.userdetails[0].user)
-            setErrCategoryDirector(false)
-            setCategoryDirectorError1('')
-          })
-          .catch((err) => {
-            console.log('not')
-            setCategoryDirector('')
-            setCategoryDirectorConfirmed(false)
-            setCategoryDirectorValue('')
-            setErrCategoryDirector(true)
-            setCategoryDirectorError1(allMessages.error.emailError)
-          })
-      : setErrCategoryDirector(true)
-    setCategoryDirectorError1(allMessages.error.emailSearcherror)
-  }
+  // const handleCategoryDirectorClick = () => {
+  //   let roleId = 'CTDIR'
+  //   categoryDirector !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, categoryDirector)
+  //         .then((res) => {
+  //           console.log('matched')
+  //           setCategoryDirectorConfirmed(true)
+  //           setCategoryDirectorValue(res.data.userdetails[0].user)
+  //           setErrCategoryDirector(false)
+  //           setCategoryDirectorError1('')
+  //         })
+  //         .catch((err) => {
+  //           console.log('not')
+  //           setCategoryDirector('')
+  //           setCategoryDirectorConfirmed(false)
+  //           setCategoryDirectorValue('')
+  //           setErrCategoryDirector(true)
+  //           setCategoryDirectorError1(allMessages.error.emailError)
+  //         })
+  //     : setErrCategoryDirector(true)
+  //   setCategoryDirectorError1(allMessages.error.emailSearcherror)
+  // }
 
-  const handleSupplyChainSpecialistClick = () => {
-    let roleId = 'SCSPL'
-    supplyChainSpecialist !== ''
-      ? getUsersAPIByEmailAndRole &&
-        getUsersAPIByEmailAndRole(roleId, supplyChainSpecialist)
-          .then((res) => {
-            console.log('matched')
-            setSupplyChainSpecialistConfirmed(true)
-            setSupplyChainSpecialistValue(res.data.userdetails[0].user)
-            setErrSupplyChainSpecialist(false)
-            setSupChainSpecialistError1('')
-          })
-          .catch((err) => {
-            console.log('not')
-            setSupplyChainSpecialist('')
-            setSupplyChainSpecialistConfirmed(false)
-            setSupplyChainSpecialistValue('')
-            setErrSupplyChainSpecialist(true)
-            setSupChainSpecialistError1(allMessages.error.emailError)
-          })
-      : setErrSupplyChainSpecialist(true)
-    setSupChainSpecialistError1(allMessages.error.emailSearcherror)
-  }
+  // const handleSupplyChainSpecialistClick = () => {
+  //   let roleId = 'SCSPL'
+  //   supplyChainSpecialist !== ''
+  //     ? getUsersAPIByEmailAndRole &&
+  //       getUsersAPIByEmailAndRole(roleId, supplyChainSpecialist)
+  //         .then((res) => {
+  //           console.log('matched')
+  //           setSupplyChainSpecialistConfirmed(true)
+  //           setSupplyChainSpecialistValue(res.data.userdetails[0].user)
+  //           setErrSupplyChainSpecialist(false)
+  //           setSupChainSpecialistError1('')
+  //         })
+  //         .catch((err) => {
+  //           console.log('not')
+  //           setSupplyChainSpecialist('')
+  //           setSupplyChainSpecialistConfirmed(false)
+  //           setSupplyChainSpecialistValue('')
+  //           setErrSupplyChainSpecialist(true)
+  //           setSupChainSpecialistError1(allMessages.error.emailError)
+  //         })
+  //     : setErrSupplyChainSpecialist(true)
+  //   setSupChainSpecialistError1(allMessages.error.emailSearcherror)
+  // }
 
   const classDialog = (
     <Dialog open={classOpen} onClose={handleClassClose}>
@@ -2344,10 +2358,14 @@ function CreateEvent(props: any) {
       setToastRemove('create')
       setCancelOpenApprove(true)
     }
+    if (flag === 1 && btnName === 'publish') {
+      setToastRemove('publish')
+      setCancelOpenPublish(true)
+    }
   }
 
   const handleToaster = () => {
-    if (toastRemove === 'save') {
+    if (toastRemove === 'save' || toastRemove === 'publish') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     } else if (toastRemove === 'create') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
@@ -2572,7 +2590,9 @@ function CreateEvent(props: any) {
             res.data[0].status.toLowerCase() === 'draft' ||
             res.data[0].status.toLowerCase() === 'confirmed'
           ) {
-            setDisabled(true)
+            setDisableSave(true)
+            setDisableCreate(true)
+            setDisablePublish(true)
             let newVal = [res.data[0], ...fileData]
             let _tasks = newVal.filter(
               (value: any) => fileErrorData.errorId !== value.errorId
@@ -2593,11 +2613,11 @@ function CreateEvent(props: any) {
               life: life,
               className: 'login-toast',
             })
-            setDisabled(false)
+            setDisableSave(false)
           } else {
             console.log(res.data[0])
             // setErrorData(res.data[0])
-            setDisabled(false)
+            setDisableSave(false)
             // setErrorFile(res.data[0])
             // checkForErrors(res.data[0])
             // checkErrorMessages(res.data[0])
@@ -2608,7 +2628,9 @@ function CreateEvent(props: any) {
             res.data[0].status.toLowerCase() === 'draft' ||
             res.data[0].status.toLowerCase() === 'confirmed'
           ) {
-            setDisabled(true)
+            setDisableSave(true)
+            setDisableCreate(true)
+            setDisablePublish(true)
             toast.current.show({
               severity: 'success',
               summary: 'Success',
@@ -2627,9 +2649,9 @@ function CreateEvent(props: any) {
               life: life,
               className: 'login-toast',
             })
-            setDisabled(false)
+            setDisableSave(false)
           } else {
-            setDisabled(false)
+            setDisableSave(false)
             // checkForErrors(res.data[0])
             // checkErrorMessages(res.data[0])
             checkForErrors(checkErrorMessages2(res.data[0]))
@@ -2643,7 +2665,7 @@ function CreateEvent(props: any) {
       .catch((err: any) => {
         setIsSuccessCall(false)
         setIsProgressLoader(false)
-        setDisabled(false)
+        setDisableSave(false)
         console.log(err)
         toast.current.show({
           severity: 'error',
@@ -2740,7 +2762,7 @@ function CreateEvent(props: any) {
           },
           eventHeader: {
             resetType: data.resetType,
-            rafAppDueDate: data.appDueDate,
+            rafAppDueDate: data.appDueDate ? data.appDueDate : null,
             eventLaunchDate: data.targetDate,
             eventName: data.name,
             eventHierarchy: {
@@ -2749,7 +2771,9 @@ function CreateEvent(props: any) {
               department: data.department,
             },
             inventoryControl: {
-              planogramClass: data.planogramClass.className,
+              planogramClass: data.planogramClass
+                ? data.planogramClass.className
+                : null,
               storeWastetiming: data.wastageRange,
               orderStopDateCheckRequired: data.orderStopDateCheck,
               stopOrderStockRundown: data.stopOrder,
@@ -2930,7 +2954,9 @@ function CreateEvent(props: any) {
 
     patchRangeResetEvents(formData)
       .then((res: any) => {
-        setDisabled(true)
+        setDisableSave(true)
+        setDisableCreate(true)
+        setDisablePublish(true)
         setIsSuccessCall(false)
         setIsProgressLoader(false)
         // let newVal = [formData.rangeResets[0], ...fileData]
@@ -3078,8 +3104,9 @@ function CreateEvent(props: any) {
             console.log(formdata1)
 
             createEventsCamunda(res.data[0].id, formdata1)
-              .then((res: any) => {
-                console.log(res.data)
+              .then((res1: any) => {
+                console.log(res1.data)
+
                 toast.current.show({
                   severity: 'success',
                   summary: 'Success',
@@ -3108,11 +3135,11 @@ function CreateEvent(props: any) {
               life: life,
               className: 'login-toast',
             })
-            setDisabled(false)
+            setDisableSave(false)
           } else {
             console.log()
             // setErrorData(res.data[0])
-            setDisabled(false)
+            setDisableSave(false)
             // checkForErrors(res.data[0])
             checkForErrors(checkErrorMessages2(res.data[0]))
             // setErrorFile(res.data[0])
@@ -3285,11 +3312,11 @@ function CreateEvent(props: any) {
               life: life,
               className: 'login-toast',
             })
-            setDisabled(false)
+            setDisableSave(false)
           } else {
             console.log()
             // setErrorData(res.data[0])
-            setDisabled(false)
+            setDisableSave(false)
             // checkForErrors(res.data[0])
             checkForErrors(checkErrorMessages2(res.data[0]))
             // setErrorFile(res.data[0])
@@ -3301,7 +3328,442 @@ function CreateEvent(props: any) {
       .catch((err: any) => {
         setIsSuccessCall(false)
         setIsProgressLoader(false)
-        setDisabled(false)
+        setDisableSave(false)
+        console.log(err)
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error!',
+          // detail: err.response.data.errorMessage,
+          life: life,
+          className: 'login-toast',
+        })
+      })
+  }
+
+  const handlePublishAfterDialog = (e: any) => {
+    e.preventDefault()
+    checkForm('publish')
+  }
+
+  const handleCancelPublish = (e: any) => {
+    e.preventDefault()
+    setCancelOpenPublish((p) => !p)
+  }
+
+  const handleCreateAndPublish = () => {
+    setIsProgressLoader(true)
+    const formData = createFormData()
+    console.log(formData)
+
+    patchRangeResetEvents(formData)
+      .then((res: any) => {
+        setDisableSave(true)
+        setDisableCreate(true)
+        setDisablePublish(true)
+        setIsSuccessCall(false)
+        setIsProgressLoader(false)
+        // let newVal = [formData.rangeResets[0], ...fileData]
+        // setFile(newVal)
+        console.log(res.data)
+        // if (errorCheck && errorCheck > -1) {
+        if (fileErrorData) {
+          if (
+            res.data[0].status.toLowerCase() === 'draft' ||
+            res.data[0].status.toLowerCase() === 'confirmed'
+          ) {
+            let newVal = [res.data[0], ...fileData]
+            let _tasks = newVal.filter(
+              (value: any) => fileErrorData.errorId !== value.errorId
+            )
+            setFile(_tasks)
+
+            const formdata1 = createCamundaFormData(res.data[0])
+            console.log(formdata1)
+
+            createEventsCamunda(res.data[0].id, formdata1)
+              .then((res1: any) => {
+                console.log(res1.data)
+                const data = res.data[0]
+                const data1 = res1.data
+                let formData2 = {
+                  reviewDecision: 'Confirmed',
+                  requester: {
+                    persona: 'Range Reset Manager',
+                    details: {
+                      emailId:
+                        userDetail && userDetail.userdetails[0].user.emailId,
+                      userId:
+                        userDetail && userDetail.userdetails[0].user.userId,
+                      name:
+                        userDetail &&
+                        userDetail.userdetails[0].user.middleName &&
+                        userDetail.userdetails[0].user.middleName != ''
+                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    },
+                  },
+                  eventId: data.id,
+                  eventStatus: data.status,
+                  eventHeader: {
+                    resetType: 'Range Reset',
+                    // "resetType":data.resetType,
+                    rafAppDueDate: data.appDueDate ? data.appDueDate : null,
+                    eventLaunchDate: data.targetDate,
+                    eventName: data.name,
+                    eventHierarchy: {
+                      tradingGroup: data.tradeGroup,
+                      category: data.category,
+                      department: data.department,
+                    },
+                    inventoryControl: {
+                      planogramClass: data.planogramClass
+                        ? data.planogramClass.className
+                        : null,
+                      clearancePriceApplied:
+                        data.clearancePriceCheck === 'Y' ? 'true' : 'false',
+                      orderStopDateCheckRequired:
+                        data.orderStopDateCheck === 'Y' ? 'true' : 'false',
+                      stopOrderStockRundown: data.stopOrder ? 'true' : 'false',
+                      storeWastetiming: data.wastageRange,
+                    },
+                    eventTeam: {
+                      team: [
+                        {
+                          persona: 'Buyer',
+                          details: {
+                            emailId: data.buyerEmailId,
+                            userId: data.buyerId,
+                            name: data.buyer,
+                          },
+                        },
+                        {
+                          persona: 'Category Director',
+                          details: {
+                            emailId: data.categoryDirectorEmailId,
+                            userId: data.categoryDirectorId,
+                            name: data.categoryDirector,
+                          },
+                        },
+                        {
+                          persona: 'Senior Buying Manager',
+                          details: {
+                            emailId: data.seniorBuyingManagerEmailId,
+                            userId: data.seniorBuyingManagerId,
+                            name: data.seniorBuyingManager,
+                          },
+                        },
+                        {
+                          persona: 'Buying Assistant',
+                          details: {
+                            emailId: data.buyerAssistantEmailId,
+                            userId: data.buyerAssistantId,
+                            name: data.buyerAssistant,
+                          },
+                        },
+                        {
+                          persona: 'Merchandiser',
+                          details: {
+                            emailId: data.merchandiserEmailId,
+                            userId: data.merchandiserId,
+                            name: data.merchandiser,
+                          },
+                        },
+                        {
+                          persona: 'Supply Chain Specialist',
+                          details: {
+                            emailId: data.supplyChainAnalystEmailId,
+                            userId: data.supplyChainAnalystId,
+                            name: data.supplyChainAnalyst,
+                          },
+                        },
+                        {
+                          persona: 'Own Brand Manager',
+                          details: {
+                            emailId: data.ownBrandManagerEmailId,
+                            userId: data.ownBrandManagerId,
+                            name: data.ownBrandManager,
+                          },
+                        },
+                        {
+                          persona: 'Range Reset Manager',
+                          details: {
+                            emailId: data.rangeResetManagerEmailId,
+                            userId: data.rangeResetManagerId,
+                            name: data.rangeResetManager,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  milestones:
+                    data1.eventUpdateResponses[0].eventMilestones.milestones.map(
+                      (milestone: any) => {
+                        return {
+                          status: 'Future',
+                          visibility: 'Enabled',
+                          taskId: milestone.taskId,
+                          taskName: milestone.taskName,
+                          taskDescription: milestone.taskDescription,
+                          dueDate: milestone.dueDate,
+                          notifyDate: milestone.notifyDate,
+                          slaDate: milestone.slaDate,
+                          assigneeDetails: {
+                            emailId: milestone.assigneeDetails.emailId,
+                            userId: milestone.assigneeDetails.userId,
+                            name: milestone.assigneeDetails.name,
+                          },
+                          assigneeRole: milestone.assigneeRole,
+                        }
+                      }
+                    ),
+                  logging: {
+                    comments: data1.logging.comments,
+                    created: data1.logging.created
+                      ? data1.logging.created
+                      : null,
+                  },
+                }
+
+                console.log(formData2)
+
+                publishEventsCamunda(data.id, formData2)
+                  .then((res2: any) => {
+                    console.log(res2.data)
+                  })
+                  .catch((err2: any) => {
+                    console.log(err2)
+                  })
+              })
+              .catch((err1: any) => {
+                console.log(err1)
+                toast.current.show({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: `Camunda Create event error`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+          } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
+            toast.current.show({
+              severity: 'error',
+              // summary: 'Duplicate Event',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              summary: 'Error',
+              detail: `${res.data[0].status}`,
+              life: life,
+              className: 'login-toast',
+            })
+            setDisableSave(false)
+          } else {
+            console.log()
+            // setErrorData(res.data[0])
+            setDisableSave(false)
+            // checkForErrors(res.data[0])
+            checkForErrors(checkErrorMessages2(res.data[0]))
+            // setErrorFile(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(fileErrorData)
+          }
+        } else {
+          if (
+            res.data[0].status.toLowerCase() === 'draft' ||
+            res.data[0].status.toLowerCase() === 'confirmed'
+          ) {
+            const formdata1 = createCamundaFormData(res.data[0])
+            console.log(formdata1)
+
+            createEventsCamunda(res.data[0].id, formdata1)
+              .then((res1: any) => {
+                console.log(res1.data)
+                const data = res.data[0]
+                const data1 = res1.data
+                let formData2 = {
+                  reviewDecision: 'Confirmed',
+                  requester: {
+                    persona: 'Range Reset Manager',
+                    details: {
+                      emailId:
+                        userDetail && userDetail.userdetails[0].user.emailId,
+                      userId:
+                        userDetail && userDetail.userdetails[0].user.userId,
+                      name:
+                        userDetail &&
+                        userDetail.userdetails[0].user.middleName &&
+                        userDetail.userdetails[0].user.middleName != ''
+                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    },
+                  },
+                  eventId: data.id,
+                  eventStatus: data.status,
+                  eventHeader: {
+                    resetType: 'Range Reset',
+                    // "resetType":data.resetType,
+                    rafAppDueDate: data.appDueDate ? data.appDueDate : null,
+                    eventLaunchDate: data.targetDate,
+                    eventName: data.name,
+                    eventHierarchy: {
+                      tradingGroup: data.tradeGroup,
+                      category: data.category,
+                      department: data.department,
+                    },
+                    inventoryControl: {
+                      planogramClass: data.planogramClass
+                        ? data.planogramClass.className
+                        : null,
+                      clearancePriceApplied:
+                        data.clearancePriceCheck === 'Y' ? 'true' : 'false',
+                      orderStopDateCheckRequired:
+                        data.orderStopDateCheck === 'Y' ? 'true' : 'false',
+                      stopOrderStockRundown: data.stopOrder ? 'true' : 'false',
+                      storeWastetiming: data.wastageRange,
+                    },
+                    eventTeam: {
+                      team: [
+                        {
+                          persona: 'Buyer',
+                          details: {
+                            emailId: data.buyerEmailId,
+                            userId: data.buyerId,
+                            name: data.buyer,
+                          },
+                        },
+                        {
+                          persona: 'Category Director',
+                          details: {
+                            emailId: data.categoryDirectorEmailId,
+                            userId: data.categoryDirectorId,
+                            name: data.categoryDirector,
+                          },
+                        },
+                        {
+                          persona: 'Senior Buying Manager',
+                          details: {
+                            emailId: data.seniorBuyingManagerEmailId,
+                            userId: data.seniorBuyingManagerId,
+                            name: data.seniorBuyingManager,
+                          },
+                        },
+                        {
+                          persona: 'Buying Assistant',
+                          details: {
+                            emailId: data.buyerAssistantEmailId,
+                            userId: data.buyerAssistantId,
+                            name: data.buyerAssistant,
+                          },
+                        },
+                        {
+                          persona: 'Merchandiser',
+                          details: {
+                            emailId: data.merchandiserEmailId,
+                            userId: data.merchandiserId,
+                            name: data.merchandiser,
+                          },
+                        },
+                        {
+                          persona: 'Supply Chain Specialist',
+                          details: {
+                            emailId: data.supplyChainAnalystEmailId,
+                            userId: data.supplyChainAnalystId,
+                            name: data.supplyChainAnalyst,
+                          },
+                        },
+                        {
+                          persona: 'Own Brand Manager',
+                          details: {
+                            emailId: data.ownBrandManagerEmailId,
+                            userId: data.ownBrandManagerId,
+                            name: data.ownBrandManager,
+                          },
+                        },
+                        {
+                          persona: 'Range Reset Manager',
+                          details: {
+                            emailId: data.rangeResetManagerEmailId,
+                            userId: data.rangeResetManagerId,
+                            name: data.rangeResetManager,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  milestones:
+                    data1.eventUpdateResponses[0].eventMilestones.milestones.map(
+                      (milestone: any) => {
+                        return {
+                          status: 'Future',
+                          visibility: 'Enabled',
+                          taskId: milestone.taskId,
+                          taskName: milestone.taskName,
+                          taskDescription: milestone.taskDescription,
+                          dueDate: milestone.dueDate,
+                          notifyDate: milestone.notifyDate,
+                          slaDate: milestone.slaDate,
+                          assigneeDetails: {
+                            emailId: milestone.assigneeDetails.emailId,
+                            userId: milestone.assigneeDetails.userId,
+                            name: milestone.assigneeDetails.name,
+                          },
+                          assigneeRole: milestone.assigneeRole,
+                        }
+                      }
+                    ),
+                  logging: {
+                    comments: data1.logging.comments,
+                    created: data1.logging.created
+                      ? data1.logging.created
+                      : null,
+                  },
+                }
+
+                console.log(formData2)
+
+                publishEventsCamunda(data.id, formData2)
+                  .then((res2: any) => {
+                    console.log(res2.data)
+                  })
+                  .catch((err2: any) => {
+                    console.log(err2)
+                  })
+              })
+              .catch((err: any) => {
+                console.log(err)
+                toast.current.show({
+                  severity: 'error',
+                  summary: 'Error',
+                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  life: life,
+                  className: 'login-toast',
+                })
+              })
+          } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
+            toast.current.show({
+              severity: 'error',
+              // summary: 'Duplicate Event',
+              // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+              summary: 'Error',
+              detail: `${res.data[0].status}`,
+              life: life,
+              className: 'login-toast',
+            })
+            setDisableSave(false)
+          } else {
+            console.log()
+            // setErrorData(res.data[0])
+            setDisableSave(false)
+            // checkForErrors(res.data[0])
+            checkForErrors(checkErrorMessages2(res.data[0]))
+            // setErrorFile(res.data[0])
+            // checkForErrors(res.data[0])
+            // checkErrorMessages(fileErrorData)
+          }
+        }
+      })
+      .catch((err: any) => {
+        setIsSuccessCall(false)
+        setIsProgressLoader(false)
+        setDisableSave(false)
         console.log(err)
         toast.current.show({
           severity: 'error',
@@ -3319,6 +3781,16 @@ function CreateEvent(props: any) {
       handleCancel={handleCancelCreate}
       handleProceed={handleCreateEvent}
       label1="Are you sure to Create?"
+      label2="Please click Ok to proceed"
+    />
+  )
+
+  const viewConfirmPublish = (
+    <ConfirmBox
+      cancelOpen={cancelOpenPublish}
+      handleCancel={handleCancelPublish}
+      handleProceed={handleCreateAndPublish}
+      label1="Are you sure to Create & Publish?"
       label2="Please click Ok to proceed"
     />
   )
@@ -4679,7 +5151,7 @@ function CreateEvent(props: any) {
                     </Grid> */}
 
                     <OutlinedInput
-                      placeholder="Provide Merchandiser Email"
+                      placeholder="Provide Supply Chain Specialist Email"
                       margin="dense"
                       value={supplyChainSpecialist}
                       className={classes.inputFields}
@@ -4748,7 +5220,7 @@ function CreateEvent(props: any) {
                     </Grid> */}
 
                     <OutlinedInput
-                      placeholder="Provide Merchandiser Email"
+                      placeholder="Provide Own Brand Manager Email"
                       margin="dense"
                       value={ownBrandManager}
                       className={classes.inputFields}
@@ -4819,7 +5291,7 @@ function CreateEvent(props: any) {
                     </Grid> */}
 
                     <OutlinedInput
-                      placeholder="Provide Merchandiser Email"
+                      placeholder="Provide Range Reset Manager Email"
                       margin="dense"
                       value={rangeResetManager}
                       className={classes.inputFields}
@@ -4878,7 +5350,7 @@ function CreateEvent(props: any) {
                         className={classes.buttons}
                         onClick={handleSaveAfterDialog}
                         size="small"
-                        disabled={disabled}
+                        disabled={disableSave}
                       >
                         Save
                       </Button>
@@ -4889,6 +5361,8 @@ function CreateEvent(props: any) {
                         color="primary"
                         className={classes.buttons}
                         size="small"
+                        onClick={handlePublishAfterDialog}
+                        disabled={disablePublish}
                       >
                         {buttonText}
                       </Button>
@@ -4900,6 +5374,7 @@ function CreateEvent(props: any) {
                         className={classes.buttons}
                         onClick={handleCreateAfterDialog}
                         size="small"
+                        disabled={disableCreate}
                       >
                         Create Event
                       </Button>
@@ -4945,6 +5420,7 @@ function CreateEvent(props: any) {
           {viewConfirmSave}
           {viewConfirmBack}
           {viewConfirmCreate}
+          {viewConfirmPublish}
           {/* </Grid> */}
         </Grid>
       </Paper>

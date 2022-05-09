@@ -40,6 +40,8 @@ const {
   GET_WASTAGE_RANGES,
   CREATE_EVENTS_CAMUNDA,
   GET_EVENTDETAILS_BY_ID,
+  PATCH_DELETE_RANGERESETS,
+  PUBLISH_CAMUNDA_EVENT,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -377,8 +379,22 @@ export const deleteRangeResets = (resetId) => {
   return serviceRequest(url, 'DELETE', undefined)
 }
 
+export const patchUpdateRangeResets = (resetId, req) => {
+  let url = `${BASE_URL}${PATCH_DELETE_RANGERESETS}`
+  url = url.replace('{rangeResetId}', resetId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'PATCH', reqBody)
+}
+
 export const createEventsCamunda = (eventId, req) => {
   let url = `${BASE_URL}${CREATE_EVENTS_CAMUNDA}`
+  url = url.replace('{eventId}', eventId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'PUT', reqBody)
+}
+
+export const publishEventsCamunda = (eventId, req) => {
+  let url = `${BASE_URL}${PUBLISH_CAMUNDA_EVENT}`
   url = url.replace('{eventId}', eventId)
   let reqBody = `${JSON.stringify(req)}`
   return serviceRequest(url, 'PUT', reqBody)

@@ -64,6 +64,7 @@ import {
   getRangeResetEvents,
   patchRangeResetEvents,
   deleteRangeResets,
+  patchUpdateRangeResets,
 } from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import { bulkUploadFileType } from '../../../util/Constants'
@@ -208,57 +209,207 @@ function ManageTaskEvent(props: any) {
       .then((res: any) => {
         console.log(res.data)
         if (res.data.length > 0) {
-          const data = res.data.map((d: any) => {
-            return {
-              name: d.name,
-              id: d.id,
-              resetType: d.resetType,
-              appDueDate: d.appDueDate,
-              tradeGroup: d.tradeGroup,
-              category: d.category,
-              categoryId: d.categoryId,
-              department: d.department,
-              departmentId: d.departmentId,
-              targetDate: d.targetDate,
-              planogramClass: d.planogramClass,
-              wastageRange: d.wastageRange,
-              wastageRangeText: d.wastageRangeText,
-              buyer: d.buyer,
-              buyerId: d.buyerId,
-              buyerEmailId: d.buyerEmailId,
-              categoryDirector: d.categoryDirector,
-              categoryDirectorId: d.categoryDirectorId,
-              categoryDirectorEmailId: d.categoryDirectorEmailId,
-              seniorBuyingManager: d.seniorBuyingManager,
-              seniorBuyingManagerId: d.seniorBuyingManagerId,
-              seniorBuyingManagerEmailId: d.seniorBuyingManagerEmailId,
-              buyerAssistant: d.buyerAssistant,
-              buyerAssistantId: d.buyerAssistantId,
-              buyerAssistantEmailId: d.buyerAssistantEmailId,
-              merchandiser: d.merchandiser,
-              merchandiserId: d.merchandiserId,
-              merchandiserEmailId: d.merchandiserEmailId,
-              supplyChainAnalyst: d.supplyChainAnalyst,
-              supplyChainAnalystId: d.supplyChainAnalystId,
-              supplyChainAnalystEmailId: d.supplyChainAnalystEmailId,
-              ownBrandManager: d.ownBrandManager,
-              ownBrandManagerId: d.ownBrandManagerId,
-              ownBrandManagerEmailId: d.ownBrandManagerEmailId,
-              rangeResetManager: d.rangeResetManager,
-              rangeResetManagerId: d.rangeResetManagerId,
-              rangeResetManagerEmailId: d.rangeResetManagerEmailId,
+          const data = res.data
+            .filter((d: any) => d.status.toLowerCase() != 'cancelled')
+            .map((d: any) => {
+              return {
+                name: d.name,
+                id: d.id,
+                resetType: d.resetType,
+                appDueDate: d.appDueDate,
+                tradeGroup: d.tradeGroup,
+                category: d.category,
+                categoryId: d.categoryId,
+                department: d.department,
+                departmentId: d.departmentId,
+                targetDate: d.targetDate,
+                planogramClass: d.planogramClass,
+                wastageRange: d.wastageRange,
+                wastageRangeText: d.wastageRangeText,
+                buyer: d.buyer,
+                buyerId: d.buyerId,
+                buyerEmailId: d.buyerEmailId,
+                categoryDirector: d.categoryDirector,
+                categoryDirectorId: d.categoryDirectorId,
+                categoryDirectorEmailId: d.categoryDirectorEmailId,
+                seniorBuyingManager: d.seniorBuyingManager,
+                seniorBuyingManagerId: d.seniorBuyingManagerId,
+                seniorBuyingManagerEmailId: d.seniorBuyingManagerEmailId,
+                buyerAssistant: d.buyerAssistant,
+                buyerAssistantId: d.buyerAssistantId,
+                buyerAssistantEmailId: d.buyerAssistantEmailId,
+                merchandiser: d.merchandiser,
+                merchandiserId: d.merchandiserId,
+                merchandiserEmailId: d.merchandiserEmailId,
+                supplyChainAnalyst: d.supplyChainAnalyst,
+                supplyChainAnalystId: d.supplyChainAnalystId,
+                supplyChainAnalystEmailId: d.supplyChainAnalystEmailId,
+                ownBrandManager: d.ownBrandManager,
+                ownBrandManagerId: d.ownBrandManagerId,
+                ownBrandManagerEmailId: d.ownBrandManagerEmailId,
+                rangeResetManager: d.rangeResetManager,
+                rangeResetManagerId: d.rangeResetManagerId,
+                rangeResetManagerEmailId: d.rangeResetManagerEmailId,
 
-              // eventId: d['Event ID'],
-              // name: 'string',
-              // eventName: eventName(),
+                // eventId: d['Event ID'],
+                // name: 'string',
+                // eventName: eventName(),
 
-              status: d.status,
-              clearancePriceCheck: d.clearancePriceCheck,
-              orderStopDateCheck: d.orderStopDateCheck,
-              stopOrder: d.stopOrder,
-            }
-          })
+                status: d.status,
+                clearancePriceCheck: d.clearancePriceCheck,
+                orderStopDateCheck: d.orderStopDateCheck,
+                stopOrder: d.stopOrder,
+              }
+            })
           console.log(data)
+
+          for (var i = 0; i < data.length; i++) {
+            console.log(data[i])
+            let payload = {
+              requests: [
+                {
+                  submitType: 'new',
+                  eventId: data[i].id,
+                  eventStatus: data[i].status,
+                  requester: {
+                    persona: 'Range Reset Manager',
+                    details: {
+                      emailId:
+                        userDetail && userDetail.userdetails[0].user.emailId,
+                      userId:
+                        userDetail && userDetail.userdetails[0].user.userId,
+                      name:
+                        userDetail &&
+                        userDetail.userdetails[0].user.middleName &&
+                        userDetail.userdetails[0].user.middleName != ''
+                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    },
+                    roles: [
+                      {
+                        // "roleId": userDetail && userDetail.userdetails[0].roles[0].roleId
+                        roleId: 'RRMNGR',
+                      },
+                    ],
+                    usergroups:
+                      userDetail &&
+                      userDetail.userdetails[0].usergroups.map((group: any) => {
+                        return {
+                          groupId: group.groupId,
+                          status: group.status,
+                        }
+                      }),
+                    // [
+                    //   {
+                    //     groupId:
+                    //       userDetail &&
+                    //       userDetail.userdetails[0].userGroups.groupId,
+                    //     status:
+                    //       userDetail &&
+                    //       userDetail.userdetails[0].userGroups.status,
+                    //   },
+                    // ],
+                  },
+                  eventHeader: {
+                    resetType: data[i].resetType,
+                    rafAppDueDate: data[i].appDueDate,
+                    eventLaunchDate: data[i].targetDate,
+                    eventName: data[i].name,
+                    eventHierarchy: {
+                      tradingGroup: data[i].tradeGroup,
+                      category: data[i].category,
+                      department: data[i].department,
+                    },
+                    inventoryControl: {
+                      planogramClass: data[i].planogramClass
+                        ? data[i].planogramClass.className
+                        : null,
+                      clearancePriceApplied: data[i].clearancePriceCheck
+                        ? data[i].clearancePriceCheck
+                        : 'Y',
+                      orderStopDateCheckRequired: data[i].orderStopDateCheck
+                        ? data[i].orderStopDateCheck
+                        : 'Y',
+                      stopOrderStockRundown: data[i].stopOrder
+                        ? data[i].stopOrder
+                        : 'Y',
+                      storeWastetiming: data[i].wastageRange,
+                    },
+                    eventTeam: {
+                      team: [
+                        {
+                          persona: 'Buyer',
+                          details: {
+                            emailId: data[i].buyerEmailId,
+                            userId: data[i].buyerId,
+                            name: data[i].buyer,
+                          },
+                        },
+                        {
+                          persona: 'Category Director',
+                          details: {
+                            emailId: data[i].categoryDirectorEmailId,
+                            userId: data[i].categoryDirectorId,
+                            name: data[i].categoryDirector,
+                          },
+                        },
+                        {
+                          persona: 'Senior Buying Manager',
+                          details: {
+                            emailId: data[i].seniorBuyingManagerEmailId,
+                            userId: data[i].seniorBuyingManagerId,
+                            name: data[i].seniorBuyingManager,
+                          },
+                        },
+                        {
+                          persona: 'Buying Assistant',
+                          details: {
+                            emailId: data[i].buyerAssistantEmailId,
+                            userId: data[i].buyerAssistantId,
+                            name: data[i].buyerAssistant,
+                          },
+                        },
+                        {
+                          persona: 'Merchandiser',
+                          details: {
+                            emailId: data[i].merchandiserEmailId,
+                            userId: data[i].merchandiserId,
+                            name: data[i].merchandiser,
+                          },
+                        },
+                        {
+                          persona: 'Supply Chain Specialist',
+                          details: {
+                            emailId: data[i].supplyChainAnalystEmailId,
+                            userId: data[i].supplyChainAnalystId,
+                            name: data[i].supplyChainAnalyst,
+                          },
+                        },
+                        {
+                          persona: 'Own Brand Manager',
+                          details: {
+                            emailId: data[i].ownBrandManagerEmailId,
+                            userId: data[i].ownBrandManagerId,
+                            name: data[i].ownBrandManager,
+                          },
+                        },
+                        {
+                          persona: 'Range Reset Manager',
+                          details: {
+                            emailId: data[i].rangeResetManagerEmailId,
+                            userId: data[i].rangeResetManagerId,
+                            name: data[i].rangeResetManager,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            }
+            console.log(payload)
+          }
+
           setFetchRangeResets(data)
           if (fileData.length < 1) {
             setFile(data)
@@ -1613,6 +1764,7 @@ function ManageTaskEvent(props: any) {
     } else {
       alert('Upload correct file')
       setUploadedFile(null)
+      setConfirmtable(true)
     }
   }
 
@@ -1643,8 +1795,8 @@ function ManageTaskEvent(props: any) {
       cancelOpen={cancelOpenDelete}
       handleCancel={() => setCancelOpenDelete(false)}
       handleProceed={removeTasks}
-      label1="Are you sure to Delete?"
-      label2="Please click Ok to Delete"
+      label1="Confirm 'Delete'"
+      label2="Are you sure you want to delete the selected record(s)?"
     />
   )
 
@@ -1694,7 +1846,26 @@ function ManageTaskEvent(props: any) {
           (event.status.toLowerCase() !== 'error' ||
             event.status.toLowerCase() !== 'duplicate')
         ) {
-          deleteRangeResets(event.id)
+          // deleteRangeResets(event.id)
+          //   .then((res: any) => {
+          //     console.log(res)
+          //     let _tasks = fetchRangeResets.filter(
+          //       (value: any) => !selectedEvents.includes(value)
+          //     )
+          //     console.log(_tasks)
+          //     setFailureCount((prevState) => prevState - 1)
+          //     setCheckCount((prevState) => prevState - 1)
+          //     setFetchRangeResets(_tasks)
+          //     setFile(_tasks)
+          //   })
+          //   .catch((err: any) => {
+          //     setCheckCount((prevState) => prevState - 1)
+          //   })
+          let formData = {
+            status: 'Cancelled',
+            items: [],
+          }
+          patchUpdateRangeResets(event.id, formData)
             .then((res: any) => {
               console.log(res)
               let _tasks = fetchRangeResets.filter(
@@ -1762,13 +1933,13 @@ function ManageTaskEvent(props: any) {
 
   const uploadDialog = (
     <Dialog
-      // onClose={handleUploadDialogClose}
+      onClose={handleUploadDialogClose}
       open={openUploadDialog}
-      onClose={(_, reason: any) => {
-        if (reason !== 'backdropClick') {
-          handleUploadDialogClose()
-        }
-      }}
+      // onClose={(_, reason: any) => {
+      //   if (reason !== 'backdropClick') {
+      //     handleUploadDialogClose()
+      //   }
+      // }}
     >
       <Box
         sx={{
@@ -2119,17 +2290,18 @@ function ManageTaskEvent(props: any) {
   const previewDialog = (
     <Dialog
       open={openPreviewDialog}
-      // onClose={() => {
-      //   fetchRangeResets.length > 0 && setConfirmtable(true)
-      //   handlePreviewialogClose()
-      // }}
-
-      onClose={(_, reason: any) => {
-        if (reason !== 'backdropClick') {
-          fetchRangeResets.length > 0 && setConfirmtable(true)
-          handlePreviewialogClose()
-        }
+      onClose={() => {
+        // fetchRangeResets.length > 0 && setConfirmtable(true)
+        // handlePreviewialogClose()
+        setCancelOpenCross(true)
       }}
+      // onClose={(_, reason: any) => {
+      //   if (reason !== 'backdropClick') {
+      //     // fetchRangeResets.length > 0 && setConfirmtable(true)
+      //     // handlePreviewialogClose()
+      //     setCancelOpenCross(true)
+      //   }
+      // }}
       fullWidth
       classes={{ paperFullWidth: classes.previewDialog }}
     >
@@ -2248,11 +2420,15 @@ function ManageTaskEvent(props: any) {
     </Dialog>
   )
 
+  // const cancelCross = () => {
+  //   fetchRangeResets.length > 0 && setConfirmtable(true)
+  //   setOpenPreviewDialog(false)
+  //   setOpenUploadDialog(true)
+  //   setCancelOpenCross(false)
+  // }
   const cancelCross = () => {
     fetchRangeResets.length > 0 && setConfirmtable(true)
     setOpenPreviewDialog(false)
-    setOpenUploadDialog(true)
-    setCancelOpenCross(false)
   }
 
   const viewConfirmCross = (
@@ -2260,8 +2436,8 @@ function ManageTaskEvent(props: any) {
       cancelOpen={cancelOpenCross}
       handleCancel={() => setCancelOpenCross(false)}
       handleProceed={cancelCross}
-      label1="Cancel Bulk Event Upload"
-      label2="Are you sure want to cancel bulk upload?"
+      label1="Cancel 'Bulk Event Upload'"
+      label2="Are you sure want to cancel 'Bulk Event Upload'?"
     />
   )
 
@@ -2737,12 +2913,12 @@ function ManageTaskEvent(props: any) {
   const advancedSearch = (
     <Dialog
       open={openAdvancedSearchDialog}
-      // onClose={handleSearchDialogClose}
-      onClose={(_, reason: any) => {
-        if (reason !== 'backdropClick') {
-          handleSearchDialogClose()
-        }
-      }}
+      onClose={handleSearchDialogClose}
+      // onClose={(_, reason: any) => {
+      //   if (reason !== 'backdropClick') {
+      //     handleSearchDialogClose()
+      //   }
+      // }}
       fullWidth
       classes={{ paperFullWidth: classes.searchDialog }}
     >
