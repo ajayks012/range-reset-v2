@@ -65,6 +65,8 @@ import {
   patchRangeResetEvents,
   deleteRangeResets,
   patchUpdateRangeResets,
+  getEventDetailsById,
+  publishEventsCamunda,
 } from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import { bulkUploadFileType } from '../../../util/Constants'
@@ -105,8 +107,8 @@ function ManageTaskEvent(props: any) {
   const [confirmedRows, setConfirmedRows] = useState<any>([])
   const [fetchRangeResets, setFetchRangeResets] = useState<any>([])
   const [filteredImportedData, setFilteredImportedData] = useState<any>()
-  const [selectedImportedData, setSelectedImportedData] = useState<any>()
-  const [selectedEvents, setSelectedEvents] = useState<any>()
+  const [selectedImportedData, setSelectedImportedData] = useState<any>([])
+  const [selectedEvents, setSelectedEvents] = useState<any>([])
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false)
   const [importedCols, setImportedCols] = useState<any>()
   const [globalFilter, setGlobalFilter] = React.useState('')
@@ -200,6 +202,13 @@ function ManageTaskEvent(props: any) {
   const [failureCount, setFailureCount] = React.useState(0)
   const [cancelOpenDelete, setCancelOpenDelete] = useState(false)
   const [cancelOpenCross, setCancelOpenCross] = useState(false)
+
+  const [checkCount1, setCheckCount1] = React.useState(1)
+  const [failureCount1, setFailureCount1] = React.useState(0)
+
+  useEffect(() => {
+    console.log(selectedEvents)
+  }, [selectedEvents])
 
   useEffect(() => {
     setIsProgressLoader(true)
@@ -805,11 +814,11 @@ function ManageTaskEvent(props: any) {
               fileName: fileName && fileName,
               createdById: userDetail && userDetail.userdetails[0].user.userId,
               createdByName:
-                userDetail &&
-                userDetail.userdetails[0].user.middleName &&
-                userDetail.userdetails[0].user.middleName != ''
-                  ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                  : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                userDetail && userDetail.userdetails[0].user.emailId,
+              // middleName &&
+              // userDetail.userdetails[0].user.middleName != ''
+              //   ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+              //   : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
             }
           }),
       }
@@ -1016,256 +1025,83 @@ function ManageTaskEvent(props: any) {
     }
   }
 
+  useEffect(() => {
+    // console.log('Check count: ', checkCount)
+    // console.log('Failure count: ', failureCount)
+    let detail
+    let severity
+    if (checkCount1 === 0) {
+      if (failureCount1 === 0) {
+        //detail = allMessages.success.successDelete
+        detail = allMessages.success.successPublish
+        severity = 'success'
+      } else if (failureCount1 > 0) {
+        //detail = allMessages.error.errorDelete
+        detail = `${failureCount1} ${allMessages.error.errorPublish}`
+        severity = 'error'
+      }
+      setIsProgressLoader(false)
+      toast.current.show([
+        {
+          severity: severity,
+          summary: '',
+          detail: detail,
+          life: life,
+          className: 'login-toast',
+        },
+      ])
+      // setTimeout(() => history.push(`${DEFAULT}${DASHBOARD}`), life)
+    }
+  }, [checkCount1, failureCount1])
+
   const handlePublish = () => {
     // history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
-    // selectedImportedData.map((data: any) => {
-    //   let formdata
-    //   if (data.status.toLowerCase() === 'draft') {
-    //     let payload = {
-    //       reviewDecision: 'Confirmed',
-    //       eventId: data.id,
-    //       eventHeader: {
-    //         resetType: data.resetType,
-    //         rafAppDueDate: data.appDueDate,
-    //         eventLaunchDate: data.targetDate,
-    //         eventName: data.name,
-    //         eventHierarchy: {
-    //           tradingGroup: data.tradeGroup,
-    //           category: data.category,
-    //           department: data.department,
-    //         },
-    //         inventoryControl: {
-    //           planogramClass: data.planogramClass.className,
-    //           isClearancePriceApplied: data.clearancePriceCheck,
-    //           isOrderStopDateCheckRequired: data.orderStopDateCheck,
-    //           isStopOrderStockRundown: data.stopOrder,
-    //         },
-    //         requester: {
-    //           persona:
-    //             userDetail && userDetail.userdetails[0].roles[0].roleName,
-    //           details: {
-    //             name:
-    //               userDetail && userDetail.userdetails[0].user.middleName
-    //                 ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-    //                 : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-    //             emailId: userDetail && userDetail.userdetails[0].user.emailId,
-    //             userId: userDetail && userDetail.userdetails[0].user.userId,
-    //           },
-    //         },
-    //         eventTeam: {
-    //           team: [
-    //             {
-    //               persona: 'Buyer',
-    //               details: {
-    //                 emailId: data.buyerEmailId,
-    //                 userId: data.buyerId,
-    //                 name: data.buyer,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Buying Assistant',
-    //               details: {
-    //                 emailId: data.buyerAssistantEmailId,
-    //                 userId: data.buyerAssistantId,
-    //                 name: data.buyerAssistant,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Range Reset Manager',
-    //               details: {
-    //                 emailId: data.rangeResetManagerEmailId,
-    //                 userId: data.rangeResetManagerId,
-    //                 name: data.rangeResetManager,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Own Brand Manager',
-    //               details: {
-    //                 emailId: data.ownBrandManagerEmailId,
-    //                 userId: data.ownBrandManagerId,
-    //                 name: data.ownBrandManager,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Senior Buying Manager',
-    //               details: {
-    //                 emailId: data.seniorBuyingManagerEmailId,
-    //                 userId: data.seniorBuyingManagerId,
-    //                 name: data.seniorBuyingManager,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Merchandiser',
-    //               details: {
-    //                 emailId: data.merchandiserEmailId,
-    //                 userId: data.merchandiserId,
-    //                 name: data.merchandiser,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Category Director',
-    //               details: {
-    //                 emailId: data.categoryDirectorEmailId,
-    //                 userId: data.categoryDirectorId,
-    //                 name: data.categoryDirector,
-    //               },
-    //             },
-    //             {
-    //               persona: 'Supply Chain Specialist',
-    //               details: {
-    //                 emailId: data.buyerEmailId,
-    //                 userId: data.buyerId,
-    //                 name: data.buyer,
-    //               },
-    //             },
-    //           ],
-    //         },
-    //       },
-    //       milestones: [
-    //         {
-    //           taskName: 'CT6',
-    //           taskDescription: 'De-list draft added by asst buyer',
-    //           visibility: 'Disabled',
-    //           dueDate: '2021-11-15 01:00:00',
-    //           notifyDate: '2021-11-08 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buying Assistant',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyingasst@morrisonsplc.co.uk',
-    //               userId: '70004',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT8',
-    //           taskDescription: 'Initiate stock count',
-    //           visibility: 'Disabled',
-    //           dueDate: '2021-11-15 01:00:00',
-    //           notifyDate: '2021-11-08 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'System',
-    //             details: {
-    //               emailId: null,
-    //               userId: 'system',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT19',
-    //           taskDescription: 'Finalise Range - Delists & New',
-    //           visibility: 'Disabled',
-    //           dueDate: '2022-01-10 01:00:00',
-    //           notifyDate: '2022-01-03 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buyer',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
-    //               userId: '70001',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT7',
-    //           taskDescription: 'De-list draft added by buyer',
-    //           visibility: 'Disabled',
-    //           dueDate: '2021-11-15 01:00:00',
-    //           notifyDate: '2021-11-08 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buyer',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
-    //               userId: '70001',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT18',
-    //           taskDescription: 'Finalise Range - Delists & New',
-    //           visibility: 'Enabled',
-    //           dueDate: '2022-01-10 01:00:00',
-    //           notifyDate: '2022-01-03 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buying Assistant',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyingasst@morrisonsplc.co.uk',
-    //               userId: '70004',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT9',
-    //           taskDescription: 'Build of core planograms',
-    //           visibility: 'Enabled',
-    //           dueDate: '2021-11-22 01:00:00',
-    //           notifyDate: '2021-11-15 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buying Assistant',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyingasst@morrisonsplc.co.uk',
-    //               userId: '70004',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT27',
-    //           taskDescription: 'Review/Add & Approve De-Ranged items',
-    //           visibility: 'Enabled',
-    //           dueDate: '2022-02-28 01:00:00',
-    //           notifyDate: '2022-02-21 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buyer',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
-    //               userId: '70001',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT26',
-    //           taskDescription: 'De-Range items added to the RCM app (Draft)',
-    //           visibility: 'Enabled',
-    //           dueDate: '2022-02-28 01:00:00',
-    //           notifyDate: '2022-02-21 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'System',
-    //             details: {
-    //               emailId: null,
-    //               userId: 'system',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT34',
-    //           taskDescription: 'Review Store waste',
-    //           visibility: 'Enabled',
-    //           dueDate: '2022-05-16 01:00:00',
-    //           notifyDate: '2022-05-09 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buyer',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
-    //               userId: '70001',
-    //             },
-    //           },
-    //         },
-    //         {
-    //           taskName: 'CT10',
-    //           taskDescription: 'core plan recommendation',
-    //           visibility: 'Enabled',
-    //           dueDate: '2021-11-29 01:00:00',
-    //           notifyDate: '2021-11-22 01:00:00',
-    //           assigneeDetails: {
-    //             persona: 'Buyer',
-    //             details: {
-    //               emailId: 'servicetest.frozen.buyer@morrisonsplc.co.uk',
-    //               userId: '70001',
-    //             },
-    //           },
-    //         },
-    //       ],
-    //     }
-    //   }
-    // })
+    if (selectedEvents && selectedEvents.length > 0) {
+      setToastRemove('publish')
+      setIsProgressLoader(true)
+      setFailureCount1(selectedEvents.length)
+      setCheckCount1(selectedEvents.length)
+      selectedEvents.map((event: any) => {
+        if (event.status.toLowerCase() === 'draft') {
+          getEventDetailsById(event.id)
+            .then((res1: any) => {
+              let getResponse = res1.data
+              let formData1 = {
+                reviewDecision: 'confirmed',
+                requester:
+                  getResponse.eventDetailsList[0].rangeEventRequest.requester,
+                eventId: event.id,
+                eventStatus: event.status,
+                eventHeader:
+                  getResponse.eventDetailsList[0].rangeEventRequest.eventHeader,
+                milestones: getResponse.eventDetailsList[0].milestones,
+                logging: {
+                  comments: 'string',
+                  updated: 'string',
+                },
+              }
+              console.log(formData1)
+              publishEventsCamunda(event.id, formData1)
+                .then((res2: any) => {
+                  console.log(res2.data)
+                  setFailureCount1((prevState) => prevState - 1)
+                  setCheckCount1((prevState) => prevState - 1)
+                })
+                .catch((err2: any) => {
+                  console.log(err2)
+                  setCheckCount1((prevState) => prevState - 1)
+                })
+            })
+            .catch((err1: any) => {
+              console.log(err1)
+              setCheckCount1((prevState) => prevState - 1)
+            })
+        } else {
+          setCheckCount1((prevState) => prevState - 1)
+        }
+      })
+    }
+    setSelectedEvents(null)
   }
 
   const eventNameTemplate = (rowData: any) => {
@@ -3867,9 +3703,7 @@ function ManageTaskEvent(props: any) {
                 <Box sx={{ padding: '10px' }}>
                   <Button
                     className={classes.submitButtons}
-                    onClick={() => {
-                      selectedImportedData.length > 0 && handlePublish()
-                    }}
+                    onClick={handlePublish}
                   >
                     Publish
                   </Button>

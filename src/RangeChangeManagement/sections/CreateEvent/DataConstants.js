@@ -282,4 +282,5 @@ export const errorArrayMessage = {
   clearancePriceCheck: 'Clearance Price Check',
   orderStopDateCheck: 'Order Stop Date Check',
   stopOrder: 'Stop Order',
+  camundaError: 'Camunda Workflow'
 }

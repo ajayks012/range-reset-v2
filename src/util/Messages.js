@@ -41,6 +41,7 @@ export const allMessages = {
       'Date range will be between system date and 2 weeks in the future',
     launchDateerror: 'Launch date should be equal or greater than current date',
     bulkUploadfailure: 'Bulk upload failure due to service error',
+    errorPublish: 'tasks failed to publish due to service error',
   },
   success: {
     successPost: 'Log posted successfully',
@@ -52,5 +53,6 @@ export const allMessages = {
     successGroupCopy: 'GroupId has been autocopied to clipboard',
     promptMessage: 'Unsaved changes will be lost. Do you want to continue ?',
     bulkUploadSuccess: 'Events uploaded successfully',
+    successPublish: 'Selected tasks published successfully',
   },
 }

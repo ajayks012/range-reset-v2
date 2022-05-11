@@ -172,6 +172,7 @@ function CreateEvent(props: any) {
   const [errClearancePrice, setErrClearancePrice] = useState<any>(false)
   const [errOrderStopDate, setErrOrderStopDate] = useState<any>(false)
   const [errStopOrder, setErrStopOrder] = useState<any>(false)
+  const [errCamunda, setErrCamunda] = useState<any>(false)
 
   const [errorMessageValues, setErrorMessageValues] = useState<any>('')
   const [rafDueDateError1, setRafDueDateError1] = useState<any>('')
@@ -196,6 +197,7 @@ function CreateEvent(props: any) {
   const [clearancePriceError1, setClearancePriceError1] = useState<any>('')
   const [orderStopDateError1, setOrderStopDateError1] = useState<any>('')
   const [stopOrderError1, setStopOrderError1] = useState<any>('')
+  const [camundaError1, setCamundaError1] = useState<any>('')
 
   const [productHierValues, setProductHierValues] = useState<any>([])
   const [disableSave, setDisableSave] = React.useState(false)
@@ -258,7 +260,11 @@ function CreateEvent(props: any) {
     let newData = item
     // item.name && setEventName(item.name)
     let errorArray = item.errorMessage.split(',')
+    if (!item.errorMessage.includes(',')) {
+      errorArray.push('')
+    }
     console.log(errorArray)
+    console.log(errorArray.length)
     let count = 0
 
     errorArray.map((err: any) => {
@@ -411,6 +417,12 @@ function CreateEvent(props: any) {
       }
       if (key === errorArrayMessage.stopOrder) {
         newData.stopOrderError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+      if (key === errorArrayMessage.camundaError) {
+        newData.camundaError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
@@ -1024,6 +1036,11 @@ function CreateEvent(props: any) {
         setStopOrder(null)
       } else {
         setStopOrder(value.stopOrder)
+      }
+
+      if (value.hasOwnProperty('camundaError')) {
+        setErrCamunda(true)
+        setCamundaError1(value.camundaError)
       }
     }
   }
@@ -2475,12 +2492,11 @@ function CreateEvent(props: any) {
           stopOrder: stopOrder ? stopOrder : 'Y',
           fileName: null,
           createdById: userDetail && userDetail.userdetails[0].user.userId,
-          createdByName:
-            userDetail &&
-            userDetail.userdetails[0].user.middleName &&
-            userDetail.userdetails[0].user.middleName != ''
-              ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-              : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+          createdByName: userDetail && userDetail.userdetails[0].user.emailId,
+          // middleName &&
+          // userDetail.userdetails[0].user.middleName != ''
+          //   ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+          //   : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
         },
       ],
     }
@@ -4003,11 +4019,13 @@ function CreateEvent(props: any) {
                       <LightTooltip
                         title={
                           <>
-                            This field is mandatory for Reset Type Rapid
-                            Response
-                            <br />
-                            RAF/ APP Due Date should be between System Date and
-                            Launch Date
+                            <Typography variant="body2">
+                              This field is mandatory for Reset Type Rapid
+                              Response
+                              <br />
+                              RAF/ APP Due Date should be between System Date
+                              and Launch Date
+                            </Typography>
                           </>
                         }
                         position={'top'}
