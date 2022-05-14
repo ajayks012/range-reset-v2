@@ -67,6 +67,7 @@ import {
   patchUpdateRangeResets,
   getEventDetailsById,
   publishEventsCamunda,
+  claimEventsCamunda,
 } from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import { bulkUploadFileType } from '../../../util/Constants'
@@ -205,6 +206,7 @@ function ManageTaskEvent(props: any) {
 
   const [checkCount1, setCheckCount1] = React.useState(1)
   const [failureCount1, setFailureCount1] = React.useState(0)
+  const [disabled, setDisabled] = useState(false)
 
   useEffect(() => {
     console.log(selectedEvents)
@@ -738,11 +740,14 @@ function ManageTaskEvent(props: any) {
   }, [])
 
   const goBack = () => {
+    setSelectedEvents([])
     history.goBack()
   }
 
   const handleCreateEvent = () => {
+    setSelectedEvents([])
     history.push(`${DEFAULT}${RANGEAMEND_CREATE}`)
+    setSelectedEvents([])
   }
 
   const excelDatetoDate = (eDate: any) => {
@@ -1017,11 +1022,13 @@ function ManageTaskEvent(props: any) {
       // let singleRow = [data]
       // setFile(singleRow)
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+      setSelectedEvents([])
     } else if (data.status && data.status.toLowerCase() === 'duplicate') {
       alert('Duplicate Event')
     } else {
       // setErrorFile(data)
       history.push(`${DEFAULT}${RANGEAMEND_CREATE}`)
+      setSelectedEvents([])
     }
   }
 
@@ -1054,6 +1061,22 @@ function ManageTaskEvent(props: any) {
     }
   }, [checkCount1, failureCount1])
 
+  useEffect(() => {
+    if (selectedEvents) {
+      for (let i = 0; i < selectedEvents.length; i++) {
+        if (
+          selectedEvents &&
+          selectedEvents[i].status.toLowerCase() !== 'draft'
+        ) {
+          setDisabled(true)
+          break
+        } else {
+          setDisabled(false)
+        }
+      }
+    }
+  }, [selectedEvents])
+
   const handlePublish = () => {
     // history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
     if (selectedEvents && selectedEvents.length > 0) {
@@ -1066,30 +1089,65 @@ function ManageTaskEvent(props: any) {
           getEventDetailsById(event.id)
             .then((res1: any) => {
               let getResponse = res1.data
-              let formData1 = {
-                reviewDecision: 'confirmed',
-                requester:
-                  getResponse.eventDetailsList[0].rangeEventRequest.requester,
-                eventId: event.id,
-                eventStatus: event.status,
-                eventHeader:
-                  getResponse.eventDetailsList[0].rangeEventRequest.eventHeader,
-                milestones: getResponse.eventDetailsList[0].milestones,
-                logging: {
-                  comments: 'string',
-                  updated: 'string',
+              const formData2 = {
+                requestorDetails: {
+                  emailId: userDetail && userDetail.userdetails[0].user.emailId,
+                  requestBy:
+                    userDetail && userDetail.userdetails[0].user.userId,
+                  requestorName:
+                    userDetail &&
+                    userDetail.userdetails[0].user.middleName &&
+                    userDetail.userdetails[0].user.middleName !== ''
+                      ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                      : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                  requestType: 'complete',
+                  requestDate: new Date().toISOString().split('T')[0],
                 },
+                requestorRoles:
+                  userDetail &&
+                  userDetail.userdetails[0].roles.map((role: any) => {
+                    return {
+                      roleId: role.roleId,
+                    }
+                  }),
               }
-              console.log(formData1)
-              publishEventsCamunda(event.id, formData1)
-                .then((res2: any) => {
-                  console.log(res2.data)
-                  setFailureCount1((prevState) => prevState - 1)
-                  setCheckCount1((prevState) => prevState - 1)
+
+              claimEventsCamunda(
+                getResponse.eventDetailsList[0].rangeEventRequest.taskId,
+                formData2
+              )
+                .then((res3: any) => {
+                  console.log(res3)
+                  let formData1 = {
+                    reviewDecision: 'confirmed',
+                    requester:
+                      getResponse.eventDetailsList[0].rangeEventRequest
+                        .requester,
+                    eventId: event.id,
+                    eventStatus: event.status,
+                    eventHeader:
+                      getResponse.eventDetailsList[0].rangeEventRequest
+                        .eventHeader,
+                    milestones: getResponse.eventDetailsList[0].milestones,
+                    logging: {
+                      comments: 'string',
+                      updated: 'string',
+                    },
+                  }
+                  console.log(formData1)
+                  publishEventsCamunda(event.id, formData1)
+                    .then((res2: any) => {
+                      console.log(res2.data)
+                      setFailureCount1((prevState) => prevState - 1)
+                      setCheckCount1((prevState) => prevState - 1)
+                    })
+                    .catch((err2: any) => {
+                      console.log(err2)
+                      setCheckCount1((prevState) => prevState - 1)
+                    })
                 })
-                .catch((err2: any) => {
-                  console.log(err2)
-                  setCheckCount1((prevState) => prevState - 1)
+                .catch((err: any) => {
+                  console.log(err)
                 })
             })
             .catch((err1: any) => {
@@ -1934,7 +1992,7 @@ function ManageTaskEvent(props: any) {
             }
             selectionMode="checkbox"
             selection={selectedEvents}
-            onSelectionChange={(e) => setSelectedEvents(e.value)}
+            onSelectionChange={(e: any) => setSelectedEvents(e.value)}
             globalFilter={globalFilter}
             emptyMessage="No Events found."
             className="p-datatable-sm"
@@ -3704,6 +3762,7 @@ function ManageTaskEvent(props: any) {
                   <Button
                     className={classes.submitButtons}
                     onClick={handlePublish}
+                    disabled={disabled}
                   >
                     Publish
                   </Button>

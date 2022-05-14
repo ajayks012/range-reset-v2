@@ -42,6 +42,7 @@ const {
   GET_EVENTDETAILS_BY_ID,
   PATCH_DELETE_RANGERESETS,
   PUBLISH_CAMUNDA_EVENT,
+  PUT_CAMUNDA_CLAIM,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -405,6 +406,13 @@ export const getEventDetailsById = (eventId) => {
   url = url.replace('{eventId}', eventId)
   // let reqBody = `${JSON.stringify(req)}`
   return serviceRequest(url, 'GET', undefined)
+}
+
+export const claimEventsCamunda = (taskId, req) => {
+  let url = `${BASE_URL}${PUT_CAMUNDA_CLAIM}`
+  url = url.replace('{taskId}', taskId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'PUT', reqBody)
 }
 
 // export const getItemWeekStoreViewForecastAPI = (

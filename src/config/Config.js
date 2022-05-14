@@ -44,6 +44,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_CLAIM:
+      'commercial-workflow-range/v1/tasks/{taskId}/claim/process/hbtwEventRequestHandler',
     PUBLISH_CAMUNDA_EVENT:
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
@@ -95,6 +97,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_CLAIM:
+      'commercial-workflow-range/v1/tasks/{taskId}/claim/process/hbtwEventRequestHandler',
     PUBLISH_CAMUNDA_EVENT:
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
@@ -146,6 +150,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_CLAIM:
+      'commercial-workflow-range/v1/tasks/{taskId}/claim/process/hbtwEventRequestHandler',
     PUBLISH_CAMUNDA_EVENT:
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
@@ -197,6 +203,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_CLAIM:
+      'commercial-workflow-range/v1/tasks/{taskId}/claim/process/hbtwEventRequestHandler',
     PUBLISH_CAMUNDA_EVENT:
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:
@@ -248,6 +256,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
     GET_EVENTDETAILS_BY_ID:
       'commercial-workflow-range/v1/events/{eventId}/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_CLAIM:
+      'commercial-workflow-range/v1/tasks/{taskId}/claim/process/hbtwEventRequestHandler',
     PUBLISH_CAMUNDA_EVENT:
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     GOOGLE_CLIENT_ID:

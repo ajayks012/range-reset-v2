@@ -47,4 +47,7 @@ export const useStyles = makeStyles((theme) => ({
     // },
   },
   paper: { minWidth: '500px' },
+  validRequestId: {
+    color: theme.palette.primary.main,
+  },
 }))

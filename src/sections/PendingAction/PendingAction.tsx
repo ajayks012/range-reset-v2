@@ -57,17 +57,32 @@ function PendingAction(props: any) {
   }, [mypendingAction])
 
   const requestIdTemplate = (rowData: any) => {
-    return (
-      <button
-        type="button"
-        className={classes.exploreButtonforid}
-        value={rowData.requestId}
-        onClick={handleNameClick}
-      >
-        {rowData.requestId}
-      </button>
-    )
+    if (rowData.approved === false) {
+      return (
+        <button // disabled={true}
+          type="button"
+          className={classes.exploreButtonforid}
+          value={rowData.requestId}
+          onClick={handleNameClick}
+        >
+                    {rowData.requestId}       {' '}
+        </button>
+      )
+    } else {
+      return (
+        <button
+          disabled={true}
+          type="button"
+          className={classes.exploreButtonforid}
+          value={rowData.requestId}
+          onClick={handleNameClick}
+        >
+                    {rowData.requestId}       {' '}
+        </button>
+      )
+    }
   }
+
   return (
     <div className="manageUser">
       <div className="manageRequest">

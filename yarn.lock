@@ -9579,9 +9579,9 @@
   "version" "4.1.0"
 
 "primereact@^6.5.1":
-  "integrity" "sha512-onoowjhlOz9Kcjna1DYEKWTGjKah4MjqZchm9E3BkcWjeXoCLv3F5QnIo8eVF9q+xymEK/6Oh7zHlfCJYyWwDw=="
-  "resolved" "https://registry.npmjs.org/primereact/-/primereact-6.6.0.tgz"
-  "version" "6.6.0"
+  "integrity" "sha512-hue9DKE935re5TjphaaFDgN7552EPrSwezH8ohlWQ+1jeq30MHEMn/h1oc82iXuvROHZpfjYVpnBxifV4Uavsg=="
+  "resolved" "https://registry.npmjs.org/primereact/-/primereact-6.5.1.tgz"
+  "version" "6.5.1"
 
 "printj@~1.2.2":
   "integrity" "sha512-sanczS6xOJOg7IKDvi4sGOUOe7c1tsEzjwlLFH/zgwx/uyImVM9/rgBkc8AfiQa/Vg54nRd8mkm9yI7WV/O+WA=="

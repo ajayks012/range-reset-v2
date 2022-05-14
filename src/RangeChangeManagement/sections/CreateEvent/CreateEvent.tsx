@@ -51,6 +51,8 @@ import {
   patchRangeResetEvents,
   patchUpdateRangeResets,
   publishEventsCamunda,
+  getEventDetailsById,
+  claimEventsCamunda,
 } from '../../../api/Fetch'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import { connect } from 'react-redux'
@@ -792,13 +794,19 @@ function CreateEvent(props: any) {
         console.log('appDueDateError')
         setRafDueDateError1(value.appDueDateError)
         if (value.hasOwnProperty('appDueDate')) {
-          setRafDueDate(value.appDueDate)
+          if (value.appDueDate) {
+            const date = new Date(value.appDueDate)
+            setRafDueDate(date.toISOString().split('T')[0])
+          }
         } else {
           setRafDueDate(null)
         }
       } else {
         console.log(value.appDueDate)
-        value.appDueDate && setRafDueDate(value.appDueDate)
+        if (value.appDueDate) {
+          const date = new Date(value.appDueDate)
+          setRafDueDate(date.toISOString().split('T')[0])
+        }
       }
 
       if (value.hasOwnProperty('resetTypeError')) {
@@ -872,13 +880,19 @@ function CreateEvent(props: any) {
         setErrLaunchDate(true)
         setLaunchError1(value.targetDateError)
         if (value.hasOwnProperty('targetDate')) {
-          setLaunchDate(value.targetDate)
+          if (value.targetDate) {
+            const date = new Date(value.targetDate)
+            setLaunchDate(date.toISOString().split('T')[0])
+          }
         } else {
           setLaunchDate(null)
         }
       } else {
         console.log(value.targetDate)
-        value.targetDate && setLaunchDate(value.targetDate)
+        if (value.targetDate) {
+          const date = new Date(value.targetDate)
+          setLaunchDate(date.toISOString().split('T')[0])
+        }
       }
 
       if (value.hasOwnProperty('planogramClassError')) {
@@ -3383,171 +3397,78 @@ function CreateEvent(props: any) {
         console.log(res.data)
         // if (errorCheck && errorCheck > -1) {
         if (fileErrorData) {
-          if (
-            res.data[0].status.toLowerCase() === 'draft' ||
-            res.data[0].status.toLowerCase() === 'confirmed'
-          ) {
+          if (res.data[0].status.toLowerCase() === 'draft') {
             let newVal = [res.data[0], ...fileData]
             let _tasks = newVal.filter(
               (value: any) => fileErrorData.errorId !== value.errorId
             )
             setFile(_tasks)
 
-            const formdata1 = createCamundaFormData(res.data[0])
-            console.log(formdata1)
-
-            createEventsCamunda(res.data[0].id, formdata1)
+            getEventDetailsById(res.data[0].id)
               .then((res1: any) => {
-                console.log(res1.data)
-                const data = res.data[0]
-                const data1 = res1.data
-                let formData2 = {
-                  reviewDecision: 'Confirmed',
-                  requester: {
-                    persona: 'Range Reset Manager',
-                    details: {
-                      emailId:
-                        userDetail && userDetail.userdetails[0].user.emailId,
-                      userId:
-                        userDetail && userDetail.userdetails[0].user.userId,
-                      name:
-                        userDetail &&
-                        userDetail.userdetails[0].user.middleName &&
-                        userDetail.userdetails[0].user.middleName != ''
-                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    },
+                let getResponse = res1.data
+                const formData2 = {
+                  requestorDetails: {
+                    emailId:
+                      userDetail && userDetail.userdetails[0].user.emailId,
+                    requestBy:
+                      userDetail && userDetail.userdetails[0].user.userId,
+                    requestorName:
+                      userDetail &&
+                      userDetail.userdetails[0].user.middleName &&
+                      userDetail.userdetails[0].user.middleName !== ''
+                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    requestType: 'complete',
+                    requestDate: new Date().toISOString().split('T')[0],
                   },
-                  eventId: data.id,
-                  eventStatus: data.status,
-                  eventHeader: {
-                    resetType: 'Range Reset',
-                    // "resetType":data.resetType,
-                    rafAppDueDate: data.appDueDate ? data.appDueDate : null,
-                    eventLaunchDate: data.targetDate,
-                    eventName: data.name,
-                    eventHierarchy: {
-                      tradingGroup: data.tradeGroup,
-                      category: data.category,
-                      department: data.department,
-                    },
-                    inventoryControl: {
-                      planogramClass: data.planogramClass
-                        ? data.planogramClass.className
-                        : null,
-                      clearancePriceApplied:
-                        data.clearancePriceCheck === 'Y' ? 'true' : 'false',
-                      orderStopDateCheckRequired:
-                        data.orderStopDateCheck === 'Y' ? 'true' : 'false',
-                      stopOrderStockRundown: data.stopOrder ? 'true' : 'false',
-                      storeWastetiming: data.wastageRange,
-                    },
-                    eventTeam: {
-                      team: [
-                        {
-                          persona: 'Buyer',
-                          details: {
-                            emailId: data.buyerEmailId,
-                            userId: data.buyerId,
-                            name: data.buyer,
-                          },
-                        },
-                        {
-                          persona: 'Category Director',
-                          details: {
-                            emailId: data.categoryDirectorEmailId,
-                            userId: data.categoryDirectorId,
-                            name: data.categoryDirector,
-                          },
-                        },
-                        {
-                          persona: 'Senior Buying Manager',
-                          details: {
-                            emailId: data.seniorBuyingManagerEmailId,
-                            userId: data.seniorBuyingManagerId,
-                            name: data.seniorBuyingManager,
-                          },
-                        },
-                        {
-                          persona: 'Buying Assistant',
-                          details: {
-                            emailId: data.buyerAssistantEmailId,
-                            userId: data.buyerAssistantId,
-                            name: data.buyerAssistant,
-                          },
-                        },
-                        {
-                          persona: 'Merchandiser',
-                          details: {
-                            emailId: data.merchandiserEmailId,
-                            userId: data.merchandiserId,
-                            name: data.merchandiser,
-                          },
-                        },
-                        {
-                          persona: 'Supply Chain Specialist',
-                          details: {
-                            emailId: data.supplyChainAnalystEmailId,
-                            userId: data.supplyChainAnalystId,
-                            name: data.supplyChainAnalyst,
-                          },
-                        },
-                        {
-                          persona: 'Own Brand Manager',
-                          details: {
-                            emailId: data.ownBrandManagerEmailId,
-                            userId: data.ownBrandManagerId,
-                            name: data.ownBrandManager,
-                          },
-                        },
-                        {
-                          persona: 'Range Reset Manager',
-                          details: {
-                            emailId: data.rangeResetManagerEmailId,
-                            userId: data.rangeResetManagerId,
-                            name: data.rangeResetManager,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  milestones:
-                    data1.eventUpdateResponses[0].eventMilestones.milestones.map(
-                      (milestone: any) => {
-                        return {
-                          status: 'Future',
-                          visibility: 'Enabled',
-                          taskId: milestone.taskId,
-                          taskName: milestone.taskName,
-                          taskDescription: milestone.taskDescription,
-                          dueDate: milestone.dueDate,
-                          notifyDate: milestone.notifyDate,
-                          slaDate: milestone.slaDate,
-                          assigneeDetails: {
-                            emailId: milestone.assigneeDetails.emailId,
-                            userId: milestone.assigneeDetails.userId,
-                            name: milestone.assigneeDetails.name,
-                          },
-                          assigneeRole: milestone.assigneeRole,
-                        }
+                  requestorRoles:
+                    userDetail &&
+                    userDetail.userdetails[0].roles.map((role: any) => {
+                      return {
+                        roleId: role.roleId,
                       }
-                    ),
-                  logging: {
-                    comments: data1.logging.comments,
-                    created: data1.logging.created
-                      ? data1.logging.created
-                      : null,
-                  },
+                    }),
                 }
 
-                console.log(formData2)
-
-                publishEventsCamunda(data.id, formData2)
-                  .then((res2: any) => {
-                    console.log(res2.data)
+                claimEventsCamunda(
+                  getResponse.eventDetailsList[0].rangeEventRequest.taskId,
+                  formData2
+                )
+                  .then((res3: any) => {
+                    console.log(res3)
+                    let formData1 = {
+                      reviewDecision: 'confirmed',
+                      requester:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .requester,
+                      eventId: res.data[0].id,
+                      eventStatus:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .eventStatus,
+                      eventHeader:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .eventHeader,
+                      milestones: getResponse.eventDetailsList[0].milestones,
+                      logging: {
+                        comments: 'string',
+                        updated: 'string',
+                      },
+                    }
+                    console.log(formData1)
+                    publishEventsCamunda(res.data[0].id, formData1)
+                      .then((res2: any) => {
+                        console.log(res2.data)
+                        // setFailureCount1((prevState:any) => prevState - 1)
+                        // setCheckCount1((prevState:any) => prevState - 1)
+                      })
+                      .catch((err2: any) => {
+                        console.log(err2)
+                        // setCheckCount1((prevState:any) => prevState - 1)
+                      })
                   })
-                  .catch((err2: any) => {
-                    console.log(err2)
+                  .catch((err: any) => {
+                    console.log(err)
                   })
               })
               .catch((err1: any) => {
@@ -3583,172 +3504,86 @@ function CreateEvent(props: any) {
           }
         } else {
           if (
-            res.data[0].status.toLowerCase() === 'draft' ||
-            res.data[0].status.toLowerCase() === 'confirmed'
+            res.data[0].status.toLowerCase() === 'draft'
+            // ||
+            // res.data[0].status.toLowerCase() === 'confirmed'
           ) {
-            const formdata1 = createCamundaFormData(res.data[0])
-            console.log(formdata1)
+            // const formdata1 = createCamundaFormData(res.data[0])
+            // console.log(formdata1)
 
-            createEventsCamunda(res.data[0].id, formdata1)
+            getEventDetailsById(res.data[0].id)
               .then((res1: any) => {
-                console.log(res1.data)
-                const data = res.data[0]
-                const data1 = res1.data
-                let formData2 = {
-                  reviewDecision: 'Confirmed',
-                  requester: {
-                    persona: 'Range Reset Manager',
-                    details: {
-                      emailId:
-                        userDetail && userDetail.userdetails[0].user.emailId,
-                      userId:
-                        userDetail && userDetail.userdetails[0].user.userId,
-                      name:
-                        userDetail &&
-                        userDetail.userdetails[0].user.middleName &&
-                        userDetail.userdetails[0].user.middleName != ''
-                          ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                          : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    },
+                let getResponse = res1.data
+                const formData2 = {
+                  requestorDetails: {
+                    emailId:
+                      userDetail && userDetail.userdetails[0].user.emailId,
+                    requestBy:
+                      userDetail && userDetail.userdetails[0].user.userId,
+                    requestorName:
+                      userDetail &&
+                      userDetail.userdetails[0].user.middleName &&
+                      userDetail.userdetails[0].user.middleName !== ''
+                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+                    requestType: 'complete',
+                    requestDate: new Date().toISOString().split('T')[0],
                   },
-                  eventId: data.id,
-                  eventStatus: data.status,
-                  eventHeader: {
-                    resetType: 'Range Reset',
-                    // "resetType":data.resetType,
-                    rafAppDueDate: data.appDueDate ? data.appDueDate : null,
-                    eventLaunchDate: data.targetDate,
-                    eventName: data.name,
-                    eventHierarchy: {
-                      tradingGroup: data.tradeGroup,
-                      category: data.category,
-                      department: data.department,
-                    },
-                    inventoryControl: {
-                      planogramClass: data.planogramClass
-                        ? data.planogramClass.className
-                        : null,
-                      clearancePriceApplied:
-                        data.clearancePriceCheck === 'Y' ? 'true' : 'false',
-                      orderStopDateCheckRequired:
-                        data.orderStopDateCheck === 'Y' ? 'true' : 'false',
-                      stopOrderStockRundown: data.stopOrder ? 'true' : 'false',
-                      storeWastetiming: data.wastageRange,
-                    },
-                    eventTeam: {
-                      team: [
-                        {
-                          persona: 'Buyer',
-                          details: {
-                            emailId: data.buyerEmailId,
-                            userId: data.buyerId,
-                            name: data.buyer,
-                          },
-                        },
-                        {
-                          persona: 'Category Director',
-                          details: {
-                            emailId: data.categoryDirectorEmailId,
-                            userId: data.categoryDirectorId,
-                            name: data.categoryDirector,
-                          },
-                        },
-                        {
-                          persona: 'Senior Buying Manager',
-                          details: {
-                            emailId: data.seniorBuyingManagerEmailId,
-                            userId: data.seniorBuyingManagerId,
-                            name: data.seniorBuyingManager,
-                          },
-                        },
-                        {
-                          persona: 'Buying Assistant',
-                          details: {
-                            emailId: data.buyerAssistantEmailId,
-                            userId: data.buyerAssistantId,
-                            name: data.buyerAssistant,
-                          },
-                        },
-                        {
-                          persona: 'Merchandiser',
-                          details: {
-                            emailId: data.merchandiserEmailId,
-                            userId: data.merchandiserId,
-                            name: data.merchandiser,
-                          },
-                        },
-                        {
-                          persona: 'Supply Chain Specialist',
-                          details: {
-                            emailId: data.supplyChainAnalystEmailId,
-                            userId: data.supplyChainAnalystId,
-                            name: data.supplyChainAnalyst,
-                          },
-                        },
-                        {
-                          persona: 'Own Brand Manager',
-                          details: {
-                            emailId: data.ownBrandManagerEmailId,
-                            userId: data.ownBrandManagerId,
-                            name: data.ownBrandManager,
-                          },
-                        },
-                        {
-                          persona: 'Range Reset Manager',
-                          details: {
-                            emailId: data.rangeResetManagerEmailId,
-                            userId: data.rangeResetManagerId,
-                            name: data.rangeResetManager,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  milestones:
-                    data1.eventUpdateResponses[0].eventMilestones.milestones.map(
-                      (milestone: any) => {
-                        return {
-                          status: 'Future',
-                          visibility: 'Enabled',
-                          taskId: milestone.taskId,
-                          taskName: milestone.taskName,
-                          taskDescription: milestone.taskDescription,
-                          dueDate: milestone.dueDate,
-                          notifyDate: milestone.notifyDate,
-                          slaDate: milestone.slaDate,
-                          assigneeDetails: {
-                            emailId: milestone.assigneeDetails.emailId,
-                            userId: milestone.assigneeDetails.userId,
-                            name: milestone.assigneeDetails.name,
-                          },
-                          assigneeRole: milestone.assigneeRole,
-                        }
+                  requestorRoles:
+                    userDetail &&
+                    userDetail.userdetails[0].roles.map((role: any) => {
+                      return {
+                        roleId: role.roleId,
                       }
-                    ),
-                  logging: {
-                    comments: data1.logging.comments,
-                    created: data1.logging.created
-                      ? data1.logging.created
-                      : null,
-                  },
+                    }),
                 }
 
-                console.log(formData2)
-
-                publishEventsCamunda(data.id, formData2)
-                  .then((res2: any) => {
-                    console.log(res2.data)
+                claimEventsCamunda(
+                  getResponse.eventDetailsList[0].rangeEventRequest.taskId,
+                  formData2
+                )
+                  .then((res3: any) => {
+                    console.log(res3)
+                    let formData1 = {
+                      reviewDecision: 'confirmed',
+                      requester:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .requester,
+                      eventId: res.data[0].id,
+                      eventStatus:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .eventStatus,
+                      eventHeader:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .eventHeader,
+                      milestones: getResponse.eventDetailsList[0].milestones,
+                      logging: {
+                        comments: 'string',
+                        updated: 'string',
+                      },
+                    }
+                    console.log(formData1)
+                    publishEventsCamunda(res.data[0].id, formData1)
+                      .then((res2: any) => {
+                        console.log(res2.data)
+                        // setFailureCount1((prevState:any) => prevState - 1)
+                        // setCheckCount1((prevState:any) => prevState - 1)
+                      })
+                      .catch((err2: any) => {
+                        console.log(err2)
+                        // setCheckCount1((prevState:any) => prevState - 1)
+                      })
                   })
-                  .catch((err2: any) => {
-                    console.log(err2)
+                  .catch((err: any) => {
+                    console.log(err)
                   })
               })
-              .catch((err: any) => {
-                console.log(err)
+              .catch((err1: any) => {
+                console.log(err1)
                 toast.current.show({
                   severity: 'error',
                   summary: 'Error',
-                  // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                  detail: `Camunda Create event error`,
                   life: life,
                   className: 'login-toast',
                 })
@@ -5327,6 +5162,20 @@ function CreateEvent(props: any) {
                   </Grid>
                 </Grid>
 
+                <Grid container item xl={12} lg={12} md={12} sm={12} xs={12}>
+                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}></Grid>
+
+                  <Grid item container xl={7} lg={7} md={7} sm={7} xs={12}>
+                    <Typography variant="subtitle2" color="primary">
+                      {errCamunda && (
+                        <span className={classes.errorMessageColor}>
+                          {camundaError1}
+                        </span>
+                      )}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
                 <Grid
                   container
                   item
@@ -5385,7 +5234,7 @@ function CreateEvent(props: any) {
                         {buttonText}
                       </Button>
                     </Grid>
-                    <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
+                    {/* <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -5396,7 +5245,7 @@ function CreateEvent(props: any) {
                       >
                         Create Event
                       </Button>
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                 </Grid>
               </Grid>
