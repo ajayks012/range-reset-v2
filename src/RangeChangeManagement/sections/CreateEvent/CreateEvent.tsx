@@ -3459,29 +3459,60 @@ function CreateEvent(props: any) {
                     publishEventsCamunda(res.data[0].id, formData1)
                       .then((res2: any) => {
                         console.log(res2.data)
-                        // setFailureCount1((prevState:any) => prevState - 1)
-                        // setCheckCount1((prevState:any) => prevState - 1)
+                        setIsSuccessCall(false)
+                        setIsProgressLoader(false)
+                        toast.current.show({
+                          severity: 'success',
+                          summary: 'Success',
+                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                          detail: `${res.data[0].id} event is published`,
+                          life: life,
+                          className: 'login-toast',
+                        })
                       })
                       .catch((err2: any) => {
                         console.log(err2)
-                        // setCheckCount1((prevState:any) => prevState - 1)
+                        setIsSuccessCall(false)
+                        setIsProgressLoader(false)
+                        toast.current.show({
+                          severity: 'error',
+                          summary: 'Error',
+                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                          detail: 'Camunda Publish event error',
+                          life: life,
+                          className: 'login-toast',
+                        })
                       })
                   })
                   .catch((err: any) => {
                     console.log(err)
+                    setIsSuccessCall(false)
+                    setIsProgressLoader(false)
+                    toast.current.show({
+                      severity: 'error',
+                      summary: 'Error',
+                      // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                      detail: 'Camunda claim event error',
+                      life: life,
+                      className: 'login-toast',
+                    })
                   })
               })
               .catch((err1: any) => {
                 console.log(err1)
+                setIsSuccessCall(false)
+                setIsProgressLoader(false)
                 toast.current.show({
                   severity: 'error',
                   summary: 'Error',
-                  detail: `Camunda Create event error`,
+                  detail: `Camunda Get event error`,
                   life: life,
                   className: 'login-toast',
                 })
               })
           } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
+            setIsSuccessCall(false)
+            setIsProgressLoader(false)
             toast.current.show({
               severity: 'error',
               // summary: 'Duplicate Event',
@@ -3494,6 +3525,9 @@ function CreateEvent(props: any) {
             setDisableSave(false)
           } else {
             console.log()
+            // setIsSuccessCall(false)
+            setDisablePublish(false)
+            setIsProgressLoader(false)
             // setErrorData(res.data[0])
             setDisableSave(false)
             // checkForErrors(res.data[0])
@@ -3566,29 +3600,60 @@ function CreateEvent(props: any) {
                     publishEventsCamunda(res.data[0].id, formData1)
                       .then((res2: any) => {
                         console.log(res2.data)
-                        // setFailureCount1((prevState:any) => prevState - 1)
-                        // setCheckCount1((prevState:any) => prevState - 1)
+                        setIsSuccessCall(false)
+                        setIsProgressLoader(false)
+                        toast.current.show({
+                          severity: 'success',
+                          summary: 'Success',
+                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                          detail: `${res.data[0].id} event is published`,
+                          life: life,
+                          className: 'login-toast',
+                        })
                       })
                       .catch((err2: any) => {
                         console.log(err2)
-                        // setCheckCount1((prevState:any) => prevState - 1)
+                        setIsSuccessCall(false)
+                        setIsProgressLoader(false)
+                        toast.current.show({
+                          severity: 'error',
+                          summary: 'Error',
+                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                          detail: 'Camunda Publish event error',
+                          life: life,
+                          className: 'login-toast',
+                        })
                       })
                   })
                   .catch((err: any) => {
                     console.log(err)
+                    setIsSuccessCall(false)
+                    setIsProgressLoader(false)
+                    toast.current.show({
+                      severity: 'error',
+                      summary: 'Error',
+                      // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+                      detail: 'Camunda claim event error',
+                      life: life,
+                      className: 'login-toast',
+                    })
                   })
               })
               .catch((err1: any) => {
+                setIsSuccessCall(false)
+                setIsProgressLoader(false)
                 console.log(err1)
                 toast.current.show({
                   severity: 'error',
                   summary: 'Error',
-                  detail: `Camunda Create event error`,
+                  detail: `Camunda Get event error`,
                   life: life,
                   className: 'login-toast',
                 })
               })
           } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
+            setIsSuccessCall(false)
+            setIsProgressLoader(false)
             toast.current.show({
               severity: 'error',
               // summary: 'Duplicate Event',
@@ -3602,6 +3667,8 @@ function CreateEvent(props: any) {
           } else {
             console.log()
             // setErrorData(res.data[0])
+            // setIsSuccessCall(false)
+            setIsProgressLoader(false)
             setDisableSave(false)
             // checkForErrors(res.data[0])
             checkForErrors(checkErrorMessages2(res.data[0]))
@@ -5229,7 +5296,7 @@ function CreateEvent(props: any) {
                         className={classes.buttons}
                         size="small"
                         onClick={handlePublishAfterDialog}
-                        disabled={disablePublish}
+                        disabled={disableSave}
                       >
                         {buttonText}
                       </Button>

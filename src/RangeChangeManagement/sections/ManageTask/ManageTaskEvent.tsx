@@ -1062,7 +1062,7 @@ function ManageTaskEvent(props: any) {
   }, [checkCount1, failureCount1])
 
   useEffect(() => {
-    if (selectedEvents) {
+    if (selectedEvents && selectedEvents.length > 0) {
       for (let i = 0; i < selectedEvents.length; i++) {
         if (
           selectedEvents &&
@@ -1074,6 +1074,8 @@ function ManageTaskEvent(props: any) {
           setDisabled(false)
         }
       }
+    } else {
+      setDisabled(false)
     }
   }, [selectedEvents])
 
@@ -1146,8 +1148,9 @@ function ManageTaskEvent(props: any) {
                       setCheckCount1((prevState) => prevState - 1)
                     })
                 })
-                .catch((err: any) => {
-                  console.log(err)
+                .catch((err3: any) => {
+                  console.log(err3)
+                  setCheckCount1((prevState) => prevState - 1)
                 })
             })
             .catch((err1: any) => {
@@ -2281,7 +2284,9 @@ function ManageTaskEvent(props: any) {
           >
             <Button
               onClick={() => setCancelOpenDelete(true)}
-              className={classes.whiteButton}
+              // className={classes.whiteButton}
+              variant="outlined"
+              color="primary"
               disabled={
                 selectedImportedData
                   ? selectedImportedData.length === 0
@@ -2303,8 +2308,10 @@ function ManageTaskEvent(props: any) {
           >
             <Button
               // onClick={handlePreviewDialogSave}
+              variant="contained"
+              color="primary"
               onClick={handlePreviewDialogSave1}
-              className={classes.submitButtons}
+              // className={classes.submitButtons}
             >
               Save
             </Button>
@@ -3453,6 +3460,25 @@ function ManageTaskEvent(props: any) {
     </Dialog>
   )
 
+  const disablePublishButton = () => {
+    if (selectedEvents && selectedEvents.length !== 0) {
+      let errorRows = 0
+      selectedEvents.map((e: any) => {
+        if (
+          e.status.toLowerCase() === 'error' ||
+          e.status.toLowerCase() === 'duplicate'
+        ) {
+          errorRows = errorRows + 1
+        }
+      })
+      if (errorRows !== 0) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
   return (
     <>
       <Toast
@@ -3746,7 +3772,9 @@ function ManageTaskEvent(props: any) {
                 <Box sx={{ padding: '10px' }}>
                   <Button
                     onClick={removeEvents}
-                    className={classes.whiteButton}
+                    // className={classes.whiteButton}
+                    variant="outlined"
+                    color="primary"
                     disabled={
                       selectedEvents
                         ? selectedEvents.length === 0
@@ -3760,9 +3788,11 @@ function ManageTaskEvent(props: any) {
                 </Box>
                 <Box sx={{ padding: '10px' }}>
                   <Button
-                    className={classes.submitButtons}
+                    // className={classes.submitButtons}
+                    variant="contained"
                     onClick={handlePublish}
                     disabled={disabled}
+                    color="primary"
                   >
                     Publish
                   </Button>

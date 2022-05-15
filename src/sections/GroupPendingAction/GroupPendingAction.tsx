@@ -71,13 +71,19 @@ function GroupPendingAction(props: any) {
 
   useEffect(() => {
     console.log('starting')
-    for (let i = 0; i < unassignUser.length; i++) {
-      if (unassignUser && unassignUser[i].approved === true) {
-        setIsDisabled(true)
-        break
-      } else {
-        setIsDisabled(false)
+    if (unassignUser.length > 0) {
+      console.log('length greater than zero')
+      for (let i = 0; i < unassignUser.length; i++) {
+        if (unassignUser && unassignUser[i].approved === true) {
+          setIsDisabled(true)
+          break
+        } else {
+          setIsDisabled(false)
+        }
       }
+    } else {
+      console.log('length less than one')
+      setIsDisabled(false)
     }
   }, [unassignUser])
 
