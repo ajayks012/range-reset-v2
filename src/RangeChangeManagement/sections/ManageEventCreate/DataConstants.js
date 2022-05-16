@@ -348,11 +348,11 @@ export const manageEventPublishCols = [
 ]
 
 export const manageTaskPublishCols = [
-  {
-    field: 'rowButton',
-    header: `Remove / Skip / Reactivate Task`,
-    width: '100px',
-  },
+  // {
+  //   field: 'rowButton',
+  //   header: `Remove / Skip / Reactivate Task`,
+  //   width: '100px',
+  // },
   {
     field: 'taskId',
     header: 'Task Id',

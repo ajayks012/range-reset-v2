@@ -2167,14 +2167,14 @@ function ManageEventCreate(props: any) {
                   showGridlines
                   sortField="taskId"
                 >
-                  {/* <Column
+                  <Column
                     selectionMode="multiple"
                     headerStyle={{
                       width: '50px',
                       color: 'white',
                       backgroundColor: theme1.palette.primary.main,
                     }}
-                  ></Column> */}
+                  ></Column>
                   {manageTaskPublishCols.map((col: any, index: any) => {
                     return (
                       <Column
@@ -2182,7 +2182,7 @@ function ManageEventCreate(props: any) {
                         field={col.field}
                         header={col.header}
                         body={
-                          (col.field === 'rowButton' && buttonTemplate) ||
+                          // (col.field === 'rowButton' && buttonTemplate) ||
                           (col.field === 'dueDate' && dueDateTemplate) ||
                           (col.field === 'notifiedDate' &&
                             notifiedDateTemplate) ||
