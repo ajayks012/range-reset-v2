@@ -241,10 +241,21 @@ export const yesOrNo = [
 
 export const manageEventPublishCols = [
   {
+    field: 'eventId',
+    header: 'Event ID',
+    width: '100px',
+  },
+  {
+    field: 'eventName',
+    header: 'Event Name',
+    width: '200px',
+  },
+  {
     field: 'resetType',
     header: 'Reset Type',
     width: '220px',
   },
+
   {
     field: 'appDueDate',
     header: 'RAF/App Due Date',
@@ -270,16 +281,7 @@ export const manageEventPublishCols = [
     header: 'Launch Date',
     width: '150px',
   },
-  {
-    field: 'eventId',
-    header: 'Event ID',
-    width: '100px',
-  },
-  {
-    field: 'name',
-    header: 'Event Name',
-    width: '200px',
-  },
+
   {
     field: 'planogramClass',
     header: 'Planogram Class',

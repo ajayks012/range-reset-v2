@@ -43,6 +43,7 @@ const {
   PATCH_DELETE_RANGERESETS,
   PUBLISH_CAMUNDA_EVENT,
   PUT_CAMUNDA_CLAIM,
+  DELETE_EVENTS_CAMUNDA,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -399,6 +400,13 @@ export const publishEventsCamunda = (eventId, req) => {
   url = url.replace('{eventId}', eventId)
   let reqBody = `${JSON.stringify(req)}`
   return serviceRequest(url, 'PUT', reqBody)
+}
+
+export const deleteEventsCamunda = (req) => {
+  let url = `${BASE_URL}${DELETE_EVENTS_CAMUNDA}`
+  // url = url.replace('{eventId}', eventId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'DELETE', reqBody)
 }
 
 export const getEventDetailsById = (eventId) => {

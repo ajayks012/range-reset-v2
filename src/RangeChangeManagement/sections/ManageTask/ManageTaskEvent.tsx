@@ -40,6 +40,7 @@ import {
   setFile,
   resetFile,
   setErrorFile,
+  setTaskFile,
 } from '../../../redux/Actions/FileUpload'
 import { connect } from 'react-redux'
 import {
@@ -68,6 +69,7 @@ import {
   getEventDetailsById,
   publishEventsCamunda,
   claimEventsCamunda,
+  deleteEventsCamunda,
 } from '../../../api/Fetch'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
 import { bulkUploadFileType } from '../../../util/Constants'
@@ -90,7 +92,14 @@ const Input = styled('input')({
 // }))(Tooltip)
 
 function ManageTaskEvent(props: any) {
-  const { userDetail, setFile, resetFile, setErrorFile, fileData } = props
+  const {
+    userDetail,
+    setFile,
+    resetFile,
+    setErrorFile,
+    setTaskFile,
+    fileData,
+  } = props
 
   const classes = useStyles()
   const theme = useTheme()
@@ -1012,8 +1021,6 @@ function ManageTaskEvent(props: any) {
     //   },
     // })
 
-    setErrorFile(data)
-
     if (
       data.status.toLowerCase() === 'draft' ||
       data.status.toLowerCase() === 'confirmed'
@@ -1021,12 +1028,14 @@ function ManageTaskEvent(props: any) {
       console.log([data])
       // let singleRow = [data]
       // setFile(singleRow)
+      setTaskFile(data)
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
       setSelectedEvents([])
     } else if (data.status && data.status.toLowerCase() === 'duplicate') {
       alert('Duplicate Event')
     } else {
       // setErrorFile(data)
+      setErrorFile(data)
       history.push(`${DEFAULT}${RANGEAMEND_CREATE}`)
       setSelectedEvents([])
     }
@@ -1106,12 +1115,19 @@ function ManageTaskEvent(props: any) {
                   requestDate: new Date().toISOString().split('T')[0],
                 },
                 requestorRoles:
-                  userDetail &&
-                  userDetail.userdetails[0].roles.map((role: any) => {
-                    return {
-                      roleId: role.roleId,
-                    }
-                  }),
+                  // userDetail &&
+                  // userDetail.userdetails[0].roles.map((role: any) => {
+                  //   return {
+                  //     roleId: role.roleId,
+                  //   }
+                  // }),
+                  [
+                    {
+                      roleId:
+                        getResponse.eventDetailsList[0].rangeEventRequest
+                          .requester.persona,
+                    },
+                  ],
               }
 
               claimEventsCamunda(
@@ -1223,7 +1239,7 @@ function ManageTaskEvent(props: any) {
           />
         </div>
       )
-    } else {
+    } else if (rowData.status && rowData.status.toLowerCase() == 'error') {
       // let errorArray = []
       // rowData.resetTypeError && errorArray.push(rowData.resetTypeError)
       // rowData.appDueDateError && errorArray.push(rowData.appDueDateError)
@@ -1317,6 +1333,8 @@ function ManageTaskEvent(props: any) {
           </div>
         )
       }
+    } else {
+      return <>{rowData.status}</>
     }
   }
 
@@ -1736,6 +1754,7 @@ function ManageTaskEvent(props: any) {
       setFailureCount(selectedEvents.length)
       setCheckCount(selectedEvents.length)
 
+      // let deletingEvents: any = []
       selectedEvents.map((event: any) => {
         if (
           (event.status.toLowerCase() === 'draft' ||
@@ -1743,7 +1762,13 @@ function ManageTaskEvent(props: any) {
           (event.status.toLowerCase() !== 'error' ||
             event.status.toLowerCase() !== 'duplicate')
         ) {
-          // deleteRangeResets(event.id)
+          // services delete endpoint
+
+          // let formData = {
+          //   status: 'Cancelled',
+          //   items: [],
+          // }
+          // patchUpdateRangeResets(event.id, formData)
           //   .then((res: any) => {
           //     console.log(res)
           //     let _tasks = fetchRangeResets.filter(
@@ -1758,24 +1783,88 @@ function ManageTaskEvent(props: any) {
           //   .catch((err: any) => {
           //     setCheckCount((prevState) => prevState - 1)
           //   })
+
+          // camunda delete endpoint
+
+          // deletingEvents.push({
+          //   eventId: event.id,
+          //   status: event.status,
+          // })
+
+          // let _tasks = fetchRangeResets.filter(
+          //   (value: any) => !selectedEvents.includes(value)
+          // )
+          // console.log(_tasks)
+
+          // setFailureCount((prevState) => prevState - 1)
+          // setCheckCount((prevState) => prevState - 1)
+          // setFetchRangeResets(_tasks)
+          // setFile(_tasks)
+
           let formData = {
-            status: 'Cancelled',
-            items: [],
+            requester: {
+              persona:
+                userDetail && userDetail.userdetails[0].roles[0].roleName,
+              details: {
+                emailId: userDetail && userDetail.userdetails[0].user.emailId,
+                userId: userDetail && userDetail.userdetails[0].user.userId,
+                name:
+                  userDetail &&
+                  userDetail.userdetails[0].user.middleName &&
+                  userDetail.userdetails[0].user.middleName != ''
+                    ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+                    : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+              },
+              roles:
+                userDetail &&
+                userDetail.userdetails[0].roles.map((role: any) => {
+                  return {
+                    roleId: role.roleId,
+                  }
+                }),
+              usergroups:
+                userDetail &&
+                userDetail.userdetails[0].usergroups.map((group: any) => {
+                  return {
+                    groupId: group.groupId,
+                    status: group.status,
+                  }
+                }),
+            },
+            deleteEventRequests: [
+              {
+                eventId: event.id,
+                status: event.status,
+              },
+            ],
+            logging: {
+              comments: 'string',
+              updated: 'string',
+            },
           }
-          patchUpdateRangeResets(event.id, formData)
+
+          deleteEventsCamunda(formData)
             .then((res: any) => {
-              console.log(res)
-              let _tasks = fetchRangeResets.filter(
-                (value: any) => !selectedEvents.includes(value)
-              )
-              console.log(_tasks)
-              setFailureCount((prevState) => prevState - 1)
-              setCheckCount((prevState) => prevState - 1)
-              setFetchRangeResets(_tasks)
-              setFile(_tasks)
+              console.log(res.data)
+              if (res.data && res.data.eventAlert.eventId === null) {
+                let _tasks = fetchRangeResets.filter(
+                  (value: any) => !selectedEvents.includes(value)
+                )
+                console.log(_tasks)
+                setFailureCount((prevState) => prevState - 1)
+                setCheckCount((prevState) => prevState - 1)
+                setFetchRangeResets(_tasks)
+                setFile(_tasks)
+              } else {
+                setCheckCount((prevState) => prevState - 1)
+              }
+
+              // setIsProgressLoader(false)
             })
             .catch((err: any) => {
+              console.log(err)
               setCheckCount((prevState) => prevState - 1)
+              // setIsProgressLoader(false)
             })
         } else {
           let _tasks = fetchRangeResets.filter(
@@ -1789,6 +1878,52 @@ function ManageTaskEvent(props: any) {
           setIsProgressLoader(false)
         }
       })
+
+      // let formData = {
+      //   requester: {
+      //     persona: userDetail && userDetail.userdetails[0].roles[0].roleName,
+      //     details: {
+      //       emailId: userDetail && userDetail.userdetails[0].user.emailId,
+      //       userId: userDetail && userDetail.userdetails[0].user.userId,
+      //       name:
+      //         userDetail &&
+      //         userDetail.userdetails[0].user.middleName &&
+      //         userDetail.userdetails[0].user.middleName != ''
+      //           ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+      //           : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+      //     },
+      //     roles:
+      //       userDetail &&
+      //       userDetail.userdetails[0].roles.map((role: any) => {
+      //         return {
+      //           roleId: role.roleId,
+      //         }
+      //       }),
+      //     usergroups:
+      //       userDetail &&
+      //       userDetail.userdetails[0].usergroups.map((group: any) => {
+      //         return {
+      //           groupId: group.groupId,
+      //           status: group.status,
+      //         }
+      //       }),
+      //   },
+      //   deleteEventRequests: deletingEvents,
+      //   logging: {
+      //     comments: 'string',
+      //     updated: 'string',
+      //   },
+      // }
+
+      // deleteEventsCamunda(formData)
+      //   .then((res: any) => {
+      //     console.log(res.data)
+      //     setIsProgressLoader(false)
+      //   })
+      //   .catch((err: any) => {
+      //     console.log(err)
+      //     setIsProgressLoader(false)
+      //   })
     }
     setSelectedEvents(null)
     // if (fileData && fileData.length == 0) {
@@ -3824,6 +3959,7 @@ const matchDispatchToProps = (dispatch: any) => {
     setFile: (fileData: any) => dispatch(setFile(fileData)),
     resetFile: () => dispatch(resetFile),
     setErrorFile: (fileData: any) => dispatch(setErrorFile(fileData)),
+    setTaskFile: (fileData: any) => dispatch(setTaskFile(fileData)),
   }
 }
 

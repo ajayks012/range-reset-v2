@@ -79,6 +79,31 @@ export const useStyles = makeStyles((theme) => {
     value: {
       flex: 1,
     },
+    uploadTextfield: {
+      [theme.breakpoints.up(670)]: {
+        width: 250,
+      },
+      [theme.breakpoints.down(670)]: {
+        width: 100,
+      },
+
+      height: '32px',
+      cursor: 'pointer',
+    },
+    uploadButton: {
+      width: 100,
+      height: '32px',
+      cursor: 'pointer',
+      backgroundColor: theme.palette.primary.main,
+      color: 'white',
+    },
+    buttonRemoveTask: {
+      height: 40,
+      marginRight: '20px',
+    },
+    duedate: {
+      background: '#dddddd',
+    },
   }
 })
 

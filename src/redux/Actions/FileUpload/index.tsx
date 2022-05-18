@@ -1,1 +1,8 @@
-export { setFile, resetFile, setErrorFile, resetErrorFile } from './Actions'
+export {
+  setFile,
+  resetFile,
+  setErrorFile,
+  resetErrorFile,
+  setTaskFile,
+  resetTaskFile,
+} from './Actions'

@@ -3,11 +3,14 @@ import {
   RESET_FILE,
   SET_ERROR_FILE,
   RESET_ERROR_FILE,
+  SET_TASK_FILE,
+  RESET_TASK_FILE,
 } from '../Actions/FileUpload/Type'
 
 const initialState = {
   fileData: [],
   fileErrorData: [],
+  fileManageData: [],
 }
 
 const fileReducer = (state = initialState, action: any) => {
@@ -32,6 +35,16 @@ const fileReducer = (state = initialState, action: any) => {
       return {
         ...state,
         fileErrorData: [],
+      }
+    case SET_TASK_FILE:
+      return {
+        ...state,
+        fileManageData: payload,
+      }
+    case RESET_TASK_FILE:
+      return {
+        ...state,
+        fileManageData: [],
       }
     default:
       return state

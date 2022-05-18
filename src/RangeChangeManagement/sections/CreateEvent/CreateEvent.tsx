@@ -3423,12 +3423,19 @@ function CreateEvent(props: any) {
                     requestDate: new Date().toISOString().split('T')[0],
                   },
                   requestorRoles:
-                    userDetail &&
-                    userDetail.userdetails[0].roles.map((role: any) => {
-                      return {
-                        roleId: role.roleId,
-                      }
-                    }),
+                    // userDetail &&
+                    // userDetail.userdetails[0].roles.map((role: any) => {
+                    //   return {
+                    //     roleId: role.roleId,
+                    //   }
+                    // }),
+                    [
+                      {
+                        roleId:
+                          getResponse.eventDetailsList[0].rangeEventRequest
+                            .requester.persona,
+                      },
+                    ],
                 }
 
                 claimEventsCamunda(
@@ -3564,12 +3571,19 @@ function CreateEvent(props: any) {
                     requestDate: new Date().toISOString().split('T')[0],
                   },
                   requestorRoles:
-                    userDetail &&
-                    userDetail.userdetails[0].roles.map((role: any) => {
-                      return {
-                        roleId: role.roleId,
-                      }
-                    }),
+                    // userDetail &&
+                    // userDetail.userdetails[0].roles.map((role: any) => {
+                    //   return {
+                    //     roleId: role.roleId,
+                    //   }
+                    // }),
+                    [
+                      {
+                        roleId:
+                          getResponse.eventDetailsList[0].rangeEventRequest
+                            .requester.persona,
+                      },
+                    ],
                 }
 
                 claimEventsCamunda(

@@ -1,7 +1,12 @@
 import { Column } from 'primereact/column'
+// import {  } from 'primereact/tooltip'
 import { DataTable } from 'primereact/datatable'
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
+import { Checkbox } from 'primereact/checkbox'
+import { InputTextarea } from 'primereact/inputtextarea'
+// import './TooltipDemo.css'
+
 import {
   Buyers,
   BuyingAssistants,
@@ -15,13 +20,15 @@ import {
   SupplyChainSpecialists,
   CategoryDirectors,
   classOptions,
-  resetTypes,
+  // resetTypes,
   groups,
   categories,
   departments,
   wastageRanges,
   yesOrNo,
   userGroupOptions,
+  // manageEventDummyData,
+  // ManagePageApiData,
 } from './DataConstants'
 import {
   Grid,
@@ -29,6 +36,7 @@ import {
   Typography,
   Button,
   TextField,
+  Tooltip,
   Box,
   Dialog,
   Radio,
@@ -42,9 +50,11 @@ import {
   Paper,
 } from '@material-ui/core'
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+
 import DateFnsUtils from '@date-io/date-fns'
 import { Autocomplete } from '@material-ui/lab'
 import AutocompleteSelect from '../../components/AutoCompleteSelect/AutocompleteSelect'
+import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
 import { routes } from '../../../util/Constants'
@@ -52,20 +62,39 @@ import { allMessages } from '../../../util/Messages'
 import {
   getProductHierarchyListAPI,
   getUsersAPIByEmailAndRole,
+  // getManageEventByEventIdAPI,
   getUsersAPIByRole,
+  // putManageEventByEventIdAPI,
+  claimEventsCamunda,
+  getResetTypes,
   getEventDetailsById,
+  publishEventsCamunda,
 } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
+import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 import { connect } from 'react-redux'
 import {
   resetErrorFile,
   resetFile,
   setFile,
+  resetTaskFile,
 } from '../../../redux/Actions/FileUpload'
+import '../../../styles/global/helpers.css'
+import { findAllByDisplayValue } from '@testing-library/react'
+import { styled } from '@material-ui/styles'
 
+const Input = styled('input')({
+  display: 'none',
+})
 function ManageEventCreate(props: any) {
-  const { fileErrorData, resetErrorFile } = props
+  const {
+    fileErrorData,
+    fileManageData,
+    setFile,
+    resetErrorFile,
+    resetTaskFile,
+  } = props
 
   const location = useLocation<any>()
   const history = useHistory()
@@ -75,19 +104,15 @@ function ManageEventCreate(props: any) {
 
   const { DEFAULT, RANGEAMEND_EVENTDASH, RANGEAMEND_MANAGE } = routes
 
-  const [eventId, setEventId] = useState<any>(null)
+  const [resetTypes, setResetTypes] = useState<any>()
   const [eventDetails, setEventDetails] = useState<any>()
-  const [resetType, setResetType] = useState<any>('')
-  const [resetTypeError, setResetTypeError] = useState<any>('')
-  const [rafDueDate, setRafDueDate] = useState<any>(null)
-  const [rafDueDateError, setRafDueDateError] = useState<any>('')
-  const [launchDate, setLaunchDate] = useState<any>(null)
-  const [launchDateError, setLaunchDateError] = useState<any>('')
+  const [team, setTeam] = useState<any>()
   const [eventName, setEventName] = useState<any>('')
   const [group, setGroup] = useState<any>('')
   const [category, setCategory] = useState<any>('')
   const [department, setDepartment] = useState<any>('')
-  const [taskDetails, setTaskDetails] = useState<any>(manageTaskPublishRows)
+  const [taskDetails, setTaskDetails] = useState<any>()
+  // const [taskDetails, setTaskDetails] = useState<any>()
   const [singleTask, setSingleTask] = useState<any>()
   const [selectTasks, setSelectTasks] = useState<any>()
   const [classValues, setClassValues] = useState<any>()
@@ -129,314 +154,58 @@ function ManageEventCreate(props: any) {
 
   const [classOpen, setClassOpen] = useState(false)
   const [groupsOpen, setGroupsOpen] = useState(false)
+  const [updateEventOpen, setUpdateEventOpen] = useState(false)
+  const [removeTaskOpen, setRemoveTaskOpen] = useState(false)
+  const [saveEventTaskButton, setsaveEventTaskButton] = useState(false)
 
-  const [productHierValues, setProductHierValues] = useState<any>([])
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
+  const [errBuyer, setErrBuyer] = useState<any>(false)
+  const [buyerError1, setBuyerError1] = useState<any>('')
+  const [errBuyerAssisant, setErrBuyerAssisant] = useState<any>(false)
+  const [buyingAssistentError1, setBuyingAssistentError1] = useState<any>('')
+  const [errOwnBrandManager, setErrOwnBrandManager] = useState<any>(false)
+  const [ownBrandManagerError1, setOwnBrandManagerError1] = useState<any>('')
+  const [errSeniorBuyingManager, setErrSeniorBuyingManager] =
+    useState<any>(false)
+  const [seniorBuyingManagerError1, setSeniorBuyingManagerError1] =
+    useState<any>('')
+  const [errMerchandiser, setErrMerchandiser] = useState<any>(false)
+  const [errRangeResetManager, setErrRangeResetManager] = useState<any>(false)
+  const [errCategoryDirector, setErrCategoryDirector] = useState<any>(false)
+  const [errSupplyChainSpecialist, setErrSupplyChainSpecialist] =
+    useState<any>(false)
+  const [merchandiserError1, setMerchandiserError1] = useState<any>('')
+  const [rangeResetManagerError1, setRangeResetManagerError1] =
+    useState<any>('')
+  const [categoryDirectorError1, setCategoryDirectorError1] = useState<any>('')
+  const [supChainSpecialistError1, setSupChainSpecialistError1] =
+    useState<any>('')
+  const [uploadedFile, setUploadedFile] = useState<any>()
+  const [confirmEnDis, setConfirmEnDis] = useState<any>(false)
+  const [publishVisible, setPublishVisible] = useState(true)
+  const [saveVisible, setSaveVisible] = useState(false)
+  const [isProgressLoader, setIsProgressLoader] = useState(false)
 
   useEffect(() => {
-    return () => resetErrorFile()
+    // return () => resetErrorFile()
+    return () => resetTaskFile()
   }, [])
 
-  useEffect(() => {
-    if (!fileErrorData) {
-      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
-    } else {
-      console.log(fileErrorData)
-      setEventName(fileErrorData.name)
-      setEventId(fileErrorData.id)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (eventId) {
-      getEventDetailsById &&
-        getEventDetailsById(eventId)
-          .then((res: any) => {
-            const eventData = res.data.eventDetailsList[0].rangeEventRequest
-            console.log('EVENTID', eventData)
-            const milestoneData = res.data.eventDetailsList[0].milestones
-
-            // Below original API CALL
-
-            // const eventData = res.eventDetailsList[0].rangeEventRequest
-            // console.log('EVENTID', eventData)
-
-            const manageList = [
-              {
-                resetType: eventData.eventHeader.resetType,
-                category: eventData.eventHeader.eventHierarchy.category,
-                department: eventData.eventHeader.eventHierarchy.department,
-                tradeGroup: eventData.eventHeader.eventHierarchy.tradingGroup,
-                eventId: eventData.eventId,
-                targetDate: eventData.eventHeader.eventLaunchDate,
-                appDueDate: eventData.eventHeader.rafAppDueDate,
-                eventName: eventData.eventHeader.eventName,
-                planogramClass: {
-                  className: [
-                    eventData.eventHeader.inventoryControl.planogramClass,
-                  ],
-                },
-                clearancePriceCheck:
-                  eventData.eventHeader.inventoryControl.clearancePriceApplied,
-                orderStopDateCheck:
-                  eventData.eventHeader.inventoryControl
-                    .orderStopDateCheckRequired,
-                stopOrder:
-                  eventData.eventHeader.inventoryControl.stopOrderStockRundown,
-                wastageRange:
-                  eventData.eventHeader.inventoryControl.storeWastetiming,
-                buyerEmailId: '',
-                buyerAssistantEmailId: '',
-                ownBrandManagerEmailId: '',
-                seniorBuyingManagerEmailId: '',
-                merchandiserEmailId: '',
-                rangeResetManagerEmailId: '',
-                categoryDirectorEmailId: '',
-                supplyChainAnalystEmailId: '',
-              },
-            ]
-            eventData.eventHeader.eventTeam.team.map((val: any) => {
-              // if (val.roles[0].roleId === 'Buyer') {
-              //   manageList[0].buyerEmailId = val.details.emailId
-              // }
-              // if (val.roles[0].roleId === 'Buying Assistant') {
-              //   manageList[0].buyerAssistantEmailId = val.details.emailId
-              // }
-              if (val.persona === 'Buyer') {
-                manageList[0].buyerEmailId = val.details.emailId
-              }
-              if (val.persona === 'Buying Assistant') {
-                manageList[0].buyerAssistantEmailId = val.details.emailId
-              }
-              if (val.persona === 'Range Reset Manager') {
-                manageList[0].rangeResetManagerEmailId = val.details.emailId
-              }
-
-              if (val.persona === 'Own Brand Manager') {
-                manageList[0].ownBrandManagerEmailId = val.details.emailId
-              }
-              if (val.persona === 'Senior Buying Manager') {
-                manageList[0].seniorBuyingManagerEmailId = val.details.emailId
-              }
-              if (val.persona === 'Merchandiser') {
-                manageList[0].merchandiserEmailId = val.details.emailId
-              }
-              if (val.persona === 'Category Director') {
-                manageList[0].categoryDirectorEmailId = val.details.emailId
-              }
-              if (val.persona === 'Supply Chain Specialist') {
-                manageList[0].supplyChainAnalystEmailId = val.details.emailId
-              }
-            })
-
-            const manageTask = milestoneData.map((milestone: any) => {
-              return {
-                taskId: milestone.taskName,
-                task: milestone.taskDescription,
-                dueDate: milestone.dueDate,
-                notifiedDate: milestone.notifyDate,
-                assignedUserGroup: milestone.assigneeRole,
-                name: milestone.assigneeDetails.name,
-                userId: milestone.assigneeDetails.userId,
-                visibility: milestone.visibility,
-              }
-            })
-            console.log(manageList)
-            console.log(manageTask)
-            setTaskDetails(manageTask)
-            setEventDetails(manageList)
-          })
-          .catch((err: any) => console.log('EVENTID', err))
-    }
-  }, [eventId])
-
   // useEffect(() => {
-  //   if (eventDetails && eventDetails.length > 0) {
-  //     setResetType(eventDetails[0].resetType)
-  //     setRafDueDate(eventDetails[0].appDueDate)
-  //     setLaunchDate(eventDetails[0].targetDate)
-  //     setGroup(eventDetails[0].tradeGroup)
-  //     setCategory({
-  //       category: eventDetails[0].category,
-  //       categoryId: eventDetails[0].categoryId,
-  //     })
-  //     setDepartment({
-  //       department: eventDetails[0].department,
-  //       departmentId: eventDetails[0].departmentId,
-  //     })
-  //     setBuyer({
-  //       buyer: eventDetails[0].buyer,
-  //       buyerEmailId: eventDetails[0].buyerEmailId,
-  //       buyerId: eventDetails[0].buyerId,
-  //     })
+  //   if (!fileData[0]) {
+  //     history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+  //   } else {
+  //     console.log(fileData)
+  //     setEventDetails(fileData)
+  //     // setEventName(fileData[0]['eventName'])
+  //     setEventId()
   //   }
+  //   return () => setEventDetails([])
   // }, [])
 
-  // useEffect(() => {
-  //   setEventDetails([
-  //     {
-  // uniqueId: uniqueId,
-  // resetType: resetType,
-  // tradeGroup: group,
-  // categoryId: category.categoryId,
-  // category: category.category,
-  // department: department.department,
-  // departmentId: department.departmentId,
-  // targetDate: launchDate ? `${launchDate} ${'01:00:00.00'}` : null,
-  // appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
-  // eventName: eventName,
-  // planogramClass: {
-  //   className: classFormData ? classFormData : [''],
-  // },
-  // storeWasteProcessTiming: storeWasteProcess.value
-  //   ? storeWasteProcess.value
-  //   : '',
-  // buyer: buyer,
-  // buyerId: buyer.userId,
-  // buyerEmailId: buyer.emailId,
-  // buyer: buyer.buyer,
-  // buyerAssistantId: buyingAssistantValue.userId,
-  // buyerAssistantEmailId: buyingAssistantValue.emailId,
-  // buyerAssistant: buyingAssistantValue.middleName
-  //   ? `${buyingAssistantValue.firstName} ${buyingAssistantValue.middleName} ${buyingAssistantValue.lastName}`
-  //   : `${buyingAssistantValue.firstName} ${buyingAssistantValue.lastName}`,
-  // ownBrandManagerId: ownBrandManagerValue.userId,
-  // ownBrandManagerEmailId: ownBrandManagyterValue.emailId,
-  // ownBrandManager: ownBrandManagerValue.middleName
-  //   ? `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.middleName} ${ownBrandManagerValue.lastName}`
-  //   : `${ownBrandManagerValue.firstName} ${ownBrandManagerValue.lastName}`,
-  // seniorBuyingManagerId: seniorBuyingManagerValue.userId,
-  // seniorBuyingManagerEmailId: seniorBuyingManagerValue.emailId,
-  // seniorBuyingManager: seniorBuyingManagerValue.middleName
-  //   ? `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.middleName} ${seniorBuyingManagerValue.lastName}`
-  //   : `${seniorBuyingManagerValue.firstName} ${seniorBuyingManagerValue.lastName}`,
-  // merchandiserId: merchandiserValue.userId,
-  // merchandiserEmailId: merchandiserValue.emailId,
-  // merchandiser: merchandiserValue.middleName
-  //   ? `${merchandiserValue.firstName} ${merchandiserValue.middleName} ${merchandiserValue.lastName}`
-  //   : `${merchandiserValue.firstName} ${merchandiserValue.lastName}`,
-  // rangeResetManagerId: rangeResetManagerValue.userId,
-  // rangeResetManagerEmailId: rangeResetManagerValue.emailId,
-  // rangeResetManager: rangeResetManagerValue.middleName
-  //   ? `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.middleName} ${rangeResetManagerValue.lastName}`
-  //   : `${rangeResetManagerValue.firstName} ${rangeResetManagerValue.lastName}`,
-  // categoryDirectorId: categoryDirectorValue.userId,
-  // categoryDirectorEmailId: categoryDirectorValue.emailId,
-  // categoryDirector: categoryDirectorValue.middleName
-  //   ? `${categoryDirectorValue.firstName} ${categoryDirectorValue.middleName} ${categoryDirectorValue.lastName}`
-  //   : `${categoryDirectorValue.firstName} ${categoryDirectorValue.lastName}`,
-  // supplyChainAnalystId: supplyChainSpecialistValue.userId,
-  // supplyChainAnalystEmailId: supplyChainSpecialistValue.emailId,
-  // supplyChainAnalyst: supplyChainSpecialistValue.supplyChainAnalyst,
-  // clearancePriceApplied: clearancePriceApplied,
-  // orderStopDateCheck: orderStopDateCheck,
-  // stopOrder: stopOrder,
-  //     },
-  //   ])
-  // }, [
-  //   resetType,
-  //   launchDate,
-  //   rafDueDate,
-  //   group,
-  //   category,
-  //   department,
-  //   buyer,
-  //   eventName,
-  // ])
-
-  // useEffect(() => {
-  //   getProductHierarchyListAPI &&
-  //     getProductHierarchyListAPI('department')
-  //       .then((res: any) => {
-  //         const hierarchyList = res.data.hierarchyNode.map((item: any) => {
-  //           return {
-  //             groupId: item.group,
-  //             groupName: item.groupName,
-  //             categoryId: item.category,
-  //             categoryName: item.categoryName,
-  //             departmentId: item.department,
-  //             departmentName: item.departmentName,
-  //           }
-  //         })
-  //         setProductHierValues(hierarchyList)
-  //         console.log(hierarchyList)
-  //       })
-  //       .catch((err: any) => setProductHierValues([]))
-  // }, [])
-  // useEffect(() => {
-  //   if (productHierValues) {
-  //     let data: any = []
-  //     productHierValues.map((item: any) => {
-  //       if (!data) {
-  //         data.push({
-  //           value: item.groupId,
-  //           label: item.groupName,
-  //           groupId: item.groupId,
-  //           groupName: item.groupName,
-  //         })
-  //       } else if (
-  //         data.findIndex((d: any) => d.groupId === item.groupId) === -1
-  //       ) {
-  //         data.push({
-  //           value: item.groupId,
-  //           label: item.groupName,
-  //           groupId: item.groupId,
-  //           groupName: item.groupName,
-  //         })
-  //       }
-  //     })
-  //     console.log(data)
-  //     setGroupOptions(data)
-  //   }
-  // }, [productHierValues])
-
-  // useEffect(() => {
-  //   if (group) {
-  //     let data: any = []
-  //     productHierValues.map((item: any) => {
-  //       if (
-  //         data.findIndex((d: any) => d.categoryId === item.categoryId) === -1
-  //       ) {
-  //         if (group.groupId === item.groupId) {
-  //           data.push({
-  //             value: item.categoryId,
-  //             label: item.categoryName,
-  //             categoryId: item.categoryId,
-  //             categoryName: item.categoryName,
-  //           })
-  //         }
-  //       }
-  //     })
-  //     console.log(data)
-  //     setCategoryOptions(data)
-  //   }
-  // }, [group])
-
-  // useEffect(() => {
-  //   if (category) {
-  //     let data: any = []
-  //     productHierValues.map((item: any) => {
-  //       if (
-  //         data.findIndex((d: any) => d.departmentId === item.departmentId) ===
-  //         -1
-  //       ) {
-  //         if (item.categoryId === category.categoryId) {
-  //           data.push({
-  //             value: item.departmentId,
-  //             label: item.departmentName,
-  //             departmentId: item.departmentId,
-  //             departmentName: item.departmentName,
-  //           })
-  //         }
-  //       }
-  //     })
-  //     console.log(data)
-  //     setDepartmentOptions(data)
-  //   }
-  // }, [category])
-
+  //apisri
   useEffect(() => {
     getProductHierarchyListAPI &&
       getProductHierarchyListAPI('group')
@@ -445,7 +214,8 @@ function ManageEventCreate(props: any) {
             return {
               value: item.groupName,
               label: item.groupName,
-              groupName: item.groupName,
+              id: item.group,
+              hierGroup: 'group',
             }
           })
           setGroupOptions(grpList)
@@ -454,6 +224,22 @@ function ManageEventCreate(props: any) {
         .catch((err: any) => setGroupOptions([]))
   }, [])
 
+  // useEffect(() => {
+  //   getResetTypes()
+  //     .then((res: any) => {
+  //       console.log('getResetTypes', res)
+  //       const types = res.data.map((val: any) => {
+  //         return {
+  //           name: val.configValue,
+  //           text: val.configValue,
+  //         }
+  //       })
+  //       setResetTypes(types)
+  //     })
+  //     .catch((err: any) => {
+  //       console.log('getResetTypesERROR', err)
+  //     })
+  // },[])
   useEffect(() => {
     console.log(group)
     getProductHierarchyListAPI &&
@@ -463,17 +249,18 @@ function ManageEventCreate(props: any) {
             return {
               value: item.categoryName,
               label: item.categoryName,
-              categoryName: item.categoryName,
+              id: item.category,
+              hierGroup: 'category',
               groupName: item.groupName,
+              groupId: item.group,
             }
           })
+          setCategoryOptions(categoryList)
 
-          group &&
-            setCategoryOptions(
-              categoryList.filter(
-                (cat: any) => cat.groupName === group.groupName
-              )
-            )
+          // group &&
+          //   setCategoryOptions(
+          //     categoryList.filter((cat: any) => cat.groupId === group.id)
+          //   )
           // group &&
           //   console.log(
           //     'category length: ',
@@ -484,45 +271,335 @@ function ManageEventCreate(props: any) {
   }, [group])
 
   useEffect(() => {
-    if (group && category) {
-      getProductHierarchyListAPI &&
-        getProductHierarchyListAPI('department')
+    // console.log('manageEventDummyData', manageEventDummyData)
+    // console.log('ManagePageApiData', ManagePageApiData) // 1706 //9039 /1644 //9043 ADMIN //9044 RRM //9047
+    // console.log(fileErrorData)
+    setIsProgressLoader(true)
+    console.log(fileManageData)
+    setEventName(fileManageData.name)
+    // getEventDetailsById(fileErrorData && fileErrorData.id)
+    getEventDetailsById(fileManageData && fileManageData.id)
+      .then((res: any) => {
+        let data = res.data
+        const eventData = data.eventDetailsList[0].rangeEventRequest
+        console.log('EVENTID', eventData)
+        const milestoneData = data.eventDetailsList[0].milestones
+
+        // Below original API CALL
+
+        // const eventData = res.data.eventDetailsList[0].rangeEventRequest
+        // const milestoneData = res.data.eventDetailsList[0].milestones
+        // console.log('EVENTID', eventData)
+
+        const manageList = [
+          {
+            eventStatus: eventData.eventStatus,
+            resetType: eventData.eventHeader.resetType,
+            category: eventData.eventHeader.eventHierarchy.category,
+            department: eventData.eventHeader.eventHierarchy.department,
+            tradeGroup: eventData.eventHeader.eventHierarchy.tradingGroup,
+            eventId: eventData.eventId,
+            taskIdEvent: eventData.taskId,
+            targetDate: eventData.eventHeader.eventLaunchDate,
+            appDueDate: eventData.eventHeader.rafAppDueDate,
+            eventName: eventData.eventHeader.eventName,
+            planogramClass:
+              eventData.eventHeader.inventoryControl.planogramClass,
+            clearancePriceCheck:
+              eventData.eventHeader.inventoryControl.clearancePriceApplied,
+            orderStopDateCheck:
+              eventData.eventHeader.inventoryControl.orderStopDateCheckRequired,
+            stopOrder:
+              eventData.eventHeader.inventoryControl.stopOrderStockRundown,
+            wastageRange:
+              eventData.eventHeader.inventoryControl.storeWastetiming,
+            buyerEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            buyerAssistantEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            ownBrandManagerEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            seniorBuyingManagerEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            merchandiserEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            rangeResetManagerEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            categoryDirectorEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            supplyChainAnalystEmailId: {
+              persona: '',
+              emailId: '',
+              name: '',
+              userId: '',
+            },
+            requesterEmailId: eventData.requester.details.emailId,
+            requesterName: eventData.requester.details.name,
+            requesteruserId: eventData.requester.details.userId,
+            requesterRole: eventData.requester.roles,
+            requesterUserGroup: eventData.requester.usergroups,
+            requesterPersona: eventData.requester.persona,
+          },
+        ]
+
+        eventData.eventHeader.eventTeam.team.map((val: any) => {
+          // if (val.roles[0].roleId === 'Buyer') {
+          //   manageList[0].buyerEmailId = val.details.emailId
+          // }
+          // if (val.roles[0].roleId === 'Buying Assistant') {
+          //   manageList[0].buyerAssistantEmailId = val.details.emailId
+          // }
+          if (val.persona === 'Buyer') {
+            manageList[0].buyerEmailId.persona = val.persona
+            manageList[0].buyerEmailId.emailId = val.details.emailId
+            manageList[0].buyerEmailId.name = val.details.name
+            manageList[0].buyerEmailId.userId = val.details.userId
+          }
+          if (val.persona === 'Buying Assistant') {
+            manageList[0].buyerAssistantEmailId.persona = val.persona
+            manageList[0].buyerAssistantEmailId.emailId = val.details.emailId
+            manageList[0].buyerAssistantEmailId.name = val.details.name
+            manageList[0].buyerAssistantEmailId.userId = val.details.userId
+          }
+          if (val.persona === 'Range Reset Manager') {
+            manageList[0].rangeResetManagerEmailId.persona = val.persona
+            manageList[0].rangeResetManagerEmailId.emailId = val.details.emailId
+            manageList[0].rangeResetManagerEmailId.name = val.details.name
+            manageList[0].rangeResetManagerEmailId.userId = val.details.userId
+          }
+
+          if (val.persona === 'Own Brand Manager') {
+            manageList[0].ownBrandManagerEmailId.persona = val.persona
+            manageList[0].ownBrandManagerEmailId.emailId = val.details.emailId
+            manageList[0].ownBrandManagerEmailId.name = val.details.name
+            manageList[0].ownBrandManagerEmailId.userId = val.details.userId
+          }
+          if (
+            val.persona === 'Senior Buying Manager' ||
+            val.persona === 'Senior Buying Manger'
+          ) {
+            manageList[0].seniorBuyingManagerEmailId.persona = val.persona
+            manageList[0].seniorBuyingManagerEmailId.emailId =
+              val.details.emailId
+            manageList[0].seniorBuyingManagerEmailId.name = val.details.name
+            manageList[0].seniorBuyingManagerEmailId.userId = val.details.userId
+          }
+          if (
+            val.persona === 'Merchandiser' ||
+            val.persona === 'Merchendiser'
+          ) {
+            manageList[0].merchandiserEmailId.persona = val.persona
+            manageList[0].merchandiserEmailId.emailId = val.details.emailId
+            manageList[0].merchandiserEmailId.name = val.details.name
+            manageList[0].merchandiserEmailId.userId = val.details.userId
+          }
+          if (val.persona === 'Category Director') {
+            manageList[0].categoryDirectorEmailId.persona = val.persona
+            manageList[0].categoryDirectorEmailId.emailId = val.details.emailId
+            manageList[0].categoryDirectorEmailId.name = val.details.name
+            manageList[0].categoryDirectorEmailId.userId = val.details.userId
+          }
+          if (val.persona === 'Supply Chain Specialist') {
+            manageList[0].supplyChainAnalystEmailId.persona = val.persona
+            manageList[0].supplyChainAnalystEmailId.emailId =
+              val.details.emailId
+            manageList[0].supplyChainAnalystEmailId.name = val.details.name
+            manageList[0].supplyChainAnalystEmailId.userId = val.details.userId
+          }
+        })
+        const manageTeamData = [
+          manageList[0].buyerEmailId,
+          manageList[0].buyerAssistantEmailId,
+          manageList[0].rangeResetManagerEmailId,
+          manageList[0].ownBrandManagerEmailId,
+          manageList[0].seniorBuyingManagerEmailId,
+          manageList[0].merchandiserEmailId,
+          manageList[0].categoryDirectorEmailId,
+          manageList[0].supplyChainAnalystEmailId,
+        ]
+        // console.log('TEAMSSSSS', manageTeamData)
+
+        const manageTask = milestoneData.map((milestone: any) => {
+          return {
+            taskId2: milestone.taskId,
+            taskId: milestone.taskName,
+            status: milestone.status,
+            slaDate: milestone.slaDate,
+            task: milestone.taskDescription,
+            dueDate: milestone.dueDate,
+            notifiedDate: milestone.notifyDate,
+            assignedUserGroup: milestone.assigneeRole,
+            name: milestone.assigneeDetails.name,
+            userId: milestone.assigneeDetails.userId,
+            emailId: milestone.assigneeDetails.emailId
+              ? milestone.assigneeDetails.emailId
+              : '',
+            visibility: milestone.visibility, //'ACTIVE',
+          }
+        })
+        console.log(manageTask)
+        console.log(manageList)
+        setTaskDetails(manageTask)
+        setEventDetails(manageList)
+        let classValue =
+          manageList[0].planogramClass &&
+          manageList[0].planogramClass.map((c: any) => {
+            return {
+              value: c,
+              label: c,
+            }
+          })
+        setClassValues(classValue)
+        setTeam(manageTeamData)
+        if (eventData.eventStatus === 'Confirmed') {
+          console.log('Confirmedddddddd', eventData.eventStatus)
+          setConfirmEnDis(true)
+        }
+        setIsProgressLoader(false)
+      })
+      .catch((err: any) => {
+        console.log('EVENTID', err)
+        setIsProgressLoader(false)
+      })
+  }, [])
+
+  const [buyerAssign, setBuyerAssign] = useState([])
+  const [buyerAssistentAssign, setAssistentAssign] = useState([])
+  const [srBuyerAssign, setSrBuyerAssign] = useState([])
+  const [ownBrandManAssign, setOwnBrandManAssign] = useState([])
+  const [merchandiserAssign, setMerchandiserAssign] = useState([])
+  const [rangeResetAssign, setRangeResetAssign] = useState([])
+  const [catDirectorAssign, setCatDirectorAssign] = useState([])
+  const [supplyChainAssign, setSupplyChainAssign] = useState([])
+
+  const [roldIdAssign, setRoleIdAssign] = useState<any>('')
+  useEffect(() => {
+    let roleIdTask = ''
+    if (userGroup === 'Buyer') {
+      roleIdTask = 'BUYER'
+    } else if (userGroup === 'Buying Assistant') {
+      roleIdTask = 'BYAST'
+    } else if (userGroup === 'Own Brand Manager') {
+      roleIdTask = 'OWNBRM'
+    } else if (userGroup === 'Senior Buying Manager') {
+      roleIdTask = 'SRBYM'
+    } else if (userGroup === 'Merchandiser') {
+      roleIdTask = 'MERCH'
+    } else if (userGroup === 'Range Reset Manager') {
+      roleIdTask = 'RRMNGR'
+    } else if (userGroup === 'Category Director') {
+      roleIdTask = 'CTDIR'
+    } else if (userGroup === 'Supply Chain Specialist') {
+      roleIdTask = 'SCSPL'
+    } else {
+      roleIdTask = ''
+    }
+    {
+      userGroup &&
+        getUsersAPIByRole &&
+        getUsersAPIByRole(roleIdTask)
           .then((res: any) => {
-            const depList = res.data.hierarchyNode.map((item: any) => {
+            const userDetails = res.data.userdetails.map((val: any) => {
               return {
-                value: item.departmentName,
-                label: item.departmentName,
-                groupName: item.groupName,
-                categoryName: item.categoryName,
+                email: val.user.emailId,
+                label: val.user.firstName + ' ' + val.user.lastName,
+                value: val.user.firstName + ' ' + val.user.lastName,
               }
             })
-            setDepartmentOptions(
-              depList.filter(
-                (dep: any) =>
-                  dep.groupName === group.groupName &&
-                  dep.categoryName === category.Name
-              )
-            )
-            // console.log(
-            //   'department length: ',
-            //   depList.filter(
-            //     (dep: any) =>
-            //       dep.groupId === group.id && dep.categoryId === category.id
-            //   )
-            // )
-            // setLoaded(true)
+            console.log('Buyer userDetails', userDetails)
+            if (userGroup === 'Buyer') {
+              setBuyerAssign(userDetails)
+            } else if (userGroup === 'Buying Assistant') {
+              setAssistentAssign(userDetails)
+            } else if (userGroup === 'Own Brand Manager') {
+              setOwnBrandManAssign(userDetails)
+            } else if (userGroup === 'Senior Buying Manager') {
+              setSrBuyerAssign(userDetails)
+            } else if (userGroup === 'Merchandiser') {
+              setMerchandiserAssign(userDetails)
+            } else if (userGroup === 'Range Reset Manager') {
+              setRangeResetAssign(userDetails)
+            } else if (userGroup === 'Category Director') {
+              setCatDirectorAssign(userDetails)
+            } else if (userGroup === 'Supply Chain Specialist') {
+              setSupplyChainAssign(userDetails)
+            }
           })
-          .catch((err: any) => {
-            setDepartmentOptions([])
-            // setLoaded(true)
-          })
+          .catch((err: any) => console.log('Buyer ERROR', err))
     }
-  }, [category])
+  }, [userGroup])
+
+  useEffect(() => {
+    // if (group && category) {
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('department')
+        .then((res: any) => {
+          const depList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.departmentName,
+              label: item.departmentName,
+              id: item.department,
+              hierGroup: 'department',
+              groupName: item.groupName,
+              categoryName: item.categoryName,
+              groupId: item.group,
+              categoryId: item.category,
+            }
+          })
+          setDepartmentOptions(depList)
+          // setDepartmentOptions(
+          //   depList.filter(
+          //     (dep: any) =>
+          //       dep.groupId === group.id && dep.categoryId === category.id
+          //   )
+          // )
+          // console.log(
+          //   'department length: ',
+          //   depList.filter(
+          //     (dep: any) =>
+          //       dep.groupId === group.id && dep.categoryId === category.id
+          //   )
+          // )
+          // setLoaded(true)
+        })
+        .catch((err: any) => {
+          setDepartmentOptions([])
+          // setLoaded(true)
+        })
+    // }
+  }, [department])
 
   const goBack = () => {
     history.goBack()
-    console.log('going back')
-    resetErrorFile()
+    resetFile()
   }
 
   // useEffect(() => {
@@ -589,6 +666,209 @@ function ManageEventCreate(props: any) {
     setClassOpen(false)
   }
 
+  const handleUpdateEventClose = () => {
+    setUpdateEventOpen(false)
+  }
+  const handleFileUpload = (event: any) => {
+    setUploadedFile(event.target.files[0])
+  }
+  const [inputTextareaValue, setInputTextareaValue] = useState<any>('')
+  const updateEventDialog = (
+    <Dialog open={updateEventOpen} onClose={handleUpdateEventClose}>
+      <Box
+        sx={{
+          height: 450,
+          // width: 'auto',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+        className={classes.classDialog}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <DialogHeader title="Update Event" onClose={handleUpdateEventClose} />
+          <Box
+            sx={{
+              alignItems: 'flex-start',
+              marginTop: '30px',
+            }}
+          >
+            <strong>Comments</strong>
+            <InputTextarea
+              value={inputTextareaValue}
+              onChange={(e) => setInputTextareaValue(e.target.value)}
+              rows={5}
+              cols={43}
+              autoResize
+            />
+            <br />
+            <strong>Upload Reference Document</strong>
+            <input
+              type="text"
+              value={uploadedFile ? uploadedFile.name : ''}
+              onClick={() => document.getElementById('selectedFile')!.click()}
+              className={classes.uploadTextfield}
+              placeholder="Upload relevant reference document"
+              readOnly
+            />
+            <Input
+              type="file"
+              id="selectedFile"
+              // accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              onChange={handleFileUpload}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => document.getElementById('selectedFile')!.click()}
+              className={classes.uploadButton}
+            >
+              Browse...
+            </button>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'end',
+          }}
+        >
+          <Button
+            // type="submit"
+            variant="contained"
+            color="primary"
+            className={classes.buttons}
+            // onClick={handleClassConfirm}
+            onClick={() => handlePublishEvent('confirmed')}
+          >
+            Update Event
+          </Button>
+        </Box>
+      </Box>
+    </Dialog>
+  )
+  const handleremoveTaskClose = () => {
+    setRemoveTaskOpen(false)
+  }
+  const removeTaskDialog = (
+    <Dialog open={removeTaskOpen} onClose={handleremoveTaskClose}>
+      <Box
+        sx={{
+          height: 250,
+          // width: 'auto',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+        className={classes.classDialog}
+      >
+        <DialogHeader
+          title="Remove / Skip Task"
+          onClose={handleremoveTaskClose}
+        />
+        <Box
+          sx={{
+            alignItems: 'flex-start',
+            // marginTop: '10px',
+          }}
+        >
+          <h6>Are you sure to 'Remove / Skip Task' from the event?</h6>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'end',
+          }}
+        >
+          <Button
+            // type="submit"
+            variant="contained"
+            color="primary"
+            size="small"
+            className={classes.buttonRemoveTask}
+            // onClick={handleClassConfirm}
+            onClick={() => setRemoveTaskOpen(false)} // Ended here today to show popups
+          >
+            No
+          </Button>
+          <Button
+            // type="submit"
+            variant="contained"
+            color="primary"
+            className={classes.buttonRemoveTask}
+            // onClick={handleClassConfirm}
+            onClick={() => handlePublishEvent('modifySave')}
+          >
+            Yes
+          </Button>
+        </Box>
+      </Box>
+    </Dialog>
+  )
+  const handleSaveTaskClose = () => {
+    setsaveEventTaskButton(false)
+  }
+  const saveEventTask = (
+    <Dialog open={saveEventTaskButton} onClose={handleSaveTaskClose}>
+      <Box
+        sx={{
+          height: 250,
+          // width: 'auto',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+        className={classes.classDialog}
+      >
+        <DialogHeader title="Save" onClose={handleSaveTaskClose} />
+        <Box
+          sx={{
+            alignItems: 'flex-start',
+            // marginTop: '10px',
+          }}
+        >
+          <h6>Are you sure to confirm the changes made?</h6>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'end',
+          }}
+        >
+          <Button
+            // type="submit"
+            variant="contained"
+            color="primary"
+            size="small"
+            className={classes.buttonRemoveTask}
+            // onClick={handleClassConfirm}
+            onClick={() => setsaveEventTaskButton(false)} // Ended here today to show popups
+          >
+            No
+          </Button>
+          <Button
+            // type="submit"
+            variant="contained"
+            color="primary"
+            className={classes.buttonRemoveTask}
+            // onClick={handleClassConfirm}
+            onClick={() => handlePublishEvent('modifyAuto')}
+          >
+            Yes
+          </Button>
+        </Box>
+      </Box>
+    </Dialog>
+  )
+
   const classDialog = (
     <Dialog open={classOpen} onClose={handleClassClose}>
       <Box
@@ -616,7 +896,7 @@ function ManageEventCreate(props: any) {
             }}
           >
             <AutocompleteSelect
-              value={classValues}
+              value={classValues && classValues}
               isMulti={true}
               options={classOptions}
               onChange={handleClassChange}
@@ -643,46 +923,50 @@ function ManageEventCreate(props: any) {
     </Dialog>
   )
 
-  const resetTypeTemplate = (rowData: any) => {
-    // const val = resetTypes.findIndex(
-    //   (item) => rowData.resetType.toLowerCase() === item.text.toLowerCase()
-    // )
-    // console.log('reset type:', val)
-    return (
-      <Select
-        value={rowData.resetType}
-        // value={resetType}
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                resetType: e.target.value,
-              },
-            ]
-          })
-          // setResetType(e.target.value)
-        }}
-        input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
-      >
-        {resetTypes.map((type) => {
-          return (
-            <MenuItem
-              value={type.text}
-              key={type.name}
-              className={classes.muiSelect}
-            >
-              {type.text}
-            </MenuItem>
-          )
-        })}
-      </Select>
-    )
-  }
+  // const resetTypeTemplate = (rowData: any) => {
+  //   console.log('rowData', rowData)
+  //   const val = resetTypes.findIndex(
+  //     (group: any) => rowData.resetType === group.text
+  //   )
+  //   return (
+  //     <Select
+  //       value={val > -1 ? resetTypes[val].name : rowData.resetType}
+  //       renderValue={(selected: any) => {
+  //         console.log(selected)
+  //         if (!selected) return 'Placeholder'
+  //         else return selected
+  //       }}
+  //       onChange={(e) => {
+  //         setEventDetails((prevState: any) => {
+  //           return [
+  //             {
+  //               ...prevState[0],
+  //               resetType: e.target.value,
+  //             },
+  //           ]
+  //         })
+  //       }}
+  //       input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+  //     >
+  //       {resetTypes.map((type: any) => {
+  //         return (
+  //           <MenuItem
+  //             value={type.name}
+  //             key={type.name}
+  //             className={classes.muiSelect}
+  //           >
+  //             {type.text}
+  //           </MenuItem>
+  //         )
+  //       })}
+  //     </Select>
+  //   )
+  // }
 
   const rafDueDateTemplate = (rowData: any) => {
     return (
       <DatePicker
+        disabled={confirmEnDis ? true : false}
         format="dd/MM/yy"
         value={rowData['appDueDate'] ? rowData['appDueDate'] : null}
         onChange={(date: any) => {
@@ -721,120 +1005,201 @@ function ManageEventCreate(props: any) {
     )
   }
 
+  const groupTemplatenotused = (rowData: any) => {
+    const val = groups.findIndex((group) => rowData.tradeGroup === group.text)
+    console.log(
+      'SridharGroup',
+      val > -1 ? groups[val].name : rowData.tradeGroup
+    )
+    return (
+      // <Select
+      //   value={val > -1 ? groups[val].name : rowData.tradeGroup}
+      //   onChange={(e) => {
+      //     setEventDetails((prevState: any) => {
+      //       return [
+      //         {
+      //           ...prevState[0],
+      //           tradeGroup: e.target.value,
+      //         },
+      //       ]
+      //     })
+      //   }}
+      //   input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+      // >
+      //   {groups.map((type) => {
+      //     return (
+      //       <MenuItem
+      //         value={type.value}
+      //         key={type.value}
+      //         className={classes.muiSelect}
+      //       >
+      //         {type.label}
+      //       </MenuItem>
+      //     )
+      //   })}
+      // </Select>
+
+      <AutocompleteSelect
+        value={group}
+        options={groupOptions}
+        // onChange={handleGroup}
+        onChange={(e: any) => {
+          if (e) {
+            setGroup(e)
+            setCategory('')
+            setDepartment('')
+            setDepartmentOptions([])
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  tradeGroup: e.value,
+                },
+              ]
+            })
+          } else {
+            setGroup('')
+            setCategory('')
+            setDepartment('')
+            setCategoryOptions([])
+            setDepartmentOptions([])
+          }
+        }}
+        placeholder="Select Trading Group"
+      />
+    )
+  }
+
+  const [grpVal, setGrpVal] = useState('')
+  const [catVal, setCatVal] = useState('')
+  const [depVal, setDepVal] = useState('')
+  const [cptVal, setCptVal] = useState('')
+  const [gscopVal, setGscopVal] = useState('')
+  const [sotVal, setSotVal] = useState('')
+
+  useEffect(() => {
+    console.log('groupOptions', grpVal)
+    console.log('categoryOptions', catVal)
+    console.log('departmentOptions', depVal)
+    console.log('ClearancePricingActionrequired	', cptVal)
+    console.log('setGscopVal	', gscopVal)
+    console.log('setSotVal	', sotVal)
+    console.log('eventDetails	', eventDetails)
+    console.log('setTaskDetails	', taskDetails)
+  }, [eventDetails])
+
+  useEffect(() => {
+    console.log('setTaskDetails Change	', taskDetails)
+  }, [taskDetails])
+
+  const eventHandleDetails = (e: any) => {
+    setEventDetails((prevState: any) => {
+      setGrpVal(e.target.value)
+      return [
+        {
+          ...prevState[0],
+          tradeGroup: e.target.value,
+        },
+      ]
+    })
+  }
+  const eventHandleDetailsCategory = (e: any) => {
+    setEventDetails((prevState: any) => {
+      setCatVal(e.target.value)
+      return [
+        {
+          ...prevState[0],
+          category: e.target.value,
+        },
+      ]
+    })
+  }
+  const eventHandleDetailsDepartment = (e: any) => {
+    setEventDetails((prevState: any) => {
+      setDepVal(e.target.value)
+      return [
+        {
+          ...prevState[0],
+          department: e.target.value,
+        },
+      ]
+    })
+  }
+
   const groupTemplate = (rowData: any) => {
-    const val =
-      groupOptions &&
-      groupOptions.findIndex((group: any) => rowData.tradeGroup === group.group)
+    setGrpVal(rowData.tradeGroup)
     return (
       <Select
-        // value={val > -1 ? rowData.tradeGroup : rowData.tradeGroup}
-        value={rowData.tradeGroup}
-        onChange={(e) => {
-          setGroup(groupOptions[val])
-          // setCategory('')
-          // setDepartment('')
-          // setDepartmentOptions([])
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                tradeGroup: e.target.value,
-                categoryId: null,
-                category: '',
-                departmentId: null,
-                department: '',
-              },
-            ]
-          })
-        }}
+        // value={val > -1 ? groups[val].name : rowData.tradeGroup}
+        disabled={confirmEnDis ? true : false}
+        value={grpVal}
+        onChange={(e) => eventHandleDetails(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+        renderValue={(selected: any) => {
+          console.log(selected)
+          if (!selected) return 'Placeholder'
+          else return selected
+        }}
       >
-        {groupOptions &&
-          groupOptions.map((type: any) => {
-            return (
-              <MenuItem
-                value={type.groupName}
-                key={type.groupId}
-                className={classes.muiSelect}
-              >
-                {type.label}
-              </MenuItem>
-            )
-          })}
+        {groupOptions.map((type: any) => {
+          return (
+            <MenuItem
+              value={type.value}
+              key={type.id}
+              className={classes.muiSelect}
+            >
+              {type.value}
+            </MenuItem>
+          )
+        })}
       </Select>
-
-      // <AutocompleteSelect
-      //   value={group}
-      //   options={groupOptions}
-      //   // onChange={handleGroup}
-      //   onChange={(e: any) => {
-      //     if (e) {
-      //       setGroup(e)
-      //       setCategory('')
-      //       setDepartment('')
-      //       setDepartmentOptions([])
-      //       setEventDetails((prevState: any) => {
-      //         return [
-      //           {
-      //             ...prevState[0],
-      //             tradeGroup: e.value,
-      //           },
-      //         ]
-      //       })
-      //     } else {
-      //       setGroup('')
-      //       setCategory('')
-      //       setDepartment('')
-      //       setCategoryOptions([])
-      //       setDepartmentOptions([])
-      //     }
-      //   }}
-      //   placeholder="Select Trading Group"
-      // />
     )
   }
 
   const categoryTemplate = (rowData: any) => {
-    const val =
-      categoryOptions &&
-      categoryOptions.findIndex(
-        (item: any) =>
-          rowData.categoryId === item.categoryId &&
-          rowData.tradeGroup === item.groupName
-      )
-    console.log(val)
+    const val = categories.findIndex((group) => rowData.category === group.text)
+    setCatVal(rowData.category)
     return (
+      //   <select
+      //     name="category"
+      //     id="category"
+      //     value={rowData.category}
+      //     onChange={(e) => {
+      //       setEventDetails((prevState: any) => {
+      //         return [
+      //           {
+      //             ...prevState[0],
+      //             category: e.target.value,
+      //           },
+      //         ]
+      //       })
+      //     }}
+      //     required
+      //   >
+      //     <option value="Frozen Food">Frozen Food</option>
+      //   </select>
       <Select
-        value={val > -1 ? rowData.category : rowData.category}
-        onChange={(e) => {
-          // const index = categoryOptions.findIndex(
-          //   (item: any) => e.target.value === item.categoryId
-          // )
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                category: e.target.value,
-                // category: categoryOptions[index].categoryName,
-                // categoryId: categoryOptions[index].categoryId,
-              },
-            ]
-          })
-        }}
+        disabled={confirmEnDis ? true : false}
+        value={catVal}
+        onChange={(e) => eventHandleDetailsCategory(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+        renderValue={(selected: any) => {
+          console.log(selected)
+          if (!selected) return 'Placeholder'
+          else return selected
+        }}
       >
-        {categoryOptions &&
-          categoryOptions.map((type: any) => {
-            return (
-              <MenuItem
-                value={type.categoryId}
-                key={type.categoryName}
-                className={classes.muiSelect}
-              >
-                {type.label}
-              </MenuItem>
-            )
-          })}
+        {categoryOptions.map((type: any) => {
+          return (
+            <MenuItem
+              value={type.value}
+              key={type.id}
+              className={classes.muiSelect}
+            >
+              {type.value}
+            </MenuItem>
+          )
+        })}
       </Select>
     )
   }
@@ -843,6 +1208,7 @@ function ManageEventCreate(props: any) {
     const val = departments.findIndex(
       (group) => rowData.department === group.text
     )
+    setDepVal(rowData.department)
     return (
       //   <Typography variant="subtitle2">
       //     <select
@@ -867,32 +1233,33 @@ function ManageEventCreate(props: any) {
       //     </select>
       //   </Typography>
       <Select
-        value={val > -1 ? departments[val].name : rowData.department}
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                department: e.target.value,
-              },
-            ]
-          })
-        }}
+        disabled={confirmEnDis}
+        value={depVal}
+        onChange={(e) => eventHandleDetailsDepartment(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+        renderValue={(selected: any) => {
+          console.log(selected)
+          if (!selected) return 'Placeholder'
+          else return selected
+        }}
       >
-        {departments.map((type) => {
+        {departmentOptions.map((type: any) => {
           return (
             <MenuItem
-              value={type.name}
-              key={type.name}
+              value={type.value}
+              key={type.id}
               className={classes.muiSelect}
             >
-              {type.text}
+              {type.value}
             </MenuItem>
           )
         })}
       </Select>
     )
+  }
+  const eventUniqueId = (rowData: any) => {
+    // console.log('SridharROw', rowData)
+    return <span>{rowData.eventId}</span>
   }
   const eventNameTemplate = (rowData: any) => {
     return (
@@ -917,16 +1284,17 @@ function ManageEventCreate(props: any) {
 
       //   />
       <OutlinedInput
+        disabled={confirmEnDis}
         margin="dense"
         className={classes.muiSelect}
-        value={rowData.name}
+        value={rowData.eventName}
         onChange={(e) => {
           if (e.target.value !== null) {
             setEventDetails((prevState: any) => {
               return [
                 {
                   ...prevState[0],
-                  name: e.target.value,
+                  eventName: e.target.value,
                 },
               ]
             })
@@ -937,14 +1305,17 @@ function ManageEventCreate(props: any) {
   }
 
   const classTemplate = (rowData: any) => {
+    console.log('class template', rowData.planogramClass)
     if (rowData['planogramClass']) {
-      if (rowData['planogramClass']['className'][0] != '') {
-        let len = rowData['planogramClass']['className']
-          ? rowData['planogramClass']['className'].length
-          : '0'
+      // if (rowData['planogramClass']['className'][0] != '') {
+      if (rowData['planogramClass'] !== []) {
+        // let len = rowData['planogramClass']
+        //   ? rowData['planogramClass'].length
+        //   : '0'
         return (
           <Typography>
             <button
+              disabled={confirmEnDis}
               className={classes.backButton}
               type="button"
               onClick={() => setClassOpen(true)}
@@ -952,7 +1323,7 @@ function ManageEventCreate(props: any) {
                 fontSize: '16px',
               }}
             >
-              Class({len})
+              Class({classValues ? classValues.length : '0'})
             </button>
           </Typography>
         )
@@ -960,6 +1331,7 @@ function ManageEventCreate(props: any) {
         return (
           <Typography variant="body2">
             <button
+              disabled={confirmEnDis}
               className={classes.backButton}
               type="button"
               onClick={() => setClassOpen(true)}
@@ -973,6 +1345,7 @@ function ManageEventCreate(props: any) {
       return (
         <Typography variant="body2">
           <button
+            disabled={confirmEnDis}
             className={classes.backButton}
             type="button"
             onClick={() => setClassOpen(true)}
@@ -1008,6 +1381,7 @@ function ManageEventCreate(props: any) {
       //     <option value="Week +7\ +10">Week +6\ +10</option>
       //   </select>
       <Select
+        disabled={confirmEnDis}
         value={val > -1 ? wastageRanges[val].value : rowData.wastageRange}
         onChange={(e) => {
           setEventDetails((prevState: any) => {
@@ -1020,6 +1394,11 @@ function ManageEventCreate(props: any) {
           })
         }}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+        renderValue={(selected: any) => {
+          console.log(selected)
+          if (!selected) return 'Placeholder'
+          else return selected
+        }}
       >
         {wastageRanges.map((type) => {
           return (
@@ -1036,7 +1415,20 @@ function ManageEventCreate(props: any) {
     )
   }
 
+  const eventHandleDetailsCPT = (e: any) => {
+    setEventDetails((prevState: any) => {
+      setCptVal(e.target.value)
+      return [
+        {
+          ...prevState[0],
+          clearancePriceCheck: e.target.value,
+        },
+      ]
+    })
+  }
+
   const clearancePriceTemplate = (rowData: any) => {
+    setCptVal(rowData.clearancePriceCheck)
     return (
       //   <select
       //     value={rowData.clearencePriceCheck}
@@ -1060,26 +1452,19 @@ function ManageEventCreate(props: any) {
       //   </select>
 
       <Select
-        value={
-          rowData.clearancePriceCheck === 'Yes'
-            ? 'Y'
-            : rowData.clearancePriceCheck === 'No'
-            ? 'N'
-            : rowData.clearancePriceCheck
-        }
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                clearancePriceCheck: e.target.value,
-              },
-            ]
-          })
-        }}
+        disabled={confirmEnDis}
+        // value={
+        //   rowData.clearancePriceApplied === 'Yes'
+        //     ? 'y'
+        //     : rowData.clearancePriceApplied === 'No'
+        //     ? 'n'
+        //     : rowData.clearancePriceApplied
+        // }
+        value={cptVal}
+        onChange={(e) => eventHandleDetailsCPT(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
       >
-        {yesOrNo.map((type) => {
+        {yesOrNo.map((type: any) => {
           return (
             <MenuItem
               value={type.name}
@@ -1093,7 +1478,21 @@ function ManageEventCreate(props: any) {
       </Select>
     )
   }
+
+  const eventHandleDetailsGSCOP = (e: any) => {
+    setEventDetails((prevState: any) => {
+      setGscopVal(e.target.value)
+      return [
+        {
+          ...prevState[0],
+          orderStopDateCheck: e.target.value,
+        },
+      ]
+    })
+  }
+
   const GSCOPDateTemplate = (rowData: any) => {
+    setGscopVal(rowData.orderStopDateCheck)
     return (
       //   <select
       //     value={rowData.orderStopDateCheck}
@@ -1115,23 +1514,16 @@ function ManageEventCreate(props: any) {
       //     <option value="No">No</option>
       //   </select>
       <Select
-        value={
-          rowData.orderStopDateCheck === 'Yes'
-            ? 'Y'
-            : rowData.orderStopDateCheck === 'No'
-            ? 'N'
-            : rowData.orderStopDateCheck
-        }
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                orderStopDateCheck: e.target.value,
-              },
-            ]
-          })
-        }}
+        // value={
+        //   rowData.orderStopDateCheck === 'Yes'
+        //     ? 'y'
+        //     : rowData.orderStopDateCheck === 'No'
+        //     ? 'n'
+        //     : rowData.orderStopDateCheck
+        // }
+        disabled={confirmEnDis}
+        value={gscopVal}
+        onChange={(e) => eventHandleDetailsGSCOP(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
       >
         {yesOrNo.map((type) => {
@@ -1149,7 +1541,20 @@ function ManageEventCreate(props: any) {
     )
   }
 
+  const eventHandleDetailsSOT = (e: any) => {
+    setEventDetails((prevState: any) => {
+      setSotVal(e.target.value)
+      return [
+        {
+          ...prevState[0],
+          stopOrder: e.target.value,
+        },
+      ]
+    })
+  }
+
   const stopOrderTemplate = (rowData: any) => {
+    setSotVal(rowData.stopOrder)
     return (
       //   <select
       //     value={rowData.stopOrder}
@@ -1171,23 +1576,16 @@ function ManageEventCreate(props: any) {
       //     <option value="No">No</option>
       //   </select>
       <Select
-        value={
-          rowData.stopOrder === 'Yes'
-            ? 'Y'
-            : rowData.stopOrder === 'No'
-            ? 'N'
-            : rowData.stopOrder
-        }
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                stopOrder: e.target.value,
-              },
-            ]
-          })
-        }}
+        disabled={confirmEnDis}
+        // value={
+        //   rowData.stopOrder === 'Yes'
+        //     ? 'y'
+        //     : rowData.stopOrder === 'No'
+        //     ? 'n'
+        //     : rowData.stopOrder
+        // }
+        value={sotVal}
+        onChange={(e) => eventHandleDetailsSOT(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
       >
         {yesOrNo.map((type) => {
@@ -1203,6 +1601,186 @@ function ManageEventCreate(props: any) {
         })}
       </Select>
     )
+  }
+
+  const handleBuyerClick = (name: any, email: any) => {
+    console.log(email)
+    let roleId = 'BUYER'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res: any) => {
+            console.log('matched')
+            setBuyerConfirmed(true)
+            setBuyerValue(res.data.userdetails[0].user)
+            setErrBuyer(false)
+            setBuyerError1('')
+          })
+          .catch((err: any) => {
+            console.log('not')
+            console.log('allMessages', allMessages)
+            setBuyer('')
+            setBuyerConfirmed(false)
+            setErrBuyer(true)
+            setBuyerValue('')
+            setBuyerError1(allMessages.error.emailError)
+          })
+      : setErrBuyer(true)
+    setBuyerError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleBuyingAssistantClick = (name: any, email: any) => {
+    let roleId = 'BYAST'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res: any) => {
+            console.log('matched')
+            setBuyingAssistantConfirmed(true)
+            setBuyingAssistantValue(res.data.userdetails[0].user)
+          })
+          .catch((err: any) => {
+            console.log('not')
+            setBuyingAssistant('')
+            setBuyingAssistantConfirmed(false)
+            setBuyingAssistantValue('')
+            setErrBuyerAssisant(true)
+            setBuyingAssistentError1(allMessages.error.emailError)
+          })
+      : setErrBuyerAssisant(true)
+    setBuyingAssistentError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleOwnBrandManagerClick = (name: any, email: any) => {
+    let roleId = 'OWNBRM'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res) => {
+            console.log('matched')
+            setOwnBrandManagerConfirmed(true)
+            setOwnBrandManagerValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setOwnBrandManager('')
+            setOwnBrandManagerConfirmed(false)
+            setOwnBrandManagerValue('')
+            setErrOwnBrandManager(true)
+            setOwnBrandManagerError1(allMessages.error.emailError)
+          })
+      : setErrOwnBrandManager(true)
+    setOwnBrandManagerError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleSeniorBuyingManagerClick = (name: any, email: any) => {
+    let roleId = 'SRBYM'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res) => {
+            console.log('matched')
+            setSeniorBuyingManagerConfirmed(true)
+            setSeniorBuyingManagerValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setSeniorBuyingManager('')
+            setSeniorBuyingManagerConfirmed(false)
+            setSeniorBuyingManagerValue('')
+            setErrSeniorBuyingManager(true)
+            setSeniorBuyingManagerError1(allMessages.error.emailError)
+          })
+      : setErrSeniorBuyingManager(true)
+    setSeniorBuyingManagerError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleMerchandiserClick = (name: any, email: any) => {
+    let roleId = 'MERCH'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res) => {
+            console.log('matched')
+            setMerchandiserConfirmed(true)
+            setMerchandiserValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setMerchandiser('')
+            setMerchandiserConfirmed(false)
+            setMerchandiserValue('')
+            setErrMerchandiser(true)
+            setMerchandiserError1(allMessages.error.emailError)
+          })
+      : setErrMerchandiser(true)
+    setMerchandiserError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleRangeResetManagerClick = (name: any, email: any) => {
+    let roleId = 'RRMNGR'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res) => {
+            console.log('matched')
+            setRangeResetManagerConfirmed(true)
+            setRangeResetManagerValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setRangeResetManager('')
+            setRangeResetManagerConfirmed(false)
+            setRangeResetManagerValue('')
+            setErrRangeResetManager(true)
+            setRangeResetManagerError1(allMessages.error.emailError)
+          })
+      : setErrRangeResetManager(true)
+    setRangeResetManagerError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleCategoryDirectorClick = (name: any, email: any) => {
+    let roleId = 'CTDIR'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res) => {
+            console.log('matched')
+            setCategoryDirectorConfirmed(true)
+            setCategoryDirectorValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setErrCategoryDirector(true)
+            setCategoryDirector('')
+            setCategoryDirectorConfirmed(false)
+            setCategoryDirectorValue('')
+            setCategoryDirectorError1(allMessages.error.emailError)
+          })
+      : setErrCategoryDirector(true)
+    setCategoryDirectorError1(allMessages.error.emailSearcherror)
+  }
+
+  const handleSupplyChainSpecialistClick = (name: any, email: any) => {
+    let roleId = 'SCSPL'
+    email !== ''
+      ? getUsersAPIByEmailAndRole &&
+        getUsersAPIByEmailAndRole(roleId, email)
+          .then((res) => {
+            console.log('matched')
+            setSupplyChainSpecialistConfirmed(true)
+            setSupplyChainSpecialistValue(res.data.userdetails[0].user)
+          })
+          .catch((err) => {
+            console.log('not')
+            setSupplyChainSpecialist('')
+            setErrSupplyChainSpecialist(true)
+            setSupplyChainSpecialistConfirmed(false)
+            setSupplyChainSpecialistValue('')
+            setSupChainSpecialistError1(allMessages.error.emailError)
+          })
+      : setErrSupplyChainSpecialist(true)
+    setSupChainSpecialistError1(allMessages.error.emailSearcherror)
   }
 
   const buyerTemplate = (rowData: any) => {
@@ -1244,28 +1822,38 @@ function ManageEventCreate(props: any) {
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.buyerEmailId}
+            value={rowData.buyerEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               console.log(event.target.value)
+              setErrBuyer(false)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      buyerEmailId: event.target.value,
+                      buyerEmailId: { emailId: event.target.value },
                     },
                   ]
                 })
               }
             }}
             placeholder="Search Buyer"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            onClick={() =>
+              handleBuyerClick('buyerEmail', rowData.buyerEmailId.emailId)
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errBuyer && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1311,28 +1899,41 @@ function ManageEventCreate(props: any) {
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.buyerAssistantEmailId}
+            value={rowData.buyerAssistantEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               console.log(event.target.value)
+              setErrBuyerAssisant(false)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      buyerAssistantEmailId: event.target.value,
+                      buyerAssistantEmailId: { emailId: event.target.value },
                     },
                   ]
                 })
               }
             }}
             placeholder="Search Buying Assistant"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            onClick={() =>
+              handleBuyingAssistantClick(
+                'buyerEmail',
+                rowData.buyerAssistantEmailId.emailId
+              )
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errBuyerAssisant && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1378,29 +1979,42 @@ function ManageEventCreate(props: any) {
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.ownBrandManagerEmailId}
+            value={rowData.ownBrandManagerEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               console.log(event.target.value)
+              setErrOwnBrandManager(false)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      ownBrandManagerEmailId: event.target.value,
+                      ownBrandManagerEmailId: { emailId: event.target.value },
                     },
                   ]
                 })
               }
             }}
             placeholder="Search Own Brand Manager"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            onClick={() =>
+              handleOwnBrandManagerClick(
+                '',
+                rowData.ownBrandManagerEmailId.emailId
+              )
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
           {/* </Typography> */}
+          <Typography variant="subtitle2" color="primary">
+            {errOwnBrandManager && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
         </Grid>
         <Grid
           item
@@ -1446,28 +2060,43 @@ function ManageEventCreate(props: any) {
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.seniorBuyingManagerEmailId}
+            value={rowData.seniorBuyingManagerEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
+              setErrSeniorBuyingManager(false)
               console.log(event.target.value)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      seniorBuyingManagerEmailId: event.target.value,
+                      seniorBuyingManagerEmailId: {
+                        emailId: event.target.value,
+                      },
                     },
                   ]
                 })
               }
             }}
             placeholder="Search Senior Buying Manager"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            onClick={() =>
+              handleSeniorBuyingManagerClick(
+                '',
+                rowData.seniorBuyingManagerEmailId.emailId
+              )
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errSeniorBuyingManager && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1487,55 +2116,64 @@ function ManageEventCreate(props: any) {
 
   const merchandiserTemplate = (rowData: any) => {
     return (
-      // <Autocomplete
-      //   value={rowData.merchandiser}
-      //   options={Merchandisers.map((merch) => {
-      //     return merch.value
-      //   })}
-      //   onChange={(event, newValue) => {
-      //     if (newValue !== null) {
-      //       setEventDetails((prevState: any) => {
-      //         return [
-      //           {
-      //             ...prevState[0],
-      //             merchandiser: newValue,
-      //           },
-      //         ]
-      //       })
-      //     }
-      //   }}
-      //   classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
-      //   renderInput={(params) => (
-      //     <TextField {...params} variant="outlined" size="small" />
-      //   )}
-      // />
-
+      //   <Autocomplete
+      //     value={rowData.merchandiser}
+      //     options={Merchandisers.map((merch) => {
+      //       return merch.value
+      //     })}
+      //     onChange={(event, newValue) => {
+      //       if (newValue !== null) {
+      //         setEventDetails((prevState: any) => {
+      //           return [
+      //             {
+      //               ...prevState[0],
+      //               merchandiser: newValue,
+      //             },
+      //           ]
+      //         })
+      //       }
+      //     }}
+      //     classes={{ input: classes.smallFont, option: classes.smallFontGreen }}
+      //     renderInput={(params) => (
+      //       <TextField {...params} variant="outlined" size="small" />
+      //     )}
+      //   />
       <Grid container item xs={12} spacing={1}>
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.merchandiserEmailId}
+            value={rowData.merchandiserEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
+              setErrMerchandiser(false)
               console.log(event.target.value)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      merchandiserEmailId: event.target.value,
+                      merchandiserEmailId: { emailId: event.target.value },
                     },
                   ]
                 })
               }
             }}
             placeholder="Search Merchandiser"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            onClick={() =>
+              handleMerchandiserClick('', rowData.merchandiserEmailId.emailId)
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errMerchandiser && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1577,33 +2215,45 @@ function ManageEventCreate(props: any) {
       //     <TextField {...params} variant="outlined" size="small" />
       //   )}
       // />
-
       <Grid container item xs={12} spacing={1}>
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.rangeResetManagerEmailId}
+            value={rowData.rangeResetManagerEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
+              setErrRangeResetManager(false)
               console.log(event.target.value)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      rangeResetManagerEmailId: event.target.value,
+                      rangeResetManagerEmailId: { emailId: event.target.value },
                     },
                   ]
                 })
               }
             }}
-            placeholder="Search Range Reset Manager"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            placeholder="Search Range Reset Manager	"
+            onClick={() =>
+              handleRangeResetManagerClick(
+                '',
+                rowData.rangeResetManagerEmailId.emailId
+              )
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errRangeResetManager && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1645,33 +2295,45 @@ function ManageEventCreate(props: any) {
       //     <TextField {...params} variant="outlined" size="small" />
       //   )}
       // />
-
       <Grid container item xs={12} spacing={1}>
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.categoryDirectorEmailId}
+            value={rowData.categoryDirectorEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
+              setErrCategoryDirector(false)
               console.log(event.target.value)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      categoryDirectorEmailId: event.target.value,
+                      categoryDirectorEmailId: { emailId: event.target.value },
                     },
                   ]
                 })
               }
             }}
-            placeholder="Search Category Director"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            placeholder="Search Category Director	"
+            onClick={() =>
+              handleCategoryDirectorClick(
+                '',
+                rowData.categoryDirectorEmailId.emailId
+              )
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errCategoryDirector && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1717,28 +2379,43 @@ function ManageEventCreate(props: any) {
         <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
-            value={rowData.supplyChainAnalystEmailId}
+            value={rowData.supplyChainAnalystEmailId.emailId}
             // onChange={handleBuyer}
             onChange={(event: any) => {
+              setErrSupplyChainSpecialist(false)
               console.log(event.target.value)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
                     {
                       ...prevState[0],
-                      supplyChainAnalystEmailId: event.target.value,
+                      supplyChainAnalystEmailId: {
+                        emailId: event.target.value,
+                      },
                     },
                   ]
                 })
               }
             }}
-            placeholder="Search Supply Chain Analyst"
-            // onClick={handleBuyerClick}
-            onClick={() => console.log('clicked')}
+            placeholder="Search Supply Chain Splst"
+            onClick={() =>
+              handleSupplyChainSpecialistClick(
+                '',
+                rowData.supplyChainAnalystEmailId.emailId
+              )
+            }
+            // onClick={() => console.log('clicked')}
             styles={{
               fontSize: '12px',
             }}
           />
+          <Typography variant="subtitle2" color="primary">
+            {errSupplyChainSpecialist && (
+              <span style={{ color: 'red', fontSize: '12px' }}>
+                Please enter a valid Email ID
+              </span>
+            )}
+          </Typography>
           {/* </Typography> */}
         </Grid>
         <Grid
@@ -1756,14 +2433,14 @@ function ManageEventCreate(props: any) {
     )
   }
 
-  const buttonTemplate = (rowData: any) => {
-    return <Button>Remove</Button>
-  }
-
   const dueDateTemplate = (rowData: any) => {
     const dueDate = rowData['dueDate']
     return (
       <DatePicker
+        // disabled={rowData.visibility === 'Enabled' ? false : true}
+        disabled={true}
+        // readOnly={rowData.visibility === 'Enabled' ? false : true}
+        // readOnly={true}
         format="dd/MM/yy"
         value={dueDate}
         onChange={(date: any) => {
@@ -1780,9 +2457,10 @@ function ManageEventCreate(props: any) {
             })
           })
         }}
+        // className={rowData.visibility === 'Enabled' ? '' : classes.duedate}
         // style={{
         //   //   fontSize: aboveSm ? '0.8rem' : '0.65rem',
-        //   width: '150px',
+        //   background: '#e9ecef',
         // }}
       />
     )
@@ -1793,6 +2471,9 @@ function ManageEventCreate(props: any) {
     const testDate = new Date(notifiedDate).toString()
     return (
       <DatePicker
+        // disabled={rowData.visibility === 'Enabled' ? false : true} //change
+        disabled={true}
+        // disabled={rowData.visibility === 'Enabled' ? false : true}
         format="dd/MM/yy"
         value={notifiedDate}
         onChange={(date: any) => {
@@ -1809,6 +2490,7 @@ function ManageEventCreate(props: any) {
             })
           })
         }}
+        // className={rowData.visibility === 'Enabled' ? '' : classes.duedate}
         // style={{
         //   //   fontSize: aboveSm ? '0.8rem' : '0.65rem',
         //   width: '150px',
@@ -1956,7 +2638,8 @@ function ManageEventCreate(props: any) {
                 <RadioGroup onChange={handleGroupValues}>
                   {userGroup &&
                     userGroup.toLowerCase() === 'buyer' &&
-                    Buyers.map((b: any) => {
+                    // Buyers.map((b: any) => {
+                    buyerAssign.map((b: any) => {
                       return (
                         <FormControlLabel
                           key={b.value}
@@ -1969,7 +2652,7 @@ function ManageEventCreate(props: any) {
                     })}
                   {userGroup &&
                     userGroup.toLowerCase() === 'buying assistant' &&
-                    BuyingAssistants.map((b: any) => {
+                    buyerAssistentAssign.map((b: any) => {
                       return (
                         <FormControlLabel
                           key={b.value}
@@ -1983,7 +2666,72 @@ function ManageEventCreate(props: any) {
 
                   {userGroup &&
                     userGroup.toLowerCase() === 'senior buying manager' &&
-                    SeniorBuyingManagers.map((b: any) => {
+                    srBuyerAssign.map((b: any) => {
+                      return (
+                        <FormControlLabel
+                          key={b.value}
+                          value={b.value}
+                          control={radio}
+                          label={b.label}
+                          classes={{ label: classes.dialogText }}
+                        />
+                      )
+                    })}
+                  {userGroup &&
+                    userGroup.toLowerCase() === 'own brand manager' &&
+                    ownBrandManAssign.map((b: any) => {
+                      return (
+                        <FormControlLabel
+                          key={b.value}
+                          value={b.value}
+                          control={radio}
+                          label={b.label}
+                          classes={{ label: classes.dialogText }}
+                        />
+                      )
+                    })}
+                  {userGroup &&
+                    userGroup.toLowerCase() === 'merchandiser' &&
+                    merchandiserAssign.map((b: any) => {
+                      return (
+                        <FormControlLabel
+                          key={b.value}
+                          value={b.value}
+                          control={radio}
+                          label={b.label}
+                          classes={{ label: classes.dialogText }}
+                        />
+                      )
+                    })}
+                  {userGroup &&
+                    userGroup.toLowerCase() === 'range reset manager' &&
+                    rangeResetAssign.map((b: any) => {
+                      return (
+                        <FormControlLabel
+                          key={b.value}
+                          value={b.value}
+                          control={radio}
+                          label={b.label}
+                          classes={{ label: classes.dialogText }}
+                        />
+                      )
+                    })}
+                  {userGroup &&
+                    userGroup.toLowerCase() === 'category director' &&
+                    catDirectorAssign.map((b: any) => {
+                      return (
+                        <FormControlLabel
+                          key={b.value}
+                          value={b.value}
+                          control={radio}
+                          label={b.label}
+                          classes={{ label: classes.dialogText }}
+                        />
+                      )
+                    })}
+                  {userGroup &&
+                    userGroup.toLowerCase() === 'supply chain specialist' &&
+                    supplyChainAssign.map((b: any) => {
                       return (
                         <FormControlLabel
                           key={b.value}
@@ -2023,6 +2771,7 @@ function ManageEventCreate(props: any) {
     return (
       <Typography variant="body2">
         <button
+          disabled={rowData.visibility === 'Enabled' ? false : true}
           className={classes.backButton}
           type="button"
           onClick={() => handleGroupsOpen(rowData)}
@@ -2037,20 +2786,281 @@ function ManageEventCreate(props: any) {
   }
 
   const removeTasks = () => {
+    console.log('taskDetails', taskDetails)
     let _tasks = taskDetails.filter(
       (value: any) => !selectTasks.includes(value)
     )
-    console.log(_tasks)
+    console.log('_tasks', _tasks)
+    console.log('selectTasks', selectTasks)
     setTaskDetails(_tasks)
     setSelectTasks(null)
   }
 
-  const handlePublishEvent = () => {
-    history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
+  // { ...value, status: false }
+
+  // const [activeOrDeactive, setActiveOrDeactive] = useState<any>([])
+  // const removeTasks = () => {
+  //   setTaskDetails([])
+  //   console.log('taskDetails', taskDetails)
+  //   setTaskDetails(
+  //     taskDetails.map((task: any) => {
+  //       selectTasks.filter((check: any) => {
+  //         if (task.taskId === check.taskId) {
+  //           task.status = true
+  //         } else {
+  //           task.status = false
+  //         }
+  //       })
+  //       return task
+  //     })
+  // )
+
+  // let activate = taskDetails.filter(
+  //   (value: any) => !selectTasks.includes(value)
+  // )
+
+  // let deactivate = selectTasks.map((value: any) => {
+  //   return { ...value, status: true }
+  // })
+  // console.log('activate', activate)
+  // console.log('deactivate', deactivate)
+  // }
+
+  const handlePublishEvent = (clickState: any) => {
+    setIsProgressLoader(true)
+    if (clickState === 'modifyAuto') {
+      setPublishVisible(false)
+      setSaveVisible(true)
+    }
+
+    const claimTaskData = {
+      requestorDetails: {
+        emailId: eventDetails[0].requesterEmailId,
+        requestBy: eventDetails[0].requesteruserId,
+        requestorName: eventDetails[0].requesterName,
+        requestType: 'complete',
+        requestDate: new Date().toISOString().split('T')[0],
+      },
+      // requestorRoles: eventDetails[0].requesterRole,
+      requestorRoles: [
+        {
+          roleId: eventDetails[0].requesterPersona,
+        },
+      ],
+    }
+
+    console.log('Publish Clicked', taskDetails)
+
+    if (clickState === 'modifySave') {
+      selectTasks &&
+        setTaskDetails(
+          taskDetails.map((task: any) => {
+            selectTasks.filter((check: any) => {
+              if (task.taskId === check.taskId) {
+                task.visibility = 'Removed'
+              }
+            })
+            return task
+          })
+        )
+    }
+
+    // console.log('selectedMap', selectedMap)
+
+    const taskDetailsData = taskDetails.map((val: any) => {
+      return {
+        status: val.status,
+        visibility: val.visibility,
+        taskId: val.taskId2,
+        taskName: val.taskId,
+        taskDescription: val.task,
+        dueDate: val.dueDate,
+        notifyDate: val.notifiedDate,
+        slaDate: val.slaDate,
+        // assigneeDetails: {
+        //   persona: val.assignedUserGroup,
+        //   details: {
+        //     name: val.manager,
+        //     emailId: val.emailId,
+        //     userId: val.userId,
+        //   },
+        // },
+        assigneeDetails: {
+          emailId: val.emailId,
+          userId: val.userId,
+          name: val.name,
+        },
+        assigneeRole: val.assignedUserGroup,
+      }
+    })
+
+    // const eventTeamData = team.filter((val: any) => {
+    //   const { persona, emailId, userId, name } = val
+    //   if (persona && emailId && userId && name) {
+    //     return {
+    //       // persona: val.persona,
+    //       details: {
+    //         emailId: val.emailId,
+    //         userId: val.userId,
+    //         name: val.name,
+    //       },
+    //     }
+    //   }
+    // })
+    const eventTeamData = team.map((val: any) => {
+      return {
+        persona: val.persona,
+        details: {
+          emailId: val.emailId,
+          userId: val.userId,
+          name: val.name,
+        },
+      }
+    })
+
+    const publishEvent = {
+      reviewDecision: clickState,
+
+      eventId: eventDetails[0].eventId,
+      eventStatus: eventDetails[0].eventStatus,
+      requester: {
+        persona: eventDetails[0].requesterPersona,
+        details: {
+          name: eventDetails[0].requesterName,
+          emailId: eventDetails[0].requesterEmailId,
+          userId: eventDetails[0].requesteruserId,
+        },
+        roles: eventDetails[0].requesterRole,
+        usergroups: eventDetails[0].requesterUserGroup,
+      },
+      logging: {
+        comments: 'string',
+        uploadRef: 'string',
+        // comments: inputTextareaValue,
+        // uploadRef: uploadedFile,
+      },
+      eventHeader: {
+        resetType: eventDetails[0].resetType,
+        rafAppDueDate: eventDetails[0].appDueDate,
+        eventLaunchDate: eventDetails[0].targetDate,
+        eventName: eventDetails[0].eventName,
+        eventHierarchy: {
+          tradingGroup: eventDetails[0].tradeGroup,
+          category: eventDetails[0].category,
+          department: eventDetails[0].department,
+        },
+        inventoryControl: {
+          planogramClass: classValues
+            ? classValues.map((c: any) => {
+                return c.value
+              })
+            : [],
+          isClearancePriceApplied: eventDetails[0].clearancePriceCheck,
+          isOrderStopDateCheckRequired: eventDetails[0].orderStopDateCheck,
+          isStopOrderStockRundown: eventDetails[0].stopOrder,
+          storeWastetiming: eventDetails[0].wastageRange,
+        },
+
+        eventTeam: {
+          team: eventTeamData,
+        },
+      },
+      milestones: taskDetailsData,
+    }
+    console.log('publishEvent', publishEvent)
+    // console.log('publishEventJSON', JSON.stringify(publishEvent))
+
+    claimEventsCamunda(eventDetails[0].taskIdEvent, claimTaskData)
+      .then((res: any) => {
+        console.log('claimEventsCamunda API call', res)
+        publishEvent &&
+          publishEventsCamunda(eventDetails[0].eventId, publishEvent)
+            .then((res: any) => {
+              console.log('Response publishEvent', res)
+              setIsProgressLoader(false)
+            })
+            .catch((err: any) => {
+              console.log('Error publishEvent', err)
+              setIsProgressLoader(false)
+            })
+      })
+      .catch((err: any) => {
+        console.log('claimEventsCamunda Error api', err)
+        setIsProgressLoader(false)
+      })
+
+    //
+    setRemoveTaskOpen(false)
+    setUpdateEventOpen(false)
+    setsaveEventTaskButton(false)
+
+    // history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
+  }
+
+  // const confirmPublish = (
+  //   <ConfirmBox
+  //     cancelOpen={cancelOpenDelete}
+  //     handleCancel={() => setCancelOpenDelete(false)}
+  //     handleProceed={removeTasks}
+  //     label1="Confirm 'Publish'"
+  //     label2="Are you sure you want to Publish the Event?"
+  //   />
+  // )
+
+  // const confirmSave = (
+  //   <ConfirmBox
+  //     cancelOpen={cancelOpenDelete}
+  //     handleCancel={() => setCancelOpenDelete(false)}
+  //     handleProceed={removeTasks}
+  //     label1="Confirm 'Save'"
+  //     label2="Are you sure you want to Save the Event?"
+  //   />
+  // )
+
+  const rowClass = (data: any) => {
+    return {
+      'row-accessories': data.visibility === 'Removed', //"Disabled"
+      // 'p-highlight': data.visibility === 'Disabled', //"Disabled"
+      cursor: data.visibility === 'Removed', //"Disabled"
+    }
+  }
+  const columnClass = (data: any) => {
+    return {
+      sridhar: data.visibility === 'Removed', //"Disabled"
+    }
+  }
+  const setSelectTasksChange = (e: any) => {
+    let val = e.value
+    // e.originalEvent.target.ariaChecked = 'true'
+    // console.log(e.originalEvent.target.attributes[2].value)
+    console.log('HEllo', e)
+    setSelectTasks(val)
+  }
+
+  const handleRow = (event: any) => {
+    if (event.originalEvent.target.cellIndex === 0) {
+      // event.originalEvent.target.outerHTML = ''
+      // event.originalEvent.target.ariaChecked = 'false'
+      console.log(event.originalEvent.currentTarget)
+      // console.log("My checkkk",event.currentTarget.getAttribute("aria-checked"))
+      setTaskDetails(
+        taskDetails.map((task: any) => {
+          if (event.data.taskId === task.taskId) {
+            task.visibility = 'Enabled'
+          }
+          return task
+        })
+      )
+
+      console.log('onRowClick', event.originalEvent.target, event)
+    } else {
+      return
+    }
   }
 
   return (
     <>
+      <LoadingComponent showLoader={isProgressLoader} />
       {/* <Paper className={classes.root} elevation={0}> */}
       <div
         className="manageUser" //className={classes.root}
@@ -2100,6 +3110,7 @@ function ManageEventCreate(props: any) {
               <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
                 <DataTable
                   value={eventDetails && eventDetails}
+                  // value={rangeEventRequest && rangeEventRequest}
                   scrollable
                   showGridlines
                   style={{
@@ -2114,20 +3125,21 @@ function ManageEventCreate(props: any) {
                         header={col.header}
                         body={
                           (col.field === 'targetDate' && launchDateTemplate) ||
-                          (col.field === 'resetType' && resetTypeTemplate) ||
+                          // (col.field === 'resetType' && resetTypeTemplate) ||
                           (col.field === 'appDueDate' && rafDueDateTemplate) ||
                           (col.field === 'tradeGroup' && groupTemplate) ||
                           (col.field === 'category' && categoryTemplate) ||
                           (col.field === 'department' && departmentTemplate) ||
-                          (col.field === 'name' && eventNameTemplate) ||
-                          (col.field === 'clearancePriceCheck' &&
+                          (col.field === 'uniqueId' && eventUniqueId) ||
+                          // (col.field === 'eventName' && eventNameTemplate) ||
+                          (col.field === 'clearancePriceApplied' &&
                             clearancePriceTemplate) ||
-                          (col.field === 'orderStopDateCheck' &&
+                          (col.field === 'GSCOPDateCheckRequired' &&
                             GSCOPDateTemplate) ||
                           (col.field === 'stopOrder' && stopOrderTemplate) ||
                           (col.field === 'buyer' && buyerTemplate) ||
                           (col.field === 'planogramClass' && classTemplate) ||
-                          (col.field === 'wastageRange' &&
+                          (col.field === 'storeWasteProcessTiming' &&
                             storeWasteProcessTemplate) ||
                           (col.field === 'buyerAssistant' &&
                             buyingAssistantTemplate) ||
@@ -2152,37 +3164,47 @@ function ManageEventCreate(props: any) {
                 </DataTable>
               </Grid>
               <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-                <Typography variant="subtitle1" color="primary">
-                  Manage Tasks
+                {/* <Typography variant="subtitle1">Manage Tasks</Typography> */}
+                <Typography variant="h6" color="primary">
+                  Manage Task
                 </Typography>
               </Grid>
 
               <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
                 <DataTable
                   value={taskDetails && taskDetails}
-                  selectionMode="checkbox"
+                  selectionMode={selectTasks > 0 ? 'single' : 'checkbox'}
                   selection={selectTasks}
-                  onSelectionChange={(e) => setSelectTasks(e.value)}
+                  // selection={true}
+                  onSelectionChange={(e) => setSelectTasksChange(e)}
                   scrollable
                   showGridlines
                   sortField="taskId"
+                  // rowStyle={{ background: 'red' }}
+                  rowClassName={rowClass}
+                  onRowClick={handleRow}
                 >
                   <Column
-                    selectionMode="multiple"
+                    // selectionMode="multiple"
+                    selectionMode={'multiple'}
                     headerStyle={{
                       width: '50px',
                       color: 'white',
                       backgroundColor: theme1.palette.primary.main,
                     }}
                   ></Column>
+
                   {manageTaskPublishCols.map((col: any, index: any) => {
                     return (
                       <Column
+                        // style={{
+                        //   //   fontSize: aboveSm ? '0.8rem' : '0.65rem',
+                        //   background: '#e9ecef',
+                        // }}
                         key={index}
                         field={col.field}
                         header={col.header}
                         body={
-                          // (col.field === 'rowButton' && buttonTemplate) ||
                           (col.field === 'dueDate' && dueDateTemplate) ||
                           (col.field === 'notifiedDate' &&
                             notifiedDateTemplate) ||
@@ -2220,9 +3242,11 @@ function ManageEventCreate(props: any) {
                       variant="contained"
                       color="primary"
                       // type="submit"
-                      onClick={removeTasks}
+                      // onClick={removeTasks}
+                      // onClick={() => handlePublishEvent('Cancel')}
+                      onClick={() => setRemoveTaskOpen(true)}
                     >
-                      Remove/Skip Task
+                      Remove / Skip Task
                     </Button>
                   </Grid>
                   <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
@@ -2230,19 +3254,50 @@ function ManageEventCreate(props: any) {
                       variant="contained"
                       color="primary"
                       // type="submit"
+                      // onClick={() => handlePublishEvent('ModifySave')}
+                      onClick={() => setsaveEventTaskButton(true)}
                     >
                       Save
                     </Button>
                   </Grid>
+
                   <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      // type="submit"
-                      onClick={handlePublishEvent}
-                    >
-                      Publish Event
-                    </Button>
+                    {eventDetails && eventDetails[0].eventStatus === 'Draft' ? (
+                      <Tooltip
+                        title={
+                          publishVisible
+                            ? 'Click on save to save the data.'
+                            : ''
+                        }
+                      >
+                        <span>
+                          <Button
+                            // disabled={publishVisible}
+                            variant="contained"
+                            color="primary"
+                            // type="submit"
+                            onClick={() => handlePublishEvent('confirmed')}
+                          >
+                            Publish Event
+                          </Button>
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Click on save to save the data.">
+                        <span>
+                          <Button
+                            // disabled={publishVisible}
+                            variant="contained"
+                            color="primary"
+                            // type="submit"
+                            // onClick={() => handlePublishEvent('Confirmed')}
+                            onClick={() => setUpdateEventOpen(true)}
+                          >
+                            Update Event
+                          </Button>
+                        </span>
+                      </Tooltip>
+                    )}
                   </Grid>
                 </Grid>
               </Grid>
@@ -2253,6 +3308,9 @@ function ManageEventCreate(props: any) {
       {/* </Paper> */}
       {classDialog}
       {userGroupDialog}
+      {updateEventDialog}
+      {removeTaskDialog}
+      {saveEventTask}
     </>
   )
 }
@@ -2261,6 +3319,7 @@ const mapStateToProps = (state: any) => {
   return {
     fileData: state.fileReducer.fileData,
     fileErrorData: state.fileReducer.fileErrorData,
+    fileManageData: state.fileReducer.fileManageData,
   }
 }
 
@@ -2269,6 +3328,7 @@ const matchDispatchToProps = (dispatch: any) => {
     setFile: (fileData: any) => dispatch(setFile(fileData)),
     resetFile: () => dispatch(resetFile),
     resetErrorFile: () => dispatch(resetErrorFile()),
+    resetTaskFile: () => dispatch(resetTaskFile()),
   }
 }
 
