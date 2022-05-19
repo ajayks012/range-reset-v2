@@ -33,6 +33,7 @@ const envDetails = {
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
+    // need to change the variable part of config types
     GET_RESET_TYPES: 'rangereset/v2/config/Reset Type',
     GET_PLANOGRAM_CLASSES: 'rangereset/v2/config/Planogram Class',
     GET_WASTAGE_RANGES: 'rangereset/v2/config/Wastage Range',

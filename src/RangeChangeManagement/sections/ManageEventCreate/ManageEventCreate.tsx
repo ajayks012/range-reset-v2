@@ -847,7 +847,7 @@ function ManageEventCreate(props: any) {
             color="primary"
             className={classes.buttonRemoveTask}
             // onClick={handleClassConfirm}
-            onClick={() => handlePublishEvent('modifyAuto')}
+            onClick={() => handlePublishEvent('ModifyAuto')}
           >
             Yes
           </Button>
@@ -903,7 +903,7 @@ function ManageEventCreate(props: any) {
             color="primary"
             className={classes.buttonRemoveTask}
             // onClick={handleClassConfirm}
-            onClick={() => handlePublishEvent('modifyAuto')}
+            onClick={() => handlePublishEvent('ModifyAuto')}
           >
             Yes
           </Button>
@@ -1047,7 +1047,7 @@ function ManageEventCreate(props: any) {
           setLaunchDateNew(dateVal)
           setLaunchDateConfirm(true)
         }}
-        minDate={rowData['appDueDate']}
+        // minDate={rowData['appDueDate']}
       />
     )
   }
@@ -1076,46 +1076,81 @@ function ManageEventCreate(props: any) {
     })
     // setLaunchDateOld('')
     setLaunchDateConfirm(false)
-    handlePublishEvent('modifyAuto')
+    handlePublishEvent('ModifyAuto')
     // getEventAndTasks()
+  }
+
+  const handleDueDateError = () => {
+    setEventDetails((prevState: any) => {
+      return [
+        {
+          ...prevState[0],
+          targetDate: launchDateOld && launchDateOld,
+        },
+      ]
+    })
+    handlePublishEvent('ModifyAuto')
+    setDueDateErrorOpen(false)
   }
 
   useEffect(() => {
     if (taskDetails) {
-      let count = 0
-      let sysDate = new Date()
-      taskDetails.map((task: any) => {
-        let taskDueDate = new Date(task.dueDate)
-        if (taskDueDate.getTime() < sysDate.getTime()) {
-          count = 1
-        }
-      })
-      if (count != 0) {
-        // setDueDateErrorOpen(true)
-        let confirm: any = alert(
-          'Due Date of Task(s) is behind System date, The changes done will be reverted back to previous state'
-        )
-        if (confirm) {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                targetDate: launchDateOld && launchDateOld,
-              },
-            ]
-          })
-          handlePublishEvent('modifyAuto')
+      let newDate = launchDateNew ? new Date(launchDateNew).getTime() : 0
+      let oldDate = launchDateOld ? new Date(launchDateOld).getTime() : 0
+      if (newDate != 0 && oldDate !== 0 && newDate !== oldDate) {
+        let count = 0
+        let sysDate = new Date()
+        taskDetails.map((task: any) => {
+          let taskDueDate = new Date(task.dueDate)
+          if (taskDueDate.getTime() < sysDate.getTime()) {
+            count = 1
+          }
+        })
+        if (count != 0) {
+          // setDueDateErrorOpen(true)
+          // let confirm: any = alert(
+          //   'Due Date of Task(s) is behind System date, The changes done will be reverted back to previous state'
+          // )
+          // if (confirm) {
+          //   setEventDetails((prevState: any) => {
+          //     return [
+          //       {
+          //         ...prevState[0],
+          //         targetDate: launchDateOld && launchDateOld,
+          //       },
+          //     ]
+          //   })
+          //   handlePublishEvent('ModifyAuto')
+          // }
+          setDueDateErrorOpen(true)
         }
       }
     }
   }, [taskDetails])
 
+  const confirmDueDateChangeDialog = (
+    <ConfirmBox
+      cancelOpen={dueDateErrorOpen}
+      // handleCancel={cancelLaunchDateChange}
+      // handleProceed={() => handlePublishEvent('ModifyAuto')}
+      handleProceed={handleDueDateError}
+      label1="Due Date less than System Date"
+      label2={
+        <>
+          Due Date of Task(s) is behind System date
+          <br />
+          The changes done will be reverted back to previous state
+        </>
+      }
+    />
+  )
+
   const confirmLaunchDateDialog = (
     <ConfirmBox
       cancelOpen={launchDateConfirm}
       handleCancel={cancelLaunchDateChange}
-      // handleProceed={() => handlePublishEvent('modifyAuto')}
-      handleProceed={confirmLaunchDateChange}
+      // handleProceed={() => handlePublishEvent('ModifyAuto')}
+      handleProceed={handleDueDateError}
       label1="Launch Date Change"
       label2={
         <>
@@ -2931,7 +2966,7 @@ function ManageEventCreate(props: any) {
 
   const handlePublishEvent = (clickState: any) => {
     setIsProgressLoader(true)
-    if (clickState === 'modifyAuto') {
+    if (clickState === 'ModifyAuto') {
       setPublishVisible(false)
       setSaveVisible(true)
     }
@@ -3111,7 +3146,7 @@ function ManageEventCreate(props: any) {
     <ConfirmBox
       cancelOpen={saveConfirm}
       handleCancel={() => setSaveConfirm(false)}
-      handleProceed={() => handlePublishEvent('modifyAuto')}
+      handleProceed={() => handlePublishEvent('ModifyAuto')}
       label1="Confirm 'Save'"
       label2="Are you sure you want to Save the Event changes?"
     />
@@ -3436,6 +3471,7 @@ function ManageEventCreate(props: any) {
       {confirmRemoveDialog}
       {confirmPublishDialog}
       {confirmLaunchDateDialog}
+      {confirmDueDateChangeDialog}
     </>
   )
 }
