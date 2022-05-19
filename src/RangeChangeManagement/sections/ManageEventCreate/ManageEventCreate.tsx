@@ -69,15 +69,16 @@ import {
   getResetTypes,
   getEventDetailsById,
   publishEventsCamunda,
+  getWastageRanges,
 } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
 import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 import { connect } from 'react-redux'
 import {
-  resetErrorFile,
-  resetFile,
-  setFile,
+  // resetErrorFile,
+  // resetFile,
+  // setFile,
   resetTaskFile,
 } from '../../../redux/Actions/FileUpload'
 import '../../../styles/global/helpers.css'
@@ -89,10 +90,10 @@ const Input = styled('input')({
 })
 function ManageEventCreate(props: any) {
   const {
-    fileErrorData,
+    // fileErrorData,
     fileManageData,
-    setFile,
-    resetErrorFile,
+    // setFile,
+    // resetErrorFile,
     resetTaskFile,
   } = props
 
@@ -161,6 +162,7 @@ function ManageEventCreate(props: any) {
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
+  const [wastageRangeOptions, setWastageRangeOptions] = useState<any>([])
   const [errBuyer, setErrBuyer] = useState<any>(false)
   const [buyerError1, setBuyerError1] = useState<any>('')
   const [errBuyerAssisant, setErrBuyerAssisant] = useState<any>(false)
@@ -186,7 +188,32 @@ function ManageEventCreate(props: any) {
   const [confirmEnDis, setConfirmEnDis] = useState<any>(false)
   const [publishVisible, setPublishVisible] = useState(true)
   const [saveVisible, setSaveVisible] = useState(false)
+  const [buyerAssign, setBuyerAssign] = useState([])
+  const [buyerAssistentAssign, setAssistentAssign] = useState([])
+  const [srBuyerAssign, setSrBuyerAssign] = useState([])
+  const [ownBrandManAssign, setOwnBrandManAssign] = useState([])
+  const [merchandiserAssign, setMerchandiserAssign] = useState([])
+  const [rangeResetAssign, setRangeResetAssign] = useState([])
+  const [catDirectorAssign, setCatDirectorAssign] = useState([])
+  const [supplyChainAssign, setSupplyChainAssign] = useState([])
+  const [inputTextareaValue, setInputTextareaValue] = useState<any>('')
+  const [roldIdAssign, setRoleIdAssign] = useState<any>('')
+  const [grpVal, setGrpVal] = useState('')
+  const [catVal, setCatVal] = useState('')
+  const [depVal, setDepVal] = useState('')
+  const [cptVal, setCptVal] = useState('')
+  const [gscopVal, setGscopVal] = useState('')
+  const [sotVal, setSotVal] = useState('')
+
   const [isProgressLoader, setIsProgressLoader] = useState(false)
+
+  const [saveConfirm, setSaveConfirm] = useState(false)
+  const [removeConfirm, setRemoveConfirm] = useState(false)
+  const [publishConfirm, setPublishConfirm] = useState(false)
+  const [launchDateConfirm, setLaunchDateConfirm] = useState(false)
+  const [launchDateOld, setLaunchDateOld] = useState<any>()
+  const [launchDateNew, setLaunchDateNew] = useState<any>()
+  const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
 
   useEffect(() => {
     // return () => resetErrorFile()
@@ -205,79 +232,7 @@ function ManageEventCreate(props: any) {
   //   return () => setEventDetails([])
   // }, [])
 
-  //apisri
-  useEffect(() => {
-    getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('group')
-        .then((res: any) => {
-          const grpList = res.data.hierarchyNode.map((item: any) => {
-            return {
-              value: item.groupName,
-              label: item.groupName,
-              id: item.group,
-              hierGroup: 'group',
-            }
-          })
-          setGroupOptions(grpList)
-          console.log('group length: ', grpList.length)
-        })
-        .catch((err: any) => setGroupOptions([]))
-  }, [])
-
-  // useEffect(() => {
-  //   getResetTypes()
-  //     .then((res: any) => {
-  //       console.log('getResetTypes', res)
-  //       const types = res.data.map((val: any) => {
-  //         return {
-  //           name: val.configValue,
-  //           text: val.configValue,
-  //         }
-  //       })
-  //       setResetTypes(types)
-  //     })
-  //     .catch((err: any) => {
-  //       console.log('getResetTypesERROR', err)
-  //     })
-  // },[])
-  useEffect(() => {
-    console.log(group)
-    getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('category')
-        .then((res: any) => {
-          const categoryList = res.data.hierarchyNode.map((item: any) => {
-            return {
-              value: item.categoryName,
-              label: item.categoryName,
-              id: item.category,
-              hierGroup: 'category',
-              groupName: item.groupName,
-              groupId: item.group,
-            }
-          })
-          setCategoryOptions(categoryList)
-
-          // group &&
-          //   setCategoryOptions(
-          //     categoryList.filter((cat: any) => cat.groupId === group.id)
-          //   )
-          // group &&
-          //   console.log(
-          //     'category length: ',
-          //     categoryList.filter((cat: any) => cat.groupId === group.id)
-          //   )
-        })
-        .catch((err: any) => setCategoryOptions([]))
-  }, [group])
-
-  useEffect(() => {
-    // console.log('manageEventDummyData', manageEventDummyData)
-    // console.log('ManagePageApiData', ManagePageApiData) // 1706 //9039 /1644 //9043 ADMIN //9044 RRM //9047
-    // console.log(fileErrorData)
-    setIsProgressLoader(true)
-    console.log(fileManageData)
-    setEventName(fileManageData.name)
-    // getEventDetailsById(fileErrorData && fileErrorData.id)
+  const getEventAndTasks = () => {
     getEventDetailsById(fileManageData && fileManageData.id)
       .then((res: any) => {
         let data = res.data
@@ -478,6 +433,7 @@ function ManageEventCreate(props: any) {
             }
           })
         setClassValues(classValue)
+        setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
         if (eventData.eventStatus === 'Confirmed') {
           console.log('Confirmedddddddd', eventData.eventStatus)
@@ -489,18 +445,105 @@ function ManageEventCreate(props: any) {
         console.log('EVENTID', err)
         setIsProgressLoader(false)
       })
+  }
+
+  useEffect(() => {
+    // console.log('manageEventDummyData', manageEventDummyData)
+    // console.log('ManagePageApiData', ManagePageApiData) // 1706 //9039 /1644 //9043 ADMIN //9044 RRM //9047
+    // console.log(fileErrorData)
+    if (fileManageData && fileManageData.id) {
+      setIsProgressLoader(true)
+      console.log(fileManageData)
+      setEventName(fileManageData.name)
+      // getEventDetailsById(fileErrorData && fileErrorData.id)
+      getEventAndTasks()
+    } else {
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+    }
   }, [])
 
-  const [buyerAssign, setBuyerAssign] = useState([])
-  const [buyerAssistentAssign, setAssistentAssign] = useState([])
-  const [srBuyerAssign, setSrBuyerAssign] = useState([])
-  const [ownBrandManAssign, setOwnBrandManAssign] = useState([])
-  const [merchandiserAssign, setMerchandiserAssign] = useState([])
-  const [rangeResetAssign, setRangeResetAssign] = useState([])
-  const [catDirectorAssign, setCatDirectorAssign] = useState([])
-  const [supplyChainAssign, setSupplyChainAssign] = useState([])
+  //apisri
+  useEffect(() => {
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('group')
+        .then((res: any) => {
+          const grpList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.groupName,
+              label: item.groupName,
+              id: item.group,
+              hierGroup: 'group',
+            }
+          })
+          setGroupOptions(grpList)
+          console.log('group length: ', grpList.length)
+        })
+        .catch((err: any) => setGroupOptions([]))
+  }, [])
 
-  const [roldIdAssign, setRoleIdAssign] = useState<any>('')
+  // useEffect(() => {
+  //   getResetTypes()
+  //     .then((res: any) => {
+  //       console.log('getResetTypes', res)
+  //       const types = res.data.map((val: any) => {
+  //         return {
+  //           name: val.configValue,
+  //           text: val.configValue,
+  //         }
+  //       })
+  //       setResetTypes(types)
+  //     })
+  //     .catch((err: any) => {
+  //       console.log('getResetTypesERROR', err)
+  //     })
+  // },[])
+  useEffect(() => {
+    console.log(group)
+    getProductHierarchyListAPI &&
+      getProductHierarchyListAPI('category')
+        .then((res: any) => {
+          const categoryList = res.data.hierarchyNode.map((item: any) => {
+            return {
+              value: item.categoryName,
+              label: item.categoryName,
+              id: item.category,
+              hierGroup: 'category',
+              groupName: item.groupName,
+              groupId: item.group,
+            }
+          })
+          setCategoryOptions(categoryList)
+
+          // group &&
+          //   setCategoryOptions(
+          //     categoryList.filter((cat: any) => cat.groupId === group.id)
+          //   )
+          // group &&
+          //   console.log(
+          //     'category length: ',
+          //     categoryList.filter((cat: any) => cat.groupId === group.id)
+          //   )
+        })
+        .catch((err: any) => setCategoryOptions([]))
+  }, [group])
+
+  useEffect(() => {
+    getWastageRanges()
+      .then((res: any) => {
+        const options = res.data.map((item: any) => {
+          return {
+            value: item.configDescription,
+            label: item.configDescription,
+          }
+        })
+        console.log(options)
+        setWastageRangeOptions(options)
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+  }, [])
+
   useEffect(() => {
     let roleIdTask = ''
     if (userGroup === 'Buyer') {
@@ -531,7 +574,7 @@ function ManageEventCreate(props: any) {
               return {
                 email: val.user.emailId,
                 label: val.user.firstName + ' ' + val.user.lastName,
-                value: val.user.firstName + ' ' + val.user.lastName,
+                value: val.user.emailId,
               }
             })
             console.log('Buyer userDetails', userDetails)
@@ -599,7 +642,7 @@ function ManageEventCreate(props: any) {
 
   const goBack = () => {
     history.goBack()
-    resetFile()
+    resetTaskFile()
   }
 
   // useEffect(() => {
@@ -672,7 +715,7 @@ function ManageEventCreate(props: any) {
   const handleFileUpload = (event: any) => {
     setUploadedFile(event.target.files[0])
   }
-  const [inputTextareaValue, setInputTextareaValue] = useState<any>('')
+
   const updateEventDialog = (
     <Dialog open={updateEventOpen} onClose={handleUpdateEventClose}>
       <Box
@@ -804,7 +847,7 @@ function ManageEventCreate(props: any) {
             color="primary"
             className={classes.buttonRemoveTask}
             // onClick={handleClassConfirm}
-            onClick={() => handlePublishEvent('modifySave')}
+            onClick={() => handlePublishEvent('modifyAuto')}
           >
             Yes
           </Button>
@@ -991,19 +1034,98 @@ function ManageEventCreate(props: any) {
         format="dd/MM/yy"
         value={rowData['targetDate']}
         onChange={(date: any) => {
+          let newDate = date.toISOString().split('T')[0]
+          let dateVal = newDate + ' 01:00:00'
           setEventDetails((prevState: any) => {
             return [
               {
                 ...prevState[0],
-                targetDate: date,
+                targetDate: dateVal,
               },
             ]
           })
+          setLaunchDateNew(dateVal)
+          setLaunchDateConfirm(true)
         }}
         minDate={rowData['appDueDate']}
       />
     )
   }
+  const cancelLaunchDateChange = () => {
+    setEventDetails((prevState: any) => {
+      return [
+        {
+          ...prevState[0],
+          targetDate: launchDateOld && launchDateOld,
+        },
+      ]
+    })
+    setLaunchDateNew('')
+    setLaunchDateConfirm(false)
+  }
+
+  const confirmLaunchDateChange = () => {
+    setIsProgressLoader(true)
+    setEventDetails((prevState: any) => {
+      return [
+        {
+          ...prevState[0],
+          targetDate: launchDateNew && launchDateNew,
+        },
+      ]
+    })
+    // setLaunchDateOld('')
+    setLaunchDateConfirm(false)
+    handlePublishEvent('modifyAuto')
+    // getEventAndTasks()
+  }
+
+  useEffect(() => {
+    if (taskDetails) {
+      let count = 0
+      let sysDate = new Date()
+      taskDetails.map((task: any) => {
+        let taskDueDate = new Date(task.dueDate)
+        if (taskDueDate.getTime() < sysDate.getTime()) {
+          count = 1
+        }
+      })
+      if (count != 0) {
+        // setDueDateErrorOpen(true)
+        let confirm: any = alert(
+          'Due Date of Task(s) is behind System date, The changes done will be reverted back to previous state'
+        )
+        if (confirm) {
+          setEventDetails((prevState: any) => {
+            return [
+              {
+                ...prevState[0],
+                targetDate: launchDateOld && launchDateOld,
+              },
+            ]
+          })
+          handlePublishEvent('modifyAuto')
+        }
+      }
+    }
+  }, [taskDetails])
+
+  const confirmLaunchDateDialog = (
+    <ConfirmBox
+      cancelOpen={launchDateConfirm}
+      handleCancel={cancelLaunchDateChange}
+      // handleProceed={() => handlePublishEvent('modifyAuto')}
+      handleProceed={confirmLaunchDateChange}
+      label1="Launch Date Change"
+      label2={
+        <>
+          Are you sure you want to Save the Launch Date changes?
+          <br />
+          This might affect other values
+        </>
+      }
+    />
+  )
 
   const groupTemplatenotused = (rowData: any) => {
     const val = groups.findIndex((group) => rowData.tradeGroup === group.text)
@@ -1069,13 +1191,6 @@ function ManageEventCreate(props: any) {
       />
     )
   }
-
-  const [grpVal, setGrpVal] = useState('')
-  const [catVal, setCatVal] = useState('')
-  const [depVal, setDepVal] = useState('')
-  const [cptVal, setCptVal] = useState('')
-  const [gscopVal, setGscopVal] = useState('')
-  const [sotVal, setSotVal] = useState('')
 
   useEffect(() => {
     console.log('groupOptions', grpVal)
@@ -1357,61 +1472,49 @@ function ManageEventCreate(props: any) {
     }
   }
 
+  const handleWastagRange = (e: any) => {
+    if (e) {
+      setEventDetails((prevState: any) => {
+        return [
+          {
+            ...prevState[0],
+            wastageRange: e.target.value,
+          },
+        ]
+      })
+    }
+  }
+
   const storeWasteProcessTemplate = (rowData: any) => {
-    const val = wastageRanges.findIndex(
-      (group) => rowData.wastageRange === group.label
+    const index = wastageRangeOptions.findIndex(
+      (range: any) => range.label === rowData.wastageRange
     )
     return (
-      //   <select
-      //     value={rowData.wastageRange}
-      //     onChange={(e: any) => {
-      //       setEventDetails((prevState: any) => {
-      //         return [
-      //           {
-      //             ...prevState[0],
-      //             wastageRange: e.target.value,
-      //           },
-      //         ]
-      //       })
-      //     }}
-      //   >
-      //     <option value="Week +4\ +7">Week +4\ +7</option>
-      //     <option value="Week +5\ +8">Week +5\ +8</option>
-      //     <option value="Week +6\ +9">Week +6\ +9</option>
-      //     <option value="Week +7\ +10">Week +6\ +10</option>
-      //   </select>
-      <Select
-        disabled={confirmEnDis}
-        value={val > -1 ? wastageRanges[val].value : rowData.wastageRange}
-        onChange={(e) => {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                wastageRange: e.target.value,
-              },
-            ]
-          })
-        }}
-        input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
-        renderValue={(selected: any) => {
-          console.log(selected)
-          if (!selected) return 'Placeholder'
-          else return selected
-        }}
-      >
-        {wastageRanges.map((type) => {
-          return (
-            <MenuItem
-              value={type.value}
-              key={type.value}
-              className={classes.muiSelect}
-            >
-              {type.label}
-            </MenuItem>
-          )
-        })}
-      </Select>
+      <>
+        <Select
+          disabled={confirmEnDis}
+          value={index > -1 && rowData.wastageRange}
+          onChange={handleWastagRange}
+          input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
+          renderValue={(selected: any) => {
+            console.log(selected)
+            if (!selected) return 'Placeholder'
+            else return selected
+          }}
+        >
+          {wastageRangeOptions.map((type: any) => {
+            return (
+              <MenuItem
+                value={type.value}
+                key={type.value}
+                className={classes.muiSelect}
+              >
+                {type.label}
+              </MenuItem>
+            )
+          })}
+        </Select>
+      </>
     )
   }
 
@@ -2832,19 +2935,20 @@ function ManageEventCreate(props: any) {
       setPublishVisible(false)
       setSaveVisible(true)
     }
+    console.log(eventDetails)
 
     const claimTaskData = {
       requestorDetails: {
-        emailId: eventDetails[0].requesterEmailId,
-        requestBy: eventDetails[0].requesteruserId,
-        requestorName: eventDetails[0].requesterName,
+        emailId: eventDetails && eventDetails[0].requesterEmailId,
+        requestBy: eventDetails && eventDetails[0].requesteruserId,
+        requestorName: eventDetails && eventDetails[0].requesterName,
         requestType: 'complete',
         requestDate: new Date().toISOString().split('T')[0],
       },
       // requestorRoles: eventDetails[0].requesterRole,
       requestorRoles: [
         {
-          roleId: eventDetails[0].requesterPersona,
+          roleId: eventDetails && eventDetails[0].requesterPersona,
         },
       ],
     }
@@ -2909,7 +3013,12 @@ function ManageEventCreate(props: any) {
     // })
     const eventTeamData = team.map((val: any) => {
       return {
-        persona: val.persona,
+        persona:
+          val.persona === 'Merchendiser'
+            ? 'Merchandiser'
+            : val.persona === 'Senior Buying Manger'
+            ? 'Senior Buying Manager'
+            : val.persona,
         details: {
           emailId: val.emailId,
           userId: val.userId,
@@ -2978,6 +3087,7 @@ function ManageEventCreate(props: any) {
             .then((res: any) => {
               console.log('Response publishEvent', res)
               setIsProgressLoader(false)
+              getEventAndTasks()
             })
             .catch((err: any) => {
               console.log('Error publishEvent', err)
@@ -2997,25 +3107,33 @@ function ManageEventCreate(props: any) {
     // history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
   }
 
-  // const confirmPublish = (
-  //   <ConfirmBox
-  //     cancelOpen={cancelOpenDelete}
-  //     handleCancel={() => setCancelOpenDelete(false)}
-  //     handleProceed={removeTasks}
-  //     label1="Confirm 'Publish'"
-  //     label2="Are you sure you want to Publish the Event?"
-  //   />
-  // )
-
-  // const confirmSave = (
-  //   <ConfirmBox
-  //     cancelOpen={cancelOpenDelete}
-  //     handleCancel={() => setCancelOpenDelete(false)}
-  //     handleProceed={removeTasks}
-  //     label1="Confirm 'Save'"
-  //     label2="Are you sure you want to Save the Event?"
-  //   />
-  // )
+  const confirmSaveDialog = (
+    <ConfirmBox
+      cancelOpen={saveConfirm}
+      handleCancel={() => setSaveConfirm(false)}
+      handleProceed={() => handlePublishEvent('modifyAuto')}
+      label1="Confirm 'Save'"
+      label2="Are you sure you want to Save the Event changes?"
+    />
+  )
+  const confirmRemoveDialog = (
+    <ConfirmBox
+      cancelOpen={removeConfirm}
+      handleCancel={() => setRemoveConfirm(false)}
+      handleProceed={() => handlePublishEvent('modifySave')}
+      label1="Confirm 'Remove'"
+      label2="Are you sure you want to Remove the Task(s)?"
+    />
+  )
+  const confirmPublishDialog = (
+    <ConfirmBox
+      cancelOpen={publishConfirm}
+      handleCancel={() => setPublishConfirm(false)}
+      handleProceed={() => handlePublishEvent('confirmed')}
+      label1="Confirm 'Publish'"
+      label2="Are you sure you want to Publish the Event?"
+    />
+  )
 
   const rowClass = (data: any) => {
     return {
@@ -3132,14 +3250,14 @@ function ManageEventCreate(props: any) {
                           (col.field === 'department' && departmentTemplate) ||
                           (col.field === 'uniqueId' && eventUniqueId) ||
                           // (col.field === 'eventName' && eventNameTemplate) ||
-                          (col.field === 'clearancePriceApplied' &&
+                          (col.field === 'clearancePriceCheck' &&
                             clearancePriceTemplate) ||
-                          (col.field === 'GSCOPDateCheckRequired' &&
+                          (col.field === 'orderStopDateCheck' &&
                             GSCOPDateTemplate) ||
                           (col.field === 'stopOrder' && stopOrderTemplate) ||
                           (col.field === 'buyer' && buyerTemplate) ||
                           (col.field === 'planogramClass' && classTemplate) ||
-                          (col.field === 'storeWasteProcessTiming' &&
+                          (col.field === 'wastageRange' &&
                             storeWasteProcessTemplate) ||
                           (col.field === 'buyerAssistant' &&
                             buyingAssistantTemplate) ||
@@ -3179,7 +3297,7 @@ function ManageEventCreate(props: any) {
                   onSelectionChange={(e) => setSelectTasksChange(e)}
                   scrollable
                   showGridlines
-                  sortField="taskId"
+                  // sortField="taskId"
                   // rowStyle={{ background: 'red' }}
                   rowClassName={rowClass}
                   onRowClick={handleRow}
@@ -3244,7 +3362,8 @@ function ManageEventCreate(props: any) {
                       // type="submit"
                       // onClick={removeTasks}
                       // onClick={() => handlePublishEvent('Cancel')}
-                      onClick={() => setRemoveTaskOpen(true)}
+                      // onClick={() => setRemoveTaskOpen(true)}
+                      onClick={() => setRemoveConfirm(true)}
                     >
                       Remove / Skip Task
                     </Button>
@@ -3255,7 +3374,8 @@ function ManageEventCreate(props: any) {
                       color="primary"
                       // type="submit"
                       // onClick={() => handlePublishEvent('ModifySave')}
-                      onClick={() => setsaveEventTaskButton(true)}
+                      // onClick={() => setsaveEventTaskButton(true)}
+                      onClick={() => setSaveConfirm(true)}
                     >
                       Save
                     </Button>
@@ -3276,7 +3396,8 @@ function ManageEventCreate(props: any) {
                             variant="contained"
                             color="primary"
                             // type="submit"
-                            onClick={() => handlePublishEvent('confirmed')}
+                            // onClick={() => handlePublishEvent('confirmed')}
+                            onClick={() => setPublishConfirm(true)}
                           >
                             Publish Event
                           </Button>
@@ -3311,23 +3432,27 @@ function ManageEventCreate(props: any) {
       {updateEventDialog}
       {removeTaskDialog}
       {saveEventTask}
+      {confirmSaveDialog}
+      {confirmRemoveDialog}
+      {confirmPublishDialog}
+      {confirmLaunchDateDialog}
     </>
   )
 }
 
 const mapStateToProps = (state: any) => {
   return {
-    fileData: state.fileReducer.fileData,
-    fileErrorData: state.fileReducer.fileErrorData,
+    // fileData: state.fileReducer.fileData,
+    // fileErrorData: state.fileReducer.fileErrorData,
     fileManageData: state.fileReducer.fileManageData,
   }
 }
 
 const matchDispatchToProps = (dispatch: any) => {
   return {
-    setFile: (fileData: any) => dispatch(setFile(fileData)),
-    resetFile: () => dispatch(resetFile),
-    resetErrorFile: () => dispatch(resetErrorFile()),
+    // setFile: (fileData: any) => dispatch(setFile(fileData)),
+    // resetFile: () => dispatch(resetFile),
+    // resetErrorFile: () => dispatch(resetErrorFile()),
     resetTaskFile: () => dispatch(resetTaskFile()),
   }
 }

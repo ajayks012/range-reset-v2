@@ -440,7 +440,8 @@ function ManageTaskEvent(props: any) {
               if (
                 !(
                   item.status.toLowerCase() === 'draft' ||
-                  item.status.toLowerCase() === 'confirmed'
+                  item.status.toLowerCase() === 'confirmed' ||
+                  item.status.toLowerCase() === 'published'
                 )
               ) {
                 errorData.push(item)
@@ -847,7 +848,8 @@ function ManageTaskEvent(props: any) {
           for (var i = 0; i < data.length; i++) {
             if (
               data[i].status.toLowerCase() === 'draft' ||
-              data[i].status.toLowerCase() === 'confirmed'
+              data[i].status.toLowerCase() === 'confirmed' ||
+              data[i].status.toLowerCase() === 'published'
             ) {
               // successData.push({
               //   name: data[i].name,
@@ -1023,7 +1025,8 @@ function ManageTaskEvent(props: any) {
 
     if (
       data.status.toLowerCase() === 'draft' ||
-      data.status.toLowerCase() === 'confirmed'
+      data.status.toLowerCase() === 'confirmed' ||
+      data.status.toLowerCase() === 'published'
     ) {
       console.log([data])
       // let singleRow = [data]
@@ -1137,7 +1140,7 @@ function ManageTaskEvent(props: any) {
                 .then((res3: any) => {
                   console.log(res3)
                   let formData1 = {
-                    reviewDecision: 'confirmed',
+                    reviewDecision: 'published', //'confirmed',
                     requester:
                       getResponse.eventDetailsList[0].rangeEventRequest
                         .requester,
@@ -1206,7 +1209,8 @@ function ManageTaskEvent(props: any) {
     if (
       rowData.status &&
       (rowData.status.toLowerCase() === 'draft' ||
-        rowData.status.toLowerCase() === 'confirmed')
+        rowData.status.toLowerCase() === 'confirmed' ||
+        rowData.status.toLowerCase() === 'published')
     ) {
       return rowData.status
     } else if (
@@ -1758,7 +1762,8 @@ function ManageTaskEvent(props: any) {
       selectedEvents.map((event: any) => {
         if (
           (event.status.toLowerCase() === 'draft' ||
-            event.status.toLowerCase() === 'confirmed') &&
+            event.status.toLowerCase() === 'confirmed' ||
+            event.status.toLowerCase() === 'published') &&
           (event.status.toLowerCase() !== 'error' ||
             event.status.toLowerCase() !== 'duplicate')
         ) {

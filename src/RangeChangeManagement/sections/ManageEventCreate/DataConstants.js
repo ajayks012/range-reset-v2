@@ -241,11 +241,6 @@ export const yesOrNo = [
 
 export const manageEventPublishCols = [
   {
-    field: 'eventId',
-    header: 'Event ID',
-    width: '100px',
-  },
-  {
     field: 'eventName',
     header: 'Event Name',
     width: '200px',
@@ -255,7 +250,11 @@ export const manageEventPublishCols = [
     header: 'Reset Type',
     width: '220px',
   },
-
+  {
+    field: 'eventStatus',
+    header: 'Status',
+    width: '100px',
+  },
   {
     field: 'appDueDate',
     header: 'RAF/App Due Date',
@@ -277,6 +276,11 @@ export const manageEventPublishCols = [
     width: '180px',
   },
   {
+    field: 'eventId',
+    header: 'Event ID',
+    width: '100px',
+  },
+  {
     field: 'targetDate',
     header: 'Launch Date',
     width: '150px',
@@ -287,11 +291,7 @@ export const manageEventPublishCols = [
     header: 'Planogram Class',
     width: '150px',
   },
-  {
-    field: 'wastageRange',
-    header: 'Store Waste Process Timing',
-    width: '200px',
-  },
+
   {
     field: 'clearancePriceCheck',
     header: 'Clearance Pricing Action required',
@@ -299,13 +299,18 @@ export const manageEventPublishCols = [
   },
   {
     field: 'orderStopDateCheck',
-    header: 'GSCOP Date check Required',
+    header: 'Order Stop date Check Required',
     width: '200px',
   },
   {
     field: 'stopOrder',
-    header: 'Stop Order',
+    header: 'Stop Order (stock rundown)',
     width: '100px',
+  },
+  {
+    field: 'wastageRange',
+    header: 'Store Waste Process Timing',
+    width: '200px',
   },
   {
     field: 'buyer',

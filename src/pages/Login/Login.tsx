@@ -52,6 +52,20 @@ function Login(props: any) {
   //     responseGoogle(localStorage.getItem('_Gresponse'))
   //   }
   // }, [responseGoogle, history])
+
+  useEffect(() => {
+    // console.log("before enter")
+    if (
+      localStorage.getItem('_Gresponse') &&
+      localStorage.getItem('_GresponseV2')
+    ) {
+      history.push(`${DEFAULT}${DASHBOARD}`)
+    }
+    // else if (localStorage.getItem('_Gresponse')) {
+    //   responseGoogle(localStorage.getItem('_Gresponse'))
+    // }
+  }, [DASHBOARD, DEFAULT, history])
+
   useEffect(() => {
     if (user) {
       if (!isLoading && errorMessage.toLowerCase() !== 'usernotadded')

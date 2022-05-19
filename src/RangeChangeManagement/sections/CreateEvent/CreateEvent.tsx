@@ -2736,7 +2736,8 @@ function CreateEvent(props: any) {
       cancelOpen={cancelOpenSave}
       handleCancel={handleCancelSave}
       handleProceed={handleCreateSave}
-      label1="Are you sure to Save?"
+      // label1="Are you sure to Save?"
+      label1="Are you sure to Create Event?"
       label2="Please click Ok to proceed"
     />
   )
@@ -3391,7 +3392,7 @@ function CreateEvent(props: any) {
         setDisableCreate(true)
         setDisablePublish(true)
         setIsSuccessCall(false)
-        setIsProgressLoader(false)
+
         // let newVal = [formData.rangeResets[0], ...fileData]
         // setFile(newVal)
         console.log(res.data)
@@ -3445,14 +3446,14 @@ function CreateEvent(props: any) {
                   .then((res3: any) => {
                     console.log(res3)
                     let formData1 = {
-                      reviewDecision: 'confirmed',
+                      reviewDecision: 'published',
                       requester:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .requester,
                       eventId: res.data[0].id,
-                      eventStatus:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .eventStatus,
+                      eventStatus: 'Published',
+                      // getResponse.eventDetailsList[0].rangeEventRequest
+                      //   .eventStatus,
                       eventHeader:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .eventHeader,
@@ -3593,7 +3594,7 @@ function CreateEvent(props: any) {
                   .then((res3: any) => {
                     console.log(res3)
                     let formData1 = {
-                      reviewDecision: 'confirmed',
+                      reviewDecision: 'published',
                       requester:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .requester,
@@ -5291,7 +5292,7 @@ function CreateEvent(props: any) {
                     xs={12}
                     spacing={2}
                   >
-                    <Grid item xl={2} lg={2} md={2} sm={3} xs={12}>
+                    <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -5300,7 +5301,7 @@ function CreateEvent(props: any) {
                         size="small"
                         disabled={disableSave}
                       >
-                        Save
+                        Create Event
                       </Button>
                     </Grid>
                     <Grid item xl={6} lg={6} md={6} sm={5} xs={12}>
