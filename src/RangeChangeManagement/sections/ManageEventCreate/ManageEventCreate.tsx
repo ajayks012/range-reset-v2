@@ -206,6 +206,7 @@ function ManageEventCreate(props: any) {
   const [sotVal, setSotVal] = useState('')
 
   const [isProgressLoader, setIsProgressLoader] = useState(false)
+  const [tableLoading, setTableLoading] = useState(false)
 
   const [saveConfirm, setSaveConfirm] = useState(false)
   const [removeConfirm, setRemoveConfirm] = useState(false)
@@ -214,6 +215,7 @@ function ManageEventCreate(props: any) {
   const [launchDateOld, setLaunchDateOld] = useState<any>()
   const [launchDateNew, setLaunchDateNew] = useState<any>()
   const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
+  const [dueDateErrorTasks, setDueDateErrorTasks] = useState<any>('')
 
   useEffect(() => {
     // return () => resetErrorFile()
@@ -433,7 +435,7 @@ function ManageEventCreate(props: any) {
             }
           })
         setClassValues(classValue)
-        setLaunchDateOld(manageList[0].targetDate)
+        !launchDateOld && setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
         if (eventData.eventStatus === 'Confirmed') {
           console.log('Confirmedddddddd', eventData.eventStatus)
@@ -453,10 +455,12 @@ function ManageEventCreate(props: any) {
     // console.log(fileErrorData)
     if (fileManageData && fileManageData.id) {
       setIsProgressLoader(true)
+      setTableLoading(true)
       console.log(fileManageData)
       setEventName(fileManageData.name)
       // getEventDetailsById(fileErrorData && fileErrorData.id)
       getEventAndTasks()
+      setTableLoading(false)
     } else {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     }
@@ -1024,6 +1028,7 @@ function ManageEventCreate(props: any) {
         }}
         maxDate={rowData['targetDate']}
         maxDateMessage={allMessages.error.rafDateError}
+        minDate={new Date()}
       />
     )
   }
@@ -1048,6 +1053,7 @@ function ManageEventCreate(props: any) {
           setLaunchDateConfirm(true)
         }}
         // minDate={rowData['appDueDate']}
+        minDate={new Date()}
       />
     )
   }
@@ -1060,12 +1066,13 @@ function ManageEventCreate(props: any) {
         },
       ]
     })
-    setLaunchDateNew('')
+    // setLaunchDateNew('')
     setLaunchDateConfirm(false)
   }
 
   const confirmLaunchDateChange = () => {
     setIsProgressLoader(true)
+    setTableLoading(true)
     setEventDetails((prevState: any) => {
       return [
         {
@@ -1078,9 +1085,11 @@ function ManageEventCreate(props: any) {
     setLaunchDateConfirm(false)
     handlePublishEvent('ModifyAuto')
     // getEventAndTasks()
+    setTableLoading(false)
   }
 
   const handleDueDateError = () => {
+    console.warn('setting back', launchDateOld)
     setEventDetails((prevState: any) => {
       return [
         {
@@ -1094,19 +1103,25 @@ function ManageEventCreate(props: any) {
   }
 
   useEffect(() => {
+    console.warn(eventDetails)
+  }, [eventDetails])
+
+  useEffect(() => {
     if (taskDetails) {
       let newDate = launchDateNew ? new Date(launchDateNew).getTime() : 0
       let oldDate = launchDateOld ? new Date(launchDateOld).getTime() : 0
+      console.log('date change', launchDateOld, launchDateNew)
       if (newDate != 0 && oldDate !== 0 && newDate !== oldDate) {
-        let count = 0
+        let count: any = ''
         let sysDate = new Date()
         taskDetails.map((task: any) => {
           let taskDueDate = new Date(task.dueDate)
           if (taskDueDate.getTime() < sysDate.getTime()) {
-            count = 1
+            count =
+              count === '' ? count + task.taskId : count + ', ' + task.taskId
           }
         })
-        if (count != 0) {
+        if (count != '') {
           // setDueDateErrorOpen(true)
           // let confirm: any = alert(
           //   'Due Date of Task(s) is behind System date, The changes done will be reverted back to previous state'
@@ -1122,7 +1137,11 @@ function ManageEventCreate(props: any) {
           //   })
           //   handlePublishEvent('ModifyAuto')
           // }
+          setDueDateErrorTasks(count)
           setDueDateErrorOpen(true)
+        } else {
+          setLaunchDateOld(launchDateNew)
+          setLaunchDateNew('')
         }
       }
     }
@@ -1137,7 +1156,9 @@ function ManageEventCreate(props: any) {
       label1="Due Date less than System Date"
       label2={
         <>
-          Due Date of Task(s) is behind System date
+          Due Date of Tasks ({dueDateErrorTasks})
+          <br />
+          is behind System date
           <br />
           The changes done will be reverted back to previous state
         </>
@@ -1150,7 +1171,7 @@ function ManageEventCreate(props: any) {
       cancelOpen={launchDateConfirm}
       handleCancel={cancelLaunchDateChange}
       // handleProceed={() => handlePublishEvent('ModifyAuto')}
-      handleProceed={handleDueDateError}
+      handleProceed={confirmLaunchDateChange}
       label1="Launch Date Change"
       label2={
         <>
@@ -3121,8 +3142,9 @@ function ManageEventCreate(props: any) {
           publishEventsCamunda(eventDetails[0].eventId, publishEvent)
             .then((res: any) => {
               console.log('Response publishEvent', res)
-              setIsProgressLoader(false)
+
               getEventAndTasks()
+              setIsProgressLoader(false)
             })
             .catch((err: any) => {
               console.log('Error publishEvent', err)
@@ -3269,6 +3291,7 @@ function ManageEventCreate(props: any) {
                   style={{
                     height: '100%',
                   }}
+                  loading={tableLoading}
                 >
                   {manageEventPublishCols.map((col: any, index: any) => {
                     return (
@@ -3336,6 +3359,7 @@ function ManageEventCreate(props: any) {
                   // rowStyle={{ background: 'red' }}
                   rowClassName={rowClass}
                   onRowClick={handleRow}
+                  loading={tableLoading}
                 >
                   <Column
                     // selectionMode="multiple"
