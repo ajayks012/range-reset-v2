@@ -339,7 +339,7 @@ export const manageEventPublishCols = [
   },
   {
     field: 'supplyChainSplst',
-    header: 'Supply Chain Splst',
+    header: 'Supply Chain Specialist',
     width: '200px',
   },
   {
@@ -443,5 +443,25 @@ export const userGroupOptions = [
   {
     value: 'System Task',
     label: 'System Task',
+  },
+  {
+    value: 'Category Director',
+    label: 'Category Director',
+  },
+  {
+    value: 'Merchandiser',
+    label: 'Merchandiser',
+  },
+  {
+    value: 'Supply Chain Specialist',
+    label: 'Supply Chain Specialist',
+  },
+  {
+    value: 'Own Brand Manager',
+    label: 'Own Brand Manager',
+  },
+  {
+    value: 'Range Reset Manager',
+    label: 'Range Reset Manager',
   },
 ]

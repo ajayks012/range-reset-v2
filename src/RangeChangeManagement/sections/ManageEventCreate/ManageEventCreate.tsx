@@ -216,6 +216,9 @@ function ManageEventCreate(props: any) {
   const [launchDateNew, setLaunchDateNew] = useState<any>()
   const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
   const [dueDateErrorTasks, setDueDateErrorTasks] = useState<any>('')
+  const [milestone, setMilestone] = useState<any>('')
+  const [userAssRadio, setUserAssRadio] = useState<any>()
+  const [currentTask, setCurrentTask] = useState<any>()
 
   const toast = useRef<any>(null)
   const [toastRemove, setToastRemove] = React.useState('')
@@ -408,6 +411,24 @@ function ManageEventCreate(props: any) {
         // console.log('TEAMSSSSS', manageTeamData)
 
         const manageTask = milestoneData.map((milestone: any) => {
+          let roleIdUI =
+            milestone.assigneeRole === 'Buyer'
+              ? 'BUYER'
+              : milestone.assigneeRole === 'Buying Assistant'
+              ? 'BYAST'
+              : milestone.assigneeRole === 'Own Brand Manager'
+              ? 'OWNBRM'
+              : milestone.assigneeRole === 'Senior Buying Manager'
+              ? 'SRBYM'
+              : milestone.assigneeRole === 'Merchandiser'
+              ? 'MERCH'
+              : milestone.assigneeRole === 'Category Director'
+              ? 'CTDIR'
+              : milestone.assigneeRole === 'Supply Chain Specialist'
+              ? 'SCSPL'
+              : milestone.assigneeRole === 'Range Reset Manager'
+              ? 'RRMNGR'
+              : ''
           return {
             taskId2: milestone.taskId,
             taskId: milestone.taskName,
@@ -423,6 +444,7 @@ function ManageEventCreate(props: any) {
               ? milestone.assigneeDetails.emailId
               : '',
             visibility: milestone.visibility, //'ACTIVE',
+            roleId: roleIdUI,
           }
         })
         console.log(manageTask)
@@ -551,7 +573,9 @@ function ManageEventCreate(props: any) {
       })
   }, [])
 
-  useEffect(() => {
+  const userDetailsApi = (rowdata: any) => {
+    setIsProgressLoader(true)
+    setMilestone(rowdata)
     let roleIdTask = ''
     if (userGroup === 'Buyer') {
       roleIdTask = 'BUYER'
@@ -582,29 +606,244 @@ function ManageEventCreate(props: any) {
                 email: val.user.emailId,
                 label: val.user.firstName + ' ' + val.user.lastName,
                 value: val.user.emailId,
+                userId: val.user.userId,
+                roleId: val.roles[0].roleId,
               }
             })
             console.log('Buyer userDetails', userDetails)
             if (userGroup === 'Buyer') {
               setBuyerAssign(userDetails)
+              // setUserGroupValue(eventDetails[0].buyerEmailId.emailId)
+              console.log('taskDetails---taskDetails', taskDetails)
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'BUYER' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (eventDetails[0].buyerEmailId.emailId === a[0].emailId) {
+                  setUserGroupValue(eventDetails[0].buyerEmailId.emailId)
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(eventDetails[0].buyerEmailId.emailId)
+                }
+              }
             } else if (userGroup === 'Buying Assistant') {
               setAssistentAssign(userDetails)
+              // setUserGroupValue(eventDetails[0].buyerAssistantEmailId.emailId)
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                // let obj = taskDetails.find(
+                //   (o: any) => o.emailId === a[0].emailId
+                // )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'BYAST' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].buyerAssistantEmailId.emailId === a[0].emailId
+                ) {
+                  setUserGroupValue(
+                    eventDetails[0].buyerAssistantEmailId.emailId
+                  )
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(
+                    eventDetails[0].buyerAssistantEmailId.emailId
+                  )
+                }
+              }
             } else if (userGroup === 'Own Brand Manager') {
               setOwnBrandManAssign(userDetails)
+              // setUserGroupValue(eventDetails[0].ownBrandManagerEmailId.emailId)
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'OWNBRM' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].ownBrandManagerEmailId.emailId ===
+                  a[0].emailId
+                ) {
+                  setUserGroupValue(
+                    eventDetails[0].ownBrandManagerEmailId.emailId
+                  )
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(
+                    eventDetails[0].ownBrandManagerEmailId.emailId
+                  )
+                }
+              }
             } else if (userGroup === 'Senior Buying Manager') {
               setSrBuyerAssign(userDetails)
+              // setUserGroupValue(
+              //   eventDetails[0].seniorBuyingManagerEmailId.emailId
+              // )
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'SRBYM' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].seniorBuyingManagerEmailId.emailId ===
+                  a[0].emailId
+                ) {
+                  setUserGroupValue(
+                    eventDetails[0].seniorBuyingManagerEmailId.emailId
+                  )
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(
+                    eventDetails[0].seniorBuyingManagerEmailId.emailId
+                  )
+                }
+              }
             } else if (userGroup === 'Merchandiser') {
               setMerchandiserAssign(userDetails)
+              // setUserGroupValue(eventDetails[0].merchandiserEmailId.emailId)
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'MERCH' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].merchandiserEmailId.emailId === a[0].emailId
+                ) {
+                  setUserGroupValue(eventDetails[0].merchandiserEmailId.emailId)
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(eventDetails[0].merchandiserEmailId.emailId)
+                }
+              }
             } else if (userGroup === 'Range Reset Manager') {
               setRangeResetAssign(userDetails)
+              // setUserGroupValue(
+              //   eventDetails[0].rangeResetManagerEmailId.emailId
+              // )
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'RRMNGR' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].rangeResetManagerEmailId.emailId ===
+                  a[0].emailId
+                ) {
+                  setUserGroupValue(
+                    eventDetails[0].rangeResetManagerEmailId.emailId
+                  )
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(
+                    eventDetails[0].rangeResetManagerEmailId.emailId
+                  )
+                }
+              }
             } else if (userGroup === 'Category Director') {
               setCatDirectorAssign(userDetails)
+              // setUserGroupValue(eventDetails[0].categoryDirectorEmailId.emailId)
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'CTDIR' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].categoryDirectorEmailId.emailId ===
+                  a[0].emailId
+                ) {
+                  setUserGroupValue(
+                    eventDetails[0].categoryDirectorEmailId.emailId
+                  )
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(
+                    eventDetails[0].categoryDirectorEmailId.emailId
+                  )
+                }
+              }
             } else if (userGroup === 'Supply Chain Specialist') {
               setSupplyChainAssign(userDetails)
+              // setUserGroupValue(
+              //   eventDetails[0].supplyChainAnalystEmailId.emailId
+              // )
+              if (taskDetails) {
+                let a = taskDetails.filter(
+                  (t: any) => t.taskId === rowdata.taskId
+                )
+                let obj = taskDetails.filter((val: any) => {
+                  if (val.roleId === 'SCSPL' && val.emailId === a[0].emailId) {
+                    return true
+                  }
+                  return false
+                })
+                if (
+                  eventDetails[0].supplyChainAnalystEmailId.emailId ===
+                  a[0].emailId
+                ) {
+                  setUserGroupValue(
+                    eventDetails[0].supplyChainAnalystEmailId.emailId
+                  )
+                } else if (obj.length !== 0) {
+                  setUserGroupValue(a[0].emailId)
+                } else {
+                  setUserGroupValue(
+                    eventDetails[0].supplyChainAnalystEmailId.emailId
+                  )
+                }
+              }
             }
+            setIsProgressLoader(false)
           })
-          .catch((err: any) => console.log('Buyer ERROR', err))
+          .catch((err: any) => {
+            console.log('Buyer ERROR', err)
+            setIsProgressLoader(false)
+          })
     }
+  }
+  useEffect(() => {
+    userDetailsApi(milestone)
   }, [userGroup])
 
   useEffect(() => {
@@ -1020,11 +1259,13 @@ function ManageEventCreate(props: any) {
         format="dd/MM/yy"
         value={rowData['appDueDate'] ? rowData['appDueDate'] : null}
         onChange={(date: any) => {
+          let newDate = date.toISOString().split('T')[0]
+          let dateVal = newDate + ' 01:00:00'
           setEventDetails((prevState: any) => {
             return [
               {
                 ...prevState[0],
-                appDueDate: date,
+                appDueDate: dateVal,
               },
             ]
           })
@@ -1767,16 +2008,48 @@ function ManageEventCreate(props: any) {
     )
   }
 
-  const handleBuyerClick = (name: any, email: any) => {
-    console.log(email)
+  const modifyTasksBasedOnHeaderEmailChange = (
+    roleId: any,
+    taskUserChange: any,
+    dataUser: any
+  ) => {
+    taskUserChange.forEach((val: any) => {
+      if (roleId === val.roleId && val.visibility !== 'Removed') {
+        val.emailId = dataUser.emailId
+        val.name = dataUser.firstName + ' ' + dataUser.lastName
+        val.userId = dataUser.userId
+        val.roleId = roleId
+      }
+    })
+    setTaskDetails(taskUserChange)
+  }
+
+  const handleBuyerClick = (name: any, email: any, rowdata: any) => {
+    // console.log('taskDetails-taskDetails', taskDetails)
+    setUserAssRadio(email)
     let roleId = 'BUYER'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res: any) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
             setBuyerConfirmed(true)
             setBuyerValue(res.data.userdetails[0].user)
+            // const taskUserChange = taskDetails
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
+            // persons.forEach((val: any) => {
+            //   if (
+            //     res.data.userdetails[0].roles[0].roleName ===
+            //       val.assignedUserGroup &&
+            //     val.visibility !== 'Removed'
+            //   ) {
+            //     val.emailId = dataUser.emailId
+            //     val.name = dataUser.firstName + ' ' + dataUser.lastName
+            //     val.userId = dataUser.userId
+            //   }
+            // })
+            // setTaskDetails(persons)
             setErrBuyer(false)
             setBuyerError1('')
           })
@@ -1794,12 +2067,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleBuyingAssistantClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'BYAST'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res: any) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setBuyingAssistantConfirmed(true)
             setBuyingAssistantValue(res.data.userdetails[0].user)
           })
@@ -1816,12 +2092,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleOwnBrandManagerClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'OWNBRM'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setOwnBrandManagerConfirmed(true)
             setOwnBrandManagerValue(res.data.userdetails[0].user)
           })
@@ -1838,12 +2117,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleSeniorBuyingManagerClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'SRBYM'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setSeniorBuyingManagerConfirmed(true)
             setSeniorBuyingManagerValue(res.data.userdetails[0].user)
           })
@@ -1860,12 +2142,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleMerchandiserClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'MERCH'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setMerchandiserConfirmed(true)
             setMerchandiserValue(res.data.userdetails[0].user)
           })
@@ -1882,12 +2167,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleRangeResetManagerClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'RRMNGR'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setRangeResetManagerConfirmed(true)
             setRangeResetManagerValue(res.data.userdetails[0].user)
           })
@@ -1904,12 +2192,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleCategoryDirectorClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'CTDIR'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setCategoryDirectorConfirmed(true)
             setCategoryDirectorValue(res.data.userdetails[0].user)
           })
@@ -1926,12 +2217,15 @@ function ManageEventCreate(props: any) {
   }
 
   const handleSupplyChainSpecialistClick = (name: any, email: any) => {
+    setUserAssRadio(email)
     let roleId = 'SCSPL'
     email !== ''
       ? getUsersAPIByEmailAndRole &&
         getUsersAPIByEmailAndRole(roleId, email)
           .then((res) => {
             console.log('matched')
+            const dataUser = res.data.userdetails[0].user
+            modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setSupplyChainSpecialistConfirmed(true)
             setSupplyChainSpecialistValue(res.data.userdetails[0].user)
           })
@@ -2004,7 +2298,11 @@ function ManageEventCreate(props: any) {
             }}
             placeholder="Search Buyer"
             onClick={() =>
-              handleBuyerClick('buyerEmail', rowData.buyerEmailId.emailId)
+              handleBuyerClick(
+                'buyerEmail',
+                rowData.buyerEmailId.emailId,
+                rowData
+              )
             }
             // onClick={() => console.log('clicked')}
             styles={{
@@ -2664,13 +2962,16 @@ function ManageEventCreate(props: any) {
   }
 
   const handleGroupValues = (e: any) => {
+    console.log('handleGroupValues', e.target.value)
     setUserGroupValue(e.target.value)
   }
 
   const handleGroupsOpen = (rowData: any) => {
+    setUserGroupValue(rowData.emailId)
     setSingleTask(rowData)
     setUserGroup(rowData.assignedUserGroup)
     setGroupsOpen(true)
+    userDetailsApi(rowData)
   }
 
   const handleGroupsClose = () => {
@@ -2679,17 +2980,44 @@ function ManageEventCreate(props: any) {
 
   const handleConfirmGroups = () => {
     setGroupsOpen(false)
+    const { email, value, userId, roleId, label } = currentTask
+    console.log(currentTask)
     let a = taskDetails.filter((t: any) => t.taskId !== singleTask.taskId)
     let b = singleTask
     b.assignedUserGroup = userGroup
-    b.manager = userGroupValue
+    // b.manager = userGroupValue
+    b.emailId = userGroupValue
+    // b.emailId = email
+    b.userId = userId
+    b.manager = label
+    b.name = label
+    b.roleId = roleId
     a.push(b)
     a.sort((x: any, y: any) =>
       x.taskId > y.taskId ? 1 : y.taskId > x.taskId ? -1 : 0
     )
     setTaskDetails(a)
   }
+  const handleUserClick = (event: any, data: any) => {
+    // const { email, value, userId, roleId } = data
+    // let a = taskDetails.filter((t: any) => t.taskId !== singleTask.taskId)
+    // let b = singleTask
+    // b.assignedUserGroup = userGroup
+    // b.emailId = email
+    // b.userId = userId
+    // b.manager = value
+    // b.name = value
+    // b.roleId = roleId
+    // a.push(b)
+    // a.sort((x: any, y: any) =>
+    //   x.taskId > y.taskId ? 1 : y.taskId > x.taskId ? -1 : 0
+    // )
+    // setTaskDetails(a.sort(sortAlphaNum))
+    // setUserAssRadio(email)
+    // setCurrentTask(b.taskId)
 
+    setCurrentTask(data)
+  }
   const userGroupDialog = (
     <Dialog open={groupsOpen} onClose={handleGroupsClose}>
       <Box
@@ -2806,11 +3134,23 @@ function ManageEventCreate(props: any) {
                     buyerAssign.map((b: any) => {
                       return (
                         <FormControlLabel
-                          key={b.value}
+                          key={b.email}
                           value={b.value}
                           control={radio}
+                          // checked={b.email == userAssRadio}
+                          checked={b.email == userGroupValue}
+                          onClick={(e: any) => handleUserClick(e, b)}
+                          // checked={b.email == singleTask.emailId}
+                          // checked={
+                          //   b.email === eventDetails[0].buyerEmailId.emailId
+                          //     ? true
+                          //     : false
+                          // }
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // onClick={() => () =>
+                          //   setUserGroupValue(userGroupValue)}
+                          // onChange={(e: any) => handleRadioUserAssignCheck(e)}
                         />
                       )
                     })}
@@ -2824,6 +3164,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          checked={b.email == userGroupValue}
+                          onClick={(e: any) => handleUserClick(e, b)}
                         />
                       )
                     })}
@@ -2838,6 +3181,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          checked={b.email == userGroupValue}
+                          onClick={(e: any) => handleUserClick(e, b)}
                         />
                       )
                     })}
@@ -2851,6 +3197,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          onClick={(e: any) => handleUserClick(e, b)}
+                          checked={b.email == userGroupValue}
                         />
                       )
                     })}
@@ -2864,6 +3213,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          onClick={(e: any) => handleUserClick(e, b)}
+                          checked={b.email == userGroupValue}
                         />
                       )
                     })}
@@ -2877,6 +3229,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          onClick={(e: any) => handleUserClick(e, b)}
+                          checked={b.email == userGroupValue}
                         />
                       )
                     })}
@@ -2890,6 +3245,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          onClick={(e: any) => handleUserClick(e, b)}
+                          checked={b.email == userGroupValue}
                         />
                       )
                     })}
@@ -2903,6 +3261,9 @@ function ManageEventCreate(props: any) {
                           control={radio}
                           label={b.label}
                           classes={{ label: classes.dialogText }}
+                          // checked={b.email == userAssRadio}
+                          onClick={(e: any) => handleUserClick(e, b)}
+                          checked={b.email == userGroupValue}
                         />
                       )
                     })}
@@ -2990,15 +3351,18 @@ function ManageEventCreate(props: any) {
   // console.log('deactivate', deactivate)
   // }
 
-  const handleToaster = () => {}
+  const handleToaster = () => {
+    if (toastRemove === 'publish') {
+      history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+    }
+  }
 
   const handlePublishEvent = (clickState: any) => {
     setIsProgressLoader(true)
+    setToastRemove(clickState)
     console.log(clickState)
     let reviewDecision = ''
-    if (clickState === 'save') {
-      reviewDecision = 'ModifySave'
-    } else if (clickState === 'remove') {
+    if (clickState === 'save' && clickState === 'remove') {
       reviewDecision = 'ModifySave'
     } else if (clickState === 'publish') {
       reviewDecision = 'confirmed'
@@ -3007,11 +3371,11 @@ function ManageEventCreate(props: any) {
     }
     console.log(reviewDecision)
 
-    if (clickState === 'ModifyAuto') {
-      setPublishVisible(false)
-      setSaveVisible(true)
-      setToastRemove('save')
-    }
+    // if (clickState === 'ModifyAuto') {
+    //   setPublishVisible(false)
+    //   setSaveVisible(true)
+    //   setToastRemove('save')
+    // }
     console.log(eventDetails)
 
     const claimTaskData = {
@@ -3543,9 +3907,9 @@ function ManageEventCreate(props: any) {
       {/* </Paper> */}
       {classDialog}
       {userGroupDialog}
-      {updateEventDialog}
+      {/* {updateEventDialog}
       {removeTaskDialog}
-      {saveEventTask}
+      {saveEventTask} */}
       {confirmSaveDialog}
       {confirmRemoveDialog}
       {confirmPublishDialog}
