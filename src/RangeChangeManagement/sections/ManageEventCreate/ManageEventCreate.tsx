@@ -1,12 +1,12 @@
 import { Column } from 'primereact/column'
 // import {  } from 'primereact/tooltip'
 import { DataTable } from 'primereact/datatable'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Checkbox } from 'primereact/checkbox'
 import { InputTextarea } from 'primereact/inputtextarea'
 // import './TooltipDemo.css'
-
+import { Toast } from 'primereact/toast'
 import {
   Buyers,
   BuyingAssistants,
@@ -57,7 +57,7 @@ import AutocompleteSelect from '../../components/AutoCompleteSelect/Autocomplete
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
-import { routes } from '../../../util/Constants'
+import { life, routes } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
 import {
   getProductHierarchyListAPI,
@@ -216,6 +216,9 @@ function ManageEventCreate(props: any) {
   const [launchDateNew, setLaunchDateNew] = useState<any>()
   const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
   const [dueDateErrorTasks, setDueDateErrorTasks] = useState<any>('')
+
+  const toast = useRef<any>(null)
+  const [toastRemove, setToastRemove] = React.useState('')
 
   useEffect(() => {
     // return () => resetErrorFile()
@@ -1083,7 +1086,8 @@ function ManageEventCreate(props: any) {
     })
     // setLaunchDateOld('')
     setLaunchDateConfirm(false)
-    handlePublishEvent('ModifyAuto')
+    // handlePublishEvent('ModifyAuto')
+    handlePublishEvent('dateChange')
     // getEventAndTasks()
     setTableLoading(false)
   }
@@ -1098,7 +1102,8 @@ function ManageEventCreate(props: any) {
         },
       ]
     })
-    handlePublishEvent('ModifyAuto')
+    // handlePublishEvent('ModifyAuto')
+    handlePublishEvent('dateChange')
     setDueDateErrorOpen(false)
   }
 
@@ -2985,11 +2990,27 @@ function ManageEventCreate(props: any) {
   // console.log('deactivate', deactivate)
   // }
 
+  const handleToaster = () => {}
+
   const handlePublishEvent = (clickState: any) => {
     setIsProgressLoader(true)
+    console.log(clickState)
+    let reviewDecision = ''
+    if (clickState === 'save') {
+      reviewDecision = 'ModifySave'
+    } else if (clickState === 'remove') {
+      reviewDecision = 'ModifySave'
+    } else if (clickState === 'publish') {
+      reviewDecision = 'confirmed'
+    } else if (clickState === 'dateChange') {
+      reviewDecision = 'ModifyAuto'
+    }
+    console.log(reviewDecision)
+
     if (clickState === 'ModifyAuto') {
       setPublishVisible(false)
       setSaveVisible(true)
+      setToastRemove('save')
     }
     console.log(eventDetails)
 
@@ -3011,7 +3032,8 @@ function ManageEventCreate(props: any) {
 
     console.log('Publish Clicked', taskDetails)
 
-    if (clickState === 'modifySave') {
+    // if (clickState === 'modifySave') {
+    if (clickState === 'remove') {
       selectTasks &&
         setTaskDetails(
           taskDetails.map((task: any) => {
@@ -3084,8 +3106,8 @@ function ManageEventCreate(props: any) {
     })
 
     const publishEvent = {
-      reviewDecision: clickState,
-
+      reviewDecision: reviewDecision,
+      // reviewDecision: clickState,
       eventId: eventDetails[0].eventId,
       eventStatus: eventDetails[0].eventStatus,
       requester: {
@@ -3145,15 +3167,36 @@ function ManageEventCreate(props: any) {
 
               getEventAndTasks()
               setIsProgressLoader(false)
+              toast.current.show({
+                severity: 'success',
+                summary: 'Success',
+                detail: `${clickState} Success`,
+                life: life,
+                className: 'login-toast',
+              })
             })
             .catch((err: any) => {
               console.log('Error publishEvent', err)
               setIsProgressLoader(false)
+              toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: `${clickState} Error`,
+                life: life,
+                className: 'login-toast',
+              })
             })
       })
       .catch((err: any) => {
         console.log('claimEventsCamunda Error api', err)
         setIsProgressLoader(false)
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Task Claim Error`,
+          life: life,
+          className: 'login-toast',
+        })
       })
 
     //
@@ -3168,7 +3211,8 @@ function ManageEventCreate(props: any) {
     <ConfirmBox
       cancelOpen={saveConfirm}
       handleCancel={() => setSaveConfirm(false)}
-      handleProceed={() => handlePublishEvent('ModifyAuto')}
+      handleProceed={() => handlePublishEvent('save')}
+      // handleProceed={() => handlePublishEvent('ModifySave')}
       label1="Confirm 'Save'"
       label2="Are you sure you want to Save the Event changes?"
     />
@@ -3177,7 +3221,8 @@ function ManageEventCreate(props: any) {
     <ConfirmBox
       cancelOpen={removeConfirm}
       handleCancel={() => setRemoveConfirm(false)}
-      handleProceed={() => handlePublishEvent('modifySave')}
+      // handleProceed={() => handlePublishEvent('modifySave')}
+      handleProceed={() => handlePublishEvent('remove')}
       label1="Confirm 'Remove'"
       label2="Are you sure you want to Remove the Task(s)?"
     />
@@ -3186,7 +3231,8 @@ function ManageEventCreate(props: any) {
     <ConfirmBox
       cancelOpen={publishConfirm}
       handleCancel={() => setPublishConfirm(false)}
-      handleProceed={() => handlePublishEvent('confirmed')}
+      // handleProceed={() => handlePublishEvent('confirmed')}
+      handleProceed={() => handlePublishEvent('publish')}
       label1="Confirm 'Publish'"
       label2="Are you sure you want to Publish the Event?"
     />
@@ -3235,7 +3281,16 @@ function ManageEventCreate(props: any) {
 
   return (
     <>
+      <Toast
+        ref={toast}
+        position="bottom-left"
+        // onRemove={() => {
+        //   history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+        // }}
+        onRemove={handleToaster}
+      />
       <LoadingComponent showLoader={isProgressLoader} />
+
       {/* <Paper className={classes.root} elevation={0}> */}
       <div
         className="manageUser" //className={classes.root}
