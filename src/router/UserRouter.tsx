@@ -24,6 +24,8 @@ import { makeStyles } from '@material-ui/core'
 import BulkUpload from '../RangeChangeManagement/pages/BulkUpload/BulkUpload'
 import ManualEvent from '../RangeChangeManagement/pages/ManualEvent/ManualEvent'
 import ManageEventTasks from '../RangeChangeManagement/pages/ManageEventTasks/ManageEventTasks'
+import RangeChangePendingActions from '../RangeChangeManagement/pages/RangeChangePendingActions/RangeChangePendingActions'
+import RangeChangeGroupPendingAction from '../RangeChangeManagement/pages/RangeChangeGroupPendingAction/RangeChangePendingActions'
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -52,6 +54,8 @@ const UserRouter = ({
     DASHBOARD_UNASSIGNWORKFLOW,
     DASHBOARD_INPROGRESSTASK,
     DASHBOARD_MYGROUPPENDINGTASKS,
+    DASHBOARD_RANGE_PENDINGACTION,
+    DASHBOARD_RANGE_MYGROUPPENDINGTASKS,
     RANGEAMEND,
     PROMOFUNDNG,
     RETAILPRICE,
@@ -67,7 +71,7 @@ const UserRouter = ({
     RANGEAMEND_MANAGE,
     RANGEAMEND_DELIST,
     RANGEAMEND_CREATE,
-    RANGEAMEND_MANAGE_TASK
+    RANGEAMEND_MANAGE_TASK,
   } = routes
   const classes = useStyles()
   const getPermission = (url: string) => {
@@ -131,6 +135,20 @@ const UserRouter = ({
         <AuthRoute
           path={`${path}${DASHBOARD_MYGROUPPENDINGTASKS}`}
           component={UserGroupPendingAction}
+          isAuthorized={userDetail && getPermission(DASHBOARD)}
+          serviceError={serviceError}
+          arb={false}
+        />
+        <AuthRoute
+          path={`${path}${DASHBOARD_RANGE_PENDINGACTION}`}
+          component={RangeChangePendingActions}
+          isAuthorized={userDetail && getPermission(DASHBOARD)}
+          serviceError={serviceError}
+          arb={false}
+        />
+        <AuthRoute
+          path={`${path}${DASHBOARD_RANGE_MYGROUPPENDINGTASKS}`}
+          component={RangeChangeGroupPendingAction}
           isAuthorized={userDetail && getPermission(DASHBOARD)}
           serviceError={serviceError}
           arb={false}

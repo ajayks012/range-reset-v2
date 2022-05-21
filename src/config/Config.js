@@ -13,6 +13,8 @@ const envDetails = {
     PUT_USER_DETAILS_ID_CAMUNDA:
       'commercial-workflow/v1/users/userdetails/{userId}',
     GET_DASHBOARD_STATUS_CAMUNDA: 'commercial-workflow/v1/status/{userId}',
+    EVENT_DASHBOARD_GET_CAMUNDA:
+      'commercial-workflow-range/v1/events/users/{userId}/process/{processDefKey}',
     PUT_CLAIM_TASK_CAMUNDA: 'commercial-workflow/v1/tasks/{taskId}/claim',
     PUT_REJECT_TASK_CAMUNDA:
       'commercial-workflow/v1/tasks/businesskeys/{businessKey}/reject',
@@ -30,6 +32,8 @@ const envDetails = {
     GET_TASKLOG_ALL: 'commercial-user/v1/tasklogs',
     POST_TASKLOG_ID: 'commercial-user/v1/tasklogs',
     POST_ATTACHMENT: 'commercial-user/v1/attachments/users/{userId}',
+    POST_RANGE_RESET_EVENT_ATTACHMENT:
+      'rangereset/v2/attachments/rangeresets/{rangeResetId}',
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
@@ -69,6 +73,8 @@ const envDetails = {
     PUT_USER_DETAILS_ID_CAMUNDA:
       'commercial-workflow/v1/users/userdetails/{userId}',
     GET_DASHBOARD_STATUS_CAMUNDA: 'commercial-workflow/v1/status/{userId}',
+    EVENT_DASHBOARD_GET_CAMUNDA:
+      'commercial-workflow-range/v1/events/users/{userId}/process/{processDefKey}',
     PUT_CLAIM_TASK_CAMUNDA: 'commercial-workflow/v1/tasks/{taskId}/claim',
     PUT_REJECT_TASK_CAMUNDA:
       'commercial-workflow/v1/tasks/businesskeys/{businessKey}/reject',
@@ -86,6 +92,8 @@ const envDetails = {
     GET_TASKLOG_ALL: 'commercial-user/v1/tasklogs',
     POST_TASKLOG_ID: 'commercial-user/v1/tasklogs',
     POST_ATTACHMENT: 'commercial-user/v1/attachments/users/{userId}',
+    POST_RANGE_RESET_EVENT_ATTACHMENT:
+      'rangereset/v2/attachments/rangeresets/{rangeResetId}',
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
@@ -124,6 +132,8 @@ const envDetails = {
     PUT_USER_DETAILS_ID_CAMUNDA:
       'commercial-workflow/v1/users/userdetails/{userId}',
     GET_DASHBOARD_STATUS_CAMUNDA: 'commercial-workflow/v1/status/{userId}',
+    EVENT_DASHBOARD_GET_CAMUNDA:
+      'commercial-workflow-range/v1/events/users/{userId}/process/{processDefKey}',
     PUT_CLAIM_TASK_CAMUNDA: 'commercial-workflow/v1/tasks/{taskId}/claim',
     PUT_REJECT_TASK_CAMUNDA:
       'commercial-workflow/v1/tasks/businesskeys/{businessKey}/reject',
@@ -141,6 +151,8 @@ const envDetails = {
     GET_TASKLOG_ALL: 'commercial-user/v1/tasklogs',
     POST_TASKLOG_ID: 'commercial-user/v1/tasklogs',
     POST_ATTACHMENT: 'commercial-user/v1/attachments/users/{userId}',
+    POST_RANGE_RESET_EVENT_ATTACHMENT:
+      'rangereset/v2/attachments/rangeresets/{rangeResetId}',
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
@@ -179,6 +191,8 @@ const envDetails = {
     PUT_USER_DETAILS_ID_CAMUNDA:
       'commercial-workflow/v1/users/userdetails/{userId}',
     GET_DASHBOARD_STATUS_CAMUNDA: 'commercial-workflow/v1/status/{userId}',
+    EVENT_DASHBOARD_GET_CAMUNDA:
+      'commercial-workflow-range/v1/events/users/{userId}/process/{processDefKey}',
     PUT_CLAIM_TASK_CAMUNDA: 'commercial-workflow/v1/tasks/{taskId}/claim',
     PUT_REJECT_TASK_CAMUNDA:
       'commercial-workflow/v1/tasks/businesskeys/{businessKey}/reject',
@@ -196,6 +210,8 @@ const envDetails = {
     GET_TASKLOG_ALL: 'commercial-user/v1/tasklogs',
     POST_TASKLOG_ID: 'commercial-user/v1/tasklogs',
     POST_ATTACHMENT: 'commercial-user/v1/attachments/users/{userId}',
+    POST_RANGE_RESET_EVENT_ATTACHMENT:
+      'rangereset/v2/attachments/rangeresets/{rangeResetId}',
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',
@@ -234,6 +250,8 @@ const envDetails = {
     PUT_USER_DETAILS_ID_CAMUNDA:
       'commercial-workflow/v1/users/userdetails/{userId}',
     GET_DASHBOARD_STATUS_CAMUNDA: 'commercial-workflow/v1/status/{userId}',
+    EVENT_DASHBOARD_GET_CAMUNDA:
+      'commercial-workflow-range/v1/events/users/{userId}/process/{processDefKey}',
     PUT_CLAIM_TASK_CAMUNDA: 'commercial-workflow/v1/tasks/{taskId}/claim',
     PUT_REJECT_TASK_CAMUNDA:
       'commercial-workflow/v1/tasks/businesskeys/{businessKey}/reject',
@@ -251,6 +269,8 @@ const envDetails = {
     GET_TASKLOG_ALL: 'commercial-user/v1/tasklogs',
     POST_TASKLOG_ID: 'commercial-user/v1/tasklogs',
     POST_ATTACHMENT: 'commercial-user/v1/attachments/users/{userId}',
+    POST_RANGE_RESET_EVENT_ATTACHMENT:
+      'rangereset/v2/attachments/rangeresets/{rangeResetId}',
     GET_LOCATIONS: 'location/v2/stores',
     GET_USER_INFO: 'colleague/v1/colleagues/@me',
     GET_USER_INFO_OTHER: 'colleague/v1/colleagues/{userId}',

@@ -1145,7 +1145,8 @@ function ManageTaskEvent(props: any) {
                       getResponse.eventDetailsList[0].rangeEventRequest
                         .requester,
                     eventId: event.id,
-                    eventStatus: event.status,
+                    // eventStatus: event.status,
+                    eventStatus: 'Confirmed',
                     eventHeader:
                       getResponse.eventDetailsList[0].rangeEventRequest
                         .eventHeader,

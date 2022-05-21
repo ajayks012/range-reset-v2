@@ -3451,9 +3451,10 @@ function CreateEvent(props: any) {
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .requester,
                       eventId: res.data[0].id,
-                      eventStatus:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .eventStatus,
+                      // eventStatus:
+                      //   getResponse.eventDetailsList[0].rangeEventRequest
+                      //     .eventStatus,
+                      eventStatus: 'Confirmed',
                       eventHeader:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .eventHeader,

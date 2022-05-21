@@ -28,6 +28,7 @@ const {
   USER_V2,
   PUT_CLAIM_TASK_CAMUNDA,
   GET_DASHBOARD_STATUS_CAMUNDA,
+  EVENT_DASHBOARD_GET_CAMUNDA,
   POST_ATTACHMENT,
   PUT_COMPLETE_TASK_CAMUNDA,
   PUT_REJECT_TASK_CAMUNDA,
@@ -44,6 +45,7 @@ const {
   PUBLISH_CAMUNDA_EVENT,
   PUT_CAMUNDA_CLAIM,
   DELETE_EVENTS_CAMUNDA,
+  POST_RANGE_RESET_EVENT_ATTACHMENT,
 } = config
 
 export const userV2Login = (idToken) => {
@@ -219,6 +221,21 @@ export const getStatusCamundaAPI = () => {
   return serviceRequest(url, 'GET', undefined, params)
 }
 
+export const getStatusEventCamundaAPI = () => {
+  let empId = ''
+  const userV2Response = JSON.parse(
+    localStorage && localStorage.getItem('_GresponseV2')
+  )
+  if (userV2Response) {
+    empId = userV2Response && userV2Response.empId
+  }
+  let url = `${BASE_URL}${EVENT_DASHBOARD_GET_CAMUNDA}`
+  const params = 'limit=1000'
+  url = url.replace('{userId}', empId)
+  url = url.replace('{processDefKey}', 'hbtwEventRequestHandler')
+  return serviceRequest(url, 'GET', undefined, params)
+}
+
 export const getAppsAPI = () => {
   const url = `${BASE_URL}${GET_APP_MENU_ALL}`
   const params = 'limit=1000'
@@ -299,6 +316,12 @@ export const getProductHierarchyListAPI = (nodetype) => {
 export const getAllUsersAPI = () => {
   const url = `${BASE_URL}${GET_USER_DETAILS_ALL}`
   const params = 'limit=1000'
+  return serviceRequest(url, 'GET', undefined, params)
+}
+
+export const getAllActiveUsersAPI = () => {
+  const url = `${BASE_URL}${GET_USER_DETAILS_ALL}`
+  const params = 'limit=1000&statusIn=A'
   return serviceRequest(url, 'GET', undefined, params)
 }
 
@@ -421,6 +444,12 @@ export const claimEventsCamunda = (taskId, req) => {
   url = url.replace('{taskId}', taskId)
   let reqBody = `${JSON.stringify(req)}`
   return serviceRequest(url, 'PUT', reqBody)
+}
+
+export const postFileAttachmentRangeResetAPI = (req, eventId) => {
+  let url = `${BASE_URL}${POST_RANGE_RESET_EVENT_ATTACHMENT}`
+  url = url.replace('{rangeResetId}', eventId)
+  return serviceRequestForFileUpload(url, 'POST', req)
 }
 
 // export const getItemWeekStoreViewForecastAPI = (

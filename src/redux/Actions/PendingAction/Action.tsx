@@ -10,6 +10,10 @@ import {
   SET_MYGROUPUNASSIGN_TASKS,
   RESET_MYGROUPUNASSIGN_TASKS,
   RESET_ALL,
+  SET_RANGE_PENDING_ACTION,
+  RESET_RANGE_PENDING_ACTION,
+  SET_RANGE_MYGROUPPENDING_ACTION,
+  RESET_RANGE_MYGROUPPENDING_ACTION,
 } from './Type'
 export const set_pendingAction = (data: any) => {
   return {
@@ -71,5 +75,28 @@ export const reset_mygroupunassignAction = () => {
 export const reset_all = () => {
   return {
     type: RESET_ALL,
+  }
+}
+
+export const set_range_pendingAction = (data: any) => {
+  return {
+    type: SET_RANGE_PENDING_ACTION,
+    payload: data,
+  }
+}
+export const reset_range_pendingAction = () => {
+  return {
+    type: RESET_RANGE_PENDING_ACTION,
+  }
+}
+export const set_range_grouppendingAction = (data: any) => {
+  return {
+    type: SET_RANGE_MYGROUPPENDING_ACTION,
+    payload: data,
+  }
+}
+export const reset_range_grouppendingAction = () => {
+  return {
+    type: RESET_RANGE_MYGROUPPENDING_ACTION,
   }
 }

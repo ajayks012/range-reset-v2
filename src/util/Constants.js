@@ -34,6 +34,8 @@ routes = {
   DASHBOARD_UNASSIGNWORKFLOW: '/user/unassignworkflow',
   DASHBOARD_INPROGRESSTASK: '/user/inprogresstasks',
   DASHBOARD_MYGROUPPENDINGTASKS: '/user/mygrouppendingactions',
+  DASHBOARD_RANGE_PENDINGACTION: '/event/pendingactions',
+  DASHBOARD_RANGE_MYGROUPPENDINGTASKS: '/event/mygrouppendingactions',
   RANGEAMEND: '/rangeamend',
   PROMOFUNDNG: '/promofunding',
   RETAILPRICE: '/retailprice',

@@ -10,6 +10,10 @@ import {
   SET_MYGROUPUNASSIGN_TASKS,
   RESET_MYGROUPUNASSIGN_TASKS,
   RESET_ALL,
+  SET_RANGE_PENDING_ACTION,
+  RESET_RANGE_PENDING_ACTION,
+  SET_RANGE_MYGROUPPENDING_ACTION,
+  RESET_RANGE_MYGROUPPENDING_ACTION,
 } from '../Actions/PendingAction/Type'
 const initpendingactionState = {
   pendingActionDetails: undefined,
@@ -17,6 +21,8 @@ const initpendingactionState = {
   myinprogressTasks: undefined,
   mygroupPendingAction: undefined,
   mygroupUnassignTasks: undefined,
+  eventPendingAction: undefined,
+  eventGroupPendingAction: undefined,
   // firstName: "",
   // middleName:""
 }
@@ -48,6 +54,16 @@ const pendingActionReducer = (state = initpendingactionState, action: any) => {
         ...state,
         mygroupUnassignTasks: payload,
       }
+    case SET_RANGE_PENDING_ACTION:
+      return {
+        ...state,
+        eventPendingAction: payload,
+      }
+    case SET_RANGE_MYGROUPPENDING_ACTION:
+      return {
+        ...state,
+        eventGroupPendingAction: payload,
+      }
 
     case RESET_PENDING_ACTION:
       return state
@@ -59,6 +75,10 @@ const pendingActionReducer = (state = initpendingactionState, action: any) => {
       return state
     case RESET_MYGROUPUNASSIGN_TASKS:
       return state
+    case RESET_RANGE_PENDING_ACTION:
+      return state
+    case RESET_RANGE_MYGROUPPENDING_ACTION:
+      return state
     case RESET_ALL:
       return {
         pendingActionDetails: [],
@@ -66,6 +86,8 @@ const pendingActionReducer = (state = initpendingactionState, action: any) => {
         myinprogressTasks: [],
         mygroupPendingAction: [],
         mygroupUnassignTasks: [],
+        eventPendingAction: [],
+        eventGroupPendingAction: [],
       }
     default:
       return state

@@ -57,7 +57,7 @@ import AutocompleteSelect from '../../components/AutoCompleteSelect/Autocomplete
 import LoadingComponent from '../../../components/LoadingComponent/LoadingComponent'
 import DialogHeader from '../../components/DialogHeader/DialogHeader'
 import { ConfirmedBodyStyle, ConfirmedHeaderStyle, useStyles } from './styles'
-import { life, routes } from '../../../util/Constants'
+import { life, routes, extensions } from '../../../util/Constants'
 import { allMessages } from '../../../util/Messages'
 import {
   getProductHierarchyListAPI,
@@ -70,6 +70,7 @@ import {
   getEventDetailsById,
   publishEventsCamunda,
   getWastageRanges,
+  postFileAttachmentRangeResetAPI,
 } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
@@ -212,13 +213,20 @@ function ManageEventCreate(props: any) {
   const [removeConfirm, setRemoveConfirm] = useState(false)
   const [publishConfirm, setPublishConfirm] = useState(false)
   const [launchDateConfirm, setLaunchDateConfirm] = useState(false)
-  const [launchDateOld, setLaunchDateOld] = useState<any>()
+  const [launchDateOld, setLaunchDateOld] = useState<any>('')
   const [launchDateNew, setLaunchDateNew] = useState<any>()
   const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
   const [dueDateErrorTasks, setDueDateErrorTasks] = useState<any>('')
   const [milestone, setMilestone] = useState<any>('')
   const [userAssRadio, setUserAssRadio] = useState<any>()
   const [currentTask, setCurrentTask] = useState<any>()
+
+  // const [referenceDocData, setReferenceDocData] = React.useState<Array<any>>([])
+  const [referenceDocData, setReferenceDocData] = React.useState<any>()
+  const [wrongExtn, setWrongExtn] = React.useState(false)
+  const [attachmentUrlArr, setAttachmentUrlArr] = React.useState<Array<string>>(
+    []
+  )
 
   const toast = useRef<any>(null)
   const [toastRemove, setToastRemove] = React.useState('')
@@ -460,7 +468,7 @@ function ManageEventCreate(props: any) {
             }
           })
         setClassValues(classValue)
-        !launchDateOld && setLaunchDateOld(manageList[0].targetDate)
+        launchDateOld === '' && setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
         if (eventData.eventStatus === 'Confirmed') {
           console.log('Confirmedddddddd', eventData.eventStatus)
@@ -959,8 +967,52 @@ function ManageEventCreate(props: any) {
     setUpdateEventOpen(false)
   }
   const handleFileUpload = (event: any) => {
+    console.log(event.target.files)
+    // setWrongExtn(false)
+    setReferenceDocData(event.target.files[0])
     setUploadedFile(event.target.files[0])
+    // for (let i = 0; i < event.target.files.length; i++) {
+    //   const checkextension = event.target.files[i]
+    //     ? new RegExp(
+    //         '(' + extensions.join('|').replace(/\./g, '\\.') + ')$',
+    //         'i'
+    //       ).test(event.target.files[i].name)
+    //     : false
+    //   const fileSize = event.target.files[i].size / 1024 / 1024
+    //   if (
+    //     (!checkextension || event.target.files[i].size === 0 || fileSize > 5) &&
+    //     event.target.files[i]
+    //   ) {
+    //     setWrongExtn(true)
+    //   }
+    //   if (
+    //     event.target.files[i] &&
+    //     checkextension &&
+    //     event.target.files[i].size !== 0 &&
+    //     fileSize <= 5
+    //   ) {
+    //     // let reader = new FileReader();
+    //     // reader.readAsDataURL(event.target.files[0]);
+
+    //     // reader.onload = (e: any) => {
+    //     //   console.log(e.target.result);
+    //     setReferenceDocData((prevState) => [
+    //       ...prevState,
+    //       {
+    //         name: event.target.files[i].name,
+    //         data: event.target.files[i],
+    //         link: URL.createObjectURL(event.target.files[i]),
+    //       },
+    //     ])
+    //     URL.revokeObjectURL(event.target.files[i])
+    //     // };
+    //   }
+    // }
   }
+
+  useEffect(() => {
+    console.log('referenceDocData', referenceDocData)
+  }, [referenceDocData])
 
   const updateEventDialog = (
     <Dialog open={updateEventOpen} onClose={handleUpdateEventClose}>
@@ -1034,7 +1086,7 @@ function ManageEventCreate(props: any) {
             color="primary"
             className={classes.buttons}
             // onClick={handleClassConfirm}
-            onClick={() => handlePublishEvent('confirmed')}
+            onClick={() => handlePublishEvent('update')}
           >
             Update Event
           </Button>
@@ -3362,10 +3414,12 @@ function ManageEventCreate(props: any) {
     setToastRemove(clickState)
     console.log(clickState)
     let reviewDecision = ''
+    let comments = 'string'
     if (clickState === 'save' && clickState === 'remove') {
       reviewDecision = 'ModifySave'
-    } else if (clickState === 'publish') {
+    } else if (clickState === 'publish' && clickState === 'update') {
       reviewDecision = 'confirmed'
+      comments = inputTextareaValue && inputTextareaValue
     } else if (clickState === 'dateChange') {
       reviewDecision = 'ModifyAuto'
     }
@@ -3485,9 +3539,9 @@ function ManageEventCreate(props: any) {
         usergroups: eventDetails[0].requesterUserGroup,
       },
       logging: {
-        comments: 'string',
+        // comments: 'string',
         uploadRef: 'string',
-        // comments: inputTextareaValue,
+        comments: comments,
         // uploadRef: uploadedFile,
       },
       eventHeader: {
@@ -3520,6 +3574,29 @@ function ManageEventCreate(props: any) {
     }
     console.log('publishEvent', publishEvent)
     // console.log('publishEventJSON', JSON.stringify(publishEvent))
+
+    // if (referenceDocData.length > 0) {
+    if (referenceDocData) {
+      // setFailureCount(referenceDocData.length)
+      // setCheckCount(referenceDocData.length)
+      // referenceDocData.map((rf) => {
+      const formdata1 = new FormData()
+      // formdata1.append('fileIn', referenceDocData.data)
+      formdata1.append('fileIn', referenceDocData)
+      // formdata1.append('fileIn', rf.data)
+      postFileAttachmentRangeResetAPI &&
+        postFileAttachmentRangeResetAPI(formdata1, eventDetails[0].eventId)
+          .then((res: any) => {
+            console.log(res.data)
+            publishEvent.logging.uploadRef = res.data.attachmentUrl
+          })
+          .catch((err: any) => {})
+      // })
+    } else {
+      // setFailureCount(1)
+      // setCheckCount(1)
+      // postTasklog(logData)
+    }
 
     claimEventsCamunda(eventDetails[0].taskIdEvent, claimTaskData)
       .then((res: any) => {
@@ -3907,8 +3984,8 @@ function ManageEventCreate(props: any) {
       {/* </Paper> */}
       {classDialog}
       {userGroupDialog}
-      {/* {updateEventDialog}
-      {removeTaskDialog}
+      {updateEventDialog}
+      {/* {removeTaskDialog}
       {saveEventTask} */}
       {confirmSaveDialog}
       {confirmRemoveDialog}
