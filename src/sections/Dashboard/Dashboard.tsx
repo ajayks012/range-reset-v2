@@ -176,43 +176,44 @@ function Dashboard(props: any) {
         })
     // }, [pendingStatusDetails])
 
-    // getStatusEventCamundaAPI &&
-    //   getStatusEventCamundaAPI()
-    //     .then((res) => {
-    //       const pendingTaskDetails = res.data
+    getStatusEventCamundaAPI &&
+      getStatusEventCamundaAPI()
+        .then((res) => {
+          const pendingTaskDetails = res.data
 
-    setIsProgressLoader(false)
+          setIsProgressLoader(false)
 
-    if (pendingTaskDetails && pendingTaskDetails.status) {
-      rangePendingTasks =
-        pendingTaskDetails &&
-        pendingTaskDetails.status &&
-        pendingTaskDetails.status.filter(
-          (item: any) => item.details.toLowerCase() === 'mypendingtasks'
-        )
-      rangeGroupPendingTasks =
-        pendingTaskDetails &&
-        pendingTaskDetails.status &&
-        pendingTaskDetails.status.filter(
-          (item: any) => item.details.toLowerCase() === 'mygrouppendingtasks'
-        )
-      set_range_pendingAction(rangePendingTasks)
-      // set_myinprogressAction(inprogressTasks)
-      set_range_grouppendingAction(rangeGroupPendingTasks)
-      //set_mygroupunassignAction(mygroupUnassignTasks)
-    }
-    //       })
-    //       .catch((error) => {
-    //         setIsProgressLoader(false)
-    //         set_range_pendingAction([])
-    //         // set_myinprogressAction([])
-    //         set_range_grouppendingAction([])
-    //         // set_mygroupunassignAction([])
-    //       })
+          if (pendingTaskDetails && pendingTaskDetails.status) {
+            rangePendingTasks =
+              pendingTaskDetails &&
+              pendingTaskDetails.status &&
+              pendingTaskDetails.status.filter(
+                (item: any) => item.details.toLowerCase() === 'mypendingtasks'
+              )
+            rangeGroupPendingTasks =
+              pendingTaskDetails &&
+              pendingTaskDetails.status &&
+              pendingTaskDetails.status.filter(
+                (item: any) =>
+                  item.details.toLowerCase() === 'mygrouppendingtasks'
+              )
+            set_range_pendingAction(rangePendingTasks)
+            // set_myinprogressAction(inprogressTasks)
+            set_range_grouppendingAction(rangeGroupPendingTasks)
+            //set_mygroupunassignAction(mygroupUnassignTasks)
+          }
+        })
+        .catch((error) => {
+          setIsProgressLoader(false)
+          set_range_pendingAction([])
+          // set_myinprogressAction([])
+          set_range_grouppendingAction([])
+          // set_mygroupunassignAction([])
+        })
 
-    //   return reset_all()
-    // }, [])
-  }, [pendingTaskDetails])
+    return reset_all()
+  }, [])
+  // }, [pendingTaskDetails])
 
   useEffect(() => {
     // console.log(mypendingAction)
