@@ -65,7 +65,7 @@ function PendingAction(props: any) {
           value={rowData.requestId}
           onClick={handleNameClick}
         >
-                    {rowData.requestId}       {' '}
+          {rowData.requestId}{' '}
         </button>
       )
     } else {
@@ -77,7 +77,7 @@ function PendingAction(props: any) {
           value={rowData.requestId}
           onClick={handleNameClick}
         >
-                    {rowData.requestId}       {' '}
+          {rowData.requestId}{' '}
         </button>
       )
     }

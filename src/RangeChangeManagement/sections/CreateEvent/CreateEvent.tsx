@@ -3487,7 +3487,7 @@ function CreateEvent(props: any) {
                           severity: 'error',
                           summary: 'Error',
                           // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                          detail: 'Camunda Publish event error',
+                          detail: allMessages.error.errorPublishEvent,
                           life: life,
                           className: 'login-toast',
                         })
@@ -3501,7 +3501,7 @@ function CreateEvent(props: any) {
                       severity: 'error',
                       summary: 'Error',
                       // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                      detail: 'Camunda claim event error',
+                      detail: allMessages.error.errorClaim,
                       life: life,
                       className: 'login-toast',
                     })
@@ -3635,7 +3635,7 @@ function CreateEvent(props: any) {
                           severity: 'error',
                           summary: 'Error',
                           // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                          detail: 'Camunda Publish event error',
+                          detail: allMessages.error.errorPublishEvent,
                           life: life,
                           className: 'login-toast',
                         })
@@ -3649,7 +3649,7 @@ function CreateEvent(props: any) {
                       severity: 'error',
                       summary: 'Error',
                       // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                      detail: 'Camunda claim event error',
+                      detail: allMessages.error.errorClaim,
                       life: life,
                       className: 'login-toast',
                     })

@@ -3414,16 +3414,34 @@ function ManageEventCreate(props: any) {
     setToastRemove(clickState)
     console.log(clickState)
     let reviewDecision = ''
+    let errorMsg = ''
+    let successMsg = ''
     let comments = 'string'
-    if (clickState === 'save' && clickState === 'remove') {
+
+    if (clickState === 'save') {
       reviewDecision = 'ModifySave'
-    } else if (clickState === 'publish' && clickState === 'update') {
+      errorMsg = allMessages.error.errorSave
+      successMsg = allMessages.success.successSave
+    } else if (clickState === 'remove') {
+      reviewDecision = 'ModifySave'
+      errorMsg = allMessages.error.errorRemoveTasks
+      successMsg = allMessages.success.successRemoveTasks
+    } else if (clickState === 'publish') {
+      reviewDecision = 'confirmed'
+      errorMsg = allMessages.error.errorPublishEvent
+      successMsg = allMessages.success.successPublishEvent
+    } else if (clickState === 'update') {
       reviewDecision = 'confirmed'
       comments = inputTextareaValue && inputTextareaValue
+      errorMsg = allMessages.error.errorUpdateEvent
+      successMsg = allMessages.success.successUpdateEvent
     } else if (clickState === 'dateChange') {
       reviewDecision = 'ModifyAuto'
+      errorMsg = allMessages.error.errorSave
+      successMsg = allMessages.success.successSave
     }
     console.log(reviewDecision)
+    console.log(successMsg, errorMsg)
 
     // if (clickState === 'ModifyAuto') {
     //   setPublishVisible(false)
@@ -3611,7 +3629,7 @@ function ManageEventCreate(props: any) {
               toast.current.show({
                 severity: 'success',
                 summary: 'Success',
-                detail: `${clickState} Success`,
+                detail: successMsg,
                 life: life,
                 className: 'login-toast',
               })
@@ -3622,7 +3640,7 @@ function ManageEventCreate(props: any) {
               toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: `${clickState} Error`,
+                detail: errorMsg,
                 life: life,
                 className: 'login-toast',
               })
@@ -3634,7 +3652,7 @@ function ManageEventCreate(props: any) {
         toast.current.show({
           severity: 'error',
           summary: 'Error',
-          detail: `Task Claim Error`,
+          detail: allMessages.error.errorClaim,
           life: life,
           className: 'login-toast',
         })
