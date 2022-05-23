@@ -2618,7 +2618,8 @@ function CreateEvent(props: any) {
         if (fileErrorData) {
           if (
             res.data[0].status.toLowerCase() === 'draft' ||
-            res.data[0].status.toLowerCase() === 'confirmed'
+            res.data[0].status.toLowerCase() === 'confirmed' ||
+            res.data[0].status.toLowerCase() === 'published'
           ) {
             setDisableSave(true)
             setDisableCreate(true)
@@ -2656,7 +2657,8 @@ function CreateEvent(props: any) {
         } else {
           if (
             res.data[0].status.toLowerCase() === 'draft' ||
-            res.data[0].status.toLowerCase() === 'confirmed'
+            res.data[0].status.toLowerCase() === 'confirmed' ||
+            res.data[0].status.toLowerCase() === 'published'
           ) {
             setDisableSave(true)
             setDisableCreate(true)
@@ -2997,7 +2999,8 @@ function CreateEvent(props: any) {
         if (fileErrorData) {
           if (
             res.data[0].status.toLowerCase() === 'draft' ||
-            res.data[0].status.toLowerCase() === 'confirmed'
+            res.data[0].status.toLowerCase() === 'confirmed' ||
+            res.data[0].status.toLowerCase() === 'published'
           ) {
             let newVal = [res.data[0], ...fileData]
             let _tasks = newVal.filter(
@@ -3180,7 +3183,8 @@ function CreateEvent(props: any) {
         } else {
           if (
             res.data[0].status.toLowerCase() === 'draft' ||
-            res.data[0].status.toLowerCase() === 'confirmed'
+            res.data[0].status.toLowerCase() === 'confirmed' ||
+            res.data[0].status.toLowerCase() === 'published'
           ) {
             // const formdata1 = {
             //   requests: [
@@ -3454,7 +3458,7 @@ function CreateEvent(props: any) {
                       // eventStatus:
                       //   getResponse.eventDetailsList[0].rangeEventRequest
                       //     .eventStatus,
-                      eventStatus: 'Confirmed',
+                      eventStatus: 'Published',
                       eventHeader:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .eventHeader,
@@ -3600,7 +3604,7 @@ function CreateEvent(props: any) {
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .requester,
                       eventId: res.data[0].id,
-                      eventStatus: 'Confirmed',
+                      eventStatus: 'Published',
                       eventHeader:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .eventHeader,

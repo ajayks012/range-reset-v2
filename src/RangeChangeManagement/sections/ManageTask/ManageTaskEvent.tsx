@@ -274,7 +274,7 @@ function ManageTaskEvent(props: any) {
                 // eventId: d['Event ID'],
                 // name: 'string',
                 // eventName: eventName(),
-
+                eventStatus: d.eventStatus,
                 status: d.status,
                 clearancePriceCheck: d.clearancePriceCheck,
                 orderStopDateCheck: d.orderStopDateCheck,
@@ -1146,7 +1146,7 @@ function ManageTaskEvent(props: any) {
                         .requester,
                     eventId: event.id,
                     // eventStatus: event.status,
-                    eventStatus: 'Confirmed',
+                    eventStatus: 'Published',
                     eventHeader:
                       getResponse.eventDetailsList[0].rangeEventRequest
                         .eventHeader,

@@ -442,10 +442,12 @@ function ManageEventCreate(props: any) {
             taskId2: milestone.milestoneTaskId,
             taskId: milestone.taskName,
             status: milestone.status,
+            activeTaskId: milestone.activeTaskId,
             slaDate: milestone.slaDate,
             task: milestone.taskDescription,
             dueDate: milestone.dueDate,
             notifiedDate: milestone.notifyDate,
+            healthcheckDate: milestone.healthcheckDate,
             assignedUserGroup: milestone.assigneeRole,
             name: milestone.assigneeDetails.name,
             userId: milestone.assigneeDetails.userId,
@@ -460,6 +462,9 @@ function ManageEventCreate(props: any) {
         console.log(manageList)
         setTaskDetails(manageTask)
         setEventDetails(manageList)
+        setGroup(manageList[0].tradeGroup)
+        setCategory(manageList[0].category)
+        setDepartment(manageList[0].department)
         let classValue =
           manageList[0].planogramClass &&
           manageList[0].planogramClass.map((c: any) => {
@@ -501,20 +506,41 @@ function ManageEventCreate(props: any) {
   }, [])
 
   //apisri
+  // useEffect(() => {
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('group')
+  //       .then((res: any) => {
+  //         const grpList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.groupName,
+  //             label: item.groupName,
+  //             id: item.group,
+  //             hierGroup: 'group',
+  //           }
+  //         })
+  //         setGroupOptions(grpList)
+  //         console.log('group length: ', grpList.length)
+  //       })
+  //       .catch((err: any) => setGroupOptions([]))
+  // }, [])
+
   useEffect(() => {
     getProductHierarchyListAPI &&
       getProductHierarchyListAPI('group')
         .then((res: any) => {
-          const grpList = res.data.hierarchyNode.map((item: any) => {
+          const groupList = res.data.hierarchyNode.map((item: any) => {
             return {
-              value: item.groupName,
               label: item.groupName,
-              id: item.group,
-              hierGroup: 'group',
+              value: item.groupName,
+              groupName: item.groupName,
             }
           })
-          setGroupOptions(grpList)
-          console.log('group length: ', grpList.length)
+          let list = groupList.sort((x: any, y: any) =>
+            x.label.localeCompare(y.label)
+          )
+          console.log(list)
+          setGroupOptions(list)
+          // console.log(groupList)
         })
         .catch((err: any) => setGroupOptions([]))
   }, [])
@@ -535,8 +561,39 @@ function ManageEventCreate(props: any) {
   //       console.log('getResetTypesERROR', err)
   //     })
   // },[])
+
+  // useEffect(() => {
+  //   console.log(group)
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('category')
+  //       .then((res: any) => {
+  //         const categoryList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.categoryName,
+  //             label: item.categoryName,
+  //             id: item.category,
+  //             hierGroup: 'category',
+  //             groupName: item.groupName,
+  //             groupId: item.group,
+  //           }
+  //         })
+  //         setCategoryOptions(categoryList)
+
+  //         // group &&
+  //         //   setCategoryOptions(
+  //         //     categoryList.filter((cat: any) => cat.groupId === group.id)
+  //         //   )
+  //         // group &&
+  //         //   console.log(
+  //         //     'category length: ',
+  //         //     categoryList.filter((cat: any) => cat.groupId === group.id)
+  //         //   )
+  //       })
+  //       .catch((err: any) => setCategoryOptions([]))
+  // }, [group])
+
   useEffect(() => {
-    console.log(group)
+    console.log(grpVal)
     getProductHierarchyListAPI &&
       getProductHierarchyListAPI('category')
         .then((res: any) => {
@@ -544,26 +601,110 @@ function ManageEventCreate(props: any) {
             return {
               value: item.categoryName,
               label: item.categoryName,
-              id: item.category,
-              hierGroup: 'category',
+              categoryId: item.category,
+              categoryName: item.categoryName,
               groupName: item.groupName,
-              groupId: item.group,
             }
           })
-          setCategoryOptions(categoryList)
+          let list = categoryList.sort((x: any, y: any) =>
+            x.label.localeCompare(y.label)
+          )
 
-          // group &&
-          //   setCategoryOptions(
-          //     categoryList.filter((cat: any) => cat.groupId === group.id)
-          //   )
-          // group &&
-          //   console.log(
-          //     'category length: ',
-          //     categoryList.filter((cat: any) => cat.groupId === group.id)
-          //   )
+          grpVal &&
+            setCategoryOptions(
+              list.filter((cat: any) => cat.groupName === grpVal)
+            )
+          group &&
+            console.log(
+              'category length: ',
+              categoryList.filter((cat: any) => cat.groupName === grpVal)
+            )
         })
         .catch((err: any) => setCategoryOptions([]))
-  }, [group])
+  }, [grpVal])
+
+  // useEffect(() => {
+  //   // if (group && category) {
+  //   getProductHierarchyListAPI &&
+  //     getProductHierarchyListAPI('department')
+  //       .then((res: any) => {
+  //         const depList = res.data.hierarchyNode.map((item: any) => {
+  //           return {
+  //             value: item.departmentName,
+  //             label: item.departmentName,
+  //             id: item.department,
+  //             hierGroup: 'department',
+  //             groupName: item.groupName,
+  //             categoryName: item.categoryName,
+  //             groupId: item.group,
+  //             categoryId: item.category,
+  //           }
+  //         })
+  //         setDepartmentOptions(depList)
+  //         // setDepartmentOptions(
+  //         //   depList.filter(
+  //         //     (dep: any) =>
+  //         //       dep.groupId === group.id && dep.categoryId === category.id
+  //         //   )
+  //         // )
+  //         // console.log(
+  //         //   'department length: ',
+  //         //   depList.filter(
+  //         //     (dep: any) =>
+  //         //       dep.groupId === group.id && dep.categoryId === category.id
+  //         //   )
+  //         // )
+  //         // setLoaded(true)
+  //       })
+  //       .catch((err: any) => {
+  //         setDepartmentOptions([])
+  //         // setLoaded(true)
+  //       })
+  //   // }
+  // }, [department])
+
+  useEffect(() => {
+    if (grpVal && catVal) {
+      getProductHierarchyListAPI &&
+        getProductHierarchyListAPI('department')
+          .then((res: any) => {
+            const depList = res.data.hierarchyNode.map((item: any) => {
+              return {
+                value: item.departmentName,
+                label: item.departmentName,
+                departmentId: item.department,
+                departmentName: item.departmentName,
+                groupName: item.groupName,
+                categoryName: item.categoryName,
+                categoryId: item.category,
+              }
+            })
+            let list = depList.sort((x: any, y: any) =>
+              x.label.localeCompare(y.label)
+            )
+
+            setDepartmentOptions(
+              list.filter(
+                (dep: any) =>
+                  dep.groupName === grpVal && dep.categoryName === catVal
+              )
+            )
+
+            console.log(
+              'department length: ',
+              depList.filter(
+                (dep: any) =>
+                  dep.groupName === grpVal && dep.categoryName === catVal
+              )
+            )
+            // setLoaded(true)
+          })
+          .catch((err: any) => {
+            setDepartmentOptions([])
+            // setLoaded(true)
+          })
+    }
+  }, [catVal])
 
   useEffect(() => {
     getWastageRanges()
@@ -854,46 +995,6 @@ function ManageEventCreate(props: any) {
   useEffect(() => {
     userDetailsApi(milestone)
   }, [userGroup])
-
-  useEffect(() => {
-    // if (group && category) {
-    getProductHierarchyListAPI &&
-      getProductHierarchyListAPI('department')
-        .then((res: any) => {
-          const depList = res.data.hierarchyNode.map((item: any) => {
-            return {
-              value: item.departmentName,
-              label: item.departmentName,
-              id: item.department,
-              hierGroup: 'department',
-              groupName: item.groupName,
-              categoryName: item.categoryName,
-              groupId: item.group,
-              categoryId: item.category,
-            }
-          })
-          setDepartmentOptions(depList)
-          // setDepartmentOptions(
-          //   depList.filter(
-          //     (dep: any) =>
-          //       dep.groupId === group.id && dep.categoryId === category.id
-          //   )
-          // )
-          // console.log(
-          //   'department length: ',
-          //   depList.filter(
-          //     (dep: any) =>
-          //       dep.groupId === group.id && dep.categoryId === category.id
-          //   )
-          // )
-          // setLoaded(true)
-        })
-        .catch((err: any) => {
-          setDepartmentOptions([])
-          // setLoaded(true)
-        })
-    // }
-  }, [department])
 
   const goBack = () => {
     history.goBack()
@@ -1565,10 +1666,14 @@ function ManageEventCreate(props: any) {
   const eventHandleDetails = (e: any) => {
     setEventDetails((prevState: any) => {
       setGrpVal(e.target.value)
+      setCatVal('')
+      setDepVal('')
       return [
         {
           ...prevState[0],
           tradeGroup: e.target.value,
+          category: '',
+          department: '',
         },
       ]
     })
@@ -1576,10 +1681,12 @@ function ManageEventCreate(props: any) {
   const eventHandleDetailsCategory = (e: any) => {
     setEventDetails((prevState: any) => {
       setCatVal(e.target.value)
+      setDepVal('')
       return [
         {
           ...prevState[0],
           category: e.target.value,
+          department: '',
         },
       ]
     })
@@ -3496,6 +3603,8 @@ function ManageEventCreate(props: any) {
         dueDate: val.dueDate,
         notifyDate: val.notifiedDate,
         slaDate: val.slaDate,
+        activeTaskId: val.activeTaskId,
+        healthcheckDate: val.healthcheckDate,
         // assigneeDetails: {
         //   persona: val.assignedUserGroup,
         //   details: {
@@ -3548,7 +3657,7 @@ function ManageEventCreate(props: any) {
       eventId: eventDetails[0].eventId,
       eventStatus:
         reviewDecision === 'Confirmed'
-          ? 'Confirmed'
+          ? 'Published'
           : eventDetails[0].eventStatus,
       requester: {
         persona: eventDetails[0].requesterPersona,
@@ -3640,11 +3749,19 @@ function ManageEventCreate(props: any) {
             })
             .catch((err: any) => {
               console.log('Error publishEvent', err)
+              const error = err.response
+              // error && error.response && console.log(error.response.data)
               setIsProgressLoader(false)
               toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: errorMsg,
+                detail: error
+                  ? error.data &&
+                    error.data.eventAlert &&
+                    error.data.eventAlert.alertMessage
+                    ? error.data.eventAlert.alertMessage
+                    : errorMsg
+                  : errorMsg,
                 life: life,
                 className: 'login-toast',
               })
