@@ -3446,7 +3446,7 @@ function CreateEvent(props: any) {
                   .then((res3: any) => {
                     console.log(res3)
                     let formData1 = {
-                      reviewDecision: 'confirmed',
+                      reviewDecision: 'Confirmed',
                       requester:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .requester,
@@ -3595,14 +3595,12 @@ function CreateEvent(props: any) {
                   .then((res3: any) => {
                     console.log(res3)
                     let formData1 = {
-                      reviewDecision: 'confirmed',
+                      reviewDecision: 'Confirmed',
                       requester:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .requester,
                       eventId: res.data[0].id,
-                      eventStatus:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .eventStatus,
+                      eventStatus: 'Confirmed',
                       eventHeader:
                         getResponse.eventDetailsList[0].rangeEventRequest
                           .eventHeader,

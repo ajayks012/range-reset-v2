@@ -220,6 +220,7 @@ function ManageEventCreate(props: any) {
   const [milestone, setMilestone] = useState<any>('')
   const [userAssRadio, setUserAssRadio] = useState<any>()
   const [currentTask, setCurrentTask] = useState<any>()
+  const [eventSaved, setEventSaved] = useState(false)
 
   // const [referenceDocData, setReferenceDocData] = React.useState<Array<any>>([])
   const [referenceDocData, setReferenceDocData] = React.useState<any>()
@@ -438,7 +439,7 @@ function ManageEventCreate(props: any) {
               ? 'RRMNGR'
               : ''
           return {
-            taskId2: milestone.taskId,
+            taskId2: milestone.milestoneTaskId,
             taskId: milestone.taskName,
             status: milestone.status,
             slaDate: milestone.slaDate,
@@ -3427,11 +3428,11 @@ function ManageEventCreate(props: any) {
       errorMsg = allMessages.error.errorRemoveTasks
       successMsg = allMessages.success.successRemoveTasks
     } else if (clickState === 'publish') {
-      reviewDecision = 'confirmed'
+      reviewDecision = 'Confirmed'
       errorMsg = allMessages.error.errorPublishEvent
       successMsg = allMessages.success.successPublishEvent
     } else if (clickState === 'update') {
-      reviewDecision = 'confirmed'
+      reviewDecision = 'Confirmed'
       comments = inputTextareaValue && inputTextareaValue
       errorMsg = allMessages.error.errorUpdateEvent
       successMsg = allMessages.success.successUpdateEvent
@@ -3489,7 +3490,7 @@ function ManageEventCreate(props: any) {
       return {
         status: val.status,
         visibility: val.visibility,
-        taskId: val.taskId2,
+        milestoneTaskId: val.taskId2,
         taskName: val.taskId,
         taskDescription: val.task,
         dueDate: val.dueDate,
@@ -3545,7 +3546,10 @@ function ManageEventCreate(props: any) {
       reviewDecision: reviewDecision,
       // reviewDecision: clickState,
       eventId: eventDetails[0].eventId,
-      eventStatus: eventDetails[0].eventStatus,
+      eventStatus:
+        reviewDecision === 'Confirmed'
+          ? 'Confirmed'
+          : eventDetails[0].eventStatus,
       requester: {
         persona: eventDetails[0].requesterPersona,
         details: {
@@ -3690,7 +3694,7 @@ function ManageEventCreate(props: any) {
     <ConfirmBox
       cancelOpen={publishConfirm}
       handleCancel={() => setPublishConfirm(false)}
-      // handleProceed={() => handlePublishEvent('confirmed')}
+      // handleProceed={() => handlePublishEvent('Confirmed')}
       handleProceed={() => handlePublishEvent('publish')}
       label1="Confirm 'Publish'"
       label2="Are you sure you want to Publish the Event?"
@@ -3969,7 +3973,7 @@ function ManageEventCreate(props: any) {
                             variant="contained"
                             color="primary"
                             // type="submit"
-                            // onClick={() => handlePublishEvent('confirmed')}
+                            // onClick={() => handlePublishEvent('Confirmed')}
                             onClick={() => setPublishConfirm(true)}
                           >
                             Publish Event

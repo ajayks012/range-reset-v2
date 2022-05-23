@@ -1140,7 +1140,7 @@ function ManageTaskEvent(props: any) {
                 .then((res3: any) => {
                   console.log(res3)
                   let formData1 = {
-                    reviewDecision: 'confirmed',
+                    reviewDecision: 'Confirmed',
                     requester:
                       getResponse.eventDetailsList[0].rangeEventRequest
                         .requester,
