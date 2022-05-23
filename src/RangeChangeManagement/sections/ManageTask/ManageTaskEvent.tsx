@@ -1213,7 +1213,7 @@ function ManageTaskEvent(props: any) {
         rowData.status.toLowerCase() === 'confirmed' ||
         rowData.status.toLowerCase() === 'published')
     ) {
-      return rowData.status
+      return rowData.eventStatus
     } else if (
       rowData.status &&
       rowData.status.toLowerCase().includes('duplicate')
@@ -1339,7 +1339,7 @@ function ManageTaskEvent(props: any) {
         )
       }
     } else {
-      return <>{rowData.status}</>
+      return <>{rowData.eventStatus}</>
     }
   }
 
@@ -2171,7 +2171,7 @@ function ManageTaskEvent(props: any) {
                     (col.field === 'name' &&
                       confirmTable &&
                       eventNameTemplate) ||
-                    (col.field === 'status' &&
+                    (col.field === 'eventStatus' &&
                       confirmTable &&
                       statusTemplate) ||
                     (col.field === 'appDueDate' &&
