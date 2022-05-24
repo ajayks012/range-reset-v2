@@ -228,6 +228,8 @@ function ManageEventCreate(props: any) {
   const [attachmentUrlArr, setAttachmentUrlArr] = React.useState<Array<string>>(
     []
   )
+  const [emailsHeader, setEmailHeaders] = useState<any>([])
+  const [eventPrevName, setEventPrevName] = useState<string>()
 
   const toast = useRef<any>(null)
   const [toastRemove, setToastRemove] = React.useState('')
@@ -290,48 +292,56 @@ function ManageEventCreate(props: any) {
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'BUYER',
             },
             buyerAssistantEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'BYAST',
             },
             ownBrandManagerEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'OWNBRM',
             },
             seniorBuyingManagerEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'SRBYM',
             },
             merchandiserEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'MERCH',
             },
             rangeResetManagerEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'RRMNGR',
             },
             categoryDirectorEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'CTDIR',
             },
             supplyChainAnalystEmailId: {
               persona: '',
               emailId: '',
               name: '',
               userId: '',
+              roleId: 'SCSPL',
             },
             requesterEmailId: eventData.requester.details.emailId,
             requesterName: eventData.requester.details.name,
@@ -465,6 +475,17 @@ function ManageEventCreate(props: any) {
         setGroup(manageList[0].tradeGroup)
         setCategory(manageList[0].category)
         setDepartment(manageList[0].department)
+        setEmailHeaders([
+          manageList[0].buyerEmailId,
+          manageList[0].buyerAssistantEmailId,
+          manageList[0].ownBrandManagerEmailId,
+          manageList[0].seniorBuyingManagerEmailId,
+          manageList[0].merchandiserEmailId,
+          manageList[0].rangeResetManagerEmailId,
+          manageList[0].categoryDirectorEmailId,
+          manageList[0].supplyChainAnalystEmailId,
+        ])
+        setEventPrevName(eventData.eventHeader.eventName)
         let classValue =
           manageList[0].planogramClass &&
           manageList[0].planogramClass.map((c: any) => {
@@ -476,7 +497,10 @@ function ManageEventCreate(props: any) {
         setClassValues(classValue)
         launchDateOld === '' && setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
-        if (eventData.eventStatus === 'Confirmed') {
+        if (
+          eventData.eventStatus === 'Confirmed' ||
+          eventData.eventStatus === 'Published'
+        ) {
           console.log('Confirmedddddddd', eventData.eventStatus)
           setConfirmEnDis(true)
         }
@@ -1409,7 +1433,7 @@ function ManageEventCreate(props: any) {
   const rafDueDateTemplate = (rowData: any) => {
     return (
       <DatePicker
-        disabled={confirmEnDis ? true : false}
+        // disabled={confirmEnDis ? true : false}
         format="dd/MM/yy"
         value={rowData['appDueDate'] ? rowData['appDueDate'] : null}
         onChange={(date: any) => {
@@ -1861,7 +1885,7 @@ function ManageEventCreate(props: any) {
 
       //   />
       <OutlinedInput
-        disabled={confirmEnDis}
+        // disabled={confirmEnDis}
         margin="dense"
         className={classes.muiSelect}
         value={rowData.eventName}
@@ -2197,6 +2221,23 @@ function ManageEventCreate(props: any) {
             setBuyerConfirmed(true)
             setBuyerValue(res.data.userdetails[0].user)
             // const taskUserChange = taskDetails
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  buyerEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             // persons.forEach((val: any) => {
             //   if (
@@ -2235,6 +2276,23 @@ function ManageEventCreate(props: any) {
           .then((res: any) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  buyerAssistantEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setBuyingAssistantConfirmed(true)
             setBuyingAssistantValue(res.data.userdetails[0].user)
@@ -2260,6 +2318,23 @@ function ManageEventCreate(props: any) {
           .then((res) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  ownBrandManagerEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setOwnBrandManagerConfirmed(true)
             setOwnBrandManagerValue(res.data.userdetails[0].user)
@@ -2285,6 +2360,23 @@ function ManageEventCreate(props: any) {
           .then((res) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  seniorBuyingManagerEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setSeniorBuyingManagerConfirmed(true)
             setSeniorBuyingManagerValue(res.data.userdetails[0].user)
@@ -2310,6 +2402,23 @@ function ManageEventCreate(props: any) {
           .then((res) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  merchandiserEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setMerchandiserConfirmed(true)
             setMerchandiserValue(res.data.userdetails[0].user)
@@ -2335,6 +2444,23 @@ function ManageEventCreate(props: any) {
           .then((res) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  rangeResetManagerEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setRangeResetManagerConfirmed(true)
             setRangeResetManagerValue(res.data.userdetails[0].user)
@@ -2360,6 +2486,23 @@ function ManageEventCreate(props: any) {
           .then((res) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  categoryDirectorEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setCategoryDirectorConfirmed(true)
             setCategoryDirectorValue(res.data.userdetails[0].user)
@@ -2385,6 +2528,23 @@ function ManageEventCreate(props: any) {
           .then((res) => {
             console.log('matched')
             const dataUser = res.data.userdetails[0].user
+            setEventDetails((prevState: any) => {
+              return [
+                {
+                  ...prevState[0],
+                  supplyChainAnalystEmailId: {
+                    emailId: res.data.userdetails[0].user.emailId,
+                    name:
+                      res.data.userdetails[0].user.firstName +
+                      ' ' +
+                      res.data.userdetails[0].user.lastName,
+                    persona: res.data.userdetails[0].roles[0].roleName,
+                    roleId: res.data.userdetails[0].roles[0].roleId,
+                    userId: res.data.userdetails[0].user.userId,
+                  },
+                },
+              ]
+            })
             modifyTasksBasedOnHeaderEmailChange(roleId, taskDetails, dataUser)
             setSupplyChainSpecialistConfirmed(true)
             setSupplyChainSpecialistValue(res.data.userdetails[0].user)
@@ -3140,23 +3300,44 @@ function ManageEventCreate(props: any) {
 
   const handleConfirmGroups = () => {
     setGroupsOpen(false)
-    const { email, value, userId, roleId, label } = currentTask
+    console.log('eventDetailseventDetailseventDetails', eventDetails)
     console.log(currentTask)
     let a = taskDetails.filter((t: any) => t.taskId !== singleTask.taskId)
     let b = singleTask
-    b.assignedUserGroup = userGroup
-    // b.manager = userGroupValue
-    b.emailId = userGroupValue
-    // b.emailId = email
-    b.userId = userId
-    b.manager = label
-    b.name = label
-    b.roleId = roleId
-    a.push(b)
-    a.sort((x: any, y: any) =>
-      x.taskId > y.taskId ? 1 : y.taskId > x.taskId ? -1 : 0
-    )
-    setTaskDetails(a)
+    if (currentTask) {
+      const { email, value, userId, roleId, label } = currentTask
+      console.log(currentTask)
+      b.assignedUserGroup = userGroup
+      // b.manager = userGroupValue
+      b.emailId = userGroupValue
+      // b.emailId = email
+      b.userId = userId
+      b.manager = label
+      b.name = label
+      b.roleId = roleId
+      a.push(b)
+      a.sort((x: any, y: any) =>
+        x.taskId > y.taskId ? 1 : y.taskId > x.taskId ? -1 : 0
+      )
+      setTaskDetails(a)
+    } else {
+      const singl = emailsHeader.filter((val: any) => {
+        return userGroup == val.persona
+      })
+      const { emailId, name, persona, roleId, userId } = singl[0]
+      console.log('singl', singl)
+      b.assignedUserGroup = userGroup
+      b.emailId = userGroupValue
+      b.userId = userId
+      b.manager = name
+      b.name = name
+      b.roleId = roleId
+      a.push(b)
+      a.sort((x: any, y: any) =>
+        x.taskId > y.taskId ? 1 : y.taskId > x.taskId ? -1 : 0
+      )
+      setTaskDetails(a)
+    }
   }
   const handleUserClick = (event: any, data: any) => {
     // const { email, value, userId, roleId } = data
@@ -3635,7 +3816,29 @@ function ManageEventCreate(props: any) {
     //     }
     //   }
     // })
-    const eventTeamData = team.map((val: any) => {
+    console.log('eventDetailspublishevent-publishEvent', eventDetails)
+    const {
+      buyerEmailId,
+      buyerAssistantEmailId,
+      categoryDirectorEmailId,
+      merchandiserEmailId,
+      ownBrandManagerEmailId,
+      rangeResetManagerEmailId,
+      seniorBuyingManagerEmailId,
+      supplyChainAnalystEmailId,
+    } = eventDetails[0]
+    const teamArr = [
+      buyerEmailId,
+      buyerAssistantEmailId,
+      categoryDirectorEmailId,
+      merchandiserEmailId,
+      ownBrandManagerEmailId,
+      rangeResetManagerEmailId,
+      seniorBuyingManagerEmailId,
+      supplyChainAnalystEmailId,
+    ]
+
+    const eventTeamData = teamArr.map((val: any) => {
       return {
         persona:
           val.persona === 'Merchendiser'
@@ -3679,7 +3882,10 @@ function ManageEventCreate(props: any) {
         resetType: eventDetails[0].resetType,
         rafAppDueDate: eventDetails[0].appDueDate,
         eventLaunchDate: eventDetails[0].targetDate,
-        eventName: eventDetails[0].eventName,
+        eventName:
+          eventDetails[0].eventName === ''
+            ? eventPrevName
+            : eventDetails[0].eventName,
         eventHierarchy: {
           tradingGroup: eventDetails[0].tradeGroup,
           category: eventDetails[0].category,
@@ -3942,7 +4148,7 @@ function ManageEventCreate(props: any) {
                           (col.field === 'category' && categoryTemplate) ||
                           (col.field === 'department' && departmentTemplate) ||
                           (col.field === 'uniqueId' && eventUniqueId) ||
-                          // (col.field === 'eventName' && eventNameTemplate) ||
+                          (col.field === 'eventName' && eventNameTemplate) ||
                           (col.field === 'clearancePriceCheck' &&
                             clearancePriceTemplate) ||
                           (col.field === 'orderStopDateCheck' &&
