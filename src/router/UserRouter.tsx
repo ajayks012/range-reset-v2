@@ -142,14 +142,16 @@ const UserRouter = ({
         <AuthRoute
           path={`${path}${DASHBOARD_RANGE_PENDINGACTION}`}
           component={RangeChangePendingActions}
-          isAuthorized={userDetail && getPermission(DASHBOARD)}
+          // isAuthorized={userDetail && getPermission(DASHBOARD)}
+          isAuthorized={userDetail && getPermission(RANGEAMEND_MANAGE)}
           serviceError={serviceError}
           arb={false}
         />
         <AuthRoute
           path={`${path}${DASHBOARD_RANGE_MYGROUPPENDINGTASKS}`}
           component={RangeChangeGroupPendingAction}
-          isAuthorized={userDetail && getPermission(DASHBOARD)}
+          // isAuthorized={userDetail && getPermission(DASHBOARD)}
+          isAuthorized={userDetail && getPermission(RANGEAMEND_MANAGE)}
           serviceError={serviceError}
           arb={false}
         />
