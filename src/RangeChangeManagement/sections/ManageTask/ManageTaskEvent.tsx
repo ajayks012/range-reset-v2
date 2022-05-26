@@ -1773,9 +1773,9 @@ function ManageTaskEvent(props: any) {
       // let deletingEvents: any = []
       selectedEvents.map((event: any) => {
         if (
-          event.status.toLowerCase() === 'published' &&
-          (event.status.toLowerCase() !== 'error' ||
-            event.status.toLowerCase() !== 'duplicate')
+          event.eventStatus.toLowerCase() === 'published' &&
+          (event.eventStatus.toLowerCase() !== 'error' ||
+            event.eventStatus.toLowerCase() !== 'duplicate')
         ) {
           // services delete endpoint
 
@@ -1849,7 +1849,7 @@ function ManageTaskEvent(props: any) {
             deleteEventRequests: [
               {
                 eventId: event.id,
-                status: event.status,
+                status: event.eventStatus,
               },
             ],
             logging: {
@@ -1881,7 +1881,7 @@ function ManageTaskEvent(props: any) {
               setCheckCount((prevState) => prevState - 1)
               // setIsProgressLoader(false)
             })
-        } else if (event.status.toLowerCase() === 'draft') {
+        } else if (event.eventStatus.toLowerCase() === 'draft') {
           getEventDetailsById(event.id)
             .then((res1: any) => {
               let getResponse = res1.data
