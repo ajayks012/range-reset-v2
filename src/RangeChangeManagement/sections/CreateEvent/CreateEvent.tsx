@@ -63,6 +63,7 @@ import {
   resetFile,
   setErrorFile,
   resetErrorFile,
+  setTaskFile,
 } from '../../../redux/Actions/FileUpload'
 import LightTooltip from '../../components/LightToolTip/LightTooltip'
 // import styled from 'styled-components'
@@ -80,6 +81,7 @@ function CreateEvent(props: any) {
     fileErrorData,
     setErrorFile,
     resetErrorFile,
+    setTaskFile,
   } = props
 
   const {
@@ -239,6 +241,7 @@ function CreateEvent(props: any) {
   const [isSuccessCall, setIsSuccessCall] = React.useState(true)
   const [isProgressLoader, setIsProgressLoader] = React.useState(false)
   const [toastRemove, setToastRemove] = React.useState('')
+  const [toastRemovePublish, setToastRemovePublish] = React.useState('')
 
   // useEffect(() => {
   //   console.log(rafDueDateError1)
@@ -2396,8 +2399,15 @@ function CreateEvent(props: any) {
   }
 
   const handleToaster = () => {
-    if (toastRemove === 'save' || toastRemove === 'publish') {
+    if (toastRemove === 'save') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+      // history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+    } else if (toastRemove === 'publish') {
+      if (toastRemovePublish === 'success') {
+        history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
+      } else {
+        history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
+      }
     } else if (toastRemove === 'create') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE_TASK}`)
       // history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
@@ -3400,6 +3410,61 @@ function CreateEvent(props: any) {
         // let newVal = [formData.rangeResets[0], ...fileData]
         // setFile(newVal)
         console.log(res.data)
+        const data =
+          // res.data
+          //   .filter((d: any) => d.status.toLowerCase() != 'cancelled')
+          //   .map((d: any) => {
+          //     return
+          {
+            name: res.data[0].name,
+            id: res.data[0].id,
+            resetType: res.data[0].resetType,
+            appDueDate: res.data[0].appDueDate,
+            tradeGroup: res.data[0].tradeGroup,
+            category: res.data[0].category,
+            categoryId: res.data[0].categoryId,
+            department: res.data[0].department,
+            departmentId: res.data[0].departmentId,
+            targetDate: res.data[0].targetDate,
+            planogramClass: res.data[0].planogramClass,
+            wastageRange: res.data[0].wastageRange,
+            wastageRangeText: res.data[0].wastageRangeText,
+            buyer: res.data[0].buyer,
+            buyerId: res.data[0].buyerId,
+            buyerEmailId: res.data[0].buyerEmailId,
+            categoryDirector: res.data[0].categoryDirector,
+            categoryDirectorId: res.data[0].categoryDirectorId,
+            categoryDirectorEmailId: res.data[0].categoryDirectorEmailId,
+            seniorBuyingManager: res.data[0].seniorBuyingManager,
+            seniorBuyingManagerId: res.data[0].seniorBuyingManagerId,
+            seniorBuyingManagerEmailId: res.data[0].seniorBuyingManagerEmailId,
+            buyerAssistant: res.data[0].buyerAssistant,
+            buyerAssistantId: res.data[0].buyerAssistantId,
+            buyerAssistantEmailId: res.data[0].buyerAssistantEmailId,
+            merchandiser: res.data[0].merchandiser,
+            merchandiserId: res.data[0].merchandiserId,
+            merchandiserEmailId: res.data[0].merchandiserEmailId,
+            supplyChainAnalyst: res.data[0].supplyChainAnalyst,
+            supplyChainAnalystId: res.data[0].supplyChainAnalystId,
+            supplyChainAnalystEmailId: res.data[0].supplyChainAnalystEmailId,
+            ownBrandManager: res.data[0].ownBrandManager,
+            ownBrandManagerId: res.data[0].ownBrandManagerId,
+            ownBrandManagerEmailId: res.data[0].ownBrandManagerEmailId,
+            rangeResetManager: res.data[0].rangeResetManager,
+            rangeResetManagerId: res.data[0].rangeResetManagerId,
+            rangeResetManagerEmailId: res.data[0].rangeResetManagerEmailId,
+
+            // eventId: d['Event ID'],
+            // name: 'string',
+            // eventName: eventName(),
+            eventStatus: res.data[0].eventStatus,
+            status: res.data[0].status,
+            clearancePriceCheck: res.data[0].clearancePriceCheck,
+            orderStopDateCheck: res.data[0].orderStopDateCheck,
+            stopOrder: res.data[0].stopOrder,
+          }
+        // })
+        console.log(data)
         // if (errorCheck && errorCheck > -1) {
         if (fileErrorData) {
           if (res.data[0].status.toLowerCase() === 'draft') {
@@ -3407,125 +3472,136 @@ function CreateEvent(props: any) {
             let _tasks = newVal.filter(
               (value: any) => fileErrorData.errorId !== value.errorId
             )
+            setIsProgressLoader(false)
             setFile(_tasks)
+            setTaskFile(data)
+            setToastRemovePublish('success')
+            toast.current.show({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Event created with Event ID ${res.data[0].id}`,
+              life: life,
+              className: 'login-toast',
+            })
 
-            getEventDetailsById(res.data[0].id)
-              .then((res1: any) => {
-                let getResponse = res1.data
-                const formData2 = {
-                  requestorDetails: {
-                    emailId:
-                      userDetail && userDetail.userdetails[0].user.emailId,
-                    requestBy:
-                      userDetail && userDetail.userdetails[0].user.userId,
-                    requestorName:
-                      userDetail &&
-                      userDetail.userdetails[0].user.middleName &&
-                      userDetail.userdetails[0].user.middleName !== ''
-                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    requestType: 'complete',
-                    requestDate: new Date().toISOString().split('T')[0],
-                  },
-                  requestorRoles:
-                    // userDetail &&
-                    // userDetail.userdetails[0].roles.map((role: any) => {
-                    //   return {
-                    //     roleId: role.roleId,
-                    //   }
-                    // }),
-                    [
-                      {
-                        roleId:
-                          getResponse.eventDetailsList[0].rangeEventRequest
-                            .requester.persona,
-                      },
-                    ],
-                }
+            // getEventDetailsById(res.data[0].id)
+            //   .then((res1: any) => {
+            //     let getResponse = res1.data
+            //     const formData2 = {
+            //       requestorDetails: {
+            //         emailId:
+            //           userDetail && userDetail.userdetails[0].user.emailId,
+            //         requestBy:
+            //           userDetail && userDetail.userdetails[0].user.userId,
+            //         requestorName:
+            //           userDetail &&
+            //           userDetail.userdetails[0].user.middleName &&
+            //           userDetail.userdetails[0].user.middleName !== ''
+            //             ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+            //             : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            //         requestType: 'complete',
+            //         requestDate: new Date().toISOString().split('T')[0],
+            //       },
+            //       requestorRoles:
+            //         // userDetail &&
+            //         // userDetail.userdetails[0].roles.map((role: any) => {
+            //         //   return {
+            //         //     roleId: role.roleId,
+            //         //   }
+            //         // }),
+            //         [
+            //           {
+            //             roleId:
+            //               getResponse.eventDetailsList[0].rangeEventRequest
+            //                 .requester.persona,
+            //           },
+            //         ],
+            //     }
 
-                claimEventsCamunda(
-                  getResponse.eventDetailsList[0].rangeEventRequest.taskId,
-                  formData2
-                )
-                  .then((res3: any) => {
-                    console.log(res3)
-                    let formData1 = {
-                      reviewDecision: 'Confirmed',
-                      requester:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .requester,
-                      eventId: res.data[0].id,
-                      // eventStatus:
-                      //   getResponse.eventDetailsList[0].rangeEventRequest
-                      //     .eventStatus,
-                      eventStatus: 'Published',
-                      eventHeader:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .eventHeader,
-                      milestones: getResponse.eventDetailsList[0].milestones,
-                      logging: {
-                        comments: 'string',
-                        updated: 'string',
-                      },
-                    }
-                    console.log(formData1)
-                    publishEventsCamunda(res.data[0].id, formData1)
-                      .then((res2: any) => {
-                        console.log(res2.data)
-                        setIsSuccessCall(false)
-                        setIsProgressLoader(false)
-                        toast.current.show({
-                          severity: 'success',
-                          summary: 'Success',
-                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                          detail: `${res.data[0].id} event is published`,
-                          life: life,
-                          className: 'login-toast',
-                        })
-                      })
-                      .catch((err2: any) => {
-                        console.log(err2)
-                        setIsSuccessCall(false)
-                        setIsProgressLoader(false)
-                        toast.current.show({
-                          severity: 'error',
-                          summary: 'Error',
-                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                          detail: allMessages.error.errorPublishEvent,
-                          life: life,
-                          className: 'login-toast',
-                        })
-                      })
-                  })
-                  .catch((err: any) => {
-                    console.log(err)
-                    setIsSuccessCall(false)
-                    setIsProgressLoader(false)
-                    toast.current.show({
-                      severity: 'error',
-                      summary: 'Error',
-                      // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                      detail: allMessages.error.errorClaim,
-                      life: life,
-                      className: 'login-toast',
-                    })
-                  })
-              })
-              .catch((err1: any) => {
-                console.log(err1)
-                setIsSuccessCall(false)
-                setIsProgressLoader(false)
-                toast.current.show({
-                  severity: 'error',
-                  summary: 'Error',
-                  detail: `Camunda Get event error`,
-                  life: life,
-                  className: 'login-toast',
-                })
-              })
+            //     claimEventsCamunda(
+            //       getResponse.eventDetailsList[0].rangeEventRequest.taskId,
+            //       formData2
+            //     )
+            //       .then((res3: any) => {
+            //         console.log(res3)
+            //         let formData1 = {
+            //           reviewDecision: 'Confirmed',
+            //           requester:
+            //             getResponse.eventDetailsList[0].rangeEventRequest
+            //               .requester,
+            //           eventId: res.data[0].id,
+            //           // eventStatus:
+            //           //   getResponse.eventDetailsList[0].rangeEventRequest
+            //           //     .eventStatus,
+            //           eventStatus: 'Published',
+            //           eventHeader:
+            //             getResponse.eventDetailsList[0].rangeEventRequest
+            //               .eventHeader,
+            //           milestones: getResponse.eventDetailsList[0].milestones,
+            //           logging: {
+            //             comments: 'string',
+            //             updated: 'string',
+            //           },
+            //         }
+            //         console.log(formData1)
+            //         publishEventsCamunda(res.data[0].id, formData1)
+            //           .then((res2: any) => {
+            //             console.log(res2.data)
+            //             setIsSuccessCall(false)
+            //             setIsProgressLoader(false)
+            //             toast.current.show({
+            //               severity: 'success',
+            //               summary: 'Success',
+            //               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //               detail: `${res.data[0].id} event is published`,
+            //               life: life,
+            //               className: 'login-toast',
+            //             })
+            //           })
+            //           .catch((err2: any) => {
+            //             console.log(err2)
+            //             setIsSuccessCall(false)
+            //             setIsProgressLoader(false)
+            //             toast.current.show({
+            //               severity: 'error',
+            //               summary: 'Error',
+            //               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //               detail: allMessages.error.errorPublishEvent,
+            //               life: life,
+            //               className: 'login-toast',
+            //             })
+            //           })
+            //       })
+            //       .catch((err: any) => {
+            //         console.log(err)
+            //         setIsSuccessCall(false)
+            //         setIsProgressLoader(false)
+            //         toast.current.show({
+            //           severity: 'error',
+            //           summary: 'Error',
+            //           // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //           detail: allMessages.error.errorClaim,
+            //           life: life,
+            //           className: 'login-toast',
+            //         })
+            //       })
+            //   })
+            //   .catch((err1: any) => {
+            //     console.log(err1)
+            //     setIsSuccessCall(false)
+            //     setIsProgressLoader(false)
+            //     toast.current.show({
+            //       severity: 'error',
+            //       summary: 'Error',
+            //       detail: `Camunda Get event error`,
+            //       life: life,
+            //       className: 'login-toast',
+            //     })
+            //   })
           } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
             setIsSuccessCall(false)
             setIsProgressLoader(false)
+            setToastRemovePublish('error')
             toast.current.show({
               severity: 'error',
               // summary: 'Duplicate Event',
@@ -3557,121 +3633,131 @@ function CreateEvent(props: any) {
           ) {
             // const formdata1 = createCamundaFormData(res.data[0])
             // console.log(formdata1)
+            setIsProgressLoader(false)
+            setTaskFile(data)
+            setToastRemovePublish('success')
+            toast.current.show({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Event created with Event ID ${res.data[0].id}`,
+              life: life,
+              className: 'login-toast',
+            })
+            // getEventDetailsById(res.data[0].id)
+            //   .then((res1: any) => {
+            //     let getResponse = res1.data
+            //     const formData2 = {
+            //       requestorDetails: {
+            //         emailId:
+            //           userDetail && userDetail.userdetails[0].user.emailId,
+            //         requestBy:
+            //           userDetail && userDetail.userdetails[0].user.userId,
+            //         requestorName:
+            //           userDetail &&
+            //           userDetail.userdetails[0].user.middleName &&
+            //           userDetail.userdetails[0].user.middleName !== ''
+            //             ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+            //             : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+            //         requestType: 'complete',
+            //         requestDate: new Date().toISOString().split('T')[0],
+            //       },
+            //       requestorRoles:
+            //         // userDetail &&
+            //         // userDetail.userdetails[0].roles.map((role: any) => {
+            //         //   return {
+            //         //     roleId: role.roleId,
+            //         //   }
+            //         // }),
+            //         [
+            //           {
+            //             roleId:
+            //               getResponse.eventDetailsList[0].rangeEventRequest
+            //                 .requester.persona,
+            //           },
+            //         ],
+            //     }
 
-            getEventDetailsById(res.data[0].id)
-              .then((res1: any) => {
-                let getResponse = res1.data
-                const formData2 = {
-                  requestorDetails: {
-                    emailId:
-                      userDetail && userDetail.userdetails[0].user.emailId,
-                    requestBy:
-                      userDetail && userDetail.userdetails[0].user.userId,
-                    requestorName:
-                      userDetail &&
-                      userDetail.userdetails[0].user.middleName &&
-                      userDetail.userdetails[0].user.middleName !== ''
-                        ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                        : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-                    requestType: 'complete',
-                    requestDate: new Date().toISOString().split('T')[0],
-                  },
-                  requestorRoles:
-                    // userDetail &&
-                    // userDetail.userdetails[0].roles.map((role: any) => {
-                    //   return {
-                    //     roleId: role.roleId,
-                    //   }
-                    // }),
-                    [
-                      {
-                        roleId:
-                          getResponse.eventDetailsList[0].rangeEventRequest
-                            .requester.persona,
-                      },
-                    ],
-                }
-
-                claimEventsCamunda(
-                  getResponse.eventDetailsList[0].rangeEventRequest.taskId,
-                  formData2
-                )
-                  .then((res3: any) => {
-                    console.log(res3)
-                    let formData1 = {
-                      reviewDecision: 'Confirmed',
-                      requester:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .requester,
-                      eventId: res.data[0].id,
-                      eventStatus: 'Published',
-                      eventHeader:
-                        getResponse.eventDetailsList[0].rangeEventRequest
-                          .eventHeader,
-                      milestones: getResponse.eventDetailsList[0].milestones,
-                      logging: {
-                        comments: 'string',
-                        updated: 'string',
-                      },
-                    }
-                    console.log(formData1)
-                    publishEventsCamunda(res.data[0].id, formData1)
-                      .then((res2: any) => {
-                        console.log(res2.data)
-                        setIsSuccessCall(false)
-                        setIsProgressLoader(false)
-                        toast.current.show({
-                          severity: 'success',
-                          summary: 'Success',
-                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                          detail: `${res.data[0].id} event is published`,
-                          life: life,
-                          className: 'login-toast',
-                        })
-                      })
-                      .catch((err2: any) => {
-                        console.log(err2)
-                        setIsSuccessCall(false)
-                        setIsProgressLoader(false)
-                        toast.current.show({
-                          severity: 'error',
-                          summary: 'Error',
-                          // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                          detail: allMessages.error.errorPublishEvent,
-                          life: life,
-                          className: 'login-toast',
-                        })
-                      })
-                  })
-                  .catch((err: any) => {
-                    console.log(err)
-                    setIsSuccessCall(false)
-                    setIsProgressLoader(false)
-                    toast.current.show({
-                      severity: 'error',
-                      summary: 'Error',
-                      // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
-                      detail: allMessages.error.errorClaim,
-                      life: life,
-                      className: 'login-toast',
-                    })
-                  })
-              })
-              .catch((err1: any) => {
-                setIsSuccessCall(false)
-                setIsProgressLoader(false)
-                console.log(err1)
-                toast.current.show({
-                  severity: 'error',
-                  summary: 'Error',
-                  detail: `Camunda Get event error`,
-                  life: life,
-                  className: 'login-toast',
-                })
-              })
+            //     claimEventsCamunda(
+            //       getResponse.eventDetailsList[0].rangeEventRequest.taskId,
+            //       formData2
+            //     )
+            //       .then((res3: any) => {
+            //         console.log(res3)
+            //         let formData1 = {
+            //           reviewDecision: 'Confirmed',
+            //           requester:
+            //             getResponse.eventDetailsList[0].rangeEventRequest
+            //               .requester,
+            //           eventId: res.data[0].id,
+            //           eventStatus: 'Published',
+            //           eventHeader:
+            //             getResponse.eventDetailsList[0].rangeEventRequest
+            //               .eventHeader,
+            //           milestones: getResponse.eventDetailsList[0].milestones,
+            //           logging: {
+            //             comments: 'string',
+            //             updated: 'string',
+            //           },
+            //         }
+            //         console.log(formData1)
+            //         publishEventsCamunda(res.data[0].id, formData1)
+            //           .then((res2: any) => {
+            //             console.log(res2.data)
+            //             setIsSuccessCall(false)
+            //             setIsProgressLoader(false)
+            //             toast.current.show({
+            //               severity: 'success',
+            //               summary: 'Success',
+            //               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //               detail: `${res.data[0].id} event is published`,
+            //               life: life,
+            //               className: 'login-toast',
+            //             })
+            //           })
+            //           .catch((err2: any) => {
+            //             console.log(err2)
+            //             setIsSuccessCall(false)
+            //             setIsProgressLoader(false)
+            //             toast.current.show({
+            //               severity: 'error',
+            //               summary: 'Error',
+            //               // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //               detail: allMessages.error.errorPublishEvent,
+            //               life: life,
+            //               className: 'login-toast',
+            //             })
+            //           })
+            //       })
+            //       .catch((err: any) => {
+            //         console.log(err)
+            //         setIsSuccessCall(false)
+            //         setIsProgressLoader(false)
+            //         toast.current.show({
+            //           severity: 'error',
+            //           summary: 'Error',
+            //           // detail: `Event ${res.data[0].audit[0].action} at ${res.data[0].audit[0].at}`,
+            //           detail: allMessages.error.errorClaim,
+            //           life: life,
+            //           className: 'login-toast',
+            //         })
+            //       })
+            //   })
+            //   .catch((err1: any) => {
+            //     setIsSuccessCall(false)
+            //     setIsProgressLoader(false)
+            //     console.log(err1)
+            //     toast.current.show({
+            //       severity: 'error',
+            //       summary: 'Error',
+            //       detail: `Camunda Get event error`,
+            //       life: life,
+            //       className: 'login-toast',
+            //     })
+            //   })
           } else if (res.data[0].status.toLowerCase().includes('duplicate')) {
             setIsSuccessCall(false)
             setIsProgressLoader(false)
+            setToastRemovePublish('error')
             toast.current.show({
               severity: 'error',
               // summary: 'Duplicate Event',
@@ -3700,6 +3786,7 @@ function CreateEvent(props: any) {
         setIsSuccessCall(false)
         setIsProgressLoader(false)
         setDisableSave(false)
+        setToastRemovePublish('error')
         console.log(err)
         toast.current.show({
           severity: 'error',
@@ -5394,6 +5481,7 @@ const matchDispatchToProps = (dispatch: any) => {
     resetFile: () => dispatch(resetFile()),
     setErrorFile: (fileData: any) => dispatch(setErrorFile(fileData)),
     resetErrorFile: () => dispatch(resetErrorFile()),
+    setTaskFile: (fileData: any) => dispatch(setTaskFile(fileData)),
   }
 }
 

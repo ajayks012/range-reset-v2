@@ -215,6 +215,7 @@ function ManageEventCreate(props: any) {
   const [launchDateConfirm, setLaunchDateConfirm] = useState(false)
   const [launchDateOld, setLaunchDateOld] = useState<any>('')
   const [launchDateNew, setLaunchDateNew] = useState<any>()
+  const [dueDateErrorCount, setDueDateErrorCount] = useState<any>('')
   const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
   const [dueDateErrorTasks, setDueDateErrorTasks] = useState<any>('')
   const [milestone, setMilestone] = useState<any>('')
@@ -495,7 +496,7 @@ function ManageEventCreate(props: any) {
             }
           })
         setClassValues(classValue)
-        launchDateOld === '' && setLaunchDateOld(manageList[0].targetDate)
+        dueDateErrorCount === '' && setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
         if (
           eventData.eventStatus === 'Confirmed' ||
@@ -1545,6 +1546,7 @@ function ManageEventCreate(props: any) {
               count === '' ? count + task.taskId : count + ', ' + task.taskId
           }
         })
+        setDueDateErrorCount(count)
         if (count != '') {
           // setDueDateErrorOpen(true)
           // let confirm: any = alert(
@@ -3706,6 +3708,7 @@ function ManageEventCreate(props: any) {
     let errorMsg = ''
     let successMsg = ''
     let comments = 'string'
+    let eventState = ''
 
     if (clickState === 'save') {
       reviewDecision = 'ModifySave'
@@ -3728,6 +3731,9 @@ function ManageEventCreate(props: any) {
       reviewDecision = 'ModifyAuto'
       errorMsg = allMessages.error.errorSave
       successMsg = allMessages.success.successSave
+    } else if (clickState === 'Cancel') {
+      reviewDecision = 'Cancel'
+      eventState = 'Cancelled'
     }
     console.log(reviewDecision)
     console.log(successMsg, errorMsg)
@@ -3861,6 +3867,8 @@ function ManageEventCreate(props: any) {
       eventStatus:
         reviewDecision === 'Confirmed'
           ? 'Published'
+          : eventState !== ''
+          ? eventState
           : eventDetails[0].eventStatus,
       requester: {
         persona: eventDetails[0].requesterPersona,
@@ -4255,31 +4263,62 @@ function ManageEventCreate(props: any) {
                     textAlign: 'center',
                   }}
                 >
-                  <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      // type="submit"
-                      // onClick={removeTasks}
-                      // onClick={() => handlePublishEvent('Cancel')}
-                      // onClick={() => setRemoveTaskOpen(true)}
-                      onClick={() => setRemoveConfirm(true)}
-                    >
-                      Remove / Skip Task
-                    </Button>
-                  </Grid>
-                  <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      // type="submit"
-                      // onClick={() => handlePublishEvent('ModifySave')}
-                      // onClick={() => setsaveEventTaskButton(true)}
-                      onClick={() => setSaveConfirm(true)}
-                    >
-                      Save
-                    </Button>
-                  </Grid>
+                  {eventDetails && eventDetails[0].eventStatus === 'Draft' ? (
+                    <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        // type="submit"
+                        // onClick={removeTasks}
+                        // onClick={() => handlePublishEvent('Cancel')}
+                        // onClick={() => setRemoveTaskOpen(true)}
+                        onClick={() => setRemoveConfirm(true)}
+                      >
+                        Remove / Skip Task
+                      </Button>
+                    </Grid>
+                  ) : (
+                    <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        // type="submit"
+                        // onClick={removeTasks}
+                        // onClick={() => handlePublishEvent('Cancel')}
+                        // onClick={() => setRemoveTaskOpen(true)}
+                        onClick={() => handlePublishEvent('Cancel')}
+                      >
+                        Cancel Event
+                      </Button>
+                    </Grid>
+                  )}
+                  {eventDetails && eventDetails[0].eventStatus === 'Draft' ? (
+                    <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        // type="submit"
+                        // onClick={() => handlePublishEvent('ModifySave')}
+                        // onClick={() => setsaveEventTaskButton(true)}
+                        onClick={() => setSaveConfirm(true)}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                  ) : (
+                    <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        // type="submit"
+                        // onClick={() => handlePublishEvent('ModifySave')}
+                        // onClick={() => setsaveEventTaskButton(true)}
+                        onClick={() => setRemoveConfirm(true)}
+                      >
+                        Remove Task
+                      </Button>
+                    </Grid>
+                  )}
 
                   <Grid item xl={4} lg={4} md={4} sm={4} xs={12}>
                     {eventDetails && eventDetails[0].eventStatus === 'Draft' ? (
