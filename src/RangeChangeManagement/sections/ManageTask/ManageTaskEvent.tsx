@@ -1654,7 +1654,7 @@ function ManageTaskEvent(props: any) {
                     className: classArray(d[cols[7]]),
                   }
                 : classArray(d[cols[7]]),
-              // planogramClassString: d[cols[7]] ? d[cols[7]] : '',
+              planogramClassString: d[cols[7]] ? d[cols[7]] : '',
 
               clearancePriceCheck: d[cols[8]] ? d[cols[8]] : 'Y',
               orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',

@@ -55,6 +55,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     DELETE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_MILESTONE_UPDATE:
+      'commercial-workflow-range/v1/events/{eventId}/milestones/process/hbtwRangeEventManagementWorkflow',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -114,6 +116,9 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     DELETE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_MILESTONE_UPDATE:
+      'commercial-workflow-range/v1/events/{eventId}/milestones/process/hbtwRangeEventManagementWorkflow',
+
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -173,6 +178,9 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     DELETE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_MILESTONE_UPDATE:
+      'commercial-workflow-range/v1/events/{eventId}/milestones/process/hbtwRangeEventManagementWorkflow',
+
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -232,6 +240,9 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     DELETE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_MILESTONE_UPDATE:
+      'commercial-workflow-range/v1/events/{eventId}/milestones/process/hbtwRangeEventManagementWorkflow',
+
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',
@@ -291,6 +302,8 @@ const envDetails = {
       'commercial-workflow-range/v1/events/{eventId}/approverangeevent/process/hbtwEventRequestHandler',
     DELETE_EVENTS_CAMUNDA:
       'commercial-workflow-range/v1/events/process/hbtwEventRequestHandler',
+    PUT_CAMUNDA_MILESTONE_UPDATE:
+      'commercial-workflow-range/v1/events/{eventId}/milestones/process/hbtwRangeEventManagementWorkflow',
     GOOGLE_CLIENT_ID:
       '171849099600-gb5qs9al4mvmk93j3nuam7mgqvv0pmct.apps.googleusercontent.com',
     USER_V2: 'user/v2/token',

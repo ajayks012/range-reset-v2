@@ -71,6 +71,8 @@ import {
   publishEventsCamunda,
   getWastageRanges,
   postFileAttachmentRangeResetAPI,
+  putCamundaMileStoneUpdate,
+  deleteEventsCamunda,
 } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
@@ -114,6 +116,7 @@ function ManageEventCreate(props: any) {
   const [category, setCategory] = useState<any>('')
   const [department, setDepartment] = useState<any>('')
   const [taskDetails, setTaskDetails] = useState<any>()
+  const [taskDetails2, setTaskDetails2] = useState<any>()
   // const [taskDetails, setTaskDetails] = useState<any>()
   const [singleTask, setSingleTask] = useState<any>()
   const [selectTasks, setSelectTasks] = useState<any>()
@@ -472,6 +475,7 @@ function ManageEventCreate(props: any) {
         console.log(manageTask)
         console.log(manageList)
         setTaskDetails(manageTask)
+        // setTaskDetails2(manageTask)
         setEventDetails(manageList)
         setGroup(manageList[0].tradeGroup)
         setCategory(manageList[0].category)
@@ -2208,6 +2212,7 @@ function ManageEventCreate(props: any) {
       }
     })
     setTaskDetails(taskUserChange)
+    // setTaskDetails2(taskUserChange)
   }
 
   const handleBuyerClick = (name: any, email: any, rowdata: any) => {
@@ -3723,7 +3728,8 @@ function ManageEventCreate(props: any) {
       errorMsg = allMessages.error.errorPublishEvent
       successMsg = allMessages.success.successPublishEvent
     } else if (clickState === 'update') {
-      reviewDecision = 'Confirmed'
+      reviewDecision = 'ModifySave'
+      eventState = 'Published'
       comments = inputTextareaValue && inputTextareaValue
       errorMsg = allMessages.error.errorUpdateEvent
       successMsg = allMessages.success.successUpdateEvent
@@ -3764,6 +3770,7 @@ function ManageEventCreate(props: any) {
     console.log('Publish Clicked', taskDetails)
 
     // if (clickState === 'modifySave') {
+
     if (clickState === 'remove') {
       selectTasks &&
         setTaskDetails(
@@ -3937,17 +3944,226 @@ function ManageEventCreate(props: any) {
           })
           .catch((err: any) => {})
       // })
-    } else {
-      // setFailureCount(1)
-      // setCheckCount(1)
-      // postTasklog(logData)
+    }
+    //1 cancel when published
+    if (
+      clickState === 'Cancel' &&
+      eventDetails[0].eventStatus === 'Published'
+    ) {
+      callCancelWhenPublish(
+        publishEvent.requester,
+        publishEvent.eventId,
+        eventDetails[0].eventStatus,
+        errorMsg,
+        successMsg
+      )
+      return
+    }
+    //2 publish when status is draft
+    if (eventDetails[0].eventStatus === 'Draft' && clickState === 'publish') {
+      claimTaskPublishEventWhenOnDraft(
+        eventDetails[0].taskIdEvent,
+        claimTaskData,
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg
+      )
+      return
+    } //3 save when status is draft
+    if (eventDetails[0].eventStatus === 'Draft' && clickState === 'save') {
+      claimTaskPublishEventWhenOnDraft(
+        eventDetails[0].taskIdEvent,
+        claimTaskData,
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg
+      )
+      return
+    } //4 remove when status is draft
+    if (eventDetails[0].eventStatus === 'Draft' && clickState === 'remove') {
+      claimTaskPublishEventWhenOnDraft(
+        eventDetails[0].taskIdEvent,
+        claimTaskData,
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg
+      )
+      return
+    }
+    //5 remove when staus is published
+    if (
+      eventDetails[0].eventStatus === 'Published' &&
+      clickState === 'remove'
+    ) {
+      modifySaveManageEventHeaderAndTasks(
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg,
+        clickState
+      )
+      return
+    } //6 update when staus is published
+    if (
+      eventDetails[0].eventStatus === 'Published' &&
+      clickState === 'update'
+    ) {
+      modifySaveManageEventHeaderAndTasks(
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg,
+        clickState
+      )
+      return
+    }
+    if (
+      eventDetails[0].eventStatus === 'Draft' &&
+      clickState === 'dateChange'
+    ) {
+      claimTaskPublishEventWhenOnDraft(
+        eventDetails[0].taskIdEvent,
+        claimTaskData,
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg
+      )
+      return
+    } else if (
+      eventDetails[0].eventStatus === 'Published' &&
+      clickState === 'dateChange'
+    ) {
+      modifySaveManageEventHeaderAndTasks(
+        eventDetails[0].eventId,
+        publishEvent,
+        errorMsg,
+        successMsg,
+        clickState
+      )
+      return
     }
 
-    claimEventsCamunda(eventDetails[0].taskIdEvent, claimTaskData)
+    //   claimEventsCamunda(eventDetails[0].taskIdEvent, claimTaskData)
+    //     .then((res: any) => {
+    //       console.log('claimEventsCamunda API call', res)
+    //       publishEvent &&
+    //         publishEventsCamunda(eventDetails[0].eventId, publishEvent)
+    //           .then((res: any) => {
+    //             console.log('Response publishEvent', res)
+
+    //             getEventAndTasks()
+    //             setIsProgressLoader(false)
+    //             toast.current.show({
+    //               severity: 'success',
+    //               summary: 'Success',
+    //               detail: successMsg,
+    //               life: life,
+    //               className: 'login-toast',
+    //             })
+    //           })
+    //           .catch((err: any) => {
+    //             console.log('Error publishEvent', err)
+    //             const error = err.response
+    //             // error && error.response && console.log(error.response.data)
+    //             setIsProgressLoader(false)
+    //             toast.current.show({
+    //               severity: 'error',
+    //               summary: 'Error',
+    //               detail: error
+    //                 ? error.data &&
+    //                   error.data.eventAlert &&
+    //                   error.data.eventAlert.alertMessage
+    //                   ? error.data.eventAlert.alertMessage
+    //                   : errorMsg
+    //                 : errorMsg,
+    //               life: life,
+    //               className: 'login-toast',
+    //             })
+    //           })
+    //     })
+    //     .catch((err: any) => {
+    //       console.log('claimEventsCamunda Error api', err)
+    //       setIsProgressLoader(false)
+    //       toast.current.show({
+    //         severity: 'error',
+    //         summary: 'Error',
+    //         detail: allMessages.error.errorClaim,
+    //         life: life,
+    //         className: 'login-toast',
+    //       })
+    //     })
+    //   setRemoveTaskOpen(false)
+    //   setUpdateEventOpen(false)
+    //   setsaveEventTaskButton(false)
+  }
+
+  const modifySaveManageEventHeaderAndTasks = (
+    eventid: any,
+    publishpayload: any,
+    errorMsg: any,
+    successMsg: any,
+    clickState: any
+  ) => {
+    publishpayload &&
+      putCamundaMileStoneUpdate(eventid, publishpayload)
+        .then((res: any) => {
+          console.log('Response publishEvent', res)
+
+          getEventAndTasks()
+          setIsProgressLoader(false)
+          toast.current.show({
+            severity: 'success',
+            summary: 'Success',
+            detail: successMsg,
+            life: life,
+            className: 'login-toast',
+          })
+        })
+        .catch((err: any) => {
+          console.log('Error publishEvent', err)
+          const error = err.response
+          setIsProgressLoader(false)
+          getEventAndTasks()
+          toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail:
+              clickState === 'remove' &&
+              eventDetails[0].eventStatus === 'Published'
+                ? allMessages.error.errorRemoveCompletedTasks
+                : error
+                ? error.data &&
+                  error.data.eventAlert &&
+                  error.data.eventAlert.alertMessage
+                  ? error.data.eventAlert.alertMessage
+                  : errorMsg
+                : errorMsg,
+            life: life,
+            className: 'login-toast',
+          })
+        })
+    setRemoveTaskOpen(false)
+    setUpdateEventOpen(false)
+    setsaveEventTaskButton(false)
+  }
+
+  const claimTaskPublishEventWhenOnDraft = (
+    taskid: any,
+    claimtask: any,
+    eventid: any,
+    publishpayload: any,
+    errorMsg: any,
+    successMsg: any
+  ) => {
+    claimEventsCamunda(taskid, claimtask)
       .then((res: any) => {
         console.log('claimEventsCamunda API call', res)
-        publishEvent &&
-          publishEventsCamunda(eventDetails[0].eventId, publishEvent)
+        publishpayload &&
+          publishEventsCamunda(eventid, publishpayload)
             .then((res: any) => {
               console.log('Response publishEvent', res)
 
@@ -3964,7 +4180,6 @@ function ManageEventCreate(props: any) {
             .catch((err: any) => {
               console.log('Error publishEvent', err)
               const error = err.response
-              // error && error.response && console.log(error.response.data)
               setIsProgressLoader(false)
               toast.current.show({
                 severity: 'error',
@@ -3992,13 +4207,49 @@ function ManageEventCreate(props: any) {
           className: 'login-toast',
         })
       })
-
-    //
     setRemoveTaskOpen(false)
     setUpdateEventOpen(false)
     setsaveEventTaskButton(false)
+  }
 
-    // history.push(`${DEFAULT}${RANGEAMEND_EVENTDASH}`)
+  const callCancelWhenPublish = (
+    requester: any,
+    eventid: any,
+    eventstatus: any,
+    errorMsg: any,
+    successMsg: any
+  ) => {
+    const reqBody = {
+      requester,
+      deleteEventRequests: [
+        {
+          eventId: eventid,
+          status: eventstatus,
+        },
+      ],
+    }
+    deleteEventsCamunda(reqBody)
+      .then((res: any) => {
+        console.log(res, 'res')
+        setIsProgressLoader(false)
+        toast.current.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: allMessages.success.successCancelEvent,
+          life: life,
+          className: 'login-toast',
+        })
+      })
+      .catch((err: any) => {
+        console.log(err, 'err')
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: allMessages.error.errorCancelEvent,
+          life: life,
+          className: 'login-toast',
+        })
+      })
   }
 
   const confirmSaveDialog = (
@@ -4274,7 +4525,7 @@ function ManageEventCreate(props: any) {
                         // onClick={() => setRemoveTaskOpen(true)}
                         onClick={() => setRemoveConfirm(true)}
                       >
-                        Remove / Skip Task
+                        Remove Task
                       </Button>
                     </Grid>
                   ) : (

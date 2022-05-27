@@ -371,6 +371,11 @@ export const manageTaskPublishCols = [
     width: '250px',
   },
   {
+    field: 'status',
+    header: 'Task Status',
+    width: '150px',
+  },
+  {
     field: 'dueDate',
     header: 'Due Date',
     width: '150px',

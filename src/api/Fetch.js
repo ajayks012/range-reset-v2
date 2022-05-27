@@ -45,6 +45,7 @@ const {
   PUBLISH_CAMUNDA_EVENT,
   PUT_CAMUNDA_CLAIM,
   DELETE_EVENTS_CAMUNDA,
+  PUT_CAMUNDA_MILESTONE_UPDATE,
   POST_RANGE_RESET_EVENT_ATTACHMENT,
 } = config
 
@@ -442,6 +443,13 @@ export const getEventDetailsById = (eventId) => {
 export const claimEventsCamunda = (taskId, req) => {
   let url = `${BASE_URL}${PUT_CAMUNDA_CLAIM}`
   url = url.replace('{taskId}', taskId)
+  let reqBody = `${JSON.stringify(req)}`
+  return serviceRequest(url, 'PUT', reqBody)
+}
+
+export const putCamundaMileStoneUpdate = (eventId, req) => {
+  let url = `${BASE_URL}${PUT_CAMUNDA_MILESTONE_UPDATE}`
+  url = url.replace('{eventId}', eventId)
   let reqBody = `${JSON.stringify(req)}`
   return serviceRequest(url, 'PUT', reqBody)
 }

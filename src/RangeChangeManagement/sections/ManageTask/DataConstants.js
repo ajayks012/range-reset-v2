@@ -153,8 +153,8 @@ export const confirmedTableCols = [
     width: '150px',
   },
   {
-    field: 'planogramClass',
-    // field: 'planogramClassString',
+    // field: 'planogramClass',
+    field: 'planogramClassString',
     header: 'Planogram Class',
     width: '150px',
   },

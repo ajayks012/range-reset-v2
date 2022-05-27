@@ -47,6 +47,9 @@ export const allMessages = {
     errorSave: 'Event failed to Save due to service error',
     errorRemoveTasks: 'Tasks failed to Remove due to service error',
     errorUpdateEvent: 'Event failed to Update due to service error',
+    errorCancelEvent: 'Event failed to cancel due to service error',
+    errorRemoveCompletedTasks:
+      'Failed to Remove - Completed Tasks cannot be Removed',
   },
   success: {
     successPost: 'Log posted successfully',
@@ -63,5 +66,6 @@ export const allMessages = {
     successSave: 'Event saved successfully',
     successRemoveTasks: 'Tasks removed successfully',
     successUpdateEvent: 'Event updated successfully',
+    successCancelEvent: 'Event cancelled successfully',
   },
 }
