@@ -216,7 +216,7 @@ function ManageEventCreate(props: any) {
   const [removeConfirm, setRemoveConfirm] = useState(false)
   const [publishConfirm, setPublishConfirm] = useState(false)
   const [launchDateConfirm, setLaunchDateConfirm] = useState(false)
-  const [launchDateOld, setLaunchDateOld] = useState<any>('')
+  const [launchDateOld, setLaunchDateOld] = useState<any>()
   const [launchDateNew, setLaunchDateNew] = useState<any>()
   const [dueDateErrorCount, setDueDateErrorCount] = useState<any>('')
   const [dueDateErrorOpen, setDueDateErrorOpen] = useState(false)
@@ -278,17 +278,22 @@ function ManageEventCreate(props: any) {
             tradeGroup: eventData.eventHeader.eventHierarchy.tradingGroup,
             eventId: eventData.eventId,
             taskIdEvent: eventData.taskId,
-            targetDate: eventData.eventHeader.eventLaunchDate,
-            appDueDate: eventData.eventHeader.rafAppDueDate,
+            targetDate:
+              eventData.eventHeader.eventLaunchDate &&
+              eventData.eventHeader.eventLaunchDate.split(' ')[0],
+            appDueDate: eventData.eventHeader.rafAppDueDate
+              ? eventData.eventHeader.rafAppDueDate.split(' ')[0]
+              : null,
             eventName: eventData.eventHeader.eventName,
             planogramClass:
               eventData.eventHeader.inventoryControl.planogramClass,
             clearancePriceCheck:
-              eventData.eventHeader.inventoryControl.clearancePriceApplied,
+              eventData.eventHeader.inventoryControl.isClearancePriceApplied,
             orderStopDateCheck:
-              eventData.eventHeader.inventoryControl.orderStopDateCheckRequired,
+              eventData.eventHeader.inventoryControl
+                .isOrderStopDateCheckRequired,
             stopOrder:
-              eventData.eventHeader.inventoryControl.stopOrderStockRundown,
+              eventData.eventHeader.inventoryControl.isStopOrderStockRundown,
             wastageRange:
               eventData.eventHeader.inventoryControl.storeWastetiming,
             buyerEmailId: {
@@ -369,7 +374,10 @@ function ManageEventCreate(props: any) {
             manageList[0].buyerEmailId.name = val.details.name
             manageList[0].buyerEmailId.userId = val.details.userId
           }
-          if (val.persona === 'Buying Assistant') {
+          if (
+            val.persona === 'Buying Assistant' ||
+            val.persona === 'Buyer Assistant'
+          ) {
             manageList[0].buyerAssistantEmailId.persona = val.persona
             manageList[0].buyerAssistantEmailId.emailId = val.details.emailId
             manageList[0].buyerAssistantEmailId.name = val.details.name
@@ -389,8 +397,8 @@ function ManageEventCreate(props: any) {
             manageList[0].ownBrandManagerEmailId.userId = val.details.userId
           }
           if (
-            val.persona === 'Senior Buying Manager' ||
-            val.persona === 'Senior Buying Manger'
+            val.persona === 'Sr. Buying Manager' ||
+            val.persona === 'Senior Buying Manager'
           ) {
             manageList[0].seniorBuyingManagerEmailId.persona = val.persona
             manageList[0].seniorBuyingManagerEmailId.emailId =
@@ -413,7 +421,10 @@ function ManageEventCreate(props: any) {
             manageList[0].categoryDirectorEmailId.name = val.details.name
             manageList[0].categoryDirectorEmailId.userId = val.details.userId
           }
-          if (val.persona === 'Supply Chain Specialist') {
+          if (
+            val.persona === 'Supply Chain Specialist' ||
+            val.persona === 'Supplychain Specialist'
+          ) {
             manageList[0].supplyChainAnalystEmailId.persona = val.persona
             manageList[0].supplyChainAnalystEmailId.emailId =
               val.details.emailId
@@ -437,17 +448,20 @@ function ManageEventCreate(props: any) {
           let roleIdUI =
             milestone.assigneeRole === 'Buyer'
               ? 'BUYER'
-              : milestone.assigneeRole === 'Buying Assistant'
+              : milestone.assigneeRole === 'Buying Assistant' ||
+                milestone.assigneeRole === 'Buyer Assistant'
               ? 'BYAST'
               : milestone.assigneeRole === 'Own Brand Manager'
               ? 'OWNBRM'
-              : milestone.assigneeRole === 'Senior Buying Manager'
+              : milestone.assigneeRole === 'Senior Buying Manager' ||
+                milestone.assigneeRole === 'Sr. Buying Manager'
               ? 'SRBYM'
               : milestone.assigneeRole === 'Merchandiser'
               ? 'MERCH'
               : milestone.assigneeRole === 'Category Director'
               ? 'CTDIR'
-              : milestone.assigneeRole === 'Supply Chain Specialist'
+              : milestone.assigneeRole === 'Supply Chain Specialist' ||
+                milestone.assigneeRole === 'Supplychain Specialist'
               ? 'SCSPL'
               : milestone.assigneeRole === 'Range Reset Manager'
               ? 'RRMNGR'
@@ -500,7 +514,8 @@ function ManageEventCreate(props: any) {
             }
           })
         setClassValues(classValue)
-        dueDateErrorCount === '' && setLaunchDateOld(manageList[0].targetDate)
+        // dueDateErrorCount === '' && setLaunchDateOld(manageList[0].targetDate)
+        !launchDateOld && setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
         if (
           eventData.eventStatus === 'Confirmed' ||
@@ -758,11 +773,17 @@ function ManageEventCreate(props: any) {
     let roleIdTask = ''
     if (userGroup === 'Buyer') {
       roleIdTask = 'BUYER'
-    } else if (userGroup === 'Buying Assistant') {
+    } else if (
+      userGroup === 'Buying Assistant' ||
+      userGroup === 'Buyer Assistant'
+    ) {
       roleIdTask = 'BYAST'
     } else if (userGroup === 'Own Brand Manager') {
       roleIdTask = 'OWNBRM'
-    } else if (userGroup === 'Senior Buying Manager') {
+    } else if (
+      userGroup === 'Senior Buying Manager' ||
+      userGroup === 'Sr. Buying Manager'
+    ) {
       roleIdTask = 'SRBYM'
     } else if (userGroup === 'Merchandiser') {
       roleIdTask = 'MERCH'
@@ -770,7 +791,10 @@ function ManageEventCreate(props: any) {
       roleIdTask = 'RRMNGR'
     } else if (userGroup === 'Category Director') {
       roleIdTask = 'CTDIR'
-    } else if (userGroup === 'Supply Chain Specialist') {
+    } else if (
+      userGroup === 'Supply Chain Specialist' ||
+      userGroup === 'Supplychain Specialist'
+    ) {
       roleIdTask = 'SCSPL'
     } else {
       roleIdTask = ''
@@ -813,7 +837,10 @@ function ManageEventCreate(props: any) {
                   setUserGroupValue(eventDetails[0].buyerEmailId.emailId)
                 }
               }
-            } else if (userGroup === 'Buying Assistant') {
+            } else if (
+              userGroup === 'Buying Assistant' ||
+              userGroup === 'Buyer Assistant'
+            ) {
               setAssistentAssign(userDetails)
               // setUserGroupValue(eventDetails[0].buyerAssistantEmailId.emailId)
               if (taskDetails) {
@@ -871,7 +898,10 @@ function ManageEventCreate(props: any) {
                   )
                 }
               }
-            } else if (userGroup === 'Senior Buying Manager') {
+            } else if (
+              userGroup === 'Senior Buying Manager' ||
+              userGroup === 'Sr. Buying Manager'
+            ) {
               setSrBuyerAssign(userDetails)
               // setUserGroupValue(
               //   eventDetails[0].seniorBuyingManagerEmailId.emailId
@@ -982,7 +1012,10 @@ function ManageEventCreate(props: any) {
                   )
                 }
               }
-            } else if (userGroup === 'Supply Chain Specialist') {
+            } else if (
+              userGroup === 'Supply Chain Specialist' ||
+              userGroup === 'Supplychain Specialist'
+            ) {
               setSupplyChainAssign(userDetails)
               // setUserGroupValue(
               //   eventDetails[0].supplyChainAnalystEmailId.emailId
@@ -1443,7 +1476,7 @@ function ManageEventCreate(props: any) {
         value={rowData['appDueDate'] ? rowData['appDueDate'] : null}
         onChange={(date: any) => {
           let newDate = date.toISOString().split('T')[0]
-          let dateVal = newDate + ' 01:00:00'
+          let dateVal = newDate
           setEventDetails((prevState: any) => {
             return [
               {
@@ -1466,8 +1499,10 @@ function ManageEventCreate(props: any) {
         format="dd/MM/yy"
         value={rowData['targetDate']}
         onChange={(date: any) => {
+          console.log(date)
+          // let date1 = new Date(date)
           let newDate = date.toISOString().split('T')[0]
-          let dateVal = newDate + ' 01:00:00'
+          let dateVal = newDate
           setEventDetails((prevState: any) => {
             return [
               {
@@ -1480,7 +1515,7 @@ function ManageEventCreate(props: any) {
           setLaunchDateConfirm(true)
         }}
         // minDate={rowData['appDueDate']}
-        minDate={new Date()}
+        // minDate={new Date()}
       />
     )
   }
@@ -1517,17 +1552,19 @@ function ManageEventCreate(props: any) {
   }
 
   const handleDueDateError = () => {
-    console.warn('setting back', launchDateOld)
+    console.error('setting back', launchDateOld)
+
     setEventDetails((prevState: any) => {
       return [
         {
           ...prevState[0],
-          targetDate: launchDateOld && launchDateOld,
+          targetDate: launchDateOld,
         },
       ]
     })
     // handlePublishEvent('ModifyAuto')
-    handlePublishEvent('dateChange')
+    launchDateOld === eventDetails.targetDate &&
+      handlePublishEvent('dateChange')
     setDueDateErrorOpen(false)
   }
 
@@ -1539,6 +1576,7 @@ function ManageEventCreate(props: any) {
     if (taskDetails) {
       let newDate = launchDateNew ? new Date(launchDateNew).getTime() : 0
       let oldDate = launchDateOld ? new Date(launchDateOld).getTime() : 0
+      let resetDate = launchDateOld
       console.log('date change', launchDateOld, launchDateNew)
       if (newDate != 0 && oldDate !== 0 && newDate !== oldDate) {
         let count: any = ''
@@ -1567,6 +1605,7 @@ function ManageEventCreate(props: any) {
           //   })
           //   handlePublishEvent('ModifyAuto')
           // }
+
           setDueDateErrorTasks(count)
           setDueDateErrorOpen(true)
         } else {
@@ -2546,6 +2585,7 @@ function ManageEventCreate(props: any) {
                       ' ' +
                       res.data.userdetails[0].user.lastName,
                     persona: res.data.userdetails[0].roles[0].roleName,
+                    // persona: 'Supply Chain Specialist',
                     roleId: res.data.userdetails[0].roles[0].roleId,
                     userId: res.data.userdetails[0].user.userId,
                   },
@@ -3503,7 +3543,7 @@ function ManageEventCreate(props: any) {
                       )
                     })}
                   {userGroup &&
-                    userGroup.toLowerCase() === 'buying assistant' &&
+                    userGroup.toLowerCase() === 'buyer assistant' &&
                     buyerAssistentAssign.map((b: any) => {
                       return (
                         <FormControlLabel
@@ -3520,7 +3560,7 @@ function ManageEventCreate(props: any) {
                     })}
 
                   {userGroup &&
-                    userGroup.toLowerCase() === 'senior buying manager' &&
+                    userGroup.toLowerCase() === 'sr. buying manager' &&
                     srBuyerAssign.map((b: any) => {
                       return (
                         <FormControlLabel
@@ -3600,7 +3640,7 @@ function ManageEventCreate(props: any) {
                       )
                     })}
                   {userGroup &&
-                    userGroup.toLowerCase() === 'supply chain specialist' &&
+                    userGroup.toLowerCase() === 'supplychain specialist' &&
                     supplyChainAssign.map((b: any) => {
                       return (
                         <FormControlLabel
@@ -3749,7 +3789,7 @@ function ManageEventCreate(props: any) {
     //   setSaveVisible(true)
     //   setToastRemove('save')
     // }
-    console.log(eventDetails)
+    console.error(eventDetails)
 
     const claimTaskData = {
       requestorDetails: {
@@ -3853,12 +3893,11 @@ function ManageEventCreate(props: any) {
 
     const eventTeamData = teamArr.map((val: any) => {
       return {
-        persona:
-          val.persona === 'Merchendiser'
-            ? 'Merchandiser'
-            : val.persona === 'Senior Buying Manger'
-            ? 'Senior Buying Manager'
-            : val.persona,
+        persona: val.persona,
+        // val.persona === 'Buyer Assistant' ? 'Buying Assistant' : val.persona,
+        // : val.persona === 'Senior Buying Manger'
+        // ? 'Senior Buying Manager'
+        // : val.persona,
         details: {
           emailId: val.emailId,
           userId: val.userId,
@@ -3895,8 +3934,10 @@ function ManageEventCreate(props: any) {
       },
       eventHeader: {
         resetType: eventDetails[0].resetType,
-        rafAppDueDate: eventDetails[0].appDueDate,
-        eventLaunchDate: eventDetails[0].targetDate,
+        rafAppDueDate: eventDetails[0].appDueDate
+          ? eventDetails[0].appDueDate + ' 01:00:00.00'
+          : null,
+        eventLaunchDate: eventDetails[0].targetDate + ' 01:00:00.00',
         eventName:
           eventDetails[0].eventName === ''
             ? eventPrevName

@@ -2841,7 +2841,7 @@ function CreateEvent(props: any) {
                   },
                 },
                 {
-                  persona: 'Senior Buying Manager',
+                  persona: 'Sr. Buying Manager',
                   details: {
                     emailId: data.seniorBuyingManagerEmailId,
                     userId: data.seniorBuyingManagerId,
@@ -2865,7 +2865,7 @@ function CreateEvent(props: any) {
                   },
                 },
                 {
-                  persona: 'Supply Chain Specialist',
+                  persona: 'Supplychain Specialist',
                   details: {
                     emailId: data.supplyChainAnalystEmailId,
                     userId: data.supplyChainAnalystId,
