@@ -114,6 +114,7 @@ export const confirmedTableCols = [
   },
   {
     field: 'eventStatus',
+    // field: 'status',
     header: 'Status',
     width: '100px',
   },

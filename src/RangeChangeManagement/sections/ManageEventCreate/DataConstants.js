@@ -438,11 +438,11 @@ export const userGroupOptions = [
     label: 'Buyer',
   },
   {
-    value: 'Buying Assistant',
-    label: 'Buying Assistant',
+    value: 'Buyer Assistant',
+    label: 'Buyer Assistant',
   },
   {
-    value: 'Senior Buying Manager',
+    value: 'Sr. Buying Manager',
     label: 'Senior Buying Manager',
   },
   {
@@ -458,7 +458,7 @@ export const userGroupOptions = [
     label: 'Merchandiser',
   },
   {
-    value: 'Supply Chain Specialist',
+    value: 'Supplychain Specialist',
     label: 'Supply Chain Specialist',
   },
   {

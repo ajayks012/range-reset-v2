@@ -484,6 +484,8 @@ function ManageEventCreate(props: any) {
               : '',
             visibility: milestone.visibility, //'ACTIVE',
             roleId: roleIdUI,
+
+            weeksPrior: milestone.weeksPrior,
           }
         })
         console.log(manageTask)
@@ -1515,7 +1517,7 @@ function ManageEventCreate(props: any) {
           setLaunchDateConfirm(true)
         }}
         // minDate={rowData['appDueDate']}
-        // minDate={new Date()}
+        minDate={new Date()}
       />
     )
   }
@@ -1554,17 +1556,9 @@ function ManageEventCreate(props: any) {
   const handleDueDateError = () => {
     console.error('setting back', launchDateOld)
 
-    setEventDetails((prevState: any) => {
-      return [
-        {
-          ...prevState[0],
-          targetDate: launchDateOld,
-        },
-      ]
-    })
     // handlePublishEvent('ModifyAuto')
-    launchDateOld === eventDetails.targetDate &&
-      handlePublishEvent('dateChange')
+    // launchDateOld === eventDetails.targetDate &&
+    handlePublishEvent('dateChange')
     setDueDateErrorOpen(false)
   }
 
@@ -1574,6 +1568,7 @@ function ManageEventCreate(props: any) {
 
   useEffect(() => {
     if (taskDetails) {
+      // setIsProgressLoader(true)
       let newDate = launchDateNew ? new Date(launchDateNew).getTime() : 0
       let oldDate = launchDateOld ? new Date(launchDateOld).getTime() : 0
       let resetDate = launchDateOld
@@ -1590,27 +1585,22 @@ function ManageEventCreate(props: any) {
         })
         setDueDateErrorCount(count)
         if (count != '') {
-          // setDueDateErrorOpen(true)
-          // let confirm: any = alert(
-          //   'Due Date of Task(s) is behind System date, The changes done will be reverted back to previous state'
-          // )
-          // if (confirm) {
-          //   setEventDetails((prevState: any) => {
-          //     return [
-          //       {
-          //         ...prevState[0],
-          //         targetDate: launchDateOld && launchDateOld,
-          //       },
-          //     ]
-          //   })
-          //   handlePublishEvent('ModifyAuto')
-          // }
+          setEventDetails((prevState: any) => {
+            return [
+              {
+                ...prevState[0],
+                targetDate: launchDateOld,
+              },
+            ]
+          })
 
           setDueDateErrorTasks(count)
           setDueDateErrorOpen(true)
+          // setIsProgressLoader(true)
         } else {
           setLaunchDateOld(launchDateNew)
           setLaunchDateNew('')
+          // setIsProgressLoader(true)
         }
       }
     }
@@ -1621,7 +1611,10 @@ function ManageEventCreate(props: any) {
       cancelOpen={dueDateErrorOpen}
       // handleCancel={cancelLaunchDateChange}
       // handleProceed={() => handlePublishEvent('ModifyAuto')}
-      handleProceed={handleDueDateError}
+      handleProceed={() => {
+        setDueDateErrorOpen(false)
+      }}
+      // handleProceed={handleDueDateError}
       label1="Due Date less than System Date"
       label2={
         <>
@@ -1629,7 +1622,7 @@ function ManageEventCreate(props: any) {
           <br />
           is behind System date
           <br />
-          The changes done will be reverted back to previous state
+          Change Launch date to valid date
         </>
       }
     />
@@ -2652,6 +2645,7 @@ function ManageEventCreate(props: any) {
             onChange={(event: any) => {
               console.log(event.target.value)
               setErrBuyer(false)
+              setBuyerConfirmed(false)
               if (event.target.value !== null) {
                 setEventDetails((prevState: any) => {
                   return [
@@ -3332,6 +3326,10 @@ function ManageEventCreate(props: any) {
     console.log('handleGroupValues', e.target.value)
     setUserGroupValue(e.target.value)
   }
+
+  useEffect(() => {
+    console.error(isProgressLoader)
+  }, [isProgressLoader])
 
   const handleGroupsOpen = (rowData: any) => {
     setUserGroupValue(rowData.emailId)

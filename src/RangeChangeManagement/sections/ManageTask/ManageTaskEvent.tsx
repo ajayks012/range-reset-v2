@@ -216,7 +216,8 @@ function ManageTaskEvent(props: any) {
 
   const [checkCount1, setCheckCount1] = React.useState(1)
   const [failureCount1, setFailureCount1] = React.useState(0)
-  const [disabled, setDisabled] = useState(false)
+  const [disablePublish, setDisablePublish] = useState(false)
+  const [disableDelete, setDisableDelete] = useState(false)
 
   useEffect(() => {
     console.log(selectedEvents)
@@ -231,7 +232,7 @@ function ManageTaskEvent(props: any) {
         console.log(res.data)
         if (res.data.length > 0) {
           const data = res.data
-            .filter((d: any) => d.status.toLowerCase() != 'cancelled')
+            // .filter((d: any) => d.status.toLowerCase() != 'cancelled')
             .map((d: any) => {
               return {
                 name: d.name,
@@ -1035,7 +1036,8 @@ function ManageTaskEvent(props: any) {
     if (
       data.status.toLowerCase() === 'draft' ||
       data.status.toLowerCase() === 'confirmed' ||
-      data.status.toLowerCase() === 'published'
+      data.status.toLowerCase() === 'published' ||
+      data.status.toLowerCase() === 'cancelled'
     ) {
       console.log([data])
       // let singleRow = [data]
@@ -1084,19 +1086,66 @@ function ManageTaskEvent(props: any) {
 
   useEffect(() => {
     if (selectedEvents && selectedEvents.length > 0) {
+      let deleteCount = 0
+      let publishCount = 0
       for (let i = 0; i < selectedEvents.length; i++) {
-        if (
-          selectedEvents &&
-          selectedEvents[i].status.toLowerCase() !== 'draft'
-        ) {
-          setDisabled(true)
-          break
+        // if (
+        //   selectedEvents &&
+        //   (selectedEvents[i].status.toLowerCase() === 'draft' ||
+        //     selectedEvents[i].status.toLowerCase() === 'published' ||
+        //     selectedEvents[i].status.toLowerCase() === 'confirmed' ||
+        //     selectedEvents[i].status.toLowerCase() === 'error')
+        // ) {
+        //   setDisableDelete(false)
+        // }
+        if (selectedEvents && selectedEvents[i].eventStatus) {
+          if (
+            selectedEvents &&
+            selectedEvents[i].eventStatus.toLowerCase() === 'cancelled'
+          ) {
+            // setDisableDelete(true)
+            // setDisablePublish(true)
+            // break
+            deleteCount = deleteCount + 1
+            publishCount = publishCount + 1
+          }
+          if (selectedEvents[i].eventStatus.toLowerCase() === 'error') {
+            // setDisablePublish(true)
+            // break
+            publishCount = publishCount + 1
+          }
+
+          if (selectedEvents[i].eventStatus.toLowerCase() === 'published') {
+            // setDisablePublish(true)
+            // break
+            publishCount = publishCount + 1
+          }
+
+          if (selectedEvents[i].eventStatus.toLowerCase() === 'confirmed') {
+            // setDisablePublish(true)
+            // break
+            publishCount = publishCount + 1
+          }
         } else {
-          setDisabled(false)
+          deleteCount = deleteCount + 1
+          publishCount = publishCount + 1
         }
       }
+      console.error('Publishcount', publishCount)
+      console.error('deletecount', deleteCount)
+      if (publishCount > 0) {
+        setDisablePublish(true)
+      } else {
+        setDisablePublish(false)
+      }
+      if (deleteCount > 0) {
+        setDisableDelete(true)
+      } else {
+        setDisableDelete(false)
+      }
     } else {
-      setDisabled(false)
+      setDisableDelete(false)
+      setDisablePublish(false)
     }
   }, [selectedEvents])
 
@@ -1862,10 +1911,17 @@ function ManageTaskEvent(props: any) {
             .then((res: any) => {
               console.log(res.data)
               if (res.data && res.data.eventAlert.eventId === null) {
+                // setFetchRangeResets((prevState:any)=>{
+                //   if(prevState.id===event.id){
+
+                //   }
+                // })
+
                 let _tasks = fetchRangeResets.filter(
                   (value: any) => !selectedEvents.includes(value)
                 )
                 console.log(_tasks)
+
                 setFailureCount((prevState) => prevState - 1)
                 setCheckCount((prevState) => prevState - 1)
                 setFetchRangeResets(_tasks)
@@ -1949,6 +2005,7 @@ function ManageTaskEvent(props: any) {
                       )
                       console.log(_tasks)
                       setFetchRangeResets(_tasks)
+
                       setFile(_tasks)
                     })
                     .catch((err2: any) => {
@@ -2247,6 +2304,7 @@ function ManageTaskEvent(props: any) {
           >
             <Column
               selectionMode="multiple"
+              // selectionMode="single"
               headerStyle={{
                 width: '50px',
                 color: 'white',
@@ -2318,6 +2376,7 @@ function ManageTaskEvent(props: any) {
           >
             <Column
               selectionMode="multiple"
+              // selectionMode="single"
               headerStyle={{
                 width: '50px',
                 color: 'white',
@@ -4032,13 +4091,14 @@ function ManageTaskEvent(props: any) {
                     // className={classes.whiteButton}
                     variant="outlined"
                     color="primary"
-                    disabled={
-                      selectedEvents
-                        ? selectedEvents.length === 0
-                          ? true
-                          : false
-                        : true
-                    }
+                    // disabled={
+                    //   selectedEvents
+                    //     ? selectedEvents.length === 0
+                    //       ? true
+                    //       : false
+                    //     : true
+                    // }
+                    disabled={disableDelete}
                   >
                     Delete Event
                   </Button>
@@ -4048,7 +4108,7 @@ function ManageTaskEvent(props: any) {
                     // className={classes.submitButtons}
                     variant="contained"
                     onClick={handlePublish}
-                    disabled={disabled}
+                    disabled={disablePublish}
                     color="primary"
                   >
                     Publish
