@@ -1131,8 +1131,8 @@ function ManageTaskEvent(props: any) {
           publishCount = publishCount + 1
         }
       }
-      console.error('Publishcount', publishCount)
-      console.error('deletecount', deleteCount)
+      // console.error('Publishcount', publishCount)
+      // console.error('deletecount', deleteCount)
       if (publishCount > 0) {
         setDisablePublish(true)
       } else {

@@ -3497,6 +3497,9 @@ function ManageEventCreate(props: any) {
                     //   className={classes.muiSelect}
                   />
                 }
+                disabled={
+                  singleTask && singleTask.status.toLowerCase() === 'completed'
+                }
               >
                 {userGroupOptions.map((type) => {
                   return (
@@ -3512,7 +3515,12 @@ function ManageEventCreate(props: any) {
               </Select>
             </Box>
             <Box>
-              <FormControl component="fieldset">
+              <FormControl
+                component="fieldset"
+                disabled={
+                  singleTask && singleTask.status.toLowerCase() === 'completed'
+                }
+              >
                 <RadioGroup onChange={handleGroupValues}>
                   {userGroup &&
                     userGroup.toLowerCase() === 'buyer' &&
@@ -3670,6 +3678,9 @@ function ManageEventCreate(props: any) {
             color="primary"
             className={classes.buttons}
             onClick={handleConfirmGroups}
+            disabled={
+              singleTask && singleTask.status.toLowerCase() === 'completed'
+            }
           >
             Save
           </Button>
