@@ -35,6 +35,7 @@ export const allMessages = {
     noTradingGroup: 'Please select a Trading Group',
     noCategory: 'Please select a Category',
     noDepartment: 'Please select a Department',
+    noEventName: 'Please select an Event Name',
     noLaunchDate: 'Please select a Launch Date',
     noRafDueDate: 'Please select a Raf due date',
     effectiveDateError:

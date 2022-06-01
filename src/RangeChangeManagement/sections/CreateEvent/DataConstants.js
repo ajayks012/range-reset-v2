@@ -268,6 +268,7 @@ export const errorArrayMessage = {
   tradingGroup: 'Trading Group',
   category: 'Category',
   department: 'Department',
+  eventName: 'Event Name',
   launchDate: 'Launch Date',
   planogramClass: 'Planogram Class',
   wastageRange: 'Wastage Range',
@@ -282,5 +283,5 @@ export const errorArrayMessage = {
   clearancePriceCheck: 'Clearance Price Check',
   orderStopDateCheck: 'Order Stop Date Check',
   stopOrder: 'Stop Order',
-  camundaError: 'Camunda Workflow'
+  camundaError: 'Camunda Workflow',
 }

@@ -447,7 +447,8 @@ function ManageTaskEvent(props: any) {
                 !(
                   item.status.toLowerCase() === 'draft' ||
                   item.status.toLowerCase() === 'confirmed' ||
-                  item.status.toLowerCase() === 'published'
+                  item.status.toLowerCase() === 'published' ||
+                  item.status.toLowerCase() === 'cancelled'
                 )
               ) {
                 errorData.push(item)
@@ -1669,7 +1670,7 @@ function ManageTaskEvent(props: any) {
                 console.log(name)
                 return name
               } else {
-                return 'Event Name'
+                return ''
               }
             }
 

@@ -19,7 +19,7 @@ import {
   SeniorBuyingManagers,
   SupplyChainSpecialists,
   CategoryDirectors,
-  classOptions,
+  // classOptions,
   // resetTypes,
   groups,
   categories,
@@ -73,6 +73,7 @@ import {
   postFileAttachmentRangeResetAPI,
   putCamundaMileStoneUpdate,
   deleteEventsCamunda,
+  getPlanogramClasses,
 } from '../../../api/Fetch'
 import SearchSelect from '../../components/SearchSelect/SearchSelect'
 import ConfirmCheckSign from '../../components/ConfirmCheck/ConfirmCheckSign'
@@ -166,6 +167,7 @@ function ManageEventCreate(props: any) {
   const [groupOptions, setGroupOptions] = useState<any>([])
   const [categoryOptions, setCategoryOptions] = useState<any>([])
   const [departmentOptions, setDepartmentOptions] = useState<any>([])
+  const [classOptions, setClassOptions] = useState<any>([])
   const [wastageRangeOptions, setWastageRangeOptions] = useState<any>([])
   const [errBuyer, setErrBuyer] = useState<any>(false)
   const [buyerError1, setBuyerError1] = useState<any>('')
@@ -751,6 +753,18 @@ function ManageEventCreate(props: any) {
           })
     }
   }, [catVal])
+
+  useEffect(() => {
+    getPlanogramClasses().then((res: any) => {
+      const options = res.data.map((item: any) => {
+        return {
+          value: item.configValue,
+          label: item.configValue,
+        }
+      })
+      setClassOptions(options)
+    })
+  }, [])
 
   useEffect(() => {
     getWastageRanges()
@@ -1495,27 +1509,60 @@ function ManageEventCreate(props: any) {
     )
   }
 
+  const handleLaunchDate = (date: any) => {
+    console.log(date)
+    // let date1 = new Date(date)
+    let newDate = date.toISOString().split('T')[0]
+    let dateVal = newDate
+    let department = eventDetails && eventDetails[0].department
+    let launchDate = date
+    if (eventDetails && department && launchDate) {
+      // var lDate = new Date(launchDate)
+      // console.log(lDate)
+      var name =
+        department.replace(/ /g, '_') +
+        '_' +
+        launchDate.getDate() +
+        launchDate.toLocaleString('default', { month: 'short' }) +
+        launchDate.getFullYear()
+      console.log(name)
+      setEventName(name)
+      setEventDetails((prevState: any) => {
+        return [
+          {
+            ...prevState[0],
+            targetDate: dateVal,
+            eventName: name,
+          },
+        ]
+      })
+    }
+    setLaunchDateNew(dateVal)
+    setLaunchDateConfirm(true)
+  }
+
   const launchDateTemplate = (rowData: any) => {
     return (
       <DatePicker
         format="dd/MM/yy"
         value={rowData['targetDate']}
-        onChange={(date: any) => {
-          console.log(date)
-          // let date1 = new Date(date)
-          let newDate = date.toISOString().split('T')[0]
-          let dateVal = newDate
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                targetDate: dateVal,
-              },
-            ]
-          })
-          setLaunchDateNew(dateVal)
-          setLaunchDateConfirm(true)
-        }}
+        onChange={handleLaunchDate}
+        // onChange={(date: any) => {
+        //   console.log(date)
+        //   // let date1 = new Date(date)
+        //   let newDate = date.toISOString().split('T')[0]
+        //   let dateVal = newDate
+        //   setEventDetails((prevState: any) => {
+        //     return [
+        //       {
+        //         ...prevState[0],
+        //         targetDate: dateVal,
+        //       },
+        //     ]
+        //   })
+        //   setLaunchDateNew(dateVal)
+        //   setLaunchDateConfirm(true)
+        // }}
         // minDate={rowData['appDueDate']}
         minDate={new Date()}
       />
@@ -1754,15 +1801,43 @@ function ManageEventCreate(props: any) {
     })
   }
   const eventHandleDetailsDepartment = (e: any) => {
-    setEventDetails((prevState: any) => {
-      setDepVal(e.target.value)
-      return [
-        {
-          ...prevState[0],
-          department: e.target.value,
-        },
-      ]
-    })
+    let department = e.target.value
+    let launchDate = eventDetails[0].targetDate
+    // let ldate = eventDetails[0].launchDate
+    console.log(department)
+    console.log(launchDate)
+    if (department && launchDate) {
+      var lDate = new Date(launchDate)
+      console.log(lDate)
+      var name =
+        department.replace(/ /g, '_') +
+        '_' +
+        lDate.getDate() +
+        lDate.toLocaleString('default', { month: 'short' }) +
+        lDate.getFullYear()
+      console.log(name)
+      setEventName(name)
+      setEventDetails((prevState: any) => {
+        setDepVal(e.target.value)
+        return [
+          {
+            ...prevState[0],
+            department: e.target.value,
+            eventName: name,
+          },
+        ]
+      })
+    } else {
+      setEventDetails((prevState: any) => {
+        setDepVal(e.target.value)
+        return [
+          {
+            ...prevState[0],
+            department: e.target.value,
+          },
+        ]
+      })
+    }
   }
 
   const groupTemplate = (rowData: any) => {
@@ -1939,6 +2014,7 @@ function ManageEventCreate(props: any) {
             })
           }
         }}
+        disabled
       />
     )
   }
@@ -2236,7 +2312,11 @@ function ManageEventCreate(props: any) {
     dataUser: any
   ) => {
     taskUserChange.forEach((val: any) => {
-      if (roleId === val.roleId && val.visibility !== 'Removed') {
+      if (
+        roleId === val.roleId &&
+        val.visibility !== 'Removed' &&
+        val.status !== 'Completed'
+      ) {
         val.emailId = dataUser.emailId
         val.name = dataUser.firstName + ' ' + dataUser.lastName
         val.userId = dataUser.userId
@@ -3749,7 +3829,7 @@ function ManageEventCreate(props: any) {
   // }
 
   const handleToaster = () => {
-    if (toastRemove === 'publish') {
+    if (toastRemove === 'publish' || toastRemove === 'cancel') {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     }
   }
@@ -3786,7 +3866,7 @@ function ManageEventCreate(props: any) {
       reviewDecision = 'ModifyAuto'
       errorMsg = allMessages.error.errorSave
       successMsg = allMessages.success.successSave
-    } else if (clickState === 'Cancel') {
+    } else if (clickState === 'cancel') {
       reviewDecision = 'Cancel'
       eventState = 'Cancelled'
     }
@@ -3997,7 +4077,7 @@ function ManageEventCreate(props: any) {
     }
     //1 cancel when published
     if (
-      clickState === 'Cancel' &&
+      clickState === 'cancel' &&
       eventDetails[0].eventStatus === 'Published'
     ) {
       callCancelWhenPublish(
@@ -4587,7 +4667,12 @@ function ManageEventCreate(props: any) {
                         // onClick={removeTasks}
                         // onClick={() => handlePublishEvent('Cancel')}
                         // onClick={() => setRemoveTaskOpen(true)}
-                        onClick={() => handlePublishEvent('Cancel')}
+                        onClick={() => handlePublishEvent('cancel')}
+                        disabled={
+                          eventDetails &&
+                          eventDetails[0].eventStatus.toLowerCase() ===
+                            'cancelled'
+                        }
                       >
                         Cancel Event
                       </Button>
@@ -4615,6 +4700,11 @@ function ManageEventCreate(props: any) {
                         // onClick={() => handlePublishEvent('ModifySave')}
                         // onClick={() => setsaveEventTaskButton(true)}
                         onClick={() => setRemoveConfirm(true)}
+                        disabled={
+                          eventDetails &&
+                          eventDetails[0].eventStatus.toLowerCase() ===
+                            'cancelled'
+                        }
                       >
                         Remove Task
                       </Button>
@@ -4653,6 +4743,11 @@ function ManageEventCreate(props: any) {
                             // type="submit"
                             // onClick={() => handlePublishEvent('Confirmed')}
                             onClick={() => setUpdateEventOpen(true)}
+                            disabled={
+                              eventDetails &&
+                              eventDetails[0].eventStatus.toLowerCase() ===
+                                'cancelled'
+                            }
                           >
                             Update Event
                           </Button>

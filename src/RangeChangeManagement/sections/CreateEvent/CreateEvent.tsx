@@ -161,6 +161,7 @@ function CreateEvent(props: any) {
   const [errCategory, setErrCategory] = useState<any>(false)
   const [errDepartment, setErrDepartment] = useState<any>(false)
   const [errLaunchDate, setErrLaunchDate] = useState<any>(false)
+  const [errEventName, setErrEventName] = useState<any>(false)
   const [errWastageRange, setErrWastageRange] = useState<any>(false)
   const [errPlanogramClass, setErrPlanogramClass] = useState<any>(false)
   const [errBuyer, setErrBuyer] = useState<any>(false)
@@ -185,6 +186,7 @@ function CreateEvent(props: any) {
   const [categoryError1, setCategoryGError1] = useState<any>('')
   const [departmentError1, setDepartmentError1] = useState<any>('')
   const [launchError1, setLaunchError1] = useState<any>('')
+  const [eventNameErr1, setEventNameErr1] = useState<any>('')
   const [planogramClassError1, setPlanogramClassError1] = useState<any>('')
   const [wastageRangeError1, setWastageRangeError1] = useState<any>('')
   const [buyerError1, setBuyerError1] = useState<any>('')
@@ -216,6 +218,7 @@ function CreateEvent(props: any) {
   const focusDepartment = useRef<any>(null)
   const focusCategory = useRef<any>(null)
   const focusLaunchDate = useRef<any>(null)
+  const focusEventName = useRef<any>(null)
   const focusRafDueDate = useRef<any>(null)
   const focusBuyer = useRef<any>(null)
   const focusCategoryDirector = useRef<any>(null)
@@ -325,6 +328,13 @@ function CreateEvent(props: any) {
       // if (key === 'Launch Date') {
       if (key === errorArrayMessage.launchDate) {
         newData.targetDateError = value
+        console.log(newData)
+        count = count + 1
+        // setErrorFile(newData)
+      }
+
+      if (key === errorArrayMessage.eventName) {
+        newData.eventNameError = value
         console.log(newData)
         count = count + 1
         // setErrorFile(newData)
@@ -898,6 +908,23 @@ function CreateEvent(props: any) {
         }
       }
 
+      if (value.hasOwnProperty('eventNameError')) {
+        setErrLaunchDate(true)
+        setLaunchError1(value.eventNameError)
+        if (value.hasOwnProperty('name')) {
+          if (value.name) {
+            setEventName(value.name)
+          }
+        } else {
+          setEventName('')
+        }
+      } else {
+        console.log(value.name)
+        if (value.name) {
+          setEventName(value.name)
+        }
+      }
+
       if (value.hasOwnProperty('planogramClassError')) {
         setErrPlanogramClass(true)
         setPlanogramClassError1(value.planogramClassError)
@@ -1441,6 +1468,8 @@ function CreateEvent(props: any) {
       setErrDepartment(false)
       setIsPageModified(true)
       setDepartment(e)
+      setErrEventName(false)
+      setEventNameErr1('')
     } else {
       setDepartment('')
     }
@@ -2191,17 +2220,29 @@ function CreateEvent(props: any) {
       setTradingGError1(allMessages.error.noTradingGroup)
       focusGroup.current.focus()
     }
-    if (!category || category === null || category === undefined) {
+    // if (!category || category === null || category === undefined) {
+    //   flag = 0
+    //   setErrCategory(true)
+    //   setCategoryGError1(allMessages.error.noCategory)
+    //   focusCategory.current.focus()
+    // }
+    // if (!department || department === null || department === undefined) {
+    //   flag = 0
+    //   setErrDepartment(true)
+    //   setDepartmentError1(allMessages.error.noDepartment)
+    //   focusDepartment.current.focus()
+    // }
+    if (
+      (!department || department === null || department === undefined) &&
+      eventName === ''
+    ) {
       flag = 0
-      setErrCategory(true)
-      setCategoryGError1(allMessages.error.noCategory)
-      focusCategory.current.focus()
+      setErrEventName(true)
+      setEventNameErr1(allMessages.error.noEventName)
+      focusEventName.current.focus()
     }
-    if (!department || department === null || department === undefined) {
+    if (errEventName) {
       flag = 0
-      setErrDepartment(true)
-      setDepartmentError1(allMessages.error.noDepartment)
-      focusDepartment.current.focus()
     }
     if (!launchDate || launchDate === null || launchDate === undefined) {
       flag = 0
@@ -2221,7 +2262,15 @@ function CreateEvent(props: any) {
           lDate.getFullYear()
         console.log(name)
         setEventName(name)
+      } else {
+        setErrEventName(true)
+        setEventNameErr1(allMessages.error.noEventName)
+        focusEventName.current.focus()
       }
+    } else {
+      setErrEventName(false)
+      setEventNameErr1('')
+      // focusEventName.current.focus()
     }
     if (errBuyer) {
       flag = 0
@@ -2443,10 +2492,10 @@ function CreateEvent(props: any) {
           // uniqueId: uniqueId,
           resetType: resetType.value,
           tradeGroup: group.groupName,
-          categoryId: category.categoryId,
-          category: category.categoryName,
-          department: department.departmentName,
-          departmentId: department.departmentId,
+          //categoryId: category.categoryId,
+          category: category ? category.categoryName : null,
+          department: department ? department.departmentName : null,
+          //departmentId: department.departmentId,
           targetDate: `${launchDate} ${'01:00:00.00'}`,
           appDueDate: rafDueDate ? `${rafDueDate} ${'01:00:00.00'}` : null,
           name: eventName,
@@ -4218,7 +4267,7 @@ function CreateEvent(props: any) {
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
                       Category
-                      {requiredStar}
+                      {/* {requiredStar} */}
                     </Typography>
                   </Grid>
 
@@ -4299,7 +4348,7 @@ function CreateEvent(props: any) {
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
                       Department
-                      {requiredStar}
+                      {/* {requiredStar} */}
                     </Typography>
                   </Grid>
 
@@ -4487,6 +4536,24 @@ function CreateEvent(props: any) {
                   <Grid item xl={5} lg={5} md={5} sm={5} xs={12}>
                     <Typography variant="subtitle2" color="primary">
                       Event Name
+                      <LightTooltip
+                        title={
+                          <>
+                            <Typography variant="body2">
+                              Event Name is mandatory when department is not
+                              selected
+                            </Typography>
+                          </>
+                        }
+                        position={'top'}
+                        icon={
+                          <InfoIcon
+                            color="secondary"
+                            fontSize="small"
+                            style={{ padding: '3px' }}
+                          />
+                        }
+                      />
                     </Typography>
                   </Grid>
 
@@ -4509,8 +4576,18 @@ function CreateEvent(props: any) {
                         className={classes.inputFields}
                         onChange={(e) => {
                           setEventName(e.target.value)
+                          setErrEventName(false)
+                          setEventNameErr1('')
                         }}
+                        ref={focusEventName}
                       />
+                    </Typography>
+                    <Typography variant="subtitle2" color="primary">
+                      {errEventName && (
+                        <span className={classes.errorMessageColor}>
+                          {eventNameErr1}
+                        </span>
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
