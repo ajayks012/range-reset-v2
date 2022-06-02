@@ -217,6 +217,7 @@ function ManageEventCreate(props: any) {
   const [saveConfirm, setSaveConfirm] = useState(false)
   const [removeConfirm, setRemoveConfirm] = useState(false)
   const [publishConfirm, setPublishConfirm] = useState(false)
+  const [cancelConfirm, setCancelConfirm] = useState(false)
   const [launchDateConfirm, setLaunchDateConfirm] = useState(false)
   const [launchDateOld, setLaunchDateOld] = useState<any>()
   const [launchDateNew, setLaunchDateNew] = useState<any>()
@@ -4413,6 +4414,20 @@ function ManageEventCreate(props: any) {
     />
   )
 
+  const confirmCancelDialog = (
+    <ConfirmBox
+      cancelOpen={cancelConfirm}
+      handleCancel={() => setCancelConfirm(false)}
+      // handleProceed={() => handlePublishEvent('Confirmed')}
+      handleProceed={() => {
+        setCancelConfirm(false)
+        handlePublishEvent('cancel')
+      }}
+      label1="Confirm 'Cancel'"
+      label2="Are you sure you want to Cancel the Event?"
+    />
+  )
+
   const rowClass = (data: any) => {
     return {
       'row-accessories': data.visibility === 'Removed', //"Disabled"
@@ -4667,7 +4682,7 @@ function ManageEventCreate(props: any) {
                         // onClick={removeTasks}
                         // onClick={() => handlePublishEvent('Cancel')}
                         // onClick={() => setRemoveTaskOpen(true)}
-                        onClick={() => handlePublishEvent('cancel')}
+                        onClick={() => setCancelConfirm(true)}
                         disabled={
                           eventDetails &&
                           eventDetails[0].eventStatus.toLowerCase() ===
@@ -4770,6 +4785,7 @@ function ManageEventCreate(props: any) {
       {confirmSaveDialog}
       {confirmRemoveDialog}
       {confirmPublishDialog}
+      {confirmCancelDialog}
       {confirmLaunchDateDialog}
       {confirmDueDateChangeDialog}
     </>
