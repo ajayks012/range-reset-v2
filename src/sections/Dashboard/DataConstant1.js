@@ -114,7 +114,7 @@ export const userTaskDashboard = [
       url: '#',
       taskDetails: [
         {
-          missedOrOverdue: 2,
+          missedOrOverdue: 5,
           //  [
           //   2,
           //   {
@@ -124,7 +124,7 @@ export const userTaskDashboard = [
           //     title: 'task 2',
           //   },
           // ],
-          rejected: 3,
+          rejected: 6,
           // [
           //   3,
           //   {
@@ -137,7 +137,7 @@ export const userTaskDashboard = [
           //     title: 'task 3',
           //   },
           // ],
-          currentWeek: 2,
+          currentWeek: 3,
           //  [
           //   2,
           //   {
@@ -147,7 +147,7 @@ export const userTaskDashboard = [
           //     title: 'task 2',
           //   },
           // ],
-          nextWeek: 3,
+          nextWeek: 4,
           // [
           //   2,
           //   {
@@ -177,7 +177,7 @@ export const userTaskDashboard = [
           //     title: 'task 2',
           //   },
           // ],
-          total: 15,
+          total: 17,
           // [
           //   2,
           //   {
@@ -753,21 +753,26 @@ export const mySecondTableCols = [
   {
     header: 'Current Week',
     field: 'currentWeek',
+    minWidth: '60px',
   },
   {
     header: 'Next Week',
     field: 'nextWeek',
+    minWidth: '60px',
   },
   {
     header: 'Week 2 to Week 5',
     field: 'weekTwoToFive',
+    minWidth: '60px',
   },
   {
     header: '> Week 5',
     field: 'weekMoreThanFive',
+    minWidth: '60px',
   },
   {
     header: 'Total',
     field: 'total',
+    minWidth: '60px',
   },
 ]

@@ -47,6 +47,7 @@ import { Column } from 'primereact/column'
 const useStyles = makeStyles((theme) => ({
   card: {
     margin: theme.spacing(2),
+    // minHeight: '422px',
   },
   spacing: {
     margin: theme.spacing(2),
@@ -110,7 +111,7 @@ const useStyles = makeStyles((theme) => ({
 function Dashboard1(props: any) {
   const [newMap, setNewMap] = useState<Array<any>>([])
   const theme = useTheme()
-  const active = useMediaQuery(theme.breakpoints.down(700))
+  const active = useMediaQuery(theme.breakpoints.down('sm'))
   const [isProgressLoader, setIsProgressLoader] = useState(false)
   const [tabValue, setTabValue] = useState(0)
   const [table1Data, setTable1Data] = useState<any>([])
@@ -256,9 +257,21 @@ function Dashboard1(props: any) {
         userDetail.userdetails &&
         userDetail.userdetails[0].roles.map((rl: any) => rl.roleId)
       let adminqn = false
+      let eventAccess = false
       for (let ad = 0; ad < admins.length; ad++) {
         if (rolelist.includes(admins[ad])) {
           adminqn = true
+          break
+        }
+      }
+      for (let accEvent = 0; accEvent < rolelist.length; accEvent++) {
+        if (
+          rolelist.includes('RRMNGR') ||
+          rolelist.includes('BUYER') ||
+          rolelist.includes('SRBYM') ||
+          rolelist.includes('CTDIR')
+        ) {
+          eventAccess = true
           break
         }
       }
@@ -300,6 +313,7 @@ function Dashboard1(props: any) {
             //     : 0
             item.myGroup.pendingActions =
               // adminqn &&
+              eventAccess &&
               eventGroupPendingAction.length > 0 &&
               eventGroupPendingAction[0].tasks.length > 0
                 ? eventGroupPendingAction[0].tasks.length
@@ -366,7 +380,7 @@ function Dashboard1(props: any) {
           newMap.map((dash, index) => {
             if (dash.value !== 'rangechangemanagement') {
               return (
-                <Grid item xl={6} lg={6} md={6} sm={6} xs={12} key={index}>
+                <Grid item xl={6} lg={6} md={6} sm={12} xs={12} key={index}>
                   <Card className={classes.card}>
                     <CardHeader
                       className="dashbordHeading"
@@ -374,14 +388,19 @@ function Dashboard1(props: any) {
                       //className={classes.header}
                       titleTypographyProps={{ variant: 'body1' }}
                     />
-                    <CardContent>
-                      <Grid container spacing={2}>
+                    <CardContent style={{ height: !active ? '424px' : '100%' }}>
+                      <Grid
+                        container
+                        spacing={2}
+                        style={{ height: '100%', alignItems: 'normal' }}
+                      >
                         <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
                           <table
                             cellSpacing={5}
                             style={{
                               width: '100%',
                               textAlign: 'left',
+                              height: '100%',
                             }}
                           >
                             <tbody>
@@ -532,7 +551,7 @@ function Dashboard1(props: any) {
               )
             } else {
               return (
-                <Grid item xl={6} lg={6} md={6} sm={6} xs={12} key={index}>
+                <Grid item xl={6} lg={6} md={6} sm={12} xs={12} key={index}>
                   <Card className={classes.card}>
                     <CardHeader
                       className="dashbordHeading"
@@ -540,8 +559,12 @@ function Dashboard1(props: any) {
                       //className={classes.header}
                       titleTypographyProps={{ variant: 'body1' }}
                     />
-                    <CardContent>
-                      <Grid container spacing={2}>
+                    <CardContent style={{ height: !active ? '424px' : '100%' }}>
+                      <Grid
+                        container
+                        spacing={2}
+                        style={{ height: '100%', alignItems: 'normal' }}
+                      >
                         <Grid
                           item
                           container
@@ -613,7 +636,9 @@ function Dashboard1(props: any) {
                             onChange={(event, newValue) => {
                               setTabValue(newValue)
                             }}
-                            style={{ width: '100%' }}
+                            variant="fullWidth"
+                            // style={{ width: '100%' }}
+                            scrollButtons="auto"
                           >
                             <Tab label="My Task" value={0} />
                             <Tab label="Group Tasks" value={1} />
@@ -662,7 +687,11 @@ function Dashboard1(props: any) {
                                 )}
                               </DataTable>
 
-                              <DataTable value={table1Data} showGridlines>
+                              <DataTable
+                                value={table1Data}
+                                showGridlines
+                                scrollable
+                              >
                                 {mySecondTableCols.map(
                                   (col: any, index: any) => {
                                     return (
@@ -679,17 +708,19 @@ function Dashboard1(props: any) {
                                         bodyStyle={{
                                           fontSize: '12px',
                                           padding: '8px',
-                                          // height: '43px',
-                                          overflowX: 'auto',
+
+                                          // overflowX: 'auto',
                                           // color: theme.palette.error.main,
                                           textAlign: 'center',
                                           fontWeight: 'bold',
                                         }}
+                                        // style={{ width: col.minWidth }}
                                         headerStyle={{
                                           color: 'white',
                                           backgroundColor:
                                             theme.palette.primary.main,
                                           // fontSize: '0.9rem',
+                                          // width: col.minWidth,
                                           fontSize: '12px',
                                           padding: '8px',
                                           height: 'auto',

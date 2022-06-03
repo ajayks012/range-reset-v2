@@ -673,6 +673,7 @@ function RcmGroupPendingActions(props: any) {
                       // size="small"
                       // onClick={handleAssign}
                       onClick={() => unassignUser && setOpenAssignDialog(true)}
+                      disabled={true}
                     >
                       Assign to Other
                     </Button>

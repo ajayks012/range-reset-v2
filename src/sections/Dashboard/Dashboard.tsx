@@ -327,7 +327,7 @@ function Dashboard(props: any) {
             <Grid item xl={6} lg={6} md={6} sm={6} xs={12} key={index}>
               <Card className={classes.card}>
                 <CardHeader
-                  className="dashbordHeading"
+                  Name="dashbordHeading"
                   title={dash.title}
                   //className={classes.header}
                   titleTypographyProps={{ variant: 'body1' }}
