@@ -476,7 +476,7 @@ function RcmGroupPendingActions(props: any) {
                       }}
                     >
                       <Typography variant="h6">
-                        Group Task {'>'} Unassigned
+                        Group Task {'>'} Pending Actions
                       </Typography>
                     </Box>
                     <Box
