@@ -112,6 +112,9 @@ const useStyles = makeStyles((theme) => ({
     'font-size': '14px',
     'font-weight': 'bold',
   },
+  tabButton: {
+    width: '100%',
+  },
 }))
 
 function Dashboard1(props: any) {
@@ -701,6 +704,7 @@ function Dashboard1(props: any) {
                                     tabValue === 0 ? 'contained' : 'text'
                                   }
                                   color="primary"
+                                  className={classes.tabButton}
                                 >
                                   My Tasks
                                 </Button>
@@ -717,6 +721,7 @@ function Dashboard1(props: any) {
                                     tabValue === 1 ? 'contained' : 'text'
                                   }
                                   color="primary"
+                                  className={classes.tabButton}
                                 >
                                   Group Tasks
                                 </Button>
