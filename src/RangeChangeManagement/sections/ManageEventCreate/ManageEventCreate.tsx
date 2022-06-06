@@ -192,6 +192,7 @@ function ManageEventCreate(props: any) {
     useState<any>('')
   const [uploadedFile, setUploadedFile] = useState<any>()
   const [confirmEnDis, setConfirmEnDis] = useState<any>(false)
+  const [cancelledEvent, setCancelledEvent] = useState<any>(false)
   const [publishVisible, setPublishVisible] = useState(true)
   const [saveVisible, setSaveVisible] = useState(false)
   const [buyerAssign, setBuyerAssign] = useState([])
@@ -528,6 +529,8 @@ function ManageEventCreate(props: any) {
         ) {
           console.log('Confirmedddddddd', eventData.eventStatus)
           setConfirmEnDis(true)
+        } else if (eventData.eventStatus === 'Cancelled') {
+          setCancelledEvent(true)
         }
         setIsProgressLoader(false)
       })
@@ -1489,6 +1492,7 @@ function ManageEventCreate(props: any) {
     return (
       <DatePicker
         // disabled={confirmEnDis ? true : false}
+        disabled={confirmEnDis ? false : cancelledEvent}
         format="dd/MM/yy"
         value={rowData['appDueDate'] ? rowData['appDueDate'] : null}
         onChange={(date: any) => {
@@ -1566,6 +1570,7 @@ function ManageEventCreate(props: any) {
         // }}
         // minDate={rowData['appDueDate']}
         minDate={new Date()}
+        disabled={confirmEnDis ? false : cancelledEvent}
       />
     )
   }
@@ -1846,7 +1851,7 @@ function ManageEventCreate(props: any) {
     return (
       <Select
         // value={val > -1 ? groups[val].name : rowData.tradeGroup}
-        disabled={confirmEnDis ? true : false}
+        disabled={confirmEnDis || cancelledEvent}
         value={grpVal}
         onChange={(e) => eventHandleDetails(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
@@ -1894,7 +1899,8 @@ function ManageEventCreate(props: any) {
       //     <option value="Frozen Food">Frozen Food</option>
       //   </select>
       <Select
-        disabled={confirmEnDis ? true : false}
+        // disabled={confirmEnDis ? true : false}
+        disabled={confirmEnDis || cancelledEvent}
         value={catVal}
         onChange={(e) => eventHandleDetailsCategory(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
@@ -1948,7 +1954,8 @@ function ManageEventCreate(props: any) {
       //     </select>
       //   </Typography>
       <Select
-        disabled={confirmEnDis}
+        // disabled={confirmEnDis}
+        disabled={confirmEnDis || cancelledEvent}
         value={depVal}
         onChange={(e) => eventHandleDetailsDepartment(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
@@ -2000,6 +2007,7 @@ function ManageEventCreate(props: any) {
       //   />
       <OutlinedInput
         // disabled={confirmEnDis}
+        disabled={confirmEnDis || cancelledEvent}
         margin="dense"
         className={classes.muiSelect}
         value={rowData.eventName}
@@ -2015,7 +2023,7 @@ function ManageEventCreate(props: any) {
             })
           }
         }}
-        disabled
+        // disabled
       />
     )
   }
@@ -2031,7 +2039,8 @@ function ManageEventCreate(props: any) {
         return (
           <Typography>
             <button
-              disabled={confirmEnDis}
+              // disabled={confirmEnDis}
+              disabled={confirmEnDis || cancelledEvent}
               className={classes.backButton}
               type="button"
               onClick={() => setClassOpen(true)}
@@ -2047,7 +2056,8 @@ function ManageEventCreate(props: any) {
         return (
           <Typography variant="body2">
             <button
-              disabled={confirmEnDis}
+              // disabled={confirmEnDis}
+              disabled={confirmEnDis || cancelledEvent}
               className={classes.backButton}
               type="button"
               onClick={() => setClassOpen(true)}
@@ -2061,7 +2071,8 @@ function ManageEventCreate(props: any) {
       return (
         <Typography variant="body2">
           <button
-            disabled={confirmEnDis}
+            // disabled={confirmEnDis}
+            disabled={confirmEnDis || cancelledEvent}
             className={classes.backButton}
             type="button"
             onClick={() => setClassOpen(true)}
@@ -2093,7 +2104,8 @@ function ManageEventCreate(props: any) {
     return (
       <>
         <Select
-          disabled={confirmEnDis}
+          // disabled={confirmEnDis}
+          disabled={confirmEnDis || cancelledEvent}
           value={index > -1 && rowData.wastageRange}
           onChange={handleWastagRange}
           input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
@@ -2156,7 +2168,8 @@ function ManageEventCreate(props: any) {
       //   </select>
 
       <Select
-        disabled={confirmEnDis}
+        // disabled={confirmEnDis}
+        disabled={confirmEnDis || cancelledEvent}
         // value={
         //   rowData.clearancePriceApplied === 'Yes'
         //     ? 'y'
@@ -2225,7 +2238,8 @@ function ManageEventCreate(props: any) {
         //     ? 'n'
         //     : rowData.orderStopDateCheck
         // }
-        disabled={confirmEnDis}
+        // disabled={confirmEnDis}
+        disabled={confirmEnDis || cancelledEvent}
         value={gscopVal}
         onChange={(e) => eventHandleDetailsGSCOP(e)}
         input={<OutlinedInput margin="dense" className={classes.muiSelect} />}
@@ -2280,7 +2294,8 @@ function ManageEventCreate(props: any) {
       //     <option value="No">No</option>
       //   </select>
       <Select
-        disabled={confirmEnDis}
+        // disabled={confirmEnDis}
+        disabled={confirmEnDis || cancelledEvent}
         // value={
         //   rowData.stopOrder === 'Yes'
         //     ? 'y'
@@ -2722,6 +2737,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.buyerEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               console.log(event.target.value)
@@ -2804,6 +2820,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.buyerAssistantEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               console.log(event.target.value)
@@ -2884,6 +2901,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.ownBrandManagerEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               console.log(event.target.value)
@@ -2965,6 +2983,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.seniorBuyingManagerEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               setErrSeniorBuyingManager(false)
@@ -3047,6 +3066,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.merchandiserEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               setErrMerchandiser(false)
@@ -3124,6 +3144,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.rangeResetManagerEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               setErrRangeResetManager(false)
@@ -3204,6 +3225,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.categoryDirectorEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               setErrCategoryDirector(false)
@@ -3284,6 +3306,7 @@ function ManageEventCreate(props: any) {
           {/* <Typography variant="body2" color="primary"> */}
           <SearchSelect
             value={rowData.supplyChainAnalystEmailId.emailId}
+            disabled={confirmEnDis ? false : cancelledEvent}
             // onChange={handleBuyer}
             onChange={(event: any) => {
               setErrSupplyChainSpecialist(false)
