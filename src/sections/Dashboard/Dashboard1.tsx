@@ -13,6 +13,7 @@ import {
   Box,
   Tabs,
   Tab,
+  Button,
 } from '@material-ui/core'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -107,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   rootTab: {
-    'min-width': '120px',
+    // 'min-width': '120px',
     'font-size': '14px',
     'font-weight': 'bold',
   },
@@ -393,9 +394,7 @@ function Dashboard1(props: any) {
                       //className={classes.header}
                       titleTypographyProps={{ variant: 'body1' }}
                     />
-                    <CardContent
-                    // style={{ height: !active ? '424px' : '100%' }}
-                    >
+                    <CardContent style={{ height: !active ? '424px' : '100%' }}>
                       <Grid
                         container
                         spacing={2}
@@ -636,7 +635,7 @@ function Dashboard1(props: any) {
                           xs={12}
                           spacing={2}
                         >
-                          <Grid
+                          {/* <Grid
                             item
                             container
                             xl={12}
@@ -660,7 +659,6 @@ function Dashboard1(props: any) {
                               >
                                 My Tasks
                               </button>
-                              {/* <Divider /> */}
                             </Grid>
                             <Grid item xs={3}>
                               <button
@@ -679,12 +677,12 @@ function Dashboard1(props: any) {
                             </Grid>
 
                             <Grid item xs={7}></Grid>
-                          </Grid>
-                          <Divider
+                          </Grid> */}
+                          {/* <Divider
                             style={{ color: 'primary' }}
                             variant="fullWidth"
-                          />
-                          {/* <Tabs
+                          /> */}
+                          <Tabs
                             value={tabValue}
                             textColor="primary"
                             indicatorColor="primary"
@@ -696,18 +694,38 @@ function Dashboard1(props: any) {
                             scrollButtons="auto"
                           >
                             <Tab
-                              label="My Task"
+                              // label="My Task"
+                              label={
+                                <Button
+                                  variant={
+                                    tabValue === 0 ? 'contained' : 'text'
+                                  }
+                                  color="primary"
+                                >
+                                  My Tasks
+                                </Button>
+                              }
                               value={0}
                               wrapped
                               classes={{ root: classes.rootTab }}
                             />
                             <Tab
-                              label="Group Tasks"
+                              // label="Group Tasks"
+                              label={
+                                <Button
+                                  variant={
+                                    tabValue === 1 ? 'contained' : 'text'
+                                  }
+                                  color="primary"
+                                >
+                                  Group Tasks
+                                </Button>
+                              }
                               value={1}
                               wrapped
                               classes={{ root: classes.rootTab }}
                             />
-                          </Tabs> */}
+                          </Tabs>
                           {tabValue === 0 && (
                             <Box sx={{ p: 2 }}>
                               <Typography color="primary" variant="body2">
