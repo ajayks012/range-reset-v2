@@ -106,6 +106,11 @@ const useStyles = makeStyles((theme) => ({
     height: '10px',
     width: '100%',
   },
+  rootTab: {
+    'min-width': '120px',
+    'font-size': '14px',
+    'font-weight': 'bold',
+  },
 }))
 
 function Dashboard1(props: any) {
@@ -388,7 +393,9 @@ function Dashboard1(props: any) {
                       //className={classes.header}
                       titleTypographyProps={{ variant: 'body1' }}
                     />
-                    <CardContent style={{ height: !active ? '424px' : '100%' }}>
+                    <CardContent
+                    // style={{ height: !active ? '424px' : '100%' }}
+                    >
                       <Grid
                         container
                         spacing={2}
@@ -629,7 +636,55 @@ function Dashboard1(props: any) {
                           xs={12}
                           spacing={2}
                         >
-                          <Tabs
+                          <Grid
+                            item
+                            container
+                            xl={12}
+                            lg={12}
+                            md={12}
+                            sm={12}
+                            xs={12}
+                            spacing={2}
+                          >
+                            <Grid item xs={2}>
+                              <button
+                                style={{
+                                  backgroundColor:
+                                    tabValue === 0
+                                      ? theme.palette.primary.main
+                                      : 'lightgrey',
+                                  color: tabValue === 0 ? 'white' : 'inherit',
+                                  padding: '10px',
+                                }}
+                                onClick={() => setTabValue(0)}
+                              >
+                                My Tasks
+                              </button>
+                              {/* <Divider /> */}
+                            </Grid>
+                            <Grid item xs={3}>
+                              <button
+                                style={{
+                                  backgroundColor:
+                                    tabValue === 1
+                                      ? theme.palette.primary.main
+                                      : 'lightgrey',
+                                  color: tabValue === 1 ? 'white' : 'inherit',
+                                  padding: '10px',
+                                }}
+                                onClick={() => setTabValue(1)}
+                              >
+                                Group Tasks
+                              </button>
+                            </Grid>
+
+                            <Grid item xs={7}></Grid>
+                          </Grid>
+                          <Divider
+                            style={{ color: 'primary' }}
+                            variant="fullWidth"
+                          />
+                          {/* <Tabs
                             value={tabValue}
                             textColor="primary"
                             indicatorColor="primary"
@@ -640,9 +695,19 @@ function Dashboard1(props: any) {
                             // style={{ width: '100%' }}
                             scrollButtons="auto"
                           >
-                            <Tab label="My Task" value={0} />
-                            <Tab label="Group Tasks" value={1} />
-                          </Tabs>
+                            <Tab
+                              label="My Task"
+                              value={0}
+                              wrapped
+                              classes={{ root: classes.rootTab }}
+                            />
+                            <Tab
+                              label="Group Tasks"
+                              value={1}
+                              wrapped
+                              classes={{ root: classes.rootTab }}
+                            />
+                          </Tabs> */}
                           {tabValue === 0 && (
                             <Box sx={{ p: 2 }}>
                               <Typography color="primary" variant="body2">
@@ -691,6 +756,8 @@ function Dashboard1(props: any) {
                                 value={table1Data}
                                 showGridlines
                                 scrollable
+                                emptyMessage="No Events found."
+                                className="p-datatable-sm"
                               >
                                 {mySecondTableCols.map(
                                   (col: any, index: any) => {
@@ -708,11 +775,11 @@ function Dashboard1(props: any) {
                                         bodyStyle={{
                                           fontSize: '12px',
                                           padding: '8px',
-
                                           // overflowX: 'auto',
                                           // color: theme.palette.error.main,
                                           textAlign: 'center',
                                           fontWeight: 'bold',
+                                          // width: col.width,
                                         }}
                                         // style={{ width: col.minWidth }}
                                         headerStyle={{
@@ -720,7 +787,7 @@ function Dashboard1(props: any) {
                                           backgroundColor:
                                             theme.palette.primary.main,
                                           // fontSize: '0.9rem',
-                                          // width: col.minWidth,
+                                          // width: col.width,
                                           fontSize: '12px',
                                           padding: '8px',
                                           height: 'auto',
@@ -760,6 +827,7 @@ function Dashboard1(props: any) {
                                           color: theme.palette.error.main,
                                           textAlign: 'center',
                                           fontWeight: 'bold',
+                                          // width: col.minWidth,
                                         }}
                                         headerStyle={{
                                           color: 'white',
@@ -770,6 +838,7 @@ function Dashboard1(props: any) {
                                           padding: '8px',
                                           height: 'auto',
                                           textAlign: 'center',
+                                          // width: col.minWidth,
                                         }}
                                       />
                                     )
@@ -777,7 +846,13 @@ function Dashboard1(props: any) {
                                 )}
                               </DataTable>
 
-                              <DataTable value={table2Data} showGridlines>
+                              <DataTable
+                                value={table2Data}
+                                showGridlines
+                                scrollable
+                                emptyMessage="No Events found."
+                                className="p-datatable-sm"
+                              >
                                 {mySecondTableCols.map(
                                   (col: any, index: any) => {
                                     return (
@@ -799,6 +874,7 @@ function Dashboard1(props: any) {
                                           // color: theme.palette.error.main,
                                           textAlign: 'center',
                                           fontWeight: 'bold',
+                                          // width: col.width,
                                         }}
                                         headerStyle={{
                                           color: 'white',
@@ -809,6 +885,7 @@ function Dashboard1(props: any) {
                                           padding: '8px',
                                           height: 'auto',
                                           textAlign: 'center',
+                                          // width: col.width,
                                         }}
                                       />
                                     )

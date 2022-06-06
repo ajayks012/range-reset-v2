@@ -753,26 +753,26 @@ export const mySecondTableCols = [
   {
     header: 'Current Week',
     field: 'currentWeek',
-    minWidth: '60px',
+    width: '70px',
   },
   {
     header: 'Next Week',
     field: 'nextWeek',
-    minWidth: '60px',
+    width: '60px',
   },
   {
     header: 'Week 2 to Week 5',
     field: 'weekTwoToFive',
-    minWidth: '60px',
+    width: '60px',
   },
   {
     header: '> Week 5',
     field: 'weekMoreThanFive',
-    minWidth: '60px',
+    width: '60px',
   },
   {
     header: 'Total',
     field: 'total',
-    minWidth: '60px',
+    width: '60px',
   },
 ]
