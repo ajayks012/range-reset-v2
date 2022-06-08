@@ -5,7 +5,7 @@ import { useStyles } from './styles'
 
 const SearchSelect = React.forwardRef((props: any, ref: any) => {
   const classes = useStyles()
-  const { value, onChange, placeholder, onClick, styles } = props
+  const { value, onChange, placeholder, onClick, styles, disabled } = props
   return (
     <>
       <OutlinedInput
@@ -24,6 +24,7 @@ const SearchSelect = React.forwardRef((props: any, ref: any) => {
             </IconButton>
           </InputAdornment>
         }
+        disabled={disabled}
       />
     </>
   )

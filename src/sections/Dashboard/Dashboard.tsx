@@ -234,9 +234,21 @@ function Dashboard(props: any) {
         userDetail.userdetails &&
         userDetail.userdetails[0].roles.map((rl: any) => rl.roleId)
       let adminqn = false
+      let eventAccess = false
       for (let ad = 0; ad < admins.length; ad++) {
         if (rolelist.includes(admins[ad])) {
           adminqn = true
+          break
+        }
+      }
+      for (let accEvent = 0; accEvent < rolelist.length; accEvent++) {
+        if (
+          rolelist.includes('RRMNGR') ||
+          rolelist.includes('BUYER') ||
+          rolelist.includes('SRBYM') ||
+          rolelist.includes('CTDIR')
+        ) {
+          eventAccess = true
           break
         }
       }
@@ -278,6 +290,7 @@ function Dashboard(props: any) {
             //     : 0
             item.myGroup.pendingActions =
               // adminqn &&
+              eventAccess &&
               eventGroupPendingAction.length > 0 &&
               eventGroupPendingAction[0].tasks.length > 0
                 ? eventGroupPendingAction[0].tasks.length
