@@ -278,7 +278,9 @@ function ManageEventCreate(props: any) {
             eventStatus: eventData.eventStatus,
             resetType: eventData.eventHeader.resetType,
             category: eventData.eventHeader.eventHierarchy.category,
+            categoryId: eventData.eventHeader.eventHierarchy.categoryId,
             department: eventData.eventHeader.eventHierarchy.department,
+            departmentId: eventData.eventHeader.eventHierarchy.departmentId,
             tradeGroup: eventData.eventHeader.eventHierarchy.tradingGroup,
             eventId: eventData.eventId,
             taskIdEvent: eventData.taskId,
@@ -1794,20 +1796,38 @@ function ManageEventCreate(props: any) {
     })
   }
   const eventHandleDetailsCategory = (e: any) => {
+    let categoryId = e.target.value
+    console.log(department)
+
+    let val = categoryOptions.findIndex(
+      (cat: any) => categoryId === cat.categoryId
+    )
+    console.log(val)
+    let category = val > -1 && categoryOptions[val].categoryName
     setEventDetails((prevState: any) => {
       setCatVal(e.target.value)
       setDepVal('')
       return [
         {
           ...prevState[0],
-          category: e.target.value,
+          category: category,
+          categoryId: categoryId,
           department: '',
         },
       ]
     })
   }
   const eventHandleDetailsDepartment = (e: any) => {
-    let department = e.target.value
+    // let department = e.target.value
+    let departmentId = e.target.value
+    console.log(departmentId)
+
+    let val = departmentOptions.findIndex(
+      (dept: any) => departmentId === dept.departmentId
+    )
+    console.log(val)
+    let department = val > -1 && departmentOptions[val].departmentName
+
     let launchDate = eventDetails[0].targetDate
     // let ldate = eventDetails[0].launchDate
     console.log(department)
@@ -1828,7 +1848,9 @@ function ManageEventCreate(props: any) {
         return [
           {
             ...prevState[0],
-            department: e.target.value,
+            // department: e.target.value,
+            department: department,
+            departmentId: departmentId,
             eventName: name,
           },
         ]
@@ -1839,7 +1861,9 @@ function ManageEventCreate(props: any) {
         return [
           {
             ...prevState[0],
-            department: e.target.value,
+            // department: e.target.value,
+            department: department,
+            departmentId: departmentId,
           },
         ]
       })
@@ -1913,8 +1937,8 @@ function ManageEventCreate(props: any) {
         {categoryOptions.map((type: any) => {
           return (
             <MenuItem
-              value={type.value}
-              key={type.id}
+              value={type.categoryId}
+              key={type.categoryId}
               className={classes.muiSelect}
             >
               {type.value}
@@ -1926,9 +1950,6 @@ function ManageEventCreate(props: any) {
   }
 
   const departmentTemplate = (rowData: any) => {
-    const val = departments.findIndex(
-      (group) => rowData.department === group.text
-    )
     setDepVal(rowData.department)
     return (
       //   <Typography variant="subtitle2">
@@ -1968,8 +1989,8 @@ function ManageEventCreate(props: any) {
         {departmentOptions.map((type: any) => {
           return (
             <MenuItem
-              value={type.value}
-              key={type.id}
+              value={type.departmentId}
+              key={type.departmentId}
               className={classes.muiSelect}
             >
               {type.value}
@@ -4058,7 +4079,9 @@ function ManageEventCreate(props: any) {
         eventHierarchy: {
           tradingGroup: eventDetails[0].tradeGroup,
           category: eventDetails[0].category,
+          categoryId: eventDetails[0].categoryId,
           department: eventDetails[0].department,
+          departmentId: eventDetails[0].departmentId,
         },
         inventoryControl: {
           planogramClass: classValues
