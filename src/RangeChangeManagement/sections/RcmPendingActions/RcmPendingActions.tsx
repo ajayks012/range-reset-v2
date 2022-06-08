@@ -478,7 +478,7 @@ function RcmPendingActions(props: any) {
                       }}
                     >
                       <Typography variant="h6">
-                        My Task {'>'} Pending
+                        My Task {'>'} Pending Actions
                       </Typography>
                     </Box>
                     <Box
