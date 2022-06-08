@@ -363,7 +363,7 @@ export const manageTaskPublishCols = [
   {
     field: 'taskId',
     header: 'Task Id',
-    width: '100px',
+    width: '80px',
   },
   {
     field: 'task',
@@ -373,11 +373,16 @@ export const manageTaskPublishCols = [
   {
     field: 'status',
     header: 'Task Status',
-    width: '150px',
+    width: '100px',
   },
   {
     field: 'dueDate',
     header: 'Due Date',
+    width: '150px',
+  },
+  {
+    field: 'weeksPrior',
+    header: 'Week to Launch Date',
     width: '150px',
   },
   {
