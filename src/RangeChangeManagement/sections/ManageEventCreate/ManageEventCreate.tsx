@@ -2028,7 +2028,7 @@ function ManageEventCreate(props: any) {
       //   />
       <OutlinedInput
         // disabled={confirmEnDis}
-        disabled={confirmEnDis || cancelledEvent}
+        disabled={cancelledEvent}
         margin="dense"
         className={classes.muiSelect}
         value={rowData.eventName}
