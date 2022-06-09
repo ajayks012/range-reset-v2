@@ -33,6 +33,7 @@ import {
   SupplyChainSpecialists,
   resetTypes,
   statusOptions,
+  tableCols,
 } from './DataConstants'
 
 import ErrorIcon from '@material-ui/icons/Error'
@@ -1633,6 +1634,7 @@ function ManageTaskEvent(props: any) {
           // Prepare DataTable
           const cols: any = data1[0]
           console.log(cols)
+          console.log(tableCols)
           console.log(data1)
 
           // let _importedCols = cols.map((col: any) => ({ field: col, header: toCapitalize(col) }));
@@ -1642,100 +1644,119 @@ function ManageTaskEvent(props: any) {
           //         return obj;
           //     }, {});
           // });
-          const newData = data.map((d: any) => {
-            console.log(d)
-            console.log(checkYesOrNo(d[cols[8]]))
-            var converted_date1 = d[cols[6]]
-              ? excelDatetoDate(d[cols[6]]) !== ''
-                ? excelDatetoDate(d[cols[6]])?.toString()
-                : null
-              : null
 
-            var converted_date3 = d[cols[1]]
-              ? excelDatetoDate(d[cols[1]]) !== ''
-                ? excelDatetoDate(d[cols[1]]).toString()
-                : null
-              : null
-
-            var eventName = () => {
-              if (d[cols[4]] && converted_date1) {
-                var lDate = new Date(converted_date1)
-                console.log(lDate)
-                var name =
-                  d[cols[4]].replace(/ /g, '_') +
-                  '_' +
-                  lDate.getDate() +
-                  lDate.toLocaleString('default', { month: 'short' }) +
-                  lDate.getFullYear()
-                console.log(name)
-                return name
-              } else {
-                return ''
+          let error = false
+          if (cols.length > 0) {
+            for (let i = 0; i < cols.length; i++) {
+              if (cols[i] !== tableCols[i]) {
+                error = true
+                // console.log(cols[i], tableCols[i])
+                break
               }
             }
+            if (error === true) {
+              setConfirmtable(true)
+              alert('Invalid Excel Headers')
+            } else {
+              const newData = data.map((d: any) => {
+                console.log(d)
+                console.log(checkYesOrNo(d[cols[8]]))
+                var converted_date1 = d[cols[6]]
+                  ? excelDatetoDate(d[cols[6]]) !== ''
+                    ? excelDatetoDate(d[cols[6]])?.toString()
+                    : null
+                  : null
 
-            // var buyerName = () => {
-            //   var index = Buyers.findIndex((item) => item.email === d['Buyer'])
-            //   return Buyers[index].value
-            // }
+                var converted_date3 = d[cols[1]]
+                  ? excelDatetoDate(d[cols[1]]) !== ''
+                    ? excelDatetoDate(d[cols[1]]).toString()
+                    : null
+                  : null
 
-            // var classArray = () => {
-            //   console.log(d[7])
-            //   let classes = d[7].split(',')
-            //   let classValues = []
-            //   for (var i in classes) {
-            //     classValues.push(classes[i].trim())
-            //   }
-            //   return d[7]
-            // }
-
-            return {
-              resetType: d[cols[0]] ? d[cols[0]] : null,
-              appDueDate: converted_date3,
-              tradeGroup: d[cols[2]] ? d[cols[2]] : null,
-              category: d[cols[3]] ? d[cols[3]] : null,
-              // categoryId: 1,
-              department: d[cols[4]] ? d[cols[4]] : null,
-              // departmentId: 1,
-              name: d[cols[5]] ? d[cols[5]] : eventName(),
-              targetDate: converted_date1,
-              planogramClass: classArray(d[cols[7]])
-                ? {
-                    className: classArray(d[cols[7]]),
+                var eventName = () => {
+                  if (d[cols[4]] && converted_date1) {
+                    var lDate = new Date(converted_date1)
+                    console.log(lDate)
+                    var name =
+                      d[cols[4]].replace(/ /g, '_') +
+                      '_' +
+                      lDate.getDate() +
+                      lDate.toLocaleString('default', { month: 'short' }) +
+                      lDate.getFullYear()
+                    console.log(name)
+                    return name
+                  } else {
+                    return ''
                   }
-                : classArray(d[cols[7]]),
-              planogramClassString: d[cols[7]] ? d[cols[7]] : '',
+                }
 
-              clearancePriceCheck: d[cols[8]] ? d[cols[8]] : 'Y',
-              orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',
-              stopOrder: d[cols[10]] ? d[cols[10]] : 'Y',
+                // var buyerName = () => {
+                //   var index = Buyers.findIndex((item) => item.email === d['Buyer'])
+                //   return Buyers[index].value
+                // }
 
-              wastageRange: d[cols[11]] ? d[cols[11]] : 'Week +4 \\ +7',
-              buyerEmailId: d[cols[12]] ? d[cols[12]] : '',
-              categoryDirectorEmailId: d[cols[13]] ? d[cols[13]] : '',
-              seniorBuyingManagerEmailId: d[cols[14]] ? d[cols[14]] : '',
-              buyerAssistantEmailId: d[cols[15]] ? d[cols[15]] : '',
-              merchandiserEmailId: d[cols[16]] ? d[cols[16]] : '',
-              supplyChainAnalystEmailId: d[cols[17]] ? d[cols[17]] : '',
-              ownBrandManagerEmailId: d[cols[18]] ? d[cols[18]] : '',
-              rangeResetManagerEmailId: d[cols[19]] ? d[cols[19]] : '',
+                // var classArray = () => {
+                //   console.log(d[7])
+                //   let classes = d[7].split(',')
+                //   let classValues = []
+                //   for (var i in classes) {
+                //     classValues.push(classes[i].trim())
+                //   }
+                //   return d[7]
+                // }
 
-              // eventId: d['Event ID'],
-              // name: 'string',
-              // eventName: eventName(),
+                return {
+                  resetType: d[cols[0]] ? d[cols[0]] : null,
+                  appDueDate: converted_date3,
+                  tradeGroup: d[cols[2]] ? d[cols[2]] : null,
+                  category: d[cols[3]] ? d[cols[3]] : null,
+                  // categoryId: 1,
+                  department: d[cols[4]] ? d[cols[4]] : null,
+                  // departmentId: 1,
+                  name: d[cols[5]] ? d[cols[5]] : eventName(),
+                  targetDate: converted_date1,
+                  planogramClass: classArray(d[cols[7]])
+                    ? {
+                        className: classArray(d[cols[7]]),
+                      }
+                    : classArray(d[cols[7]]),
+                  planogramClassString: d[cols[7]] ? d[cols[7]] : '',
 
-              // "status": d["Status"] ? d["Status"] : "Draft",
+                  clearancePriceCheck: d[cols[8]] ? d[cols[8]] : 'Y',
+                  orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',
+                  stopOrder: d[cols[10]] ? d[cols[10]] : 'Y',
+
+                  wastageRange: d[cols[11]] ? d[cols[11]] : 'Week +4 \\ +7',
+                  buyerEmailId: d[cols[12]] ? d[cols[12]] : '',
+                  categoryDirectorEmailId: d[cols[13]] ? d[cols[13]] : '',
+                  seniorBuyingManagerEmailId: d[cols[14]] ? d[cols[14]] : '',
+                  buyerAssistantEmailId: d[cols[15]] ? d[cols[15]] : '',
+                  merchandiserEmailId: d[cols[16]] ? d[cols[16]] : '',
+                  supplyChainAnalystEmailId: d[cols[17]] ? d[cols[17]] : '',
+                  ownBrandManagerEmailId: d[cols[18]] ? d[cols[18]] : '',
+                  rangeResetManagerEmailId: d[cols[19]] ? d[cols[19]] : '',
+
+                  // eventId: d['Event ID'],
+                  // name: 'string',
+                  // eventName: eventName(),
+
+                  // "status": d["Status"] ? d["Status"] : "Draft",
+                }
+              })
+              console.log(newData)
+              // let newData1 = {
+              //   rangeResets: [...newData],
+              // }
+              // console.log(newData1)
+
+              setImportedCols(eventUploadTableCols)
+              setImportedData(newData)
+              setImportedFormData(newData)
             }
-          })
-          console.log(newData)
-          // let newData1 = {
-          //   rangeResets: [...newData],
-          // }
-          // console.log(newData1)
-
-          setImportedCols(eventUploadTableCols)
-          setImportedData(newData)
-          setImportedFormData(newData)
+          } else {
+            setConfirmtable(true)
+            alert('Invalid Excel Headers')
+          }
         }
 
         reader.readAsArrayBuffer(uploadedFile)
