@@ -219,6 +219,8 @@ function ManageTaskEvent(props: any) {
   const [failureCount1, setFailureCount1] = React.useState(0)
   const [disablePublish, setDisablePublish] = useState(false)
   const [disableDelete, setDisableDelete] = useState(false)
+  const [invalidFile, setInvalidFile] = useState(false)
+  const [invalidFormat, setInvalidFormat] = useState(false)
 
   useEffect(() => {
     console.log(selectedEvents)
@@ -1656,7 +1658,8 @@ function ManageTaskEvent(props: any) {
             }
             if (error === true) {
               setConfirmtable(true)
-              alert('Invalid Excel Headers')
+              // alert('Invalid Excel Headers')
+              setInvalidFormat(true)
             } else {
               const newData = data.map((d: any) => {
                 console.log(d)
@@ -1764,11 +1767,30 @@ function ManageTaskEvent(props: any) {
       handleUploadDialogClose()
       handlePreviewDialogOpen()
     } else {
-      alert('Upload correct file')
+      // alert('Upload correct file')
+      setInvalidFile(true)
       setUploadedFile(null)
       setConfirmtable(true)
     }
   }
+
+  const invalidFileDialog = (
+    <ConfirmBox
+      cancelOpen={invalidFile}
+      handleProceed={() => setInvalidFile(false)}
+      label1="Invalid File Format"
+      label2="The file you uploaded is not an Excel file, Try again"
+    />
+  )
+
+  const invalidFormatDialog = (
+    <ConfirmBox
+      cancelOpen={invalidFormat}
+      handleProceed={() => setInvalidFormat(false)}
+      label1="Invalid Excel Headers"
+      label2="The table headers of uploaded file are invalid, Try again"
+    />
+  )
 
   useEffect(() => {
     console.log(importedData)
@@ -4145,6 +4167,8 @@ function ManageTaskEvent(props: any) {
           {advancedSearch}
           {viewConfirmDelete}
           {viewConfirmCross}
+          {invalidFileDialog}
+          {invalidFormatDialog}
         </div>
       </div>
     </>
