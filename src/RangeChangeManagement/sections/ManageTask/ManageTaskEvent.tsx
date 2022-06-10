@@ -1657,9 +1657,10 @@ function ManageTaskEvent(props: any) {
               }
             }
             if (error === true) {
-              setConfirmtable(true)
               // alert('Invalid Excel Headers')
               setInvalidFormat(true)
+              setOpenPreviewDialog(false)
+              setConfirmtable(true)
             } else {
               const newData = data.map((d: any) => {
                 console.log(d)
@@ -1755,17 +1756,18 @@ function ManageTaskEvent(props: any) {
               setImportedCols(eventUploadTableCols)
               setImportedData(newData)
               setImportedFormData(newData)
+              handlePreviewDialogOpen()
             }
           } else {
             setConfirmtable(true)
-            alert('Invalid Excel Headers')
+            // alert('Invalid Excel Headers')
+            setInvalidFormat(true)
           }
         }
 
         reader.readAsArrayBuffer(uploadedFile)
       })
       handleUploadDialogClose()
-      handlePreviewDialogOpen()
     } else {
       // alert('Upload correct file')
       setInvalidFile(true)
