@@ -3874,7 +3874,11 @@ function ManageEventCreate(props: any) {
   // }
 
   const handleToaster = () => {
-    if (toastRemove === 'publish' || toastRemove === 'cancel') {
+    if (
+      toastRemove === 'publish' ||
+      toastRemove === 'cancel' ||
+      toastRemove === 'update'
+    ) {
       history.push(`${DEFAULT}${RANGEAMEND_MANAGE}`)
     }
   }
