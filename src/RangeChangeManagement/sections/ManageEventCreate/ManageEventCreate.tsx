@@ -496,7 +496,13 @@ function ManageEventCreate(props: any) {
         })
         console.log(manageTask)
         console.log(manageList)
-        setTaskDetails(manageTask)
+
+        let taskList = manageTask.sort((x: any, y: any) =>
+          x.taskId.localeCompare(y.taskId, 'en', { numeric: true })
+        )
+        console.log(taskList)
+
+        setTaskDetails(taskList)
         // setTaskDetails2(manageTask)
         setEventDetails(manageList)
         setGroup(manageList[0].tradeGroup)
