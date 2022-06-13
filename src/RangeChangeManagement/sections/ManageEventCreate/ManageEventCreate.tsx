@@ -1645,6 +1645,7 @@ function ManageEventCreate(props: any) {
           }
         })
         setDueDateErrorCount(count)
+
         if (count != '') {
           setEventDetails((prevState: any) => {
             return [
@@ -1672,10 +1673,10 @@ function ManageEventCreate(props: any) {
       cancelOpen={dueDateErrorOpen}
       // handleCancel={cancelLaunchDateChange}
       // handleProceed={() => handlePublishEvent('ModifyAuto')}
-      handleProceed={() => {
-        setDueDateErrorOpen(false)
-      }}
-      // handleProceed={handleDueDateError}
+      // handleProceed={() => {
+      //   setDueDateErrorOpen(false)
+      // }}
+      handleProceed={handleDueDateError}
       label1="Due Date less than System Date"
       label2={
         <>

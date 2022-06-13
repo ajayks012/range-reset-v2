@@ -1652,9 +1652,9 @@ function ManageTaskEvent(props: any) {
           let error = false
           if (cols.length > 0) {
             for (let i = 0; i < cols.length; i++) {
-              if (cols[i] !== tableCols[i]) {
+              if (cols[i].trim() !== tableCols[i]) {
                 error = true
-                // console.log(cols[i], tableCols[i])
+                console.log(cols[i], tableCols[i])
                 break
               }
             }
