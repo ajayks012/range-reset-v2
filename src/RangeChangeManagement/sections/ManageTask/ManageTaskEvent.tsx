@@ -1123,12 +1123,14 @@ function ManageTaskEvent(props: any) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
+            deleteCount = deleteCount + 1
           }
 
           if (selectedEvents[i].eventStatus.toLowerCase() === 'confirmed') {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
+            deleteCount = deleteCount + 1
           }
         } else {
           deleteCount = deleteCount + 1
@@ -1867,123 +1869,124 @@ function ManageTaskEvent(props: any) {
 
       // let deletingEvents: any = []
       selectedEvents.map((event: any) => {
-        if (
-          event.eventStatus.toLowerCase() === 'published' &&
-          (event.eventStatus.toLowerCase() !== 'error' ||
-            event.eventStatus.toLowerCase() !== 'duplicate')
-        ) {
-          // services delete endpoint
+        // if (
+        //   event.eventStatus.toLowerCase() === 'published' &&
+        //   (event.eventStatus.toLowerCase() !== 'error' ||
+        //     event.eventStatus.toLowerCase() !== 'duplicate')
+        // ) {
+        //   // services delete endpoint
 
-          // let formData = {
-          //   status: 'Cancelled',
-          //   items: [],
-          // }
-          // patchUpdateRangeResets(event.id, formData)
-          //   .then((res: any) => {
-          //     console.log(res)
-          //     let _tasks = fetchRangeResets.filter(
-          //       (value: any) => !selectedEvents.includes(value)
-          //     )
-          //     console.log(_tasks)
-          //     setFailureCount((prevState) => prevState - 1)
-          //     setCheckCount((prevState) => prevState - 1)
-          //     setFetchRangeResets(_tasks)
-          //     setFile(_tasks)
-          //   })
-          //   .catch((err: any) => {
-          //     setCheckCount((prevState) => prevState - 1)
-          //   })
+        //   // let formData = {
+        //   //   status: 'Cancelled',
+        //   //   items: [],
+        //   // }
+        //   // patchUpdateRangeResets(event.id, formData)
+        //   //   .then((res: any) => {
+        //   //     console.log(res)
+        //   //     let _tasks = fetchRangeResets.filter(
+        //   //       (value: any) => !selectedEvents.includes(value)
+        //   //     )
+        //   //     console.log(_tasks)
+        //   //     setFailureCount((prevState) => prevState - 1)
+        //   //     setCheckCount((prevState) => prevState - 1)
+        //   //     setFetchRangeResets(_tasks)
+        //   //     setFile(_tasks)
+        //   //   })
+        //   //   .catch((err: any) => {
+        //   //     setCheckCount((prevState) => prevState - 1)
+        //   //   })
 
-          // camunda delete endpoint
+        //   // camunda delete endpoint
 
-          // deletingEvents.push({
-          //   eventId: event.id,
-          //   status: event.status,
-          // })
+        //   // deletingEvents.push({
+        //   //   eventId: event.id,
+        //   //   status: event.status,
+        //   // })
 
-          // let _tasks = fetchRangeResets.filter(
-          //   (value: any) => !selectedEvents.includes(value)
-          // )
-          // console.log(_tasks)
+        //   // let _tasks = fetchRangeResets.filter(
+        //   //   (value: any) => !selectedEvents.includes(value)
+        //   // )
+        //   // console.log(_tasks)
 
-          // setFailureCount((prevState) => prevState - 1)
-          // setCheckCount((prevState) => prevState - 1)
-          // setFetchRangeResets(_tasks)
-          // setFile(_tasks)
+        //   // setFailureCount((prevState) => prevState - 1)
+        //   // setCheckCount((prevState) => prevState - 1)
+        //   // setFetchRangeResets(_tasks)
+        //   // setFile(_tasks)
 
-          let formData = {
-            requester: {
-              persona:
-                userDetail && userDetail.userdetails[0].roles[0].roleName,
-              details: {
-                emailId: userDetail && userDetail.userdetails[0].user.emailId,
-                userId: userDetail && userDetail.userdetails[0].user.userId,
-                name:
-                  userDetail &&
-                  userDetail.userdetails[0].user.middleName &&
-                  userDetail.userdetails[0].user.middleName != ''
-                    ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                    : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-              },
-              roles:
-                userDetail &&
-                userDetail.userdetails[0].roles.map((role: any) => {
-                  return {
-                    roleId: role.roleId,
-                  }
-                }),
-              usergroups:
-                userDetail &&
-                userDetail.userdetails[0].usergroups.map((group: any) => {
-                  return {
-                    groupId: group.groupId,
-                    status: group.status,
-                  }
-                }),
-            },
-            deleteEventRequests: [
-              {
-                eventId: event.id,
-                status: event.eventStatus,
-              },
-            ],
-            logging: {
-              comments: 'string',
-              updated: 'string',
-            },
-          }
+        //   let formData = {
+        //     requester: {
+        //       persona:
+        //         userDetail && userDetail.userdetails[0].roles[0].roleName,
+        //       details: {
+        //         emailId: userDetail && userDetail.userdetails[0].user.emailId,
+        //         userId: userDetail && userDetail.userdetails[0].user.userId,
+        //         name:
+        //           userDetail &&
+        //           userDetail.userdetails[0].user.middleName &&
+        //           userDetail.userdetails[0].user.middleName != ''
+        //             ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+        //             : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+        //       },
+        //       roles:
+        //         userDetail &&
+        //         userDetail.userdetails[0].roles.map((role: any) => {
+        //           return {
+        //             roleId: role.roleId,
+        //           }
+        //         }),
+        //       usergroups:
+        //         userDetail &&
+        //         userDetail.userdetails[0].usergroups.map((group: any) => {
+        //           return {
+        //             groupId: group.groupId,
+        //             status: group.status,
+        //           }
+        //         }),
+        //     },
+        //     deleteEventRequests: [
+        //       {
+        //         eventId: event.id,
+        //         status: event.eventStatus,
+        //       },
+        //     ],
+        //     logging: {
+        //       comments: 'string',
+        //       updated: 'string',
+        //     },
+        //   }
 
-          deleteEventsCamunda(formData)
-            .then((res: any) => {
-              console.log(res.data)
-              if (res.data && res.data.eventAlert.eventId === null) {
-                // setFetchRangeResets((prevState:any)=>{
-                //   if(prevState.id===event.id){
+        //   deleteEventsCamunda(formData)
+        //     .then((res: any) => {
+        //       console.log(res.data)
+        //       if (res.data && res.data.eventAlert.eventId === null) {
+        //         // setFetchRangeResets((prevState:any)=>{
+        //         //   if(prevState.id===event.id){
 
-                //   }
-                // })
+        //         //   }
+        //         // })
 
-                let _tasks = fetchRangeResets.filter(
-                  (value: any) => !selectedEvents.includes(value)
-                )
-                console.log(_tasks)
+        //         let _tasks = fetchRangeResets.filter(
+        //           (value: any) => !selectedEvents.includes(value)
+        //         )
+        //         console.log(_tasks)
 
-                setFailureCount((prevState) => prevState - 1)
-                setCheckCount((prevState) => prevState - 1)
-                setFetchRangeResets(_tasks)
-                setFile(_tasks)
-              } else {
-                setCheckCount((prevState) => prevState - 1)
-              }
+        //         setFailureCount((prevState) => prevState - 1)
+        //         setCheckCount((prevState) => prevState - 1)
+        //         setFetchRangeResets(_tasks)
+        //         setFile(_tasks)
+        //       } else {
+        //         setCheckCount((prevState) => prevState - 1)
+        //       }
 
-              // setIsProgressLoader(false)
-            })
-            .catch((err: any) => {
-              console.log(err)
-              setCheckCount((prevState) => prevState - 1)
-              // setIsProgressLoader(false)
-            })
-        } else if (event.eventStatus.toLowerCase() === 'draft') {
+        //       // setIsProgressLoader(false)
+        //     })
+        //     .catch((err: any) => {
+        //       console.log(err)
+        //       setCheckCount((prevState) => prevState - 1)
+        //       // setIsProgressLoader(false)
+        //     })
+        // } else
+        if (event.eventStatus.toLowerCase() === 'draft') {
           getEventDetailsById(event.id)
             .then((res1: any) => {
               let getResponse = res1.data
@@ -2068,7 +2071,7 @@ function ManageTaskEvent(props: any) {
               console.log(err1)
               setCheckCount((prevState) => prevState - 1)
             })
-        } else {
+        } else if (event.eventStatus.toLowerCase() === 'error') {
           let _tasks = fetchRangeResets.filter(
             (value: any) => !selectedEvents.includes(value)
           )
@@ -2132,38 +2135,6 @@ function ManageTaskEvent(props: any) {
     //   setConfirmtable(false)
     // }
   }
-
-  // const sampleExcel = (
-  //   <table id="sample" style={{ display: 'none' }}>
-  //     <thead>
-  //       <tr>
-  //         {/* <th>Unique ID</th> */}
-  //         <th>Event ID</th>
-  //         <th>Reset Type</th>
-  //         <th>RAF/App Due Date</th>
-  //         <th>Trading Group</th>
-  //         <th>Category</th>
-  //         <th>Department</th>
-  //         <th>Event ID</th>
-  //         <th>Event Name</th>
-  //         <th>LaunchDate</th>
-  //         <th>Planogram Class</th>
-  //         <th>Store Waste Process Timing</th>
-  //         <th>Buyer</th>
-  //         <th>Buying Assistant</th>
-  //         <th>Own Brand Manager</th>
-  //         <th>Senior Buying Manager</th>
-  //         <th>Merchandiser</th>
-  //         <th>Range Reset Manager</th>
-  //         <th>Category Director</th>
-  //         <th>Supply Chain Specialist</th>
-  //         <th>Clearance Pricing Action required</th>
-  //         <th>GSCOP Date check Required</th>
-  //         <th>Stop Order</th>
-  //       </tr>
-  //     </thead>
-  //   </table>
-  // )
 
   const uploadDialog = (
     <Dialog
