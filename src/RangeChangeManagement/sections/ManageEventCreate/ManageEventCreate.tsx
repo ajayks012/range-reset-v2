@@ -504,6 +504,7 @@ function ManageEventCreate(props: any) {
 
         setTaskDetails(taskList)
         // setTaskDetails2(manageTask)
+        console.log('1')
         setEventDetails(manageList)
         setGroup(manageList[0].tradeGroup)
         setCategory(manageList[0].category)
@@ -1137,6 +1138,7 @@ function ManageEventCreate(props: any) {
 
   const handleClassConfirm = () => {
     handleClassClose()
+    console.log('2')
     setEventDetails((prevState: any) => {
       if (prevState[0].hasOwnProperty('planogramClass')) {
         let a = {
@@ -1506,6 +1508,7 @@ function ManageEventCreate(props: any) {
         onChange={(date: any) => {
           let newDate = date.toISOString().split('T')[0]
           let dateVal = newDate
+          console.log('3')
           setEventDetails((prevState: any) => {
             return [
               {
@@ -1523,7 +1526,7 @@ function ManageEventCreate(props: any) {
   }
 
   const handleLaunchDate = (date: any) => {
-    console.log(date)
+    console.log('date changed', date)
     // let date1 = new Date(date)
     let newDate = date.toISOString().split('T')[0]
     let dateVal = newDate
@@ -1540,6 +1543,7 @@ function ManageEventCreate(props: any) {
         launchDate.getFullYear()
       console.log(name)
       setEventName(name)
+      console.log('4')
       setEventDetails((prevState: any) => {
         return [
           {
@@ -1583,6 +1587,7 @@ function ManageEventCreate(props: any) {
     )
   }
   const cancelLaunchDateChange = () => {
+    console.log('5')
     setEventDetails((prevState: any) => {
       return [
         {
@@ -1598,6 +1603,7 @@ function ManageEventCreate(props: any) {
   const confirmLaunchDateChange = () => {
     setIsProgressLoader(true)
     setTableLoading(true)
+    console.log('6')
     setEventDetails((prevState: any) => {
       return [
         {
@@ -1612,15 +1618,6 @@ function ManageEventCreate(props: any) {
     handlePublishEvent('dateChange')
     // getEventAndTasks()
     setTableLoading(false)
-  }
-
-  const handleDueDateError = () => {
-    console.error('setting back', launchDateOld)
-
-    // handlePublishEvent('ModifyAuto')
-    // launchDateOld === eventDetails.targetDate &&
-    handlePublishEvent('dateChange')
-    setDueDateErrorOpen(false)
   }
 
   useEffect(() => {
@@ -1647,15 +1644,11 @@ function ManageEventCreate(props: any) {
         setDueDateErrorCount(count)
 
         if (count != '') {
-          setEventDetails((prevState: any) => {
-            return [
-              {
-                ...prevState[0],
-                targetDate: launchDateOld,
-              },
-            ]
-          })
-
+          let eventDetailData = eventDetails
+          eventDetailData[0].targetDate = launchDateOld
+          console.log('new data', eventDetailData)
+          console.log('7')
+          setEventDetails([...eventDetailData])
           setDueDateErrorTasks(count)
           setDueDateErrorOpen(true)
           // setIsProgressLoader(true)
@@ -1667,6 +1660,20 @@ function ManageEventCreate(props: any) {
       }
     }
   }, [taskDetails])
+
+  useEffect(() => {
+    console.log('eventDetails', eventDetails)
+  }, [eventDetails])
+
+  const handleDueDateError = () => {
+    console.error('setting back', launchDateOld)
+
+    // handlePublishEvent('ModifyAuto')
+    // launchDateOld === eventDetails.targetDate &&
+    console.log('new payload', eventDetails)
+    handlePublishEvent('dateChange')
+    setDueDateErrorOpen(false)
+  }
 
   const confirmDueDateChangeDialog = (
     <ConfirmBox
@@ -1751,6 +1758,7 @@ function ManageEventCreate(props: any) {
             setCategory('')
             setDepartment('')
             setDepartmentOptions([])
+            console.log('8')
             setEventDetails((prevState: any) => {
               return [
                 {
@@ -1788,6 +1796,7 @@ function ManageEventCreate(props: any) {
   }, [taskDetails])
 
   const eventHandleDetails = (e: any) => {
+    console.log('9')
     setEventDetails((prevState: any) => {
       setGrpVal(e.target.value)
       setCatVal('')
@@ -1811,6 +1820,7 @@ function ManageEventCreate(props: any) {
     )
     console.log(val)
     let category = val > -1 && categoryOptions[val].categoryName
+    console.log('10')
     setEventDetails((prevState: any) => {
       setCatVal(e.target.value)
       setDepVal('')

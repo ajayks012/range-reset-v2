@@ -1102,9 +1102,13 @@ function ManageTaskEvent(props: any) {
         // ) {
         //   setDisableDelete(false)
         // }
-        if (selectedEvents && selectedEvents[i].eventStatus) {
+        if (
+          selectedEvents &&
+          (selectedEvents[i].eventStatus || selectedEvents[i].status)
+        ) {
           if (
             selectedEvents &&
+            selectedEvents[i].eventStatus &&
             selectedEvents[i].eventStatus.toLowerCase() === 'cancelled'
           ) {
             // setDisableDelete(true)
@@ -1113,20 +1117,30 @@ function ManageTaskEvent(props: any) {
             deleteCount = deleteCount + 1
             publishCount = publishCount + 1
           }
-          if (selectedEvents[i].eventStatus.toLowerCase() === 'error') {
+          if (
+            (selectedEvents[i].eventStatus &&
+              selectedEvents[i].eventStatus.toLowerCase() === 'error') ||
+            selectedEvents[i].status.toLowerCase().includes('duplicate')
+          ) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
           }
 
-          if (selectedEvents[i].eventStatus.toLowerCase() === 'published') {
+          if (
+            selectedEvents[i].eventStatus &&
+            selectedEvents[i].eventStatus.toLowerCase() === 'published'
+          ) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
             deleteCount = deleteCount + 1
           }
 
-          if (selectedEvents[i].eventStatus.toLowerCase() === 'confirmed') {
+          if (
+            selectedEvents[i].eventStatus &&
+            selectedEvents[i].eventStatus.toLowerCase() === 'confirmed'
+          ) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
@@ -1137,8 +1151,8 @@ function ManageTaskEvent(props: any) {
           publishCount = publishCount + 1
         }
       }
-      // console.error('Publishcount', publishCount)
-      // console.error('deletecount', deleteCount)
+      console.log('Publishcount', publishCount)
+      console.log('deletecount', deleteCount)
       if (publishCount > 0) {
         setDisablePublish(true)
       } else {
@@ -2071,7 +2085,10 @@ function ManageTaskEvent(props: any) {
               console.log(err1)
               setCheckCount((prevState) => prevState - 1)
             })
-        } else if (event.eventStatus.toLowerCase() === 'error') {
+        } else if (
+          event.eventStatus.toLowerCase() === 'error' ||
+          event.status.toLowerCase().includes('duplicate')
+        ) {
           let _tasks = fetchRangeResets.filter(
             (value: any) => !selectedEvents.includes(value)
           )
