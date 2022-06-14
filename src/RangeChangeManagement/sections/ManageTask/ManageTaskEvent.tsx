@@ -33,6 +33,7 @@ import {
   SupplyChainSpecialists,
   resetTypes,
   statusOptions,
+  tableCols,
 } from './DataConstants'
 
 import ErrorIcon from '@material-ui/icons/Error'
@@ -218,6 +219,8 @@ function ManageTaskEvent(props: any) {
   const [failureCount1, setFailureCount1] = React.useState(0)
   const [disablePublish, setDisablePublish] = useState(false)
   const [disableDelete, setDisableDelete] = useState(false)
+  const [invalidFile, setInvalidFile] = useState(false)
+  const [invalidFormat, setInvalidFormat] = useState(false)
 
   useEffect(() => {
     console.log(selectedEvents)
@@ -1099,9 +1102,13 @@ function ManageTaskEvent(props: any) {
         // ) {
         //   setDisableDelete(false)
         // }
-        if (selectedEvents && selectedEvents[i].eventStatus) {
+        if (
+          selectedEvents &&
+          (selectedEvents[i].eventStatus || selectedEvents[i].status)
+        ) {
           if (
             selectedEvents &&
+            selectedEvents[i].eventStatus &&
             selectedEvents[i].eventStatus.toLowerCase() === 'cancelled'
           ) {
             // setDisableDelete(true)
@@ -1110,30 +1117,42 @@ function ManageTaskEvent(props: any) {
             deleteCount = deleteCount + 1
             publishCount = publishCount + 1
           }
-          if (selectedEvents[i].eventStatus.toLowerCase() === 'error') {
+          if (
+            (selectedEvents[i].eventStatus &&
+              selectedEvents[i].eventStatus.toLowerCase() === 'error') ||
+            selectedEvents[i].status.toLowerCase().includes('duplicate')
+          ) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
           }
 
-          if (selectedEvents[i].eventStatus.toLowerCase() === 'published') {
+          if (
+            selectedEvents[i].eventStatus &&
+            selectedEvents[i].eventStatus.toLowerCase() === 'published'
+          ) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
+            deleteCount = deleteCount + 1
           }
 
-          if (selectedEvents[i].eventStatus.toLowerCase() === 'confirmed') {
+          if (
+            selectedEvents[i].eventStatus &&
+            selectedEvents[i].eventStatus.toLowerCase() === 'confirmed'
+          ) {
             // setDisablePublish(true)
             // break
             publishCount = publishCount + 1
+            deleteCount = deleteCount + 1
           }
         } else {
           deleteCount = deleteCount + 1
           publishCount = publishCount + 1
         }
       }
-      // console.error('Publishcount', publishCount)
-      // console.error('deletecount', deleteCount)
+      console.log('Publishcount', publishCount)
+      console.log('deletecount', deleteCount)
       if (publishCount > 0) {
         setDisablePublish(true)
       } else {
@@ -1633,6 +1652,7 @@ function ManageTaskEvent(props: any) {
           // Prepare DataTable
           const cols: any = data1[0]
           console.log(cols)
+          console.log(tableCols)
           console.log(data1)
 
           // let _importedCols = cols.map((col: any) => ({ field: col, header: toCapitalize(col) }));
@@ -1642,112 +1662,153 @@ function ManageTaskEvent(props: any) {
           //         return obj;
           //     }, {});
           // });
-          const newData = data.map((d: any) => {
-            console.log(d)
-            console.log(checkYesOrNo(d[cols[8]]))
-            var converted_date1 = d[cols[6]]
-              ? excelDatetoDate(d[cols[6]]) !== ''
-                ? excelDatetoDate(d[cols[6]])?.toString()
-                : null
-              : null
 
-            var converted_date3 = d[cols[1]]
-              ? excelDatetoDate(d[cols[1]]) !== ''
-                ? excelDatetoDate(d[cols[1]]).toString()
-                : null
-              : null
-
-            var eventName = () => {
-              if (d[cols[4]] && converted_date1) {
-                var lDate = new Date(converted_date1)
-                console.log(lDate)
-                var name =
-                  d[cols[4]].replace(/ /g, '_') +
-                  '_' +
-                  lDate.getDate() +
-                  lDate.toLocaleString('default', { month: 'short' }) +
-                  lDate.getFullYear()
-                console.log(name)
-                return name
-              } else {
-                return ''
+          let error = false
+          if (cols.length > 0) {
+            for (let i = 0; i < cols.length; i++) {
+              if (cols[i].trim() !== tableCols[i]) {
+                error = true
+                console.log(cols[i], tableCols[i])
+                break
               }
             }
+            if (error === true) {
+              // alert('Invalid Excel Headers')
+              setInvalidFormat(true)
+              setOpenPreviewDialog(false)
+              setConfirmtable(true)
+            } else {
+              const newData = data.map((d: any) => {
+                console.log(d)
+                console.log(checkYesOrNo(d[cols[8]]))
+                var converted_date1 = d[cols[6]]
+                  ? excelDatetoDate(d[cols[6]]) !== ''
+                    ? excelDatetoDate(d[cols[6]])?.toString()
+                    : null
+                  : null
 
-            // var buyerName = () => {
-            //   var index = Buyers.findIndex((item) => item.email === d['Buyer'])
-            //   return Buyers[index].value
-            // }
+                var converted_date3 = d[cols[1]]
+                  ? excelDatetoDate(d[cols[1]]) !== ''
+                    ? excelDatetoDate(d[cols[1]]).toString()
+                    : null
+                  : null
 
-            // var classArray = () => {
-            //   console.log(d[7])
-            //   let classes = d[7].split(',')
-            //   let classValues = []
-            //   for (var i in classes) {
-            //     classValues.push(classes[i].trim())
-            //   }
-            //   return d[7]
-            // }
-
-            return {
-              resetType: d[cols[0]] ? d[cols[0]] : null,
-              appDueDate: converted_date3,
-              tradeGroup: d[cols[2]] ? d[cols[2]] : null,
-              category: d[cols[3]] ? d[cols[3]] : null,
-              // categoryId: 1,
-              department: d[cols[4]] ? d[cols[4]] : null,
-              // departmentId: 1,
-              name: d[cols[5]] ? d[cols[5]] : eventName(),
-              targetDate: converted_date1,
-              planogramClass: classArray(d[cols[7]])
-                ? {
-                    className: classArray(d[cols[7]]),
+                var eventName = () => {
+                  if (d[cols[4]] && converted_date1) {
+                    var lDate = new Date(converted_date1)
+                    console.log(lDate)
+                    var name =
+                      d[cols[4]].replace(/ /g, '_') +
+                      '_' +
+                      lDate.getDate() +
+                      lDate.toLocaleString('default', { month: 'short' }) +
+                      lDate.getFullYear()
+                    console.log(name)
+                    return name
+                  } else {
+                    return ''
                   }
-                : classArray(d[cols[7]]),
-              planogramClassString: d[cols[7]] ? d[cols[7]] : '',
+                }
 
-              clearancePriceCheck: d[cols[8]] ? d[cols[8]] : 'Y',
-              orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',
-              stopOrder: d[cols[10]] ? d[cols[10]] : 'Y',
+                // var buyerName = () => {
+                //   var index = Buyers.findIndex((item) => item.email === d['Buyer'])
+                //   return Buyers[index].value
+                // }
 
-              wastageRange: d[cols[11]] ? d[cols[11]] : 'Week +4 \\ +7',
-              buyerEmailId: d[cols[12]] ? d[cols[12]] : '',
-              categoryDirectorEmailId: d[cols[13]] ? d[cols[13]] : '',
-              seniorBuyingManagerEmailId: d[cols[14]] ? d[cols[14]] : '',
-              buyerAssistantEmailId: d[cols[15]] ? d[cols[15]] : '',
-              merchandiserEmailId: d[cols[16]] ? d[cols[16]] : '',
-              supplyChainAnalystEmailId: d[cols[17]] ? d[cols[17]] : '',
-              ownBrandManagerEmailId: d[cols[18]] ? d[cols[18]] : '',
-              rangeResetManagerEmailId: d[cols[19]] ? d[cols[19]] : '',
+                // var classArray = () => {
+                //   console.log(d[7])
+                //   let classes = d[7].split(',')
+                //   let classValues = []
+                //   for (var i in classes) {
+                //     classValues.push(classes[i].trim())
+                //   }
+                //   return d[7]
+                // }
 
-              // eventId: d['Event ID'],
-              // name: 'string',
-              // eventName: eventName(),
+                return {
+                  resetType: d[cols[0]] ? d[cols[0]] : null,
+                  appDueDate: converted_date3,
+                  tradeGroup: d[cols[2]] ? d[cols[2]] : null,
+                  category: d[cols[3]] ? d[cols[3]] : null,
+                  // categoryId: 1,
+                  department: d[cols[4]] ? d[cols[4]] : null,
+                  // departmentId: 1,
+                  name: d[cols[5]] ? d[cols[5]] : eventName(),
+                  targetDate: converted_date1,
+                  planogramClass: classArray(d[cols[7]])
+                    ? {
+                        className: classArray(d[cols[7]]),
+                      }
+                    : classArray(d[cols[7]]),
+                  planogramClassString: d[cols[7]] ? d[cols[7]] : '',
 
-              // "status": d["Status"] ? d["Status"] : "Draft",
+                  clearancePriceCheck: d[cols[8]] ? d[cols[8]] : 'Y',
+                  orderStopDateCheck: d[cols[9]] ? d[cols[9]] : 'Y',
+                  stopOrder: d[cols[10]] ? d[cols[10]] : 'Y',
+
+                  wastageRange: d[cols[11]] ? d[cols[11]] : 'Week +4 \\ +7',
+                  buyerEmailId: d[cols[12]] ? d[cols[12]] : '',
+                  categoryDirectorEmailId: d[cols[13]] ? d[cols[13]] : '',
+                  seniorBuyingManagerEmailId: d[cols[14]] ? d[cols[14]] : '',
+                  buyerAssistantEmailId: d[cols[15]] ? d[cols[15]] : '',
+                  merchandiserEmailId: d[cols[16]] ? d[cols[16]] : '',
+                  supplyChainAnalystEmailId: d[cols[17]] ? d[cols[17]] : '',
+                  ownBrandManagerEmailId: d[cols[18]] ? d[cols[18]] : '',
+                  rangeResetManagerEmailId: d[cols[19]] ? d[cols[19]] : '',
+
+                  // eventId: d['Event ID'],
+                  // name: 'string',
+                  // eventName: eventName(),
+
+                  // "status": d["Status"] ? d["Status"] : "Draft",
+                }
+              })
+              console.log(newData)
+              // let newData1 = {
+              //   rangeResets: [...newData],
+              // }
+              // console.log(newData1)
+
+              setImportedCols(eventUploadTableCols)
+              setImportedData(newData)
+              setImportedFormData(newData)
+              handlePreviewDialogOpen()
             }
-          })
-          console.log(newData)
-          // let newData1 = {
-          //   rangeResets: [...newData],
-          // }
-          // console.log(newData1)
-
-          setImportedCols(eventUploadTableCols)
-          setImportedData(newData)
-          setImportedFormData(newData)
+          } else {
+            setConfirmtable(true)
+            // alert('Invalid Excel Headers')
+            setInvalidFormat(true)
+          }
         }
 
         reader.readAsArrayBuffer(uploadedFile)
       })
       handleUploadDialogClose()
-      handlePreviewDialogOpen()
     } else {
-      alert('Upload correct file')
+      // alert('Upload correct file')
+      setInvalidFile(true)
       setUploadedFile(null)
       setConfirmtable(true)
     }
   }
+
+  const invalidFileDialog = (
+    <ConfirmBox
+      cancelOpen={invalidFile}
+      handleProceed={() => setInvalidFile(false)}
+      label1="Invalid File Format"
+      label2="The file you uploaded is not an Excel file, Try again"
+    />
+  )
+
+  const invalidFormatDialog = (
+    <ConfirmBox
+      cancelOpen={invalidFormat}
+      handleProceed={() => setInvalidFormat(false)}
+      label1="Invalid Excel Headers"
+      label2="The table headers of uploaded file are invalid, Try again"
+    />
+  )
 
   useEffect(() => {
     console.log(importedData)
@@ -1822,123 +1883,124 @@ function ManageTaskEvent(props: any) {
 
       // let deletingEvents: any = []
       selectedEvents.map((event: any) => {
-        if (
-          event.eventStatus.toLowerCase() === 'published' &&
-          (event.eventStatus.toLowerCase() !== 'error' ||
-            event.eventStatus.toLowerCase() !== 'duplicate')
-        ) {
-          // services delete endpoint
+        // if (
+        //   event.eventStatus.toLowerCase() === 'published' &&
+        //   (event.eventStatus.toLowerCase() !== 'error' ||
+        //     event.eventStatus.toLowerCase() !== 'duplicate')
+        // ) {
+        //   // services delete endpoint
 
-          // let formData = {
-          //   status: 'Cancelled',
-          //   items: [],
-          // }
-          // patchUpdateRangeResets(event.id, formData)
-          //   .then((res: any) => {
-          //     console.log(res)
-          //     let _tasks = fetchRangeResets.filter(
-          //       (value: any) => !selectedEvents.includes(value)
-          //     )
-          //     console.log(_tasks)
-          //     setFailureCount((prevState) => prevState - 1)
-          //     setCheckCount((prevState) => prevState - 1)
-          //     setFetchRangeResets(_tasks)
-          //     setFile(_tasks)
-          //   })
-          //   .catch((err: any) => {
-          //     setCheckCount((prevState) => prevState - 1)
-          //   })
+        //   // let formData = {
+        //   //   status: 'Cancelled',
+        //   //   items: [],
+        //   // }
+        //   // patchUpdateRangeResets(event.id, formData)
+        //   //   .then((res: any) => {
+        //   //     console.log(res)
+        //   //     let _tasks = fetchRangeResets.filter(
+        //   //       (value: any) => !selectedEvents.includes(value)
+        //   //     )
+        //   //     console.log(_tasks)
+        //   //     setFailureCount((prevState) => prevState - 1)
+        //   //     setCheckCount((prevState) => prevState - 1)
+        //   //     setFetchRangeResets(_tasks)
+        //   //     setFile(_tasks)
+        //   //   })
+        //   //   .catch((err: any) => {
+        //   //     setCheckCount((prevState) => prevState - 1)
+        //   //   })
 
-          // camunda delete endpoint
+        //   // camunda delete endpoint
 
-          // deletingEvents.push({
-          //   eventId: event.id,
-          //   status: event.status,
-          // })
+        //   // deletingEvents.push({
+        //   //   eventId: event.id,
+        //   //   status: event.status,
+        //   // })
 
-          // let _tasks = fetchRangeResets.filter(
-          //   (value: any) => !selectedEvents.includes(value)
-          // )
-          // console.log(_tasks)
+        //   // let _tasks = fetchRangeResets.filter(
+        //   //   (value: any) => !selectedEvents.includes(value)
+        //   // )
+        //   // console.log(_tasks)
 
-          // setFailureCount((prevState) => prevState - 1)
-          // setCheckCount((prevState) => prevState - 1)
-          // setFetchRangeResets(_tasks)
-          // setFile(_tasks)
+        //   // setFailureCount((prevState) => prevState - 1)
+        //   // setCheckCount((prevState) => prevState - 1)
+        //   // setFetchRangeResets(_tasks)
+        //   // setFile(_tasks)
 
-          let formData = {
-            requester: {
-              persona:
-                userDetail && userDetail.userdetails[0].roles[0].roleName,
-              details: {
-                emailId: userDetail && userDetail.userdetails[0].user.emailId,
-                userId: userDetail && userDetail.userdetails[0].user.userId,
-                name:
-                  userDetail &&
-                  userDetail.userdetails[0].user.middleName &&
-                  userDetail.userdetails[0].user.middleName != ''
-                    ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
-                    : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
-              },
-              roles:
-                userDetail &&
-                userDetail.userdetails[0].roles.map((role: any) => {
-                  return {
-                    roleId: role.roleId,
-                  }
-                }),
-              usergroups:
-                userDetail &&
-                userDetail.userdetails[0].usergroups.map((group: any) => {
-                  return {
-                    groupId: group.groupId,
-                    status: group.status,
-                  }
-                }),
-            },
-            deleteEventRequests: [
-              {
-                eventId: event.id,
-                status: event.eventStatus,
-              },
-            ],
-            logging: {
-              comments: 'string',
-              updated: 'string',
-            },
-          }
+        //   let formData = {
+        //     requester: {
+        //       persona:
+        //         userDetail && userDetail.userdetails[0].roles[0].roleName,
+        //       details: {
+        //         emailId: userDetail && userDetail.userdetails[0].user.emailId,
+        //         userId: userDetail && userDetail.userdetails[0].user.userId,
+        //         name:
+        //           userDetail &&
+        //           userDetail.userdetails[0].user.middleName &&
+        //           userDetail.userdetails[0].user.middleName != ''
+        //             ? `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.middleName} ${userDetail.userdetails[0].user.lastName}`
+        //             : `${userDetail.userdetails[0].user.firstName} ${userDetail.userdetails[0].user.lastName}`,
+        //       },
+        //       roles:
+        //         userDetail &&
+        //         userDetail.userdetails[0].roles.map((role: any) => {
+        //           return {
+        //             roleId: role.roleId,
+        //           }
+        //         }),
+        //       usergroups:
+        //         userDetail &&
+        //         userDetail.userdetails[0].usergroups.map((group: any) => {
+        //           return {
+        //             groupId: group.groupId,
+        //             status: group.status,
+        //           }
+        //         }),
+        //     },
+        //     deleteEventRequests: [
+        //       {
+        //         eventId: event.id,
+        //         status: event.eventStatus,
+        //       },
+        //     ],
+        //     logging: {
+        //       comments: 'string',
+        //       updated: 'string',
+        //     },
+        //   }
 
-          deleteEventsCamunda(formData)
-            .then((res: any) => {
-              console.log(res.data)
-              if (res.data && res.data.eventAlert.eventId === null) {
-                // setFetchRangeResets((prevState:any)=>{
-                //   if(prevState.id===event.id){
+        //   deleteEventsCamunda(formData)
+        //     .then((res: any) => {
+        //       console.log(res.data)
+        //       if (res.data && res.data.eventAlert.eventId === null) {
+        //         // setFetchRangeResets((prevState:any)=>{
+        //         //   if(prevState.id===event.id){
 
-                //   }
-                // })
+        //         //   }
+        //         // })
 
-                let _tasks = fetchRangeResets.filter(
-                  (value: any) => !selectedEvents.includes(value)
-                )
-                console.log(_tasks)
+        //         let _tasks = fetchRangeResets.filter(
+        //           (value: any) => !selectedEvents.includes(value)
+        //         )
+        //         console.log(_tasks)
 
-                setFailureCount((prevState) => prevState - 1)
-                setCheckCount((prevState) => prevState - 1)
-                setFetchRangeResets(_tasks)
-                setFile(_tasks)
-              } else {
-                setCheckCount((prevState) => prevState - 1)
-              }
+        //         setFailureCount((prevState) => prevState - 1)
+        //         setCheckCount((prevState) => prevState - 1)
+        //         setFetchRangeResets(_tasks)
+        //         setFile(_tasks)
+        //       } else {
+        //         setCheckCount((prevState) => prevState - 1)
+        //       }
 
-              // setIsProgressLoader(false)
-            })
-            .catch((err: any) => {
-              console.log(err)
-              setCheckCount((prevState) => prevState - 1)
-              // setIsProgressLoader(false)
-            })
-        } else if (event.eventStatus.toLowerCase() === 'draft') {
+        //       // setIsProgressLoader(false)
+        //     })
+        //     .catch((err: any) => {
+        //       console.log(err)
+        //       setCheckCount((prevState) => prevState - 1)
+        //       // setIsProgressLoader(false)
+        //     })
+        // } else
+        if (event.eventStatus.toLowerCase() === 'draft') {
           getEventDetailsById(event.id)
             .then((res1: any) => {
               let getResponse = res1.data
@@ -2023,7 +2085,10 @@ function ManageTaskEvent(props: any) {
               console.log(err1)
               setCheckCount((prevState) => prevState - 1)
             })
-        } else {
+        } else if (
+          event.eventStatus.toLowerCase() === 'error' ||
+          event.status.toLowerCase().includes('duplicate')
+        ) {
           let _tasks = fetchRangeResets.filter(
             (value: any) => !selectedEvents.includes(value)
           )
@@ -2087,38 +2152,6 @@ function ManageTaskEvent(props: any) {
     //   setConfirmtable(false)
     // }
   }
-
-  // const sampleExcel = (
-  //   <table id="sample" style={{ display: 'none' }}>
-  //     <thead>
-  //       <tr>
-  //         {/* <th>Unique ID</th> */}
-  //         <th>Event ID</th>
-  //         <th>Reset Type</th>
-  //         <th>RAF/App Due Date</th>
-  //         <th>Trading Group</th>
-  //         <th>Category</th>
-  //         <th>Department</th>
-  //         <th>Event ID</th>
-  //         <th>Event Name</th>
-  //         <th>LaunchDate</th>
-  //         <th>Planogram Class</th>
-  //         <th>Store Waste Process Timing</th>
-  //         <th>Buyer</th>
-  //         <th>Buying Assistant</th>
-  //         <th>Own Brand Manager</th>
-  //         <th>Senior Buying Manager</th>
-  //         <th>Merchandiser</th>
-  //         <th>Range Reset Manager</th>
-  //         <th>Category Director</th>
-  //         <th>Supply Chain Specialist</th>
-  //         <th>Clearance Pricing Action required</th>
-  //         <th>GSCOP Date check Required</th>
-  //         <th>Stop Order</th>
-  //       </tr>
-  //     </thead>
-  //   </table>
-  // )
 
   const uploadDialog = (
     <Dialog
@@ -4124,6 +4157,8 @@ function ManageTaskEvent(props: any) {
           {advancedSearch}
           {viewConfirmDelete}
           {viewConfirmCross}
+          {invalidFileDialog}
+          {invalidFormatDialog}
         </div>
       </div>
     </>

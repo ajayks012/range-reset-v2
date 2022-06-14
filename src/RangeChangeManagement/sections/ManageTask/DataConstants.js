@@ -344,3 +344,26 @@ export const statusOptions = [
     label: 'Cancelled',
   },
 ]
+
+export const tableCols = [
+  'Reset Type',
+  'RAF/App Due Date',
+  'Trading Group',
+  'Category',
+  'Department',
+  'Event Name',
+  'Launch Date',
+  'Planogram Class',
+  'Clearance Price Applied',
+  'Order Stop date Check Required',
+  'Stop Order (Stock rundown)',
+  'Store Waste Process Timing',
+  'Buyer',
+  'Category Director',
+  'Sr. Buying Manager',
+  'Buying Asst.',
+  'Merchandiser',
+  'Supply Chain Specialist',
+  'Own Brand Manager',
+  'Range Reset Manager',
+]
