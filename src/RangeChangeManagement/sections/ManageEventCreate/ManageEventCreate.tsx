@@ -229,6 +229,7 @@ function ManageEventCreate(props: any) {
   const [userAssRadio, setUserAssRadio] = useState<any>()
   const [currentTask, setCurrentTask] = useState<any>()
   const [eventSaved, setEventSaved] = useState(false)
+  const [dueDateChangePublish, setDueDateChangePublish] = useState(false)
 
   // const [referenceDocData, setReferenceDocData] = React.useState<Array<any>>([])
   const [referenceDocData, setReferenceDocData] = React.useState<any>()
@@ -1644,11 +1645,6 @@ function ManageEventCreate(props: any) {
         setDueDateErrorCount(count)
 
         if (count != '') {
-          let eventDetailData = eventDetails
-          eventDetailData[0].targetDate = launchDateOld
-          console.log('new data', eventDetailData)
-          console.log('7')
-          setEventDetails([...eventDetailData])
           setDueDateErrorTasks(count)
           setDueDateErrorOpen(true)
           // setIsProgressLoader(true)
@@ -1668,12 +1664,26 @@ function ManageEventCreate(props: any) {
   const handleDueDateError = () => {
     console.error('setting back', launchDateOld)
 
+    let eventDetailData = eventDetails
+    eventDetailData[0].targetDate = launchDateOld
+    console.log('new data', eventDetailData)
+    // console.log('7')
+    setEventDetails([...eventDetailData])
+
     // handlePublishEvent('ModifyAuto')
     // launchDateOld === eventDetails.targetDate &&
     console.log('new payload', eventDetails)
-    handlePublishEvent('dateChange')
+    setDueDateChangePublish(true)
+
     setDueDateErrorOpen(false)
   }
+
+  useEffect(() => {
+    if (dueDateChangePublish && eventDetails[0].targetDate === launchDateOld) {
+      handlePublishEvent('dateChange')
+      setDueDateChangePublish(false)
+    }
+  }, [dueDateChangePublish])
 
   const confirmDueDateChangeDialog = (
     <ConfirmBox
