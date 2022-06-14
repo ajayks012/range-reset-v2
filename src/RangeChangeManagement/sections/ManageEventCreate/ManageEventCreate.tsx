@@ -531,6 +531,7 @@ function ManageEventCreate(props: any) {
           })
         setClassValues(classValue)
         // dueDateErrorCount === '' && setLaunchDateOld(manageList[0].targetDate)
+        console.log('target date', manageList[0].targetDate)
         !launchDateOld && setLaunchDateOld(manageList[0].targetDate)
         setTeam(manageTeamData)
         if (
@@ -1648,7 +1649,9 @@ function ManageEventCreate(props: any) {
           setDueDateErrorTasks(count)
           setDueDateErrorOpen(true)
           // setIsProgressLoader(true)
+          setLaunchDateNew('')
         } else {
+          // if(oldDate)
           setLaunchDateOld(launchDateNew)
           setLaunchDateNew('')
           // setIsProgressLoader(true)
@@ -1658,8 +1661,12 @@ function ManageEventCreate(props: any) {
   }, [taskDetails])
 
   useEffect(() => {
-    console.log('eventDetails', eventDetails)
-  }, [eventDetails])
+    console.log('Launch date old', launchDateOld)
+  }, [launchDateOld])
+
+  useEffect(() => {
+    console.log('Launch date old', launchDateNew)
+  }, [launchDateNew])
 
   const handleDueDateError = () => {
     console.error('setting back', launchDateOld)
