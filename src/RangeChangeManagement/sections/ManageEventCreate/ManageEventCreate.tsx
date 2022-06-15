@@ -1555,6 +1555,15 @@ function ManageEventCreate(props: any) {
           },
         ]
       })
+    } else {
+      setEventDetails((prevState: any) => {
+        return [
+          {
+            ...prevState[0],
+            targetDate: dateVal,
+          },
+        ]
+      })
     }
     setLaunchDateNew(dateVal)
     setLaunchDateConfirm(true)

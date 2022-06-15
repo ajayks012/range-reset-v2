@@ -354,8 +354,44 @@ function Dashboard1(props: any) {
     let rcmData = userTaskDashboard.filter(
       (dash: any) => dash.value === 'rangechangemanagement'
     )
-    setTable1Data(rcmData[0].my.taskDetails)
+    // setTable1Data(rcmData[0].my.taskDetails)
     setTable2Data(rcmData[0].myGroup.taskDetails)
+
+    let newData = [
+      {
+        title: 'Range Change Management',
+        value: 'rangechangemanagement',
+        statuscomplete: 'Ontime Completion',
+        statuscompleteval: '85%',
+        my: {
+          missedOrOverdue: 1,
+          rejected: 0,
+          currentWeek: 0,
+          nextWeek: 0,
+          weekTwoToFive: 0,
+          weekMoreThanFive: 0,
+          total: 0,
+          pendingActions: 12,
+        },
+        myGroup: {
+          url: '#',
+          taskDetails: [
+            {
+              missedOrOverdue: 5,
+              rejected: 6,
+              currentWeek: 3,
+              nextWeek: 4,
+              weekTwoToFive: 4,
+              weekMoreThanFive: 5,
+              total: 17,
+            },
+          ],
+          pendingActions: 18,
+        },
+      },
+    ]
+
+    setTable1Data([newData[0].my])
   }, [])
 
   const missedTemplate = (rowData: any) => {
